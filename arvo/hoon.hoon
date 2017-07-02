@@ -3610,6 +3610,7 @@
   [i.vib $(vib t.vib)]
 ::
 ++  runt                                                ::  prepend repeatedly
+  ~/  %runt
   |=  {{a/@ b/@} c/tape}
   ^-  tape
   ?:  =(0 a)
@@ -6773,6 +6774,7 @@
   [(~(peek ut p.vax) %free axe) .*(q.vax [0 axe])]
 ::
 ++  wash                                                ::  render tank at width
+  ~/  %wash
   |=  {{tab/@ edg/@} tac/tank}  ^-  wall
   (~(win re tac) tab edg)
 ::
