@@ -1385,6 +1385,16 @@
           =+  bou=bust:puz
           =.  bin
               ?.  &(bou !oub)  bin
+              ~>  %slog.[0 leaf/""]
+              ~>  %slog.[0 leaf/"Please update your Vere version to urbit-0.6.0."]
+              ~>  %slog.[0 leaf/"We performed a continuity breach."]
+              ~>  %slog.[0 leaf/"So you'll need to reboot your ship with the latest code."]
+              ~>  %slog.[0 leaf/"Then you'll be able to rejoin the network."]
+              ~>  %slog.[0 leaf/"Visit https://urbit.org/docs/using/install for a recap of steps."]
+              ~>  %slog.[0 leaf/"Basically: just pull the latest urbit/urbit source clone."]
+              ~>  %slog.[0 leaf/"Then rebuild the binary and install it where you'd like."]
+              ~>  %slog.[0 leaf/"Thanks! See you in /urbit-meta soon."]
+              ~>  %slog.[0 leaf/""]
               :_(bin [%wine [our her] " not responding still trying"])
           =.  diz  ?:((boom:puz now) (pode:diz now) diz)
           (busk xong:diz yem)
