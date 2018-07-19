@@ -3418,7 +3418,7 @@
   |_  a/@
   ++  rad                                               ::  random in range
     |=  b/@  ^-  @
-    ~_  leaf+"seed-zero"
+    ~_  leaf+"rad-underflow"
     ?<  =(0 b)
     =+  c=(raw (met 0 b))
     ?:((lth c b) c $(a +(a)))
