@@ -233,47 +233,36 @@
   $:  ::  live: whether this duct is being run live
       ::
       $=  live
-      $%  [%once in-progress=@da]
+      $%  $:  %once
+              ::  date: formal date of the in-progress build
+              ::
+              date=@da
+              ::  scry-results: stored results of /* sub-builds
+              ::
+              =scry-results
+          ==
           $:  %live
+              ::  in-progress: unfinished live build, if we've started one
               ::
+              in-progress=(unit [date=@da =scry-results])
+              ::  last-completed: the last build we completed
               ::
-              in-progress=(unit @da)
-              ::  the last subscription we made
+              ::    If there is no :subscription, then the last build did not
+              ::    depend on any live resources.
               ::
-              ::    This can possibly have an empty set of resources, in which
-              ::    we never sent a move.
+              ::    NOTE: Only allowing a single subscription implies that a
+              ::    single live build can only depend on live resources from a
+              ::    single disc. We don't have a working plan for fixing this
+              ::    and will need to think very hard about the future.
               ::
-              ::    NOTE: This implies that a single live build can only depend
-              ::    on live resources from a single disc. We don't have a
-              ::    working plan for fixing this and will need to think very
-              ::    hard about the future.
-              ::
-              last-sent=(unit [date=@da subscription=(unit subscription)])
+              $=  last-completed
+              (unit [date=@da =scry-results subscription=(unit subscription)])
       ==  ==
       ::  root-schematic: the requested build for this duct
       ::
       root-schematic=schematic
   ==
-::  +build-relation: how do two builds relate to each other?
-::
-::    A +build-relation can be either :verified or not, and :blocked or not.
-::    It is a symmetric relation between two builds, in the sense that both
-::    the client and the sub will store the same relation, just pointing to
-::    the other build.
-::
-::    If it's not :verified, then the relation is a guess based on previous
-::    builds. These guesses are used to ensure that we hold onto builds we
-::    expect to be used in future builds. Each time we run +make on a build,
-::    it might produce new :verified sub-builds, which may have been unverified
-::    until then. Once a build completes, any unverified sub-builds must be
-::    cleaned up, since it turned out they weren't used by the build after all.
-::
-::    :blocked is used to note that a build can't be completed until that
-::    sub-build has been completed. A relation can be :blocked but not :verified
-::    if we're trying to promote a build, but we haven't run all its sub-builds
-::    yet. In that case, we'll try to promote or run the sub-build in order to
-::    determine whether we can promote the client. Until the sub-build has been
-::    completed, the client is provisionally blocked on the sub-build.
++$  scry-results  (map scry-request (unit cage))
 ::
 +$  real-product  (unit (each vase tang))
 +$  product       (unit (each [p=* q=*] tang))
@@ -820,11 +809,17 @@
     ::
     =+  [product progress]=(run-build root-build duct live)
     ::
-    ?+  product  !!
-      [~ %& *]  (run-gate on-build-done root-build duct progress &3.product)
-      [~ %| *]  (run-gate on-build-fail root-build duct progress &3.product)
-      ~         (run-gate on-build-stop root-build duct progress)
-    ==
+    =.  cache.state  cache.progress
+    ::
+    ?~  product
+      (run-gate on-build-blocked root-build duct blocks.progress)
+    ::
+    ?:  live
+      %+  run-gate  on-live-build-completed
+      [root-build u.product duct live-resources.progress]
+    ::
+    %+  run-gate  on-once-build-completed
+    [root-build u.product duct]
   ::  +run-build: run a build recursively, without updating permanent state
   ::
   ++  run-build
@@ -1223,6 +1218,109 @@
       ::
       [+.entry progress(cache updated-cache)]
     --
+  ::  +on-build-blocked: perform effects of a build blocking on async resources
+  ::
+  ++  on-build-blocked
+    |=  [=build =duct blocks=(set [=term =beam])]
+    ^+  event-core
+    ::
+    =/  block-list=(list scry-request)
+      %+  turn  ~(tap in blocks)
+      |=  [=term =beam]
+      ^-  scry-request
+      ::
+      =/  vane  `@c`(end 3 1 term.i.resource-list)
+      =/  care  ((hard care:clay) (rsh 3 1 term.i.resource-list))
+      ::
+      [vane care beam]
+    ::
+    |-  ^+  event-core
+    ?~  block-list  event-core
+    ::
+    =.  event-core  (start-scry-request i.block-list duct)
+    ::
+    $(block-list t.block-list)
+  ::  +on-once-build-completed: perform effects of finishing a non-live build
+  ::
+  ++  on-once-build-completed
+    |=  [=build result=(each vase tang) =duct]
+    ^+  event-core
+    ::
+    =.  moves        [[duct %give %made date.build %complete result] moves]
+    =.  ducts.state  (~(del by ducts.state) duct)
+    ::
+    event-core
+  ::  +on-live-build-completed: perform effects of finishing a live build
+  ::
+  ++  on-live-build-completed
+    |=  $:  =build
+            result=(each vase tang)
+            =duct
+            live-resources=(set [=term =rail])
+        ==
+    ^+  event-core
+    ::  group :live-resources by disc
+    ::
+    =/  resource-list=(list [=term =rail])  ~(tap in live-resources)
+    ::
+    =|  resources-by-disc=(jug disc resource)
+    =.  resources-by-disc
+      |-  ^+  resources-by-disc
+      ?~  resource-list  resources-by-disc
+      ::
+      =/  vane  `@c`(end 3 1 term.i.resource-list)
+      =/  care  ((hard care:clay) (rsh 3 1 term.i.resource-list))
+      ::
+      =/  =resource  [vane care rail.i.resource-list]
+      ::
+      =.  resources-by-disc
+        (~(put ju resources-by-disc) disc.rail.resource resource)
+      ::
+      $(resource-list t.resource-list)
+    ::  if :build depends on multiple discs, send an %incomplete and cancel
+    ::
+    ?:  (lth 1 ~(wyt by resources-by-disc))
+      =/  reason=tang  :~
+        [%leaf "root build"]
+        ::  TODO: [%leaf (build-to-tape build)]
+        [%leaf "on duct:"]
+        [%leaf "{<duct>}"]
+        [%leaf "tried to subscribe to multiple discs:"]
+        [%leaf "{<resources-by-disc>}"]
+      ==
+      ::
+      =.  moves        [[duct %give %made date.build %incomplete reason] moves]
+      =.  ducts.state  (~(del by ducts.state) duct)
+      ::
+      event-core
+    ::  TODO: don't send move if result is same as previous result
+    ::
+    =.  moves  [[duct %give %made date.build %complete result] moves]
+    :: 
+    =/  subscription=(unit subscription)
+      ?~  resources-by-disc
+        ~
+      `[date.build n.resources-by-disc]
+    ::
+    =?  event-core  ?=(^ subscription)
+      (start-clay-subscription u.subscription)
+    ::
+    =.  ducts.state
+      %+  ~(jab by ducts.state)  duct
+      |=  =duct-status
+      ^+  duct-status
+      ::
+      ?>  ?=(%live -.live.duct-status)
+      ::
+      %_    duct-status
+          in-progress.live
+        ~
+      ::
+          last-completed.live
+        `[date.build scry-results.in-progress.live.duct-status subscription]
+      ==
+    ::
+    event-core
   ::  |utilities:per-event: helper arms
   ::
   ::+|  utilities
@@ -1240,6 +1338,9 @@
   ::    answer (it produced `~`).
   ::
   ++  intercepted-scry
+    |=  =duct
+    ^-  slyt
+    ::
     %-  sloy  ^-  slyd
     ~/  %intercepted-scry
     |=  [ref=* (unit (set monk)) =term =beam]
@@ -1259,152 +1360,34 @@
       ~
     ?.  ?=(%da -.r.beam)
       ~
-    =/  =resource  [u.vane u.care rail=[[p.beam q.beam] s.beam]]
-    =/  =build     [date=p.r.beam %scry resource]
     ::  look up the scry result from our permanent state
     ::
     ::    Note: we can't freshen :build's :last-accessed date because
     ::    we can't mutate :state from this gate. %scry results might get
     ::    deleted during %wipe more quickly than they should because of this.
     ::
-    =/  local-result  -:(access-build-record build)
+    =/  =scry-request  [u.vane u.care beam]
+    =/  =duct-status   (~(got by ducts.state) duct)
+    ::
+    =/  local-result=(unit (unit cage))
+      ?:  ?=(%once -.live.duct-status)
+        (~(get by scry-results.live.duct-status) scry-request)
+      ::
+      ?<  ?=(~ in-progress.live.duct-status)
+      (~(get by scry-results.u.in-progress.live.duct-status) scry-request)
+    :: 
     ?~  local-result
       ~
-    ?:  ?=(%tombstone -.u.local-result)
-      ~
-    ::
-    =/  local-cage=cage  (result-to-cage build-result.u.local-result)
-    ::  if :local-result does not nest in :type, produce an error
-    ::
-    ?.  -:(nets:wa +.ref `type`p.q.local-cage)
+    ?~  u.local-result
       [~ ~]
     ::
-    [~ ~ `(cask)`local-cage]
-  ::  +on-root-build-complete: handle completion or promotion of a root build
-  ::
-  ::    When a build completes for a duct, we might have to send a %made move
-  ::    on the requesting duct and also do duct and build book-keeping.
-  ::
-  ::    TODO rewrite significantly
-  ::
-  ++  on-root-build-complete
-    ~/  %on-root-build-complete
-    |=  =build
-    ^+  event-core
+    =/  local-cage=cage  u.u.local-result
+    ::  if :local-result does not nest in :type, produce an error
     ::
-    =;  res=_event-core
-        =/  duct-status=(unit duct-status)
-          (~(get by ducts.state.res) duct)
-        ?~  duct-status  res
-        ::  debugging assertions to try to track down failure in
-        ::  +copy-build-tree-as-provisional
-        ::
-        ~|  [%failed-to-preserve-live-build (build-to-tape build)]
-        ?>  ?=(%live -.live.u.duct-status)
-        ~|  %failed-2
-        ?>  ?=(^ last-sent.live.u.duct-status)
-        ~|  %failed-3
-        ?>  .=  build
-            [date.u.last-sent.live.u.duct-status root-schematic.u.duct-status]
-        ~|  %failed-4
-        ?>  (~(has by builds.state.res) build)
-        ::
-        res
+    ?.  -:(nets:wa +.ref p.q.local-cage)
+      [~ ~]
     ::
-    =/  =build-status  (~(got by builds.state) build)
-    =/  =duct-status  (~(got by ducts.state) duct)
-    ::  make sure we have something to send
-    ::
-    ?>  ?=([%complete %value *] state.build-status)
-    ::  send a %made move unless it's an unchanged live build
-    ::
-    =?    moves
-        ?!
-        ?&  ?=(%live -.live.duct-status)
-            ?=(^ last-sent.live.duct-status)
-            ::
-            =/  last-build-status
-              %-  ~(got by builds.state)
-              [date.u.last-sent.live.duct-status schematic.build]
-            ::
-            ?>  ?=(%complete -.state.last-build-status)
-            ?&  ?=(%value -.build-record.state.last-build-status)
-            ::
-                .=  build-result.build-record.state.last-build-status
-                    build-result.build-record.state.build-status
-        ==  ==
-      :_  moves
-      ^-  move
-      ::
-      :*  duct  %give  %made  date.build  %complete
-          build-result.build-record.state.build-status
-      ==
-    ::
-    ?-    -.live.duct-status
-        %once
-      =.  ducts.state  (~(del by ducts.state) duct)
-      =.  state  (move-root-to-cache build)
-      ::
-      event-core
-    ::
-        %live
-      ::  clean up previous build
-      ::
-      =?  state  ?=(^ last-sent.live.duct-status)
-        =/  old-build=^build  build(date date.u.last-sent.live.duct-status)
-        ::
-        (remove-anchor-from-root old-build [%duct duct])
-      ::
-      =/  resource-list=(list [=disc resources=(set resource)])
-        ~(tap by (collect-live-resources build))
-      ::  we can only handle a single subscription
-      ::
-      ::    In the long term, we need Clay's interface to change so we can
-      ::    subscribe to multiple desks at the same time.
-      ::
-      ?:  (lth 1 (lent resource-list))
-        =.  event-core
-          %+  send-incomplete  build  :~
-            [%leaf "root build {(build-to-tape build)}"]
-            [%leaf "on duct:"]
-            [%leaf "{<duct>}"]
-            [%leaf "tried to subscribe to multiple discs:"]
-            [%leaf "{<resource-list>}"]
-          ==
-        ::  delete this instead of caching it, since it wasn't right
-        ::
-        =.  ducts.state  (~(del by ducts.state) duct)
-        =.  state  (remove-anchor-from-root build [%duct duct])
-        event-core
-      ::
-      =/  subscription=(unit subscription)
-        ?~  resource-list
-          ~
-        `[date.build disc.i.resource-list resources.i.resource-list]
-      ::
-      =?  event-core  ?=(^ subscription)
-        (start-clay-subscription u.subscription)
-      ::
-      =.  ducts.state
-        %+  ~(put by ducts.state)  duct
-        %_    duct-status
-            live
-          [%live in-progress=~ last-sent=`[date.build subscription]]
-        ==
-      ::
-      event-core
-    ==
-  ::  +send-incomplete: emit a move indicating we can't complete :build
-  ::
-  ++  send-incomplete
-    |=  [=build message=tang]
-    ^+  event-core
-    ::
-    =.  moves
-      :_  moves
-      `move`[duct %give %made date.build %incomplete message]
-    ::
-    event-core
+    [~ ~ local-cage]
   ::  +start-clay-subscription: listen for changes in the filesystem
   ::
   ++  start-clay-subscription
@@ -1486,7 +1469,7 @@
   ::  +start-scry-request: kick off an asynchronous request for a resource
   ::
   ++  start-scry-request
-    |=  =scry-request
+    |=  [=scry-request =duct]
     ^+  event-core
     ::  if we are the first block depending on this scry, send a move
     ::
