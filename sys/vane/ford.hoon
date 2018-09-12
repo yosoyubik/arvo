@@ -832,9 +832,9 @@
     =/  subject=vase  pit
     ::
     |=  [[date=@da =schematic] live=?]
-    ^-  [build-product=* progress=_progress]
+    ^-  [product _progress]
     ::
-    |^  ^-  [build-product=* progress=_progress]
+    |^  ^-  [product _progress]
         ::
         ?-    -.schematic
             ^
@@ -853,16 +853,28 @@
           ?>  ?=([~ %& *] tail)
           (succeed [[%cell p.p.u.head p.p.u.tail] q.p.u.head q.p.u.tail])
         ::
-            %call
+            %ntbn
+          =^  new-subject  progress  $(schematic subject.schematic)
+          ?~  new-subject
+            block
+          ?:  ?=([~ %| *] new-subject)
+            (wrap-error p.u.new-subject [%leaf "ford: /> failed:"]~)
+          ::
+          =/  raw-gate  ..$(subject p.u.new-subject, schematic rest.schematic)
+          ::
+          %-  cast-raw-result
+          .*(raw-gate [9 2 0 1])
+        ::
+            %ntbs
           =^  gate  progress  $(schematic gate.schematic)
           ::
           ?:  ?=([~ %| *] gate)
-            (wrap-error p.u.gate [%leaf "ford: %call: gate build failed"]~)
+            (wrap-error p.u.gate [%leaf "ford: /$ gate build failed"]~)
           ::
           =^  sample  progress  $(schematic sample.schematic)
           ::
           ?:  ?=([~ %| *] sample)
-            (wrap-error p.u.sample [%leaf "ford: %call: sample build failed"]~)
+            (wrap-error p.u.sample [%leaf "ford: /$ sample build failed"]~)
           ::
           ?^  blocks.progress
             block
@@ -951,7 +963,7 @@
             ?^  cache-result
               [`u.cache-result progress]
             ::
-            =/  product  (mong [gate sample] scry)
+            =/  product  (mong [gate sample] intercepted-scry)
             ?-    -.product
                 %0
               =/  success=vase  [product-type p.product]
@@ -972,11 +984,14 @@
               block
             ::
                 %2
-              (wrap-error p.product [%leaf "ford: %call execution failed"]~)
+              (wrap-error p.product [%leaf "ford: /$ execution failed"]~)
             ==
           --
         ::
-            %cast
+            %ntdt
+          (succeed literal.schematic)
+        ::
+            %ntkt
           ::  macro-expand to a %ride to apply the cast
           ::
           ::  />  :-  /=  spec  spec
@@ -984,20 +999,23 @@
           ::  `spec`rest
           ::
           =/  new-schematic=^schematic
-            :+  %with
-              [[%face %spec spec] [%face %rest rest]]
-            :-  %ride
+            :+  %ntbn
+              [[%ntts %spec spec] [%ntts %rest rest]]
+            :-  %ntcb
             ^-  hoon
             [%kthp [%like ~[%spec] ~] [%limb %rest]]
           ::
           $(schematic new-schematic)
       ::
-          %eval
-        =^  new-subject    progress  $(schematic subject.schematic)
+          %ntls
+        $(schematic [%ntbn [head [%ntdt subject]] rest])
+      ::
+          %ntnt
+        =^  new-subject  progress  $(schematic subject.schematic)
         ::  ensure type safety inside the build so we get a real schematic
         ::
         =^  new-schematic  progress
-          $(schematic [%cast [%here ^schematic] schematic.schematic])
+          $(schematic [%ntkt [%ntdt ^schematic] schematic.schematic])
         ::  we can't coerce :q.new-schematic to a vase, so run raw nock
         ::
         ::    We also don't virtualize with +mock, since Ford should never
@@ -1011,20 +1029,116 @@
         ::
         (cast-raw-result raw-product)
       ::
-          %face
+          %ntpd
+        ::
+        =/  parse-at-rail
+          |=  [=rail source=@t]
+          ^-  hoon
+          =/  parse-path=path  (en-beam [[ship.disc desk.disc %ud 0] spur]:rail)
+          (rain parse-path source)
+        ::
+        =/  extract-source
+          |=  [=rail result=(unit [mark=term data=@t])]
+          ^-  @t
+          ?~  result
+            ~|  "ford: /& failed: file not found at {<rail>}"  !!
+          ?.  =(%hoon mark.u.result)
+            ~|  "ford: /& failed: bad mark {<mark.u.result>} at {<rail>}"  !!
+          ::
+          data.u.result
+        ::
+        =/  new-schematic=^schematic
+          :+  %ntls
+            :+  %ntts  %rail
+            :+  %ntkt  [%ntdt !>(rail)]
+            rail.schematic
+          ::
+          :+  %ntls
+            :+  %ntts  %parsed-hoon
+            :+  %ntbs
+              [%ntdt !>(parse-at-rail)]
+            :-  [%limb %rail]
+            :+  %ntbs
+              [%ntdt !>(extract-source)]
+            :-  [%limb %rail]
+            [%ntcb [%limb %rail]]
+          ::
+          :+  %ntnt
+            [%ntdt pit]
+          :-  %ntcb
+          ^-  hoon
+          :+  %clhp
+            [%rock %tas %ntcb]
+          [%limb %parsed-hoon]
+        ::
+        $(schematic new-schematic)
+      ::
+          %nttr
+        =^  rail-result  progress  $(schematic rail.schematic)
+        ?~  rail-result
+          block
+        ?:  ?=([~ %| *] rail-result)
+          (wrap-error p.u.rail-result [%leaf "ford: /* rail build failed:"]~)
+        ::
+        =/  =rail  ((hard rail) p.u.rail-result)
+        ::
+        =?    live-resources.progress
+            live
+          =/  put-in  ~(put in *(set [=term =rail]))
+          %+  run-gate  put-in(+>+< a=live-resources.progress)
+          [term.schematic rail]
+        ::
+        =/  =beam          [[ship.disc.rail desk.disc.rail %da date] spur.rail]
+        =/  =scry-request  [term.schematic beam]
+        ::
+        =/  scry-result  (intercepted-scry scry-request)
+        ::
+        ?~  scry-result
+          =.  blocks.progress
+            =/  put-in  ~(put in *(set [=term =beam]))
+            %+  run-gate  put-in(+>+< a=blocks.progress)
+            scry-request
+          ::
+          block
+        ::
+        ?~  u.scry-result
+          (succeed !>(~))
+        ::
+        =/  =cage  u.u.scry-result
+        =/  result-vase=vase  (slop !>(p.cage) q.cage)
+        ::
+        (succeed result-vase)
+      ::
+          %ntts
         =^  sub-result  progress  $(schematic schematic.schematic)
         ?~  sub-result
           block
         ::
         ?:  ?=([~ %| *] sub-result)
           %+  wrap-error  p.u.sub-result
-          [%leaf "ford: %face {<face.schematic>} failed"]~
+          [%leaf "ford: /= {<face.schematic>} failed:"]~
         ::  wrap :face.schematic around product type
         ::
         =.  p.p.u.sub-result  [%face face.schematic p.p.u.sub-result]
         ::
         (succeed p.u.sub-result)
       ::
+          %ntvt
+        $(date date.schematic, schematic rest.schematic)
+      ::
+          %ntwt
+        =^  if  progress  $(schematic [%ntkt [%ntdt !>(?)] if.schematic])
+        ::
+        ?~  if
+          block
+        ::
+        ?:  ?=([~ %| *] if)
+          (wrap-error p.u.if [%leaf "ford: /? conditional failed:"]~)
+        ::
+        ?+  p.u.if  !!
+          %&  $(schematic then.schematic)
+          %|  $(schematic else.schematic)
+        ==
       ==
     ::  +cast-raw-result: runtime cast to placate the type system
     ::
