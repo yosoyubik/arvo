@@ -1307,21 +1307,101 @@
   ::
   ::  +schematic: plan for building
   ::
-  ++  schematic
+  +$  schematic
     ::    If the head of the +schematic is a pair, it's an auto-cons
     ::    schematic. Its result will be the pair of results of its
     ::    sub-schematics.
     ::
     $^  [head=schematic tail=schematic]
     ::
-    $%  ::  %$: literal value. Produces its input unchanged.
+    $%  ::  %ntbn: /> with :subject as subject, evaluate :rest
         ::
-        $:  %$
+        $:  %ntbn
+            ::  subject: schematic that becomes new subject
+            ::
+            subject=schematic
+            ::  rest: schematic to evaluate against result of :subject
+            ::
+            rest=schematic
+        ==
+        ::  %ntbs: /$ call a gate on a sample
+        ::
+        $:  %ntbs
+            ::  gate: schematic whose result is a gate
+            ::
+            gate=schematic
+            ::  sample:  schematic whose result will be the gate's sample
+            ::
+            sample=schematic
+        ==
+        ::  %ntdt: /. literal value. Produces its input unchanged.
+        ::
+        $:  %ntdt
             ::  literal: the value to be produced by the build
             ::
-            literal=cage
+            literal=vase
         ==
-        ::  %pin: pins a sub-schematic to a date
+        ::  %ntkt: /^ cast the result of a schematic using ^-
+        ::
+        $:  %ntkt
+            ::  spec: schematic that produces a +spec to cast to
+            ::
+            spec=schematic
+            ::  rest: schematic whose result will be cast to :spec
+            ::
+            rest=schematic
+        ==
+        ::  %ntcb: /_ compile and evaluate a hoon against the current subject
+        ::
+        $:  %ntcb
+            ::  hoon: a hoon to be evaluated against the subject
+            ::
+            =hoon
+        ==
+        ::  %ntls: /+ prepend result of :head schematic to subject
+        ::
+        $:  %ntls
+            ::  head: schematic that produces new head of subject
+            ::
+            head=schematic
+            ::  rest: schematic to evaluate against augmented subject
+            ::
+            rest=schematic
+        ==
+        ::  %ntnt: // eval new schematic against new subject, like Nock 2
+        ::
+        $:  %ntnt
+            ::  subject: schematic that produces new subject
+            ::
+            subject=schematic
+            ::  schematic: schematic that produces new schematic
+            ::
+            =schematic
+        ==
+        ::  %ntpd: /& load and compile a hoon file against the standard library
+        ::
+        ::    Schematics can only be resolved when specifying a time,
+        ::    which will turn the +rail into a +beam (full absolute path).
+        ::
+        $:  %ntpd
+            ::  rail: schematic that evaluates to a hoon filepath to load
+            ::
+            rail=schematic
+        ==
+        ::  %nttr: /* lookup a value from the urbit namespace (do a scry)
+        ::
+        $:  %nttr
+            ::  term: request type, e.g. %cx or %cz
+            ::
+            =term
+            ::  rail: schematic that evaluates to a :rail to load
+            ::
+            ::    Schematics can only be resolved when specifying a time,
+            ::    which will convert this +resource into a +scry-request.
+            ::
+            rail=schematic
+        ==
+        ::  %ntvt: /@ pins a sub-schematic to a date
         ::
         ::    There is a difference between live builds and once builds. In
         ::    live builds, we produce results over and over again and aren't
@@ -1335,306 +1415,27 @@
         ::    be cached, giving the client explicit control over the caching
         ::    behaviour.
         ::
-        $:  %pin
+        $:  %ntvt
             ::  date: time at which to perform the build
             ::
             date=@da
             ::  schematic: wrapped schematic of pinned time
             ::
-            =schematic
+            rest=schematic
         ==
-        ::  %alts: alternative build choices
+        ::  %ntwt: /? asynchronous conditional
         ::
-        ::    Try each choice in :choices, in order; accept the first one that
-        ::    succeeds. Note that the result inherits the dependencies of all
-        ::    failed schematics, as well as the successful one.
-        ::
-        $:  %alts
-            ::  choices: list of build options to try
+        $:  %ntwt
+            ::  if: schematic that evaluates to a conditional
             ::
-            choices=(list schematic)
-        ==
-        ::  %bake: run a file through a renderer
-        ::
-        $:  %bake
-            ::  renderer: name of renderer; also its file path in ren/
+            if=schematic
+            ::  then: schematic to evaluate if conditional was true
             ::
-            renderer=term
-            ::  query-string: the query string of the renderer's http path
+            then=schematic
+            ::  else: schematic to evaluate if conditional was false
             ::
-            query-string=coin
-            ::  path-to-render: full path of file to render
-            ::
-            path-to-render=rail
-        ==
-        ::  %bunt: produce the default value for a mark
-        ::
-        $:  %bunt
-            ::  disc where in clay to load the mark from
-            ::
-            =disc
-            ::  mark: name of mark; also its file path in mar/
-            ::
-            mark=term
-        ==
-        ::  %call: call a gate on a sample
-        ::
-        $:  %call
-            ::  gate: schematic whose result is a gate
-            ::
-            gate=schematic
-            ::  sample:  schematic whose result will be the gate's sample
-            ::
-            sample=schematic
-        ==
-        ::  %cast: cast the result of a schematic through a mark
-        ::
-        $:  %cast
-            ::  disc where in clay to load the mark from
-            ::
-            =disc
-            ::  mark: name of mark; also its file path in ren/
-            ::
-            mark=term
-            ::  input: schematic whose result will be run through the mark
-            ::
-            input=schematic
-        ==
-        ::  %core: build a hoon program from a source file
-        ::
-        $:  %core
-            ::  source-path: clay path from which to load hoon source
-            ::
-            source-path=rail
-        ==
-        ::  %diff: produce marked diff from :first to :second
-        ::
-        $:  %diff
-            ::  disc where in clay to load the mark from
-            ::
-            =disc
-            ::  old: schematic producing data to be used as diff starting point
-            ::
-            start=schematic
-            ::  new: schematic producing data to be used as diff ending point
-            ::
-            end=schematic
-        ==
-        ::  %dude: wrap a failure's error message with an extra message
-        ::
-        $:  %dude
-            ::  error: a trap producing an error message to wrap the original
-            ::
-            error=(trap tank)
-            ::  attempt: the schematic to try, whose error we wrap, if any
-            ::
-            attempt=schematic
-        ==
-        ::  %hood: create a +hood from a hoon source file
-        ::
-        $:  %hood
-            ::  source-path: clay path from which to load hoon source
-            ::
-            source-path=rail
-        ==
-        ::  %join: merge two diffs into one diff; produces `~` if conflicts
-        ::
-        $:  %join
-            ::  disc where in clay to load the mark from
-            ::
-            =disc
-            ::  mark: name of the mark to use for diffs; also file path in mar/
-            ::
-            mark=term
-            ::  first: schematic producing first diff
-            ::
-            first=schematic
-            ::  second: schematic producing second diff
-            ::
-            second=schematic
-        ==
-        ::  %list: performs a list of schematics, returns a list of +builds-results
-        ::
-        $:  %list
-            ::  schematics: list of builds to perform
-            ::
-            schematics=(list schematic)
-        ==
-        ::  %mash: force a merge, annotating any conflicts
-        ::
-        $:  %mash
-            ::  disc where in clay to load the mark from
-            ::
-            =disc
-            ::  mark: name of mark used in diffs; also file path in mar/
-            ::
-            mark=term
-            ::  first: marked schematic producing first diff
-            ::
-            first=[=disc mark=term =schematic]
-            ::  second: marked schematic producing second diff
-            ::
-            second=[=disc mark=term =schematic]
-        ==
-        ::  %mute: mutate a noun by replacing its wings with new values
-        ::
-        $:  %mute
-            ::  subject: schematic producing the noun to mutate
-            ::
-            subject=schematic
-            ::  mutations: axes and schematics to produce their new contents
-            ::
-            mutations=(list (pair wing schematic))
-        ==
-        ::  %pact: patch a marked noun by applying a diff
-        ::
-        $:  %pact
-            ::  disc where in clay to load marks from
-            ::
-            =disc
-            ::  start: schematic producing a noun to be patched
-            ::
-            start=schematic
-            ::  diff: schematic producing the diff to apply to :start
-            ::
-            diff=schematic
-        ==
-        ::  %path: resolve a path with `-`s to a path with `/`s
-        ::
-        ::    Resolve +raw-path to a path containing a file, replacing
-        ::    any `-`s in the path with `/`s if no file exists at the
-        ::    original path. Produces an error if multiple files match,
-        ::    e.g. a/b/c and a/b-c, or a/b/c and a-b/c.
-        ::
-        $:  %path
-            ::  disc: the +disc forming the base of the path to be resolved
-            ::
-            =disc
-            ::  prefix: path prefix under which to resolve :raw-path, e.g. lib
-            ::
-            prefix=@tas
-            ::  raw-path: the file path to be resolved
-            ::
-            raw-path=@tas
-        ==
-        ::  %plan: build a hoon program from a preprocessed source file
-        ::
-        $:  %plan
-            ::  path-to-render: the clay path of a file being rendered
-            ::
-            ::    TODO: Once we've really implemented this, write the
-            ::    documentation. (This is the path that starts out as the path
-            ::    of the hoon source which generated the scaffold, but can be
-            ::    changed with `/:`.)
-            ::
-            path-to-render=rail
-            ::  query-string: the query string of the http request
-            ::
-            query-string=coin
-            ::  scaffold: preprocessed hoon source and imports
-            ::
-            =scaffold
-        ==
-        ::  %reef: produce a hoon+zuse kernel. used internally for caching
-        ::
-        $:  %reef
-            ::  disc: location of sys/hoon/hoon and sys/zuse/hoon
-            ::
-            =disc
-        ==
-        ::  %ride: eval hoon as formula with result of a schematic as subject
-        ::
-        $:  %ride
-            ::  formula: a hoon to be evaluated against a subject
-            ::
-            formula=hoon
-            ::  subject: a schematic whose result will be used as subject
-            ::
-            subject=schematic
-        ==
-        ::  %same: the identity function
-        ::
-        ::    Functionally used to "unpin" a build for caching reasons. If you
-        ::    run a %pin build, it is treated as a once build and is therefore
-        ::    not cached. Wrapping the %pin schematic in a %same schematic
-        ::    converts it to a live build, which will be cached due to live
-        ::    build subscription semantics.
-        ::
-        $:  %same
-            ::  schematic that we evaluate to
-            ::
-            =schematic
-        ==
-        ::  %scry: lookup a value from the urbit namespace
-        ::
-        $:  %scry
-            ::  resource: a namespace request, with unspecified time
-            ::
-            ::    Schematics can only be resolved when specifying a time,
-            ::    which will convert this +resource into a +scry-request.
-            ::
-            =resource
-        ==
-        ::  %slim: compile a hoon against a subject type
-        ::
-        $:  %slim
-            ::  compile-time subject type for the :formula
-            ::
-            subject-type=type
-            ::  formula: a +hoon to be compiled to (pair type nock)
-            ::
-            formula=hoon
-        ==
-        ::  %slit: get type of gate product
-        ::
-        $:  %slit
-            ::  gate: a vase containing a gate
-            ::
-            gate=vase
-            ::  sample: a vase containing the :gate's sample
-            ::
-            sample=vase
-        ==
-        ::  %vale: coerce a noun to a mark, validated
-        ::
-        $:  %vale
-            ::  disc where in clay to load the mark from
-            ::
-            =disc
-            ::  mark: name of mark to use; also file path in mar/
-            ::
-            mark=term
-            ::  input: the noun to be converted using the mark
-            ::
-            input=*
-        ==
-        ::  %volt: coerce a noun to a mark, unsafe
-        ::
-        $:  %volt
-            ::  disc where in clay to load the mark from
-            ::
-            =disc
-            ::  mark: name of mark to use; also file path in mar/
-            ::
-            mark=term
-            ::  input: the noun to be converted using the mark
-            ::
-            input=*
-        ==
-        ::  %walk: finds a mark conversion path between two marks
-        ::
-        $:  %walk
-            ::  disc in clay to load the marks from
-            ::
-            =disc
-            ::  source: the original mark type
-            ::
-            source=term
-            ::  target: the destination mark type
-            ::
-            target=term
-        ==
-    ==
+            else=schematic
+    ==  ==
   ::
   ::  +scaffold: program construction in progress
   ::
