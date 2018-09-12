@@ -640,7 +640,7 @@
     ::    %made moves at the end of this event. Otherwise, it will
     ::    block on resources and complete during a later event.
     ::
-   event-core-loop ~)
+    (run-root-build !!)
   ::  +unblock: continue builds that had blocked on :resource
   ::
   ::    A build can be stymied temporarily if it depends on a resource
@@ -823,7 +823,7 @@
     ?+  product  !!
       [~ %& *]  (run-gate on-build-done root-build duct progress &3.product)
       [~ %| *]  (run-gate on-build-fail root-build duct progress &3.product)
-      [~ *]     (run-gate on-build-stop root-build duct progress)
+      ~         (run-gate on-build-stop root-build duct progress)
     ==
   ::  +run-build: run a build recursively, without updating permanent state
   ::
