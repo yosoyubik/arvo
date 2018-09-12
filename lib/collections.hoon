@@ -45,7 +45,7 @@
       [%perms pax=path r=rule:clay w=rule:clay]
     ::
       [%collection pax=path name=@t desc=@t comments=? visible=? type=@tas]
-      [%post pax=path name=@t type=@tas comments=? content=@t]
+      [%post pax=path name=@t type=@tas comments=? content=@t edit=?]
       [%comment pax=path content=@t]
   ==
 ::
