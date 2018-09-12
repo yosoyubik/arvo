@@ -524,12 +524,6 @@
   ::  moves: the moves to be sent out at the end of this event, reversed
   ::
   =|  moves=(list move)
-  ::  scry-results: responses to scry's to handle in this event
-  ::
-  ::    If a value is `~`, the requested resource is not available.
-  ::    Otherwise, the value will contain a +cage.
-  ::
-  =|  scry-results=(map scry-request (unit cage))
   ::  gate that produces the +per-event core from event information
   ::
   ::    Produces a core containing Ford's main build engine.
@@ -554,7 +548,7 @@
   ::  +start-build: perform a fresh +build, either live or once
   ::
   ::    This might complete the build, or the build might block on one or more
-  ::    requests for resources. Callsevent-core-loop.
+  ::    requests for resources. Calls +run-root-build.
   ::
   ++  start-build
     ~/  %start-build
@@ -568,21 +562,14 @@
       %+  ~(put by ducts.state)  duct
       :_  schematic.build
       ?:  live
-        [%live in-progress=`date.build last-sent=~]
-      [%once in-progress=date.build]
+        [%live in-progress=`[date.build scry-results=~] last-completed=~]
+      [%once in-progress=`[date.build scry-results=~]]
     ::  runevent-core on :build in a loop until it completes or blocks
     ::
-    (run-root-build build live)
+    (run-root-build build duct live)
   ::  +rebuild: rebuild a live build based on +resource updates
   ::
-  ::    For every changed resource, run the %scry build for that
-  ::    for that resource. Then rebuild upward using the mainevent-core-loop
-  ::    until all relevant builds either complete or block on external
-  ::    resources. Use dependency tracking information from the previous
-  ::    run of this live build to inform the dependency tracking for this
-  ::    new rebuild.
-  ::
-  ::    TODO rewrite this from scratch
+  ::    TODO: more detailed docs once this stabilizes
   ::
   ++  rebuild
     ~/  %rebuild
@@ -600,36 +587,55 @@
     ::
     =.  pending-subscriptions.state
       +:(del-request pending-subscriptions.state subscription duct)
-    ::  for every changed resource, create a %scry build
     ::
-    =/  builds=(list build)
+    =/  changed-scry-requests=(set scry-request)
+      %-  ~(gas in *(set scry-request))
       %+  turn  ~(tap in care-paths)
       |=  [care=care:clay =path]
-      ^-  build
+      ^-  scry-request
       ::
-      [new-date [%scry [%c care rail=[disc spur=(flop path)]]]]
+      [vane=%c care `beam`[[ship.disc desk.disc %da new-date] (flop path)]]
     ::  sanity check; only rebuild live builds, not once builds
     ::
-    =/  duct-status  (~(got by ducts.state) duct)
+    =/  =duct-status  (~(got by ducts.state) duct)
     ?>  ?=(%live -.live.duct-status)
     ::  sanity check; only rebuild once we've completed the previous one
     ::
     ?>  ?=(~ in-progress.live.duct-status)
-    ?>  ?=(^ last-sent.live.duct-status)
-    ::  set the in-progress date for this new build
+    ?>  ?=(^ last-completed.live.duct-status)
+    ::
+    =/  previous-subscription=subscription
+      %+  fall  subscription.last-completed.live.duct-status
+      [date.last-completed.live.duct-status ~]
+    ::
+    =/  previous-scry-results=(list [=scry-request scry-result=(unit cage)])
+      %+  skim  ~(tap by scry-results.u.last-completed.live.duct-status)
+      |=  [=scry-request scry-result=(unit cage)]
+      ^-  ?
+      ::
+      ?.  =([%da date.previous-subscription] r.beam.scry-request)
+        %.n
+      ::
+      %-  ~(has in resources.previous-subscription)
+      `resource`[vane care [[p q] s]:beam]:scry-request
+    ::  if we subscribed to a resource that didn't update, it's unchanged
+    ::
+    =/  unchanged-scry-results=scry-results
+      %-  ~(gas by *scry-results)
+      %+  murn  previous-scry-results
+      |=  [=scry-request scry-result=(unit cage)]
+      ^-  (unit [scry-request (unit cage)])
+      ::
+      ?:  (~(has in changed-scry-requests) scry-request)
+        ~
+      `[scry-request scry-result]
+    ::  set the in-progress date for this rebuild and copy scry results
     ::
     =.  ducts.state
       %+  ~(put by ducts.state)  duct
-      duct-status(in-progress.live `new-date)
-    ::  rebuild resource builds at the new date
+      duct-status(in-progress.live `[new-date unchanged-scry-results])
     ::
-    ::    This kicks off the main build loop, which will first build
-    ::    :builds, then rebuild upward toward the root. If the whole
-    ::    build tree completes synchronously, then this will produce
-    ::    %made moves at the end of this event. Otherwise, it will
-    ::    block on resources and complete during a later event.
-    ::
-    (run-root-build !!)
+    (run-root-build [new-date root-schematic.duct-status] duct live=%.y)
   ::  +unblock: continue builds that had blocked on :resource
   ::
   ::    A build can be stymied temporarily if it depends on a resource
