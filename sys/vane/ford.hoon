@@ -229,6 +229,9 @@
   ==
 ::  +duct-status: information relating a build to a duct
 ::
+::    TODO: convert %live and %once to %& and %|
+::    TODO: reorganize for convenience
+::
 +=  duct-status
   $:  ::  live: whether this duct is being run live
       ::
@@ -262,7 +265,7 @@
       ::
       root-schematic=schematic
   ==
-+$  scry-results  (map scry-request (unit cage))
++$  scry-results  (map scry-request (unit (unit cage)))
 ::
 +$  real-product  (unit (each vase tang))
 +$  product       (unit (each [p=* q=*] tang))
@@ -341,6 +344,39 @@
 --
 =,  format
 |%
+::  +current-status: retrieve current build status from :duct-status
+::
+++  current-status
+  |=  =duct-status
+  ^-  [date=@da =scry-results]
+  ::
+  ?:  ?=(%once -.live.duct-status)
+    u.live.duct-status
+  ::
+  ?<  ?=(~ in-progress.live.duct-status)
+  u.in-progress.live.duct-status
+::  +complete-scrys: filter a +scry-results for completed requests
+::
+++  complete-scrys
+  |=  =scry-results
+  ^+  scry-results
+  ::
+  %-  ~(gas in *_scry-results)
+  %+  skim  ~(tap by scry-results)
+  |=  [=scry-request scry-result=(unit (unit cage))]
+  ::
+  ?=(^ scry-result)
+::  +incomplete-scrys: filter a +scry-results for pending requests
+::
+++  incomplete-scrys
+  |=  =scry-results
+  ^+  scry-results
+  ::
+  %-  ~(gas in *_scry-results)
+  %+  skip  ~(tap by scry-results)
+  |=  [=scry-request scry-result=(unit (unit cage))]
+  ::
+  ?=(^ scry-result)
 ::  +tear: split a +term into segments delimited by `-`
 ::
 ::  Example:
@@ -608,9 +644,13 @@
       %+  fall  subscription.last-completed.live.duct-status
       [date.last-completed.live.duct-status ~]
     ::
-    =/  previous-scry-results=(list [=scry-request scry-result=(unit cage)])
-      %+  skim  ~(tap by scry-results.u.last-completed.live.duct-status)
-      |=  [=scry-request scry-result=(unit cage)]
+    =/  previous-scry-results=(list [=scry-request scry-result=(unit (unit cage))])
+      %+  skim
+        %~  tap  by
+        %-  incomplete-scrys
+        scry-results.u.last-completed.live.duct-status
+      ::
+      |=  [=scry-request scry-result=(unit (unit cage))]
       ^-  ?
       ::
       ?.  =([%da date.previous-subscription] r.beam.scry-request)
@@ -623,8 +663,8 @@
     =/  unchanged-scry-results=scry-results
       %-  ~(gas by *scry-results)
       %+  murn  previous-scry-results
-      |=  [=scry-request scry-result=(unit cage)]
-      ^-  (unit [scry-request (unit cage)])
+      |=  [=scry-request scry-result=(unit (unit cage))]
+      ^-  (unit [scry-request (unit (unit cage))])
       ::
       ?:  (~(has in changed-scry-requests) scry-request)
         ~
@@ -661,23 +701,34 @@
     ::    of the response to the asynchronous request we made to
     ::    retrieve that resource from another vane.
     ::
-    ::    Instead, we'll intercept any calls to +scry by looking up
-    ::    the arguments in :scry-results.per-event. This is ok because
-    ::    in this function we attempt to run every +build that had
-    ::    blocked on the resource, so the information is guaranteed
-    ::    to be used during this event before it goes out of scope.
+    =/  =duct-status  (~(got by ducts.state) duct)
     ::
-    =.  scry-results  (~(put by scry-results) scry-request scry-result)
+    =.  duct-status
+      ?:  ?=(%once -.live.duct-status)
+        %_    duct-status
+            scry-results.live
+          (~(put by scry-results.live.duct-status) scry-request `scry-result)
+        ==
+      ::
+      ?<  ?=(~ in-progress.live.duct-status)
+      ::
+      %_    duct-status
+          scry-results.in-progress.live
+        %-  ~(put by scry-results.in-progress.live.duct-status)
+        [scry-request `scry-result]
+      ==
+    ::
+    =.  ducts.state  (~(put by ducts.state) duct duct-status)
     ::  mark this +scry-request as complete now that we have a response
     ::
     =.  pending-scrys.state
       +:(del-request pending-scrys.state scry-request duct)
-    ::  update :unblocked-build's state machine to reflect its new status
     ::
-    =/  unblocked-build=build  (scry-request-to-build scry-request)
-    ::  jump into the main build loop, starting with :unblocked-build
+    =/  date=@da               date:(current-status duct-status)
+    =/  unblocked-build=build  [date root-schematic.duct-status]
+    =/  live=?                 ?=(%live -.live.duct-status)
     ::
-    (run-root-build unblocked-build live=-.live.duct-status)
+    (run-root-build unblocked-build duct live)
   ::  +wipe: forcibly decimate build results from the state
   ::
   ++  wipe
@@ -711,7 +762,6 @@
       (~(trim by-clock compiler-cache.state) count)
     ::
     state
-    --
   ::  +keep: resize caches
   ::
   ::    Ford maintains two caches: a :build-cache for caching previously
@@ -762,45 +812,41 @@
     ::
     ?:  ?=(%once -.live.u.duct-status)
       ::
-      =/  root-build=build  [in-progress.live root-schematic]:u.duct-status
-      ::
-      =.  event-core  (cancel-scrys root-build)
-      =.  state  (remove-anchor-from-root root-build [%duct duct])
-      event-core
+      %-  cancel-scrys
+      [date.live root-schematic]:u.duct-status
     ::  if the duct was live and has an unfinished build, cancel it
     ::
     =?  event-core  ?=(^ in-progress.live.u.duct-status)
       ::
-      =/  root-build=build  [u.in-progress.live root-schematic]:u.duct-status
-      ::
-      =.  event-core  (cancel-scrys root-build)
-      =.  state  (remove-anchor-from-root root-build [%duct duct])
-      event-core
+      %-  cancel-scrys
+      [date.u.in-progress.live root-schematic]:u.duct-status
     ::  if there is no completed build for the live duct, we're done
     ::
-    ?~  last-sent=last-sent.live.u.duct-status
+    ?~  last-completed=last-completed.live.u.duct-status
       event-core
-    ::  there is a completed build for the live duct, so delete it
+    ::  cancel the pending subscription if there is one
     ::
-    =/  root-build=build  [date.u.last-sent root-schematic.u.duct-status]
-    ::
-    =.  state  (remove-anchor-from-root root-build [%duct duct])
-    ::
-    ?~  subscription.u.last-sent
+    ?~  subscription.u.last-completed
       event-core
-    (cancel-clay-subscription u.subscription.u.last-sent)
+    (cancel-clay-subscription u.subscription.u.last-completed)
   ::  +cancel-scrys: cancel all blocked %scry sub-builds of :root-builds
   ::
   ++  cancel-scrys
     |=  root-build=build
     ^+  event-core
     ::
-    =/  blocked-sub-scrys  ~(tap in (collect-blocked-sub-scrys root-build))
+    =/  blocked-scry-requests=(list scry-request)
+      %~  tap  in
+      %~  key  by
+      %-  incomplete-scrys
+      =<  scry-results
+      %-  current-status
+      (~(got by ducts.state) duct)
     ::
     |-  ^+  event-core
-    ?~  blocked-sub-scrys  event-core
+    ?~  blocked-scry-requests  event-core
     ::
-    =.  event-core  (cancel-scry-request i.blocked-sub-scrys)
+    =.  event-core  (cancel-scry-request i.blocked-scry-requests)
     ::
     $(blocked-sub-scrys t.blocked-sub-scrys)
   ::  |construction: arms for performing builds
@@ -808,6 +854,8 @@
   ::+|  construction
   ::
   ::  +run-root-build: run a requested build, performing all indicated effects
+  ::
+  ::    TODO: use :duct from :event-core?
   ::
   ++  run-root-build
     |=  [root-build=build =duct live=?]
@@ -1234,6 +1282,7 @@
       %+  turn  ~(tap in blocks)
       |=  [=term =beam]
       ^-  scry-request
+      ::  TODO do this conversion in the %nttr handler
       ::
       =/  vane  `@c`(end 3 1 term.i.resource-list)
       =/  care  ((hard care:clay) (rsh 3 1 term.i.resource-list))
@@ -1344,9 +1393,7 @@
   ::    answer (it produced `~`).
   ::
   ++  intercepted-scry
-    |=  =duct
     ^-  slyt
-    ::
     %-  sloy  ^-  slyd
     ~/  %intercepted-scry
     |=  [ref=* (unit (set monk)) =term =beam]
@@ -1368,26 +1415,25 @@
       ~
     ::  look up the scry result from our permanent state
     ::
-    ::    Note: we can't freshen :build's :last-accessed date because
-    ::    we can't mutate :state from this gate. %scry results might get
-    ::    deleted during %wipe more quickly than they should because of this.
-    ::
     =/  =scry-request  [u.vane u.care beam]
     =/  =duct-status   (~(got by ducts.state) duct)
     ::
-    =/  local-result=(unit (unit cage))
-      ?:  ?=(%once -.live.duct-status)
-        (~(get by scry-results.live.duct-status) scry-request)
-      ::
-      ?<  ?=(~ in-progress.live.duct-status)
-      (~(get by scry-results.u.in-progress.live.duct-status) scry-request)
+    =/  local-result=(unit (unit (unit cage)))
+      %.  scry-request
+      %~  get  by
+      %-  complete-scrys
+      =<  scry-results
+      %-  current-status
+      (~(got by ducts.state) duct)
     :: 
     ?~  local-result
       ~
     ?~  u.local-result
+      ~
+    ?~  u.u.local-result
       [~ ~]
     ::
-    =/  local-cage=cage  u.u.local-result
+    =/  local-cage=cage  u.u.u.local-result
     ::  if :local-result does not nest in :type, produce an error
     ::
     ?.  -:(nets:wa +.ref p.q.local-cage)
@@ -1483,6 +1529,24 @@
     ::
     =.  pending-scrys.state
       (put-request pending-scrys.state scry-request duct)
+    ::  mark the request as pending in :duct-status
+    ::
+    =.  ducts.state
+      %+  ~(jab by ducts.state)  duct
+      |=  =duct-status
+      ^+  duct-status
+      ::
+      =/  new-scry-results=scry-results
+        %.  [scry-request ~]
+        %~  put  in
+        =<  scry-results
+        (current-status duct-status)
+      ::
+      ?:  ?=(%once -.live.duct-status)
+        duct-status(scry-results.live new-scry-results)
+      ::
+      ?<  ?=(~ in-progress.live.duct-status)
+      duct-status(scry-results.u.in-progress.live new-scry-results)
     ::  don't send a duplicate move if we've already sent one
     ::
     ?:  already-started
@@ -1699,7 +1763,6 @@
   ::  :parse our from the head of :wire
   ::
   =/  our=@p  (slav %p i.wire)
-  ::
   ::
   =/  ship-state
     ::  we know :our is already in :state-by-ship because we sent this request
