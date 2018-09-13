@@ -1171,7 +1171,7 @@
     |%
     ::  +task:able:ford: requests to ford
     ::
-    +=  task
+    +$  task
       $%  ::  %build: perform a build, either live or once
           ::
           $:  %build
@@ -1190,11 +1190,11 @@
           ==
           ::  %keep: reset cache sizes
           ::
-          [%keep compiler-cache=@ud build-cache=@ud]
+          [%keep compiler-cache=@ud]
           ::  %kill: stop a build; send on same duct as original %build request
           ::
           $:  %kill
-              ::  our: who our ship is (remove after cc-release)s
+              ::  our: who our ship is (remove after cc-release)
               ::
               our=@p
           ==
@@ -1207,7 +1207,7 @@
       ==
     ::  +gift:able:ford: responses from ford
     ::
-    +=  gift
+    +$  gift
       $%  ::  %mass: memory usage; response to %wegh +task
           ::
           [%mass p=mass]
@@ -1224,26 +1224,26 @@
     --
   ::  +made-result: the main payload for a %made +gift
   ::
-  +=  made-result
+  +$  made-result
     $%  ::  %complete: contains the result of the completed build
         ::
-        [%complete =build-result]
+        [%complete result=(each vase tang)]
         ::  %incomplete: couldn't finish build; contains error message
         ::
         [%incomplete =tang]
     ==
   ::  +disc: a desk on a ship; can be used as a beak that varies with time
   ::
-  +=  disc  [=ship =desk]
+  +$  disc  [=ship =desk]
   ::  +rail: a time-varying full path
   ::
   ::    This can be thought of as a +beam without a +case, which is what
   ::    would specify the time. :spur is flopped just like the +spur in a +beam.
   ::
-  +=  rail  [=disc =spur]
+  +$  rail  [=disc =spur]
   ::  +resource: time-varying dependency on a value from the urbit namespace
   ::
-  +=  resource
+  +$  resource
     $:  ::  vane which we are querying
         ::
         vane=%c
@@ -1257,55 +1257,7 @@
         ::
         =rail
     ==
-  ::  +build-result: the referentially transparent result of a +build
-  ::
-  ::    A +build produces either an error or a result. A result is a tagged
-  ::    union of the various kinds of datatypes a build can produce. The tag
-  ::    represents the sub-type of +schematic that produced the result.
-  ::
-  +=  build-result
-    $%  ::  %error: the build produced an error whose description is :message
-        ::
-        [%error message=tang]
-        ::  %success: result of successful +build, tagged by +schematic sub-type
-        ::
-        $:  %success
-            $^  [head=build-result tail=build-result]
-            $%  [%$ =cage]
-                [%alts =build-result]
-                [%bake =cage]
-                [%bunt =cage]
-                [%call =vase]
-                [%cast =cage]
-                [%core =vase]
-                [%diff =cage]
-                [%hood =scaffold]
-                [%join =cage]
-                [%list results=(list build-result)]
-                [%mash =cage]
-                [%mute =cage]
-                [%pact =cage]
-                [%path =rail]
-                [%plan =vase]
-                [%reef =vase]
-                [%ride =vase]
-                [%scry =cage]
-                [%slim [=type =nock]]
-                [%slit =type]
-                [%vale =cage]
-                [%volt =cage]
-                [%walk results=(list mark-action)]
-    ==  ==  ==
-  ::  +mark-action: represents a single mark conversion step
-  ::
-  ::    In mark conversion, we want to convert from :source to :target. We also
-  ::    need to keep track of what type of conversion this is. If %grab, we
-  ::    want to use the definitions in the :target mark. If %grow, we want to
-  ::    use the :source mark.
-  ::
-  +=  mark-action  [type=?(%grow %grab) source=term target=term]
-  ::
-  ::  +schematic: plan for building
+  ::  +schematic: ford build request, as a function of time
   ::
   +$  schematic
     ::    If the head of the +schematic is a pair, it's an auto-cons
@@ -1436,237 +1388,6 @@
             ::
             else=schematic
     ==  ==
-  ::
-  ::  +scaffold: program construction in progress
-  ::
-  ::    A source file with all its imports and requirements, which will be
-  ::    built and combined into one final product.
-  ::
-  +=  scaffold
-    $:  ::  source-rail: the file this scaffold was parsed from
-        ::
-        source-rail=rail
-        ::  zuse-version: the kelvin version of the standard library
-        ::
-        zuse-version=@ud
-        ::  structures: files from %/sur which are included
-        ::
-        structures=(list cable)
-        ::  libraries: files from %/lib which are included
-        ::
-        libraries=(list cable)
-        ::  cranes: a list of resources to transform and include
-        ::
-        cranes=(list crane)
-        ::  sources: hoon sources, either parsed or on the filesystem
-        ::
-        sources=(list hoon)
-    ==
-  ::  +cable: a reference to something on the filesystem
-  ::
-  +=  cable
-    $:  ::  face: the face to wrap around the imported file
-        ::
-        face=(unit term)
-        ::  file-path: location in clay
-        ::
-        file-path=term
-    ==
-  ::  +truss: late-bound path
-  ::
-  ::    TODO: the +tyke data structure should be rethought, possibly as part
-  ::    of this effort since it is actually a `(list (unit hoon))`, when it
-  ::    only represents @tas. It should be a structure which explicitly
-  ::    represents a path with holes that need to be filled in.
-  ::
-  +=  truss
-    $:  pre=(unit tyke)
-        pof=(unit [p=@ud q=tyke])
-    ==
-  ::  +crane: parsed rune used to include and transform resources
-  ::
-  ::    Cranes lifting cranes lifting cranes!
-  ::
-  ::    A recursive tree of Ford directives that specifies instructions for
-  ::    including and transforming resources from the Urbit namespace.
-  ::
-  +=  crane
-    $%  $:  ::  %fssg: `/~` hoon literal
-            ::
-            ::    `/~ <hoon>` produces a crane that evaluates arbitrary hoon.
-            ::
-            %fssg
-            =hoon
-        ==
-        $:  ::  %fsbc: `/$` process query string
-            ::
-            ::    `/$` will call a gate with the query string supplied to this
-            ::    build. If no query string, this errors.
-            ::
-            %fsbc
-            =hoon
-        ==
-        $:  ::  %fsbr: `/|` first of many options that succeeds
-            ::
-            ::    `/|` takes a series of cranes and produces the first one
-            ::    (left-to-right) that succeeds. If none succeed, it produces
-            ::    stack traces from all of its arguments.
-            ::
-            %fsbr
-            ::  choices: cranes to try
-            ::
-            choices=(list crane)
-        ==
-        $:  ::  %fsts: `/=` wrap a face around a crane
-            ::
-            ::    /= runs a crane (usually produced by another ford rune), takes
-            ::    the result of that crane, and wraps a face around it.
-            ::
-            %fsts
-            ::  face: face to apply
-            ::
-            face=term
-            ::  crane: internal build step
-            ::
-            =crane
-        ==
-        $:  ::  %fsdt: `/.` null-terminated list
-            ::
-            ::    Produce a null-terminated list from a sequence of cranes,
-            ::    terminated by a `==`.
-            ::
-            %fsdt
-            ::  items: cranes to evaluate
-            ::
-            items=(list crane)
-        ==
-        $:  ::  %fscm: `/,` switch by path
-            ::
-            ::    `/,` is a switch statement, which picks a branch to evaluate
-            ::    based on whether the current path matches the path in the
-            ::    switch statement. Takes a sequence of pairs of (path, crane)
-            ::    terminated by a `==`.
-            ::
-            %fscm
-            ::  cases: produces evaluated crane of first +spur match
-            ::
-            cases=(list (pair spur crane))
-        ==
-        $:  ::  %fspm: `/&` pass through a series of marks
-            ::
-            ::    `/&` passes a crane through multiple marks, right-to-left.
-            ::
-            %fspm
-            ::  marks: marks to apply to :crane, in reverse order
-            ::
-            marks=(list mark)
-            =crane
-        ==
-        $:  ::  %fscb: `/_` run a crane on each file in the current directory
-            ::
-            ::    `/_` takes a crane as an argument. It produces a new crane
-            ::    representing the result of mapping the supplied crane over the
-            ::    list of files in the current directory. The keys in the
-            ::    resulting map are the basenames of the files in the directory,
-            ::    and each value is the result of running that crane on the
-            ::    contents of the file.
-            ::
-            %fscb
-            =crane
-        ==
-        $:  ::  %fssm: `/;` operate on
-            ::
-            ::    `/;` takes a hoon and a crane. The hoon should evaluate to a
-            ::    gate, which is then called with the result of the crane as its
-            ::    sample.
-            ::
-            %fssm
-            =hoon
-            =crane
-        ==
-        $:  ::  %fscl: `/:` evaluate at path
-            ::
-            ::    `/:` takes a path and a +crane, and evaluates the crane with
-            ::    the current path set to the supplied path.
-            ::
-            %fscl
-            ::  path: late bound path to be resolved relative to current beak
-            ::
-            ::    This becomes current path of :crane
-            ::
-            path=truss
-            =crane
-        ==
-        $:  ::  %fskt: `/^` cast
-            ::
-            ::    `/^` takes a +mold and a +crane, and casts the result of the
-            ::    crane to the mold.
-            ::
-            %fskt
-            ::  mold: evaluates to a mold to be applied to :crane
-            ::
-            =spec
-            =crane
-        ==
-        $:  ::  %fstr: `/*` run :crane on all files with current path as prefix
-            ::
-            %fstr
-            =crane
-        ==
-        $:  ::  %fszp: `/!mark/` evaluate as hoon, then pass through mark
-            ::
-            %fszp
-            =mark
-        ==
-        $:  ::  %fszy: `/mark/` passes current path through :mark
-            ::
-            %fszy
-            =mark
-    ==  ==
-  ::  +result-to-cage: extract a +cage from a +build-result
-  ::
-  ++  result-to-cage
-    |=  result=build-result
-    ^-  cage
-    ?:  ?=(%error -.result)
-      [%tang !>(message.result)]
-    ?-    -.+.result
-        ^      [%noun (slop q:$(result head.result) q:$(result tail.result))]
-        %$     cage.result
-        %alts  $(result build-result.result)
-        %bake  cage.result
-        %bunt  cage.result
-        %call  [%noun vase.result]
-        %cast  cage.result
-        %core  [%noun vase.result]
-        %diff  cage.result
-        %hood  [%noun !>(scaffold.result)]
-        %join  cage.result
-        %list  [%noun -:!>(*(list cage)) (turn results.result result-to-cage)]
-        %mash  cage.result
-        %mute  cage.result
-        %pact  cage.result
-        %path  [%noun !>(rail.result)]
-        %plan  [%noun vase.result]
-        %reef  [%noun vase.result]
-        %ride  [%noun vase.result]
-        %scry  cage.result
-        %slim  [%noun !>([type nock]:result)]
-        %slit  [%noun !>(type.result)]
-        %vale  cage.result
-        %volt  cage.result
-        %walk  [%noun !>(results.result)]
-    ==
-  ::  +result-as-error: extracts a tang out of a made-result
-  ::
-  ++  made-result-as-error
-    |=  result=made-result
-    ^-  tang
-    ?:  ?=([%incomplete *] result)
-      tang.result
-    ?:  ?=([%complete %error *] result)
-      message.build-result.result
-    ~
   --
 ::                                                      ::::
 ::::                    ++gall                            ::  (1g) extensions
