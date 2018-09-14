@@ -1340,6 +1340,16 @@
             ::
             rail=schematic
         ==
+        ::  %ntts: /= wrap a face around result
+        ::
+        $:  %ntts
+            ::  face: the name of the face to wrap around the result
+            ::
+            face=term
+            ::  rest: a sub-schematic whose result will get labeled
+            ::
+            rest=schematic
+        ==
         ::  %nttr: /* lookup a value from the urbit namespace (do a scry)
         ::
         $:  %nttr
