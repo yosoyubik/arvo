@@ -132,20 +132,177 @@
 ::
 =>  =~
 |%
+  ::  TODO: move back to zuse
+  ::  +schematic: ford build request, as a function of time
+  ::
+  +$  schematic
+    $~  [%here !>(~)]
+    ::    If the head of the +schematic is a pair, it's an auto-cons
+    ::    schematic. Its result will be the pair of results of its
+    ::    sub-schematics.
+    ::
+    $^  [head=schematic tail=schematic]
+    ::
+    $%  ::  %ntbn: /> with :subject as subject, evaluate :rest
+        ::
+        $:  %ntbn
+            ::  subject: schematic that becomes new subject
+            ::
+            subject=schematic
+            ::  rest: schematic to evaluate against result of :subject
+            ::
+            rest=schematic
+        ==
+        ::  %ntbs: /$ call a gate on a sample
+        ::
+        $:  %ntbs
+            ::  gate: schematic whose result is a gate
+            ::
+            gate=schematic
+            ::  sample:  schematic whose result will be the gate's sample
+            ::
+            sample=schematic
+        ==
+        ::  %ntdt: /. literal value. Produces its input unchanged.
+        ::
+        $:  %ntdt
+            ::  literal: the value to be produced by the build
+            ::
+            literal=vase
+        ==
+        ::  %ntkt: /^ cast the result of a schematic using ^-
+        ::
+        $:  %ntkt
+            ::  spec: schematic that produces a +spec to cast to
+            ::
+            spec=schematic
+            ::  rest: schematic whose result will be cast to :spec
+            ::
+            rest=schematic
+        ==
+        ::  %ntcb: /_ compile and evaluate a hoon against the current subject
+        ::
+        $:  %ntcb
+            ::  hoon: a hoon to be evaluated against the subject
+            ::
+            =hoon
+        ==
+        ::  %ntls: /+ prepend result of :head schematic to subject
+        ::
+        $:  %ntls
+            ::  head: schematic that produces new head of subject
+            ::
+            head=schematic
+            ::  rest: schematic to evaluate against augmented subject
+            ::
+            rest=schematic
+        ==
+        ::  %ntnt: // eval new schematic against new subject, like Nock 2
+        ::
+        $:  %ntnt
+            ::  subject: schematic that produces new subject
+            ::
+            subject=schematic
+            ::  schematic: schematic that produces new schematic
+            ::
+            =schematic
+        ==
+        ::  %ntpd: /& load and compile a hoon file against the standard library
+        ::
+        ::    Schematics can only be resolved when specifying a time,
+        ::    which will turn the +rail into a +beam (full absolute path).
+        ::
+        $:  %ntpd
+            ::  rail: schematic that evaluates to a hoon filepath to load
+            ::
+            rail=schematic
+        ==
+        ::  %nttr: /* lookup a value from the urbit namespace (do a scry)
+        ::
+        $:  %nttr
+            ::  term: request type, e.g. %cx or %cz
+            ::
+            =term
+            ::  rail: schematic that evaluates to a :rail to load
+            ::
+            ::    Schematics can only be resolved when specifying a time,
+            ::    which will convert this +resource into a +scry-request.
+            ::
+            rail=schematic
+        ==
+        ::  %ntvt: /@ pins a sub-schematic to a date
+        ::
+        ::    There is a difference between live builds and once builds. In
+        ::    live builds, we produce results over and over again and aren't
+        ::    pinned to a specifc time. In once builds, we want to specify a
+        ::    specific date, which we apply recursively to any sub-schematics
+        ::    contained within :schematic.
+        ::
+        ::    If a build has a %pin at the top level, we consider it to be a
+        ::    once build. Otherwise, we consider it to be a live build. We do
+        ::    this so schematics which depend on the result of a once build can
+        ::    be cached, giving the client explicit control over the caching
+        ::    behaviour.
+        ::
+        $:  %ntvt
+            ::  date: time at which to perform the build
+            ::
+            date=@da
+            ::  schematic: wrapped schematic of pinned time
+            ::
+            rest=schematic
+        ==
+        ::  %ntwt: /? asynchronous conditional
+        ::
+        $:  %ntwt
+            ::  if: schematic that evaluates to a conditional
+            ::
+            if=schematic
+            ::  then: schematic to evaluate if conditional was true
+            ::
+            then=schematic
+            ::  else: schematic to evaluate if conditional was false
+            ::
+            else=schematic
+    ==  ==
 ::  +move: arvo moves that ford can emit
 ::
-+=  move
++$  move
   ::
   $:  ::  duct: request identifier
       ::
       =duct
-      ::  card: move contents; either a +note or a +gift:able
+      ::  card: move contents; either a %pass with +note or a %give with +gift
       ::
-      card=(wind note gift:able)
+      card=(wind note gift)
   ==
++$  gift
+  $%  ::  %mass: memory usage; response to %wegh +task
+      ::
+      [%mass p=mass]
+      ::  %meta: produce a metavase so arvo can do its untyped magic
+      ::
+      $:  %meta
+          ::  p: a +type, but not statically known as such
+          ::
+          ::    The type that :p represents should have a vase where
+          ::    :q has a `[p=* q=*]`. We can't statically guarantee that
+          ::    we produce a vase, but as long as it nests, Arvo will
+          ::    figure out what to do with it.
+          ::
+          p=*
+          ::  q: value in the metavase, containing actual build result
+          ::
+          $=  q
+          $:  %made
+              date=@da
+              $=  made-result
+              $%  [%complete result=(each [p=* q=*] tang)]
+                  [%incomplete =tang]
+  ==  ==  ==  ==
 ::  +note: private request from ford to another vane
 ::
-+=  note
++$  note
   $%  ::  %c: to clay
       ::
       $:  %c
@@ -161,7 +318,7 @@
   ==  ==  ==  ==
 ::  +sign: private response from another vane to ford
 ::
-+=  sign
++$  sign
   $%  ::  %c: from clay
       ::
       $:  %c
@@ -351,7 +508,7 @@
   ^-  [date=@da =scry-results]
   ::
   ?:  ?=(%once -.live.duct-status)
-    u.live.duct-status
+    +.live.duct-status
   ::
   ?<  ?=(~ in-progress.live.duct-status)
   u.in-progress.live.duct-status
@@ -599,7 +756,7 @@
       :_  schematic.build
       ?:  live
         [%live in-progress=`[date.build scry-results=~] last-completed=~]
-      [%once in-progress=`[date.build scry-results=~]]
+      [%once date.build scry-results=~]
     ::  runevent-core on :build in a loop until it completes or blocks
     ::
     (run-root-build build duct live)
@@ -749,17 +906,26 @@
     ::    of +wipe with anything other than 100% retention rate will
     ::    always eventually remove every build.
     ::
-    =/  num-completed-builds=@ud  size.compiler-cache.state
+    =/  num-completed-builds=@ud  
+      %-  (hard @ud)
+      %+  run-gate
+        |=((clock * *) size)
+      compiler-cache.state
+    ::
     =/  percent-to-keep=@ud  (sub 100 percent-to-remove)
     =/  num-to-keep=@ud  (div (mul percent-to-keep num-completed-builds) 100)
     =/  num-to-remove=@ud  (sub num-completed-builds num-to-keep)
     ::
     =.  compiler-cache.state
-      =/  by-clock  (by-clock compiler-cache-key build-result)
+      %-  run-gate
+      :_  compiler-cache.state
       ::
-      ?:  =(num-to-remove size.compiler-cache.state)
-        ~(purge by-clock compiler-cache.state)
-      (~(trim by-clock compiler-cache.state) count)
+      |=  cache=(clock compiler-cache-key (each vase tang))
+      =/  by-clock  (by-clock compiler-cache-key (each vase tang))
+      ::
+      ?:  =(num-to-remove size.cache)
+        ~(purge by-clock cache)
+      (~(trim by-clock cache) num-to-remove)
     ::
     state
   ::  +keep: resize caches
@@ -848,7 +1014,7 @@
     ::
     =.  event-core  (cancel-scry-request i.blocked-scry-requests)
     ::
-    $(blocked-sub-scrys t.blocked-sub-scrys)
+    $(blocked-scry-requests t.blocked-scry-requests)
   ::  |construction: arms for performing builds
   ::
   ::+|  construction
@@ -858,12 +1024,12 @@
   ::    TODO: use :duct from :event-core?
   ::
   ++  run-root-build
-    |=  [root-build=build =duct live=?]
+    |=  [root-build=build =^duct live=?]
     ^+  event-core
     ::
     =+  [product progress]=(run-build root-build duct live)
     ::
-    =.  cache.state  cache.progress
+    =.  compiler-cache.state  cache.progress
     ::
     ?~  product
       (run-gate on-build-blocked root-build duct blocks.progress)
@@ -877,13 +1043,13 @@
   ::  +run-build: run a build recursively, without updating permanent state
   ::
   ++  run-build
-    =/  =progress  [blocks=~ live-resources=~ cache=cache.state]
-    =/  subject=vase  pit
+    =/  =progress  [blocks=`*`~ live-resources=`*`~ cache=`*`compiler-cache.state]
+    =/  subject=[p=* q=*]  pit
     ::
     |=  [[date=@da =schematic] live=?]
-    ^-  [product _progress]
+    ^-  [product ^progress]
     ::
-    |^  ^-  [product _progress]
+    |^  ^-  [product ^progress]
         ::
         ?-    -.schematic
             ^
@@ -927,44 +1093,50 @@
           ::
           ?^  blocks.progress
             block
+          ::  tmi
+          ::
+          =>  .(blocks.progress `*`blocks.progress)
           ::
           ?>  ?=([~ %& *] gate)
           ?>  ?=([~ %& *] sample)
           ::
-          |^  ^-  [product _progress]
+          |^  ^-  [product ^progress]
+              ::
+              =/  derp=[product ^progress]  (cast-raw-result [~ progress])
+              ~!  derp
               ::
               =^  inferred-product-type  progress
-                %-  cast-raw-result
-                (run-gate infer-product-type p.p.u.gate p.p.u.sample)
+                %-  cast-raw-result  [~ progress]
+              ~!  inferred-product-type
               ::
-              ?<  ?=(~ inferred-product-type
-              ::
-              ?:  ?=([~ %| *] inferred-product-type
-                (fail p.inferred-product-type
-              ::
-              %-  cast-raw-result
-              %+  run-gate  perform-call
-              [p.inferred-product-type q.p.u.gate q.p.u.sample]
+              [~ progress]
+::                (run-gate infer-product-type p.p.u.gate p.p.u.sample)
+::              ::
+::              ?<  ?=(~ inferred-product-type)
+::              ::
+::              ?:  ?=([~ %| *] inferred-product-type)
+::                (fail p.inferred-product-type)
+::              ::
+::              %-  cast-raw-result
+::              %+  run-gate  perform-call
+::              [p.inferred-product-type q.p.u.gate q.p.u.sample]
           ::
           ++  infer-product-type
             |=  [gate-type=type sample-type=type]
-            ^-  [product _progress]
+            ^-  [product ^progress]
             ::
             =/  cache-key  [%slit gate-type sample-type]
-            =^  cache-result  cache.progress
-              %-  %~  get
-                    (by-clock compiler-cache-key (each vase tang))
-                  cache.progress
-              cache-key
+            =^  cache-result  cache.progress  (access-cache cache-key)
             ::
             ?^  cache-result
-              ?:  ?=(%| u.cache-result)
-                [u.cache-result progress]
-              ::  a %slit cache line is an artificial vase; extract type at :p
+              ?:  ?=(%| +.cache-result)
+                [+.cache-result progress]
+              ::  a %slit cache line is an artificial vase; extract type
               ::
-              [p.u.cache-result progress]
+              [+<.cache-result progress]
             ::
-            =/  product=(each type tang)  (mule |.((slit p.gate p.sample)))
+            =/  product=(each type tang)
+              (mule |.((slit gate-type sample-type)))
             ::
             ?:  ?=(%| -.product)
               ::  flesh out error message if failed
@@ -976,11 +1148,7 @@
                     p.product
                 ==
               ::
-              =.  cache.progress
-                %-  %~  put
-                      (by-clock compiler-cache-key (each vase tang))
-                    cache.progress
-                [cache-key product]
+              =.  cache.progress  (put-in-cache cache-key product)
               ::
               [product cache.progress]
             ::  contrive a vase out of the slit result; we'll only use the type
@@ -990,52 +1158,62 @@
             ::
             =/  product-vase=vase  [product 0]
             ::
-            =.  cache.progress
-              %-  %~  put
-                    (by-clock compiler-cache-key (each vase tang))
-                  cache.progress
-              [cache-key product-vase]
+            =.  cache.progress  (put-in-cache cache-key [%& product-vase])
             ::
             [[%& product] cache.progress]
           ::
           ++  perform-call
             |=  [product-type=type gate=* sample=*]
-            ^-  [product _progress]
+            ^-  [product ^progress]
             ::
             =/  cache-key  [%call gate sample]
-            =^  cache-result  cache.progress
-              %-  %~  get
-                    (by-clock compiler-cache-key (each vase tang))
-                  cache.progress
-              cache-key
+            =^  cache-result  cache.progress  (access-cache cache-key)
             ::
             ?^  cache-result
-              [`u.cache-result progress]
+              [cache-result progress]
             ::
             =/  product  (mong [gate sample] intercepted-scry)
             ?-    -.product
                 %0
               =/  success=vase  [product-type p.product]
-              =.  cache.progress
-                %-  %~  put
-                      (by-clock compiler-cache-key (each vase tang))
-                    cache.progress
-                [cache-key [%& success]]
+              =.  cache.progress  (put-in-cache cache-key [%& success])
               ::
               (succeed success)
             ::
                 %1
               =/  blocked-paths=(list path)  ((hard (list path)) p.product)
               =.  blocks.progress
-                %-  ~(gas in blocks.progress)
+                %+  run-gate
+                  =/  gate  ~(gas in *(set [=term =beam]))
+                  gate(+>+< a=blocks.progress)
                 (turn blocked-paths path-to-scry-request)
               ::
               block
             ::
                 %2
-              (wrap-error p.product [%leaf "ford: /$ execution failed"]~)
+              =/  error=tang
+                (welp p.product [%leaf "ford: /$ execution failed"])
+              ::
+              =.  cache.progress  (put-in-cache cache-key [%| error])
+              ::
+              (fail error)
             ==
           --
+        ::
+            %ntcb
+          ::
+          =/  cache-key  [%ride gate sample]
+          =^  cache-result  cache.progress  (access-cache cache-key)
+          ::
+          ?^  cache-result
+            [cache-result progress]
+          ::
+          =/  slap-trap  |.((mule |.((run-gate slap [subject hoon.schematic]))))
+          =/  result  .*(slap-trap [9 2 0 1])
+          ::
+          =.  cache.progress  (put-in-cache cache-key result)
+          ::
+          (cast-raw-result result progress)
         ::
             %ntdt
           (succeed literal.schematic)
@@ -1193,9 +1371,10 @@
     ::
     ++  cast-raw-result
       |=  raw-product=*
-      ^-  [build-product _progress]
+      ^-  [product ^progress]
       ::
-      =+  [result progress]=raw-product
+      =/  result    -.raw-product
+      =/  progress  +.raw-product
       ::
       ?>  ?=([blocks=* live-resources=* cache=*] progress)
       ::
@@ -1226,7 +1405,7 @@
     ::
     ++  wrap-error
       |=  [wrapped=tang wrapper=tang]
-      ^-  [product _progress]
+      ^-  [product ^progress]
       ::
       =/  combined-message  (weld wrapper wrapped)
       [[~ %| combined-message] progress]
@@ -1234,14 +1413,14 @@
     ::
     ++  fail
       |=  =tang
-      ^-  [product _progress]
+      ^-  [product ^progress]
       ::
       [[~ %| tang] progress]
     ::  +succeed: produce successful "vase"
     ::
     ++  succeed
       |=  success=*
-      ^-  [product _progress]
+      ^-  [product ^progress]
       ::  must nest in +vase
       ::
       ?>  ?=(^ success)
@@ -1250,16 +1429,25 @@
     ::  +block: halt, producing a "set" of blocked resource requests
     ::
     ++  block
-      ^-  [product _progress]
+      ^-  [product ^progress]
       ::
       ?<  ?=(~ blocks.progress)
       ::
       [~ progress]
+    ::  +put-in-cache: place :product in :cache.progress
+    ::
+    ++  put-in-cache
+      |=  [=compiler-cache-key product=*]
+      ^+  cache.progress
+      ::
+      =/  cache-door  (by-clock ^compiler-cache-key (each vase tang))
+      %+  run-gate  put:cache-door(clock cache.progress)
+      [compiler-cache-key product]
     ::  +access-cache: retrieve and freshen a cache entry
     ::
     ++  access-cache
       |=  =compiler-cache-key
-      ^-  [product _progress]
+      ^-  [product ^progress]
       ::
       =+  ^=  [entry updated-cache]
           =/  cache-door  (by-clock ^compiler-cache-key (each vase tang))
@@ -1275,7 +1463,7 @@
   ::  +on-build-blocked: perform effects of a build blocking on async resources
   ::
   ++  on-build-blocked
-    |=  [=build =duct blocks=(set [=term =beam])]
+    |=  [=build =^duct blocks=(set [=term =beam])]
     ^+  event-core
     ::
     =/  block-list=(list scry-request)
@@ -1298,19 +1486,18 @@
   ::  +on-once-build-completed: perform effects of finishing a non-live build
   ::
   ++  on-once-build-completed
-    |=  [=build result=(each vase tang) =duct]
+    |=  [=build result=(each [p=* q=*] tang) =^duct]
     ^+  event-core
     ::
-    =.  moves        [[duct %give %made date.build %complete result] moves]
     =.  ducts.state  (~(del by ducts.state) duct)
     ::
-    event-core
+    (send-complete date.build result duct)
   ::  +on-live-build-completed: perform effects of finishing a live build
   ::
   ++  on-live-build-completed
     |=  $:  =build
-            result=(each vase tang)
-            =duct
+            result=(each [p=* q=*] tang)
+            =^duct
             live-resources=(set [=term =rail])
         ==
     ^+  event-core
@@ -1335,6 +1522,8 @@
     ::  if :build depends on multiple discs, send an %incomplete and cancel
     ::
     ?:  (lth 1 ~(wyt by resources-by-disc))
+      =.  ducts.state  (~(del by ducts.state) duct)
+      ::
       =/  reason=tang  :~
         [%leaf "root build"]
         ::  TODO: [%leaf (build-to-tape build)]
@@ -1344,13 +1533,10 @@
         [%leaf "{<resources-by-disc>}"]
       ==
       ::
-      =.  moves        [[duct %give %made date.build %incomplete reason] moves]
-      =.  ducts.state  (~(del by ducts.state) duct)
-      ::
-      event-core
+      (send-incomplete date.build reason duct)
     ::  TODO: don't send move if result is same as previous result
     ::
-    =.  moves  [[duct %give %made date.build %complete result] moves]
+    =.  event-core  (send-complete date.build result duct)
     :: 
     =/  subscription=(unit subscription)
       ?~  resources-by-disc
@@ -1386,6 +1572,36 @@
     |=  [gate=* sample=*]
     ^-  *
     .*(gate(+< sample) [9 2 0 1])
+  ::  +send-complete: send a move to respond with a completed build
+  ::
+  ++  send-complete
+    |=  [date=@da raw-product=(each [p=* q=*] tang) =^duct]
+    ^+  event-core
+    ::
+    =.  moves  :_  moves
+      ^-  move
+      :-  duct
+      :-  %give
+      :+  %meta
+        p=-:!>([%made *@da %complete *(each vase tang)])
+      q=[%made date %complete raw-product]
+    ::
+    event-core
+  ::  +send-incomplete: send a move to indicate a build could not complete
+  ::
+  ++  send-incomplete
+    |=  [date=@da =tang =^duct]
+    ^+  event-core
+    ::
+    =.  moves  :_  moves
+      ^-  move
+      :-  duct
+      :-  %give
+      :+  %meta
+        p=-:!>([%made date %incomplete tang])
+      q=[%made date %incomplete tang]
+    ::
+    event-core
   ::  +intercepted-scry: augment real scry with local %scry build results
   ::
   ::    Try to deduplicate requests for possibly remote resources by looking up
@@ -1413,7 +1629,7 @@
       ~
     ?.  ?=(%da -.r.beam)
       ~
-    ::  look up the scry result from our permanent state
+    ::  look up the scry result from our local state
     ::
     =/  =scry-request  [u.vane u.care beam]
     =/  =duct-status   (~(got by ducts.state) duct)
@@ -1882,5 +2098,6 @@
     [u.existing state-by-ship.ax]
   ::
   =|  new-state=ford-state
+  =.  compiler-cache.new-state  *(clock compiler-cache-key (each [p=* q=*] tang))
   [new-state (~(put by state-by-ship.ax) our new-state)]
 --

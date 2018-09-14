@@ -15,6 +15,7 @@
 =/  test-pit=vase  !>(..zuse)
 =/  ford-gate  (ford-vane test-pit)
 ::
+=<  |%  ++  test-dumb  =>  ford-vane  ~  --
 |%
 ++  test-tear  ^-  tang
   ::
