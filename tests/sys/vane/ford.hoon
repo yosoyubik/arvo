@@ -1,6 +1,7 @@
 /+  *test
 ::
-/=  ford-vane   /:  /===/sys/vane/ford  /!noun/
+/=  ford-base   /:  /===/sys/vane/ford  /!noun/
+/=  arvo-core   /:  /===/sys/arvo       /!noun/ 
 ::
 /=  hoon-scry   /:  /===/sys/hoon       /hoon/
 /=  arvo-scry   /:  /===/sys/arvo       /hoon/
@@ -12,8 +13,16 @@
 ::  =,  ford
 =,  format
 ::
-=/  test-pit=vase  !>(..zuse)
-=/  ford-gate  (ford-vane test-pit)
+=/  bud=vase   !>(..zuse)
+=.  bud.arvo-core  bud
+::
+=/  vil=vile  (viol p.bud)
+=.  vil.arvo-core  vil
+::
+=/  ford-gate  (ford-base bud)
+::
+=/  vane  (vent.arvo-core %f vil bud *worm !>(ford-gate))
+=/  wink  (wink.vane ~1111.1.1 0xdead.beef *sley)
 ::
 |%
 ++  test-tear  ^-  tang
@@ -49,51 +58,40 @@
 ::
 ++  test-literal  ^-  tang
   ::
-  =^  results1  ford-gate
-    %-  ford-call-with-comparator  :*
-      ford-gate
-      now=~1111.1.1
-      scry=scry-is-forbidden
-      ::  send a pinned literal, expects a %made response with same literal
-      ::
-      ^=  call-args
-        [duct=~ type=~ %build ~nul live=%.n [%ntdt !>(~)]]
-      ::
-      ^=  comparator
-        |=  moves=(list move:ford-gate)
-        ^-  tang
-        ::
-        ?.  ?=([* ~] moves)
-          [%leaf "wrong number of moves: {<(lent moves)>}"]~
-        ::
-        ;:  weld
-          %+  expect-eq
-            !>  duct=~
-            !>  &1.i.moves
-        ::
-          %+  expect-eq
-            !>  %give
-            !>  &2.i.moves
-        ::
-          %+  expect-eq
-            !>  %meta
-            !>  &3.i.moves
-        ::
-          %+  expect-eq
-            !>  %.y
-            !>  =<  -
-                %+  ~(nets wa *worm)
-                  &4.i.moves
-                -:!>([%made ~1111.1.1 %complete %& !>(~)])
-        ::
-          %+  expect-eq
-            !>  [%made ~1111.1.1 %complete %& !>(~)]
-            !>  |4.i.moves
-    ==  ==
+  =/  call-card  [%build ~nul live=%.n [%ntdt !>(~)]]
+  =+  [[moves wom] vane-vase]=(swim.wink %g ~ ~[/literal] %& !>(call-card))
+  ~&  %moved
+  ?.  ?=([* ~] moves)
+    [%leaf "wrong number of moves: {<(lent moves)>}"]~
   ::
-  %+  welp
-    results1
-  (expect-ford-empty ford-gate ~nul)
+  =/  move  i.p.moves
+  ::
+  ;:  weld
+    %+  expect-eq
+      !>  ~[/literal]
+      !>  p.move
+  ::
+    %+  expect-eq
+      !>  %give
+      !>  &1.q.move
+  ::
+    %+  expect-eq
+      !>  %|
+      !>  &2.q.move
+  ::
+    ~&  %about-to-nets
+    %+  expect-eq
+      !>  %.y
+      !>  =<  -
+          %+  ~(nets wa *worm)
+            &3.q.move
+          -:!>([%made ~1111.1.1 %complete %& !>(~)])
+  ::
+    ~&  %checking-card
+    %+  expect-eq
+      !>  [%made ~1111.1.1 %complete %& !>(~)]
+      !>  |3.q.move
+  ==
 ::::
 ::++  test-autocons-same  ^-  tang
 ::  ::
@@ -6795,8 +6793,6 @@
   |=  [ford-gate=_ford-gate ship=@p]
   ^-  tang
   ::
-  ~&  %expect-ford-empty
-  ::
   =^  results1  ford-gate
     %-  ford-call  :*
       ford-gate
@@ -6805,7 +6801,6 @@
       call-args=[duct=~[/empty] type=~ [%keep 0]]
       expected-moves=~
     ==
-  ~&  %results1
   ::
   =/  ford  *ford-gate
   =/  state  (~(got by state-by-ship.ax.+>+<.ford) ship)

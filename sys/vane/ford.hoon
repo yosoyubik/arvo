@@ -358,14 +358,14 @@
       ::  %meta: produce a metavase so arvo can do its untyped magic
       ::
       $:  %meta
-          ::  p: a +type, but not statically known as such
+          ::  p: the type of the %made card
           ::
           ::    The type that :p represents should have a vase where
           ::    :q has a `[p=* q=*]`. We can't statically guarantee that
           ::    we produce a vase, but as long as it nests, Arvo will
           ::    figure out what to do with it.
           ::
-          p=*
+          p=type
           ::  q: value in the metavase, containing actual build result
           ::
           $=  q
