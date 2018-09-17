@@ -201,7 +201,7 @@
   ::  +schematic: ford build request, as a function of time
   ::
   +$  schematic
-    $~  [%here !>(~)]
+    $~  [%ntdt !>(~)]
     ::    If the head of the +schematic is a pair, it's an auto-cons
     ::    schematic. Its result will be the pair of results of its
     ::    sub-schematics.
@@ -1088,6 +1088,7 @@
   ++  run-root-build
     |=  [root-build=build =^duct live=?]
     ^+  event-core
+    ~&  %run-root-build
     ::
     =+  [product progress]=(run-build root-build live)
     ::
@@ -1113,6 +1114,8 @@
     ^-  [product ^progress]
     ::
     |^  ^-  [product ^progress]
+        ::
+        ~&  %run-build
         ::
         ?-    -.schematic
             ^
@@ -1443,6 +1446,7 @@
     ++  cast-raw-result
       |=  raw-product=*
       ^-  [product ^progress]
+      ~&  %cast-raw-result
       ::
       =/  result    -.raw-product
       =/  progress  +.raw-product
@@ -1552,6 +1556,7 @@
   ++  on-build-blocked
     |=  [=build =^duct blocks=*]
     ^+  event-core
+    ~&  %on-build-blocked
     ::
     =>  .(blocks ((hard (set scry-request)) blocks))
     ::
@@ -1568,6 +1573,7 @@
   ++  on-once-build-completed
     |=  [=build result=(each [p=* q=*] tang) =^duct]
     ^+  event-core
+    ~&  %on-once-build-completed
     ::
     =.  ducts.state  (~(del by ducts.state) duct)
     ::
@@ -1581,6 +1587,7 @@
             live-resources=*
         ==
     ^+  event-core
+    ~&  %on-live-build-completed
     ::  cast :live-resources to a usable type
     ::
     =>  .(live-resources ((hard (set ,[=term =rail])) live-resources))

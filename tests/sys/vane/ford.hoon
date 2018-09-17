@@ -9,567 +9,91 @@
 /=  diff-scry   /:  /===/mar/txt-diff   /hoon/
 ::
 !:
-=,  ford
+::  =,  ford
 =,  format
 ::
 =/  test-pit=vase  !>(..zuse)
 =/  ford-gate  (ford-vane test-pit)
 ::
-|%  ++  test-dumb  =>  ford-vane  ~  --
-::|%
-::++  test-tear  ^-  tang
-::  ::
-::  ;:  welp
-::    %+  expect-eq
-::      !>  ~['a' 'bc' 'de']
-::      !>  (tear:ford-gate 'a-bc-de')
-::  ::
-::    %+  expect-eq
-::      !>  ~['abc']
-::      !>  (tear:ford-gate 'abc')
-::  ::
-::    %+  expect-eq
-::      !>  ~['ab/c']
-::      !>  (tear:ford-gate 'ab/c')
-::  ==
-::::
-::++  test-unify-jugs  ^-  tang
-::  ::
-::  %+  expect-eq
-::    !>  ^-  (jug @tas @ud)
-::        (my ~[[%a (sy 1 2 ~)] [%b (sy 3 4 5 6 ~)] [%c (sy 7 8 ~)]])
-::    !>  %+  unify-jugs:ford-gate
-::          `(jug @tas @ud)`(my ~[[%a (sy 1 2 ~)] [%b (sy 3 4 ~)]])
-::        `(jug @tas @ud)`(my ~[[%b (sy 5 6 ~)] [%c (sy 7 8 ~)]])
-::::
-::++  test-resource-wire-encoding  ^-  tang
-::  ::
-::  ;:  welp
-::    %+  expect-eq
-::      !>  /cx/~nul/desk/~1234.5.6/bar/foo
-::      !>  ^-  path
-::          %-  scry-request-to-path:ford-gate
-::          [%c care=%x [[~nul %desk [%da ~1234.5.6]] /foo/bar]]
-::  ::
-::    %+  expect-eq
-::      !>  [%c care=%x [[~nul %desk [%da ~1234.5.6]] /foo/bar]]
-::      !>  %-  need
-::          (path-to-scry-request:ford-gate /cx/~nul/desk/~1234.5.6/bar/foo)
-::  ==
-::::
-::++  test-parse-scaffold  ^-  tang
-::  ::
-::  =/  parsed
-::    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
-::      [1 1]
-::    "!.  |=(a=@ud +(a))"
-::  ?~  q.parsed
-::    [%leaf "failed to parse at {<p.parsed>}"]~
-::  ::
-::  %+  expect-eq
-::    !>  :-  [1 19]
-::        :-  ~
-::        :_  [[1 19] ""]
-::        ^-  scaffold:ford-gate
-::        :*  source-rail=[[~nul %desk] /bar/foo]
-::            zuse-version=%309
-::            structures=~
-::            libraries=~
-::            cranes=~
-::            ^=  sources
-::              :~  :*  %dbug  [/~nul/desk/~1234.5.6/foo/bar [[1 1] [1 19]]]
-::                      (ream '!.  |=(a=@ud +(a))')
-::        ==    ==  ==
-::    !>  parsed
-::::
-::++  test-parse-scaffold-sur-libk  ^-  tang
-::  ::
-::  =/  parsed
-::    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
-::      [1 1]
-::    """
-::    /-  struct, face=other
-::    /+  library, *thing
-::    !.
-::    |=(a a)
-::    """
-::  ?~  q.parsed
-::    [%leaf "failed to parse at {<p.parsed>}"]~
-::  %+  expect-eq
-::    !>  :*  source-rail=[[~nul %desk] /bar/foo]
-::            zuse-version=309
-::            structures=~[[`%struct %struct] [`%face %other]]
-::            libraries=~[[`%library %library] [~ %thing]]
-::            cranes=~
-::            ^=  sources
-::              :~  :*  %dbug
-::                      [/~nul/desk/~1234.5.6/foo/bar [3 1] [4 8]]
-::                      (ream '|=(a a)')
-::        ==    ==  ==
-::    !>  p.u.q.parsed
-::::
-::++  test-parse-scaffold-zuse-version  ^-  tang
-::  ::
-::  =/  parsed
-::    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
-::      [1 1]
-::    """
-::    /?  400
-::    !.
-::    |=(a a)
-::    """
-::  ?~  q.parsed
-::    [%leaf "failed to parse at {<p.parsed>}"]~
-::  %+  expect-eq
-::    !>  :*  source-rail=[[~nul %desk] /bar/foo]
-::            zuse-version=400
-::            structures=~
-::            libraries=~
-::            cranes=~
-::            ^=  sources
-::              :~  :*  %dbug
-::                      [/~nul/desk/~1234.5.6/foo/bar [2 1] [3 8]]
-::                      (ream '|=(a a)')
-::        ==    ==  ==
-::    !>  p.u.q.parsed
-::::
-::++  test-parse-scaffold-crane-fssg  ^-  tang
-::  ::
-::  =/  parsed
-::    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
-::      [1 1]
-::    """
-::    /~  !.  [a=1 b=3]
-::    !.
-::    |=(a b)
-::    """
-::  ?~  q.parsed
-::    [%leaf "failed to parse at {<p.parsed>}"]~
-::  %+  expect-eq
-::    !>  :*  source-rail=[[~nul %desk] /bar/foo]
-::            zuse-version=309
-::            structures=~
-::            libraries=~
-::            ^=  crane
-::              :~  :*  %fssg
-::                      %dbug
-::                      [/~nul/desk/~1234.5.6/foo/bar [1 5] [1 18]]
-::                      (ream '[a=1 b=3]')
-::              ==  ==
-::            ^=  sources
-::              :~  :*  %dbug
-::                      [/~nul/desk/~1234.5.6/foo/bar [2 1] [3 8]]
-::                      (ream '|=(a b)')
-::        ==    ==  ==
-::    !>  p.u.q.parsed
-::::
-::++  test-parse-scaffold-crane-fsbc  ^-  tang
-::  ::
-::  =/  parsed
-::    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
-::      [1 1]
-::    """
-::    /$  !.  |=(a a)
-::    !.
-::    |=(a b)
-::    """
-::  ?~  q.parsed
-::    [%leaf "failed to parse at {<p.parsed>}"]~
-::  %+  expect-eq
-::    !>  :*  source-rail=[[~nul %desk] /bar/foo]
-::            zuse-version=309
-::            structures=~
-::            libraries=~
-::            ^=  crane
-::              :~  :*  %fsbc
-::                      %dbug
-::                      [/~nul/desk/~1234.5.6/foo/bar [1 5] [1 16]]
-::                      (ream '|=(a a)')
-::              ==  ==
-::            ^=  sources
-::              :~  :*  %dbug
-::                      [/~nul/desk/~1234.5.6/foo/bar [2 1] [3 8]]
-::                      (ream '|=(a b)')
-::        ==    ==  ==
-::    !>  p.u.q.parsed
-::::
-::++  test-parse-scaffold-crane-fsbr  ^-  tang
-::  ::
-::  =/  parsed
-::    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
-::      [1 1]
-::    """
-::    /|  /~  ~
-::        /~  ~
-::        ==
-::    5
-::    """
-::  ?~  q.parsed
-::    [%leaf "failed to parse at {<p.parsed>}"]~
-::  %+  expect-eq
-::    !>  :*  source-rail=[[~nul %desk] /bar/foo]
-::            zuse-version=309
-::            structures=~
-::            libraries=~
-::            ^=  crane
-::              :~  :*  %fsbr
-::                      :~  :*  %fssg  %dbug
-::                              [/~nul/desk/~1234.5.6/foo/bar [1 9] [1 10]]
-::                              [%bust %null]
-::                          ==
-::                          :*  %fssg  %dbug
-::                              [/~nul/desk/~1234.5.6/foo/bar [2 9] [2 10]]
-::                              [%bust %null]
-::              ==  ==  ==  ==
-::            ^=  sources
-::              :~  [%dbug [/~nul/desk/~1234.5.6/foo/bar [4 1] [4 2]] [%sand %ud 5]]
-::        ==    ==
-::    !>  p.u.q.parsed
-::::
-::++  test-parse-scaffold-crane-fsts  ^-  tang
-::  ::
-::  =/  parsed
-::    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
-::      [1 1]
-::    """
-::    /=  a  /~  ~
-::    5
-::    """
-::  ?~  q.parsed
-::    [%leaf "failed to parse at {<p.parsed>}"]~
-::  %+  expect-eq
-::    !>  :*  source-rail=[[~nul %desk] /bar/foo]
-::            zuse-version=309
-::            structures=~
-::            libraries=~
-::            ^=  crane
-::              :~  :*  %fsts  %a
-::                      %fssg  %dbug  [/~nul/desk/~1234.5.6/foo/bar [1 12] [1 13]]
-::                      [%bust %null]
-::              ==  ==
-::            ^=  sources
-::              :~  :*  %dbug
-::                      [/~nul/desk/~1234.5.6/foo/bar [2 1] [2 2]]  [%sand %ud 5]
-::        ==    ==  ==
-::    !>  p.u.q.parsed
-::::
-::++  test-parse-scaffold-crane-fsdt  ^-  tang
-::  ::
-::  =/  parsed
-::    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
-::      [1 1]
-::    """
-::    /.  /~  !.  a=5
-::        /~  !.  b=6
-::        ==
-::    5
-::    """
-::  ?~  q.parsed
-::    [%leaf "failed to parse at {<p.parsed>}"]~
-::  %+  expect-eq
-::    !>  :*  source-rail=[[~nul %desk] /bar/foo]
-::            zuse-version=309
-::            structures=~
-::            libraries=~
-::            ^=  crane
-::              :~  :*  %fsdt
-::                      :~  :*  %fssg  %dbug
-::                              [/~nul/desk/~1234.5.6/foo/bar [1 9] [1 16]]
-::                              (ream 'a=5')
-::                          ==
-::                          :*  %fssg  %dbug
-::                              [/~nul/desk/~1234.5.6/foo/bar [2 9] [2 16]]
-::                              (ream 'b=6')
-::              ==  ==  ==  ==
-::            ^=  sources
-::              :~  :*  %dbug
-::                      [/~nul/desk/~1234.5.6/foo/bar [4 1] [4 2]]  [%sand %ud 5]
-::        ==    ==  ==
-::    !>  p.u.q.parsed
-::::
-::++  test-parse-scaffold-crane-fscm  ^-  tang
-::  ::
-::  =/  parsed
-::    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
-::      [1 1]
-::    """
-::    /,
-::        /path/to/a
-::      /~  !.  a=5
-::    ::
-::        /path/to/b
-::      /~  !.  b=6
-::    ==
-::    1
-::    """
-::  ?~  q.parsed
-::    [%leaf "failed to parse at {<p.parsed>}"]~
-::  %+  expect-eq
-::    !>  :*  source-rail=[[~nul %desk] /bar/foo]
-::            zuse-version=309
-::            structures=~
-::            libraries=~
-::            ^=  crane
-::              :~  :*  %fscm
-::                      :~  :-  /path/to/a
-::                          :*  %fssg  %dbug
-::                              [/~nul/desk/~1234.5.6/foo/bar [3 7] [3 14]]
-::                              (ream 'a=5')
-::                          ==
-::                          :-  /path/to/b
-::                          :*  %fssg  %dbug
-::                              [/~nul/desk/~1234.5.6/foo/bar [6 7] [6 14]]
-::                              (ream 'b=6')
-::              ==  ==  ==  ==
-::            ^=  sources
-::              :~  :*  %dbug
-::                      [/~nul/desk/~1234.5.6/foo/bar [8 1] [8 2]]  [%sand %ud 1]
-::        ==    ==  ==
-::    !>  p.u.q.parsed
-::::
-::++  test-parse-scaffold-crane-fspm  ^-  tang
-::  ::
-::  =/  parsed
-::    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
-::      [1 1]
-::    """
-::    /=  data  /&  mark  /~  !.  a=1
-::    1
-::    """
-::  ?~  q.parsed
-::    [%leaf "failed to parse at {<p.parsed>}"]~
-::  %+  expect-eq
-::    !>  :*  source-rail=[[~nul %desk] /bar/foo]
-::            zuse-version=309
-::            structures=~
-::            libraries=~
-::            ^=  crane
-::              :~  :*  %fsts  %data
-::                      %fspm  [%mark ~]
-::                      %fssg  %dbug
-::                      [/~nul/desk/~1234.5.6/foo/bar [1 25] [1 32]]
-::                      (ream 'a=1')
-::              ==  ==
-::            ^=  sources
-::              :~  :*  %dbug
-::                      [/~nul/desk/~1234.5.6/foo/bar [2 1] [2 2]]  [%sand %ud 1]
-::        ==    ==  ==
-::    !>  p.u.q.parsed
-::::
-::++  test-parse-scaffold-crane-fscb  ^-  tang
-::  ::
-::  =/  parsed
-::    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
-::      [1 1]
-::    """
-::    /_  /mark/
-::    8
-::    """
-::  ?~  q.parsed
-::    [%leaf "failed to parse at {<p.parsed>}"]~
-::  %+  expect-eq
-::    !>  :*  source-rail=[[~nul %desk] /bar/foo]
-::            zuse-version=309
-::            structures=~
-::            libraries=~
-::            ^=  crane
-::              :~  :*  %fscb  %fszy  %mark
-::              ==  ==
-::            ^=  sources
-::              :~  :*  %dbug
-::                      [/~nul/desk/~1234.5.6/foo/bar [2 1] [2 2]]  [%sand %ud 8]
-::        ==    ==  ==
-::    !>  p.u.q.parsed
-::::
-::++  test-parse-scaffold-crane-fssm  ^-  tang
-::  ::
-::  =/  parsed
-::    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
-::      [1 1]
-::    """
-::    /=  data
-::      /;  !.  |=(a=@u +(a))
-::      /~  !.  5
-::    7
-::    """
-::  ?~  q.parsed
-::    [%leaf "failed to parse at {<p.parsed>}"]~
-::  %+  expect-eq
-::    !>  :*  source-rail=[[~nul %desk] /bar/foo]
-::            zuse-version=309
-::            structures=~
-::            libraries=~
-::            ^=  crane
-::              :~  :*  %fsts  %data
-::                      %fssm
-::                      :*  %dbug
-::                          [/~nul/desk/~1234.5.6/foo/bar [2 7] [2 24]]
-::                          (ream '|=(a=@u +(a))')
-::                      ==
-::                      %fssg
-::                      :*  %dbug
-::                          [/~nul/desk/~1234.5.6/foo/bar [3 7] [3 12]]
-::                          (ream '5')
-::              ==  ==  ==
-::            ^=  sources
-::              :~  :*  %dbug
-::                      [/~nul/desk/~1234.5.6/foo/bar [4 1] [4 2]]  [%sand %ud 7]
-::        ==    ==  ==
-::    !>  p.u.q.parsed
-::::
-::++  test-parse-scaffold-crane-fscl  ^-  tang
-::  ::
-::  =/  parsed
-::    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
-::      [1 1]
-::    """
-::    /=  tests
-::      /:  /===/tests
-::      /_  /mark/
-::    3
-::    """
-::  ?~  q.parsed
-::    [%leaf "failed to parse at {<p.parsed>}"]~
-::  %+  expect-eq
-::    !>  :*  source-rail=[[~nul %desk] /bar/foo]
-::            zuse-version=309
-::            structures=~
-::            libraries=~
-::            ^=  crane
-::              :~  :*  %fsts  %tests
-::                      %fscl  [[~ ~[~ ~ ~ [~ [%sand %tas 495.874.958.708]]]] ~]
-::                      %fscb  %fszy  %mark
-::              ==  ==
-::            ^=  sources
-::              :~  :*  %dbug
-::                      [/~nul/desk/~1234.5.6/foo/bar [4 1] [4 2]]  [%sand %ud 3]
-::        ==    ==  ==
-::    !>  p.u.q.parsed
-::::
-::++  test-parse-scaffold-crane-fskt  ^-  tang
-::  ::
-::  =/  parsed
-::    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
-::      [1 1]
-::    """
-::    /=  data
-::      /^  (list @ud)
-::      /.  /~  1
-::          /~  2
-::          ==
-::    6
-::    """
-::  ?~  q.parsed
-::    [%leaf "failed to parse at {<p.parsed>}"]~
-::  %+  expect-eq
-::    !>  :*  source-rail=[[~nul %desk] /bar/foo]
-::            zuse-version=309
-::            structures=~
-::            libraries=~
-::            ^=  crane
-::              :~  :*  %fsts  %data
-::                      %fskt
-::                      :*  %dbug
-::                          [/~nul/desk/~1234.5.6/foo/bar [2 7] [2 17]]
-::                          %make
-::                          :+  %dbug
-::                            [/~nul/desk/~1234.5.6/foo/bar [2 8] [2 12]]
-::                          [%wing ~[%list]]
-::                          :~  :+  %dbug
-::                                [/~nul/desk/~1234.5.6/foo/bar [2 13] [2 16]]
-::                              [%base [%atom %ud]]
-::                          ==
-::                      ==
-::                      %fsdt
-::                      :~  :-  %fssg
-::                          :+  %dbug
-::                            [/~nul/desk/~1234.5.6/foo/bar [3 11] [3 12]]
-::                          [%sand %ud 1]
-::                          ::
-::                          :-  %fssg
-::                          :+  %dbug
-::                            [/~nul/desk/~1234.5.6/foo/bar [4 11] [4 12]]
-::                          [%sand %ud 2]
-::              ==  ==  ==
-::            ^=  sources
-::              :~  :*  %dbug
-::                      [/~nul/desk/~1234.5.6/foo/bar [6 1] [6 2]]  [%sand %ud 6]
-::        ==    ==  ==
-::    !>  p.u.q.parsed
-::::
-::++  test-parse-scaffold-crane-fszp  ^-  tang
-::  ::
-::  =/  parsed
-::    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
-::      [1 1]
-::    """
-::    /=  data  /!mark/
-::    2
-::    """
-::  ?~  q.parsed
-::    [%leaf "failed to parse at {<p.parsed>}"]~
-::  %+  expect-eq
-::    !>  :*  source-rail=[[~nul %desk] /bar/foo]
-::            zuse-version=309
-::            structures=~
-::            libraries=~
-::            ^=  crane
-::              :~  :*  %fsts  %data
-::                      %fszp  %mark
-::              ==  ==
-::            ^=  sources
-::              :~  :*  %dbug
-::                      [/~nul/desk/~1234.5.6/foo/bar [2 1] [2 2]]  [%sand %ud 2]
-::        ==    ==  ==
-::    !>  p.u.q.parsed
-::::
-::++  test-parse-scaffold-crane-fszy  ^-  tang
-::  ::
-::  =/  parsed
-::    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
-::      [1 1]
-::    """
-::    /=  data  /mark/
-::    9
-::    """
-::  ?~  q.parsed
-::    [%leaf "failed to parse at {<p.parsed>}"]~
-::  %+  expect-eq
-::    !>  :*  source-rail=[[~nul %desk] /bar/foo]
-::            zuse-version=309
-::            structures=~
-::            libraries=~
-::            ^=  crane
-::              :~  :*  %fsts  %data
-::                      %fszy  %mark
-::              ==  ==
-::            ^=  sources
-::              :~  :*  %dbug
-::                      [/~nul/desk/~1234.5.6/foo/bar [2 1] [2 2]]  [%sand %ud 9]
-::        ==    ==  ==
-::    !>  p.u.q.parsed
-::::
-::++  test-literal  ^-  tang
-::  ::
-::  =^  results1  ford-gate
-::    %-  ford-call  :*
-::      ford-gate
-::      now=~1234.5.6
-::      scry=scry-is-forbidden
-::      ::  send a pinned literal, expects a %made response with pinned literal
-::      ::
-::      ^=  call-args
-::        [duct=~ type=~ %build ~nul live=%.n [%$ %noun !>(**)]]
-::      ::
-::      ^=  moves
-::        :~  :*  duct=~  %give  %made  ~1234.5.6
-::                %complete  %success  %$  %noun  !>(**)
-::        ==  ==
-::    ==
-::  ::
-::  %+  welp
-::    results1
-::  (expect-ford-empty ford-gate ~nul)
+|%
+++  test-tear  ^-  tang
+  ::
+  ;:  welp
+    %+  expect-eq
+      !>  ~['a' 'bc' 'de']
+      !>  (tear:ford-gate 'a-bc-de')
+  ::
+    %+  expect-eq
+      !>  ~['abc']
+      !>  (tear:ford-gate 'abc')
+  ::
+    %+  expect-eq
+      !>  ~['ab/c']
+      !>  (tear:ford-gate 'ab/c')
+  ==
+::
+++  test-resource-wire-encoding  ^-  tang
+  ::
+  ;:  welp
+    %+  expect-eq
+      !>  /cx/~nul/desk/~1111.1.1/bar/foo
+      !>  ^-  path
+          %-  scry-request-to-path:ford-gate
+          [%c care=%x [[~nul %desk [%da ~1111.1.1]] /foo/bar]]
+  ::
+    %+  expect-eq
+      !>  [%c care=%x [[~nul %desk [%da ~1111.1.1]] /foo/bar]]
+      !>  %-  need
+          (path-to-scry-request:ford-gate /cx/~nul/desk/~1111.1.1/bar/foo)
+  ==
+::
+++  test-literal  ^-  tang
+  ::
+  =^  results1  ford-gate
+    %-  ford-call-with-comparator  :*
+      ford-gate
+      now=~1111.1.1
+      scry=scry-is-forbidden
+      ::  send a pinned literal, expects a %made response with same literal
+      ::
+      ^=  call-args
+        [duct=~ type=~ %build ~nul live=%.n [%ntdt !>(~)]]
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ^-  tang
+        ::
+        ?.  ?=([* ~] moves)
+          [%leaf "wrong number of moves: {<(lent moves)>}"]~
+        ::
+        ;:  weld
+          %+  expect-eq
+            !>  duct=~
+            !>  &1.i.moves
+        ::
+          %+  expect-eq
+            !>  %give
+            !>  &2.i.moves
+        ::
+          %+  expect-eq
+            !>  %meta
+            !>  &3.i.moves
+        ::
+          %+  expect-eq
+            !>  %.y
+            !>  =<  -
+                %+  ~(nets wa *worm)
+                  &4.i.moves
+                -:!>([%made ~1111.1.1 %complete %& !>(~)])
+        ::
+          %+  expect-eq
+            !>  [%made ~1111.1.1 %complete %& !>(~)]
+            !>  |4.i.moves
+    ==  ==
+  ::
+  %+  welp
+    results1
+  (expect-ford-empty ford-gate ~nul)
 ::::
 ::++  test-autocons-same  ^-  tang
 ::  ::
@@ -7059,247 +6583,239 @@
 ::      !>  'post-b'
 ::      vase.tail.tail.result
 ::  ==
-::++  scry-with-results
-::  |=  results=(map [=term =beam] cage)
-::  |=  [* (unit (set monk)) =term =beam]
-::  ^-  (unit (unit cage))
-::  ::
-::  =/  date=@da  ?>(?=(%da -.r.beam) p.r.beam)
-::  ::
-::  ?^  reef=((scry-reef date) +<.$)
-::    reef
-::  ::
-::  ~|  scry-with-results+[term=term beam=beam]
-::  ::
-::  [~ ~ (~(got by results) [term beam])]
-::::  +scry-with-results-and-failures
-::::
-::++  scry-with-results-and-failures
-::  |=  results=(map [=term =beam] (unit cage))
-::  |=  [* (unit (set monk)) =term =beam]
-::  ^-  (unit (unit cage))
-::  ::
-::  =/  date=@da  ?>(?=(%da -.r.beam) p.r.beam)
-::  ::
-::  ?^  reef=((scry-reef date) +<.$)
-::    reef
-::  ::
-::  ~|  scry-with-results+[term=term beam=beam]
-::  ::
-::  [~ (~(got by results) [term beam])]
-::::  +scry-succeed: produces a scry function with a known request and answer
-::::
-::++  scry-succeed
-::  |=  [date=@da result=cage]  ^-  sley
-::  |=  [* (unit (set monk)) =term =beam]
-::  ^-  (unit (unit cage))
-::  ::
-::  ?^  reef=((scry-reef date) +<.$)
-::    reef
-::  ::
-::  ~|  scry-succeed+[beam+beam term+term]
-::  ?>  =(term %cx)
-::  ?>  =(beam [[~nul %desk %da date] /bar/foo])
-::  ::
-::  [~ ~ result]
-::::  +scry-fail: produces a scry function with a known request and failed answer
-::::
-::++  scry-fail
-::  |=  date=@da  ^-  sley
-::  |=  [* (unit (set monk)) =term =beam]
-::  ^-  (unit (unit cage))
-::  ::
-::  ?^  reef=((scry-reef date) +<.$)
-::    reef
-::  ::
-::  ~|  scry-fail+[beam+beam term+term]
-::  ?>  =(term %cx)
-::  ?>  =(beam [[~nul %desk %da date] /bar/foo])
-::  ::
-::  [~ ~]
-::::  +scry-block: produces a scry function with known request and blocked answer
-::::
-::++  scry-block
-::  |=  date=@da  ^-  sley
-::  |=  [* (unit (set monk)) =term =beam]
-::  ^-  (unit (unit cage))
-::  ::
-::  ?^  reef=((scry-reef date) +<.$)
-::    reef
-::  ::
-::  ~|  scry-block+[beam+beam term+term]
-::  ?>  =(term %cx)
-::  ?>  =(beam [[~nul %desk %da date] /bar/foo])
-::  ::
-::  ~
-::::  +scry-blocks: block on a file at multiple dates; does not include %reef
-::::
-::++  scry-blocks
-::  |=  dates=(set @da)  ^-  sley
-::  |=  [* (unit (set monk)) =term =beam]
-::  ^-  (unit (unit cage))
-::  ::
-::  ~|  scry-block+[beam+beam term+term]
-::  ?>  =(term %cx)
-::  ?>  ?=([%da @da] r.beam)
-::  ?>  (~(has in dates) p.r.beam)
-::  ::
-::  ~
-::::  +scry-is-forbidden: makes sure ford does not attempt to scry
-::::
-::++  scry-is-forbidden  ^-  sley
-::  |=  [* (unit (set monk)) =term =beam]
-::  ^-  (unit (unit cage))
-::  ::
-::  =/  date=@da  ?>(?=(%da -.r.beam) p.r.beam)
-::  ::
-::  ?^  reef=((scry-reef date) +<.$)
-::    reef
-::  ::
-::  ~|  scry-is-forbidden+[beam+beam term+term]
-::  !!
-::::
-::++  scry-reef
-::  |=  date=@da  ^-  sley
-::  |=  [* (unit (set monk)) =term =beam]
-::  ^-  (unit (unit cage))
-::  ::
-::  =-  ?~  res=(~(get by -) [term beam])
-::        ~
-::      `res
-::  ::
-::  %-  ~(gas by *(map [^term ^beam] cage))
-::  :~  :-  [%cx [[~nul %home %da date] /hoon/hoon/sys]]
-::      [%noun !>(~)]
-::      :-  [%cx [[~nul %home %da date] /hoon/arvo/sys]]
-::      [%noun !>(~)]
-::      :-  [%cx [[~nul %home %da date] /hoon/zuse/sys]]
-::      [%noun !>(~)]
-::  ::
-::      :-  [%cw [[~nul %home %da date] /hoon/hoon/sys]]
-::      [%cass !>([ud=0 da=date])]
-::  ==
-::::
-::++  ford-call
-::  |=  $:  ford-gate=_ford-gate
-::          now=@da
-::          scry=sley
-::          call-args=[=duct type=* wrapped-task=(hobo task:able:ford-gate)]
-::          expected-moves=(list move:ford-gate)
-::      ==
-::  ^-  [tang _ford-gate]
-::  ::
-::  =/  ford  (ford-gate now=now eny=0xdead.beef scry=scry)
-::  ::
-::  =^  moves  ford-gate
-::    %-  call:ford  call-args
-::  ::
-::  =/  output=tang
-::    %+  expect-eq
-::      !>  expected-moves
-::      !>  moves
-::  ::
-::  [output ford-gate]
-::::
-::++  ford-take
-::  |=  $:  ford-gate=_ford-gate
-::          now=@da
-::          scry=sley
-::          take-args=[=wire =duct wrapped-sign=(hypo sign:ford-gate)]
-::          expected-moves=(list move:ford-gate)
-::      ==
-::  ^-  [tang _ford-gate]
-::  ::
-::  =/  ford  (ford-gate now=now eny=0xdead.beef scry=scry)
-::  ::
-::  =^  moves  ford-gate
-::    %-  take:ford  take-args
-::  ::
-::  =/  output=tang
-::    %+  expect-eq
-::      !>  expected-moves
-::      !>  moves
-::  ::
-::  [output ford-gate]
-::::  +ford-call-with-comparator
-::::
-::::    Sometimes we can't just do simple comparisons between the moves statements
-::::    and must instead specify a gate that performs the comparisons.
-::::
-::++  ford-call-with-comparator
-::  |=  $:  ford-gate=_ford-gate
-::          now=@da
-::          scry=sley
-::          call-args=[=duct type=* wrapped-task=(hobo task:able:ford-gate)]
-::          move-comparator=$-((list move:ford-gate) tang)
-::      ==
-::  ^-  [tang _ford-gate]
-::  ::
-::  =/  ford  (ford-gate now=now eny=0xdead.beef scry=scry)
-::  ::
-::  =^  moves  ford-gate
-::    %-  call:ford  call-args
-::  ::
-::  =/  output=tang  (move-comparator moves)
-::  ::
-::  [output ford-gate]
-::::  +ford-take-with-comparator
-::::
-::++  ford-take-with-comparator
-::  |=  $:  ford-gate=_ford-gate
-::          now=@da
-::          scry=sley
-::          take-args=[=wire =duct wrapped-sign=(hypo sign:ford-gate)]
-::          move-comparator=$-((list move:ford-gate) tang)
-::      ==
-::  ^-  [tang _ford-gate]
-::  ::
-::  =/  ford  (ford-gate now=now eny=0xdead.beef scry=scry)
-::  ::
-::  =^  moves  ford-gate
-::    %-  take:ford  take-args
-::  ::
-::  =/  output=tang  (move-comparator moves)
-::  ::
-::  [output ford-gate]
-::::  +expect-cage: assert that the actual cage has the right mark and vase
-::::
-::++  expect-cage
-::  |=  [mark=term expected=vase actual=cage]
-::  %+  weld
-::    %+  expect-eq
-::      !>  mark
-::      !>  p.actual
-::  ::
-::  (expect-eq expected q.actual)
-::::  +expect-ford-empty: assert that ford's state is one empty ship
-::::
-::::    At the end of every test, we want to assert that we have cleaned up all
-::::    state.
-::::
-::++  expect-ford-empty
-::  |=  [ford-gate=_ford-gate ship=@p]
-::  ^-  tang
-::  ::
-::  =^  results1  ford-gate
-::    %-  ford-call  :*
-::      ford-gate
-::      now=~1234.5.6
-::      scry=scry-is-forbidden
-::      call-args=[duct=~[/empty] type=~ [%keep 0 0]]
-::      expected-moves=~
-::    ==
-::  ::
-::  =/  ford  *ford-gate
-::  =/  state  (~(got by state-by-ship.ax.+>+<.ford) ship)
-::  ::
-::  =/  default-state  *ford-state:ford
-::  ::
-::  =.  max-size.compiler-cache.state     max-size.compiler-cache.default-state
-::  =.  max-size.queue.build-cache.state  max-size.queue.build-cache.default-state
-::  =.  next-anchor-id.build-cache.state  0
-::  ::
-::  %+  welp  results1
+++  scry-with-results
+  |=  results=(map [=term =beam] cage)
+  |=  [* (unit (set monk)) =term =beam]
+  ^-  (unit (unit cage))
+  ::
+  =/  date=@da  ?>(?=(%da -.r.beam) p.r.beam)
+  ::
+  ?^  reef=((scry-reef date) +<.$)
+    reef
+  ::
+  ~|  scry-with-results+[term=term beam=beam]
+  ::
+  [~ ~ (~(got by results) [term beam])]
+::  +scry-with-results-and-failures
+::
+++  scry-with-results-and-failures
+  |=  results=(map [=term =beam] (unit cage))
+  |=  [* (unit (set monk)) =term =beam]
+  ^-  (unit (unit cage))
+  ::
+  =/  date=@da  ?>(?=(%da -.r.beam) p.r.beam)
+  ::
+  ?^  reef=((scry-reef date) +<.$)
+    reef
+  ::
+  ~|  scry-with-results+[term=term beam=beam]
+  ::
+  [~ (~(got by results) [term beam])]
+::  +scry-succeed: produces a scry function with a known request and answer
+::
+++  scry-succeed
+  |=  [date=@da result=cage]  ^-  sley
+  |=  [* (unit (set monk)) =term =beam]
+  ^-  (unit (unit cage))
+  ::
+  ?^  reef=((scry-reef date) +<.$)
+    reef
+  ::
+  ~|  scry-succeed+[beam+beam term+term]
+  ?>  =(term %cx)
+  ?>  =(beam [[~nul %desk %da date] /bar/foo])
+  ::
+  [~ ~ result]
+::  +scry-fail: produces a scry function with a known request and failed answer
+::
+++  scry-fail
+  |=  date=@da  ^-  sley
+  |=  [* (unit (set monk)) =term =beam]
+  ^-  (unit (unit cage))
+  ::
+  ?^  reef=((scry-reef date) +<.$)
+    reef
+  ::
+  ~|  scry-fail+[beam+beam term+term]
+  ?>  =(term %cx)
+  ?>  =(beam [[~nul %desk %da date] /bar/foo])
+  ::
+  [~ ~]
+::  +scry-block: produces a scry function with known request and blocked answer
+::
+++  scry-block
+  |=  date=@da  ^-  sley
+  |=  [* (unit (set monk)) =term =beam]
+  ^-  (unit (unit cage))
+  ::
+  ?^  reef=((scry-reef date) +<.$)
+    reef
+  ::
+  ~|  scry-block+[beam+beam term+term]
+  ?>  =(term %cx)
+  ?>  =(beam [[~nul %desk %da date] /bar/foo])
+  ::
+  ~
+::  +scry-blocks: block on a file at multiple dates; does not include %reef
+::
+++  scry-blocks
+  |=  dates=(set @da)  ^-  sley
+  |=  [* (unit (set monk)) =term =beam]
+  ^-  (unit (unit cage))
+  ::
+  ~|  scry-block+[beam+beam term+term]
+  ?>  =(term %cx)
+  ?>  ?=([%da @da] r.beam)
+  ?>  (~(has in dates) p.r.beam)
+  ::
+  ~
+::  +scry-is-forbidden: makes sure ford does not attempt to scry
+::
+++  scry-is-forbidden  ^-  sley
+  |=  [* (unit (set monk)) =term =beam]
+  ^-  (unit (unit cage))
+  ::
+  =/  date=@da  ?>(?=(%da -.r.beam) p.r.beam)
+  ::
+  ?^  reef=((scry-reef date) +<.$)
+    reef
+  ::
+  ~|  scry-is-forbidden+[beam+beam term+term]
+  !!
+::
+++  scry-reef
+  |=  date=@da  ^-  sley
+  |=  [* (unit (set monk)) =term =beam]
+  ^-  (unit (unit cage))
+  ::
+  =-  ?~  res=(~(get by -) [term beam])
+        ~
+      `res
+  ::
+  %-  ~(gas by *(map [^term ^beam] cage))
+  :~  :-  [%cx [[~nul %home %da date] /hoon/hoon/sys]]
+      [%noun !>(~)]
+      :-  [%cx [[~nul %home %da date] /hoon/arvo/sys]]
+      [%noun !>(~)]
+      :-  [%cx [[~nul %home %da date] /hoon/zuse/sys]]
+      [%noun !>(~)]
+  ::
+      :-  [%cw [[~nul %home %da date] /hoon/hoon/sys]]
+      [%cass !>([ud=0 da=date])]
+  ==
+::
+++  ford-call
+  |=  $:  ford-gate=_ford-gate
+          now=@da
+          scry=sley
+          call-args=[=duct type=* wrapped-task=(hobo task:able:ford-gate)]
+          expected-moves=(list move:ford-gate)
+      ==
+  ^-  [tang _ford-gate]
+  ::
+  =/  ford  (ford-gate now=now eny=0xdead.beef scry=scry)
+  ::
+  =^  moves  ford-gate
+    %-  call:ford  call-args
+  ::
+  =/  output=tang
+    %+  expect-eq
+      !>  expected-moves
+      !>  moves
+  ::
+  [output ford-gate]
+::
+++  ford-take
+  |=  $:  ford-gate=_ford-gate
+          now=@da
+          scry=sley
+          take-args=[=wire =duct wrapped-sign=(hypo sign:ford-gate)]
+          expected-moves=(list move:ford-gate)
+      ==
+  ^-  [tang _ford-gate]
+  ::
+  =/  ford  (ford-gate now=now eny=0xdead.beef scry=scry)
+  ::
+  =^  moves  ford-gate
+    %-  take:ford  take-args
+  ::
+  =/  output=tang
+    %+  expect-eq
+      !>  expected-moves
+      !>  moves
+  ::
+  [output ford-gate]
+::  +ford-call-with-comparator
+::
+::    Sometimes we can't just do simple comparisons between the moves statements
+::    and must instead specify a gate that performs the comparisons.
+::
+++  ford-call-with-comparator
+  |=  $:  ford-gate=_ford-gate
+          now=@da
+          scry=sley
+          call-args=[=duct type=* wrapped-task=(hobo task:able:ford-gate)]
+          move-comparator=$-((list move:ford-gate) tang)
+      ==
+  ^-  [tang _ford-gate]
+  ::
+  =/  ford  (ford-gate now=now eny=0xdead.beef scry=scry)
+  ::
+  =^  moves  ford-gate
+    %-  call:ford  call-args
+  ::
+  =/  output=tang  (move-comparator moves)
+  ::
+  [output ford-gate]
+::  +ford-take-with-comparator
+::
+++  ford-take-with-comparator
+  |=  $:  ford-gate=_ford-gate
+          now=@da
+          scry=sley
+          take-args=[=wire =duct wrapped-sign=(hypo sign:ford-gate)]
+          move-comparator=$-((list move:ford-gate) tang)
+      ==
+  ^-  [tang _ford-gate]
+  ::
+  =/  ford  (ford-gate now=now eny=0xdead.beef scry=scry)
+  ::
+  =^  moves  ford-gate
+    %-  take:ford  take-args
+  ::
+  =/  output=tang  (move-comparator moves)
+  ::
+  [output ford-gate]
+::  +expect-ford-empty: assert that ford's state is one empty ship
+::
+::    At the end of every test, we want to assert that we have cleaned up all
+::    state.
+::
+++  expect-ford-empty
+  |=  [ford-gate=_ford-gate ship=@p]
+  ^-  tang
+  ::
+  ~&  %expect-ford-empty
+  ::
+  =^  results1  ford-gate
+    %-  ford-call  :*
+      ford-gate
+      now=~1234.5.6
+      scry=scry-is-forbidden
+      call-args=[duct=~[/empty] type=~ [%keep 0]]
+      expected-moves=~
+    ==
+  ~&  %results1
+  ::
+  =/  ford  *ford-gate
+  =/  state  (~(got by state-by-ship.ax.+>+<.ford) ship)
+  ::
+  =/  default-state  *ford-state:ford
+  ::
+  %+  welp  results1
+  %+  expect-eq
+    !>  [lookup=~ queue=~ size=0 max-size=0 depth=1]
+    !>  compiler-cache.state
 ::  ::
 ::  ?:  =(default-state state)
 ::    ~
@@ -7319,4 +6835,4 @@
 ::      [%leaf "builds.state:"]
 ::      [%rose braces build-state]
 ::  ==
-::--
+--
