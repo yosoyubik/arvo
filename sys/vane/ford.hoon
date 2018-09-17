@@ -1364,6 +1364,8 @@
         $(schematic new-schematic)
       ::
           %nttr
+        ::  TODO cleanup
+        ::
         =^  rail-result  progress
           $(schematic [%ntkt [%ntdt !>(rail)] rail.schematic])
         ::
@@ -1408,22 +1410,39 @@
           ::
           (handle-scry-result u.scry-result)
         ::
-        =/  scry-result  (intercepted-scry term.schematic beam)
-        ~&  [%scry-result scry-result]
+        ~&  [%term term.schematic %beam beam]
+        =/  =scry-request  [u.vane u.care beam]
+        ~&  [%scry-request-wut scry-request]
         ::
-        ?~  scry-result
-          =/  =scry-request  [u.vane u.care beam]
-          ~&  [%scry-request scry-request]
-          ::
-          =.  blocks.progress
-            =/  put-in  ~(put in *(set ^scry-request))
-            %+  run-gate  put-in(+>+< blocks.progress)
-            scry-request
-          ~&  [%nttr-blocks-sig ?=(~ blocks.progress)]
-          ::
-          block
+        =/  local-result=(unit (unit (unit cage)))
+          %.  scry-request
+          %~  get  by
+          %-  complete-scrys
+          =<  scry-results
+          %-  current-status
+          (~(got by ducts.state) duct)
         ::
-        (handle-scry-result u.scry-result)
+        ?~  local-result
+          ~&  [%nttr-no-local term.schematic beam]
+          =/  scry-result
+            (scry [%141 %noun] ~ term.schematic beam)
+          ::
+          ?~  scry-result
+            ::
+            =.  blocks.progress
+              =/  put-in  ~(put in *(set ^scry-request))
+              %+  run-gate  put-in(+>+< blocks.progress)
+              scry-request
+            ~&  [%nttr-blocks-sig ?=(~ blocks.progress)]
+            ::
+            block
+          ::
+          (handle-scry-result u.scry-result)
+        ::  we already filtered out blocked local results
+        ::
+        ?~  u.local-result  !!
+        ::
+        (handle-scry-result u.u.local-result)
       ::
           %ntts
         =^  sub-result  progress  $(schematic rest.schematic)
@@ -1717,7 +1736,6 @@
   ::    answer (it produced `~`).
   ::
   ++  intercepted-scry
-    ^-  slyt
     %-  sloy  ^-  slyd
     ~/  %intercepted-scry
     |=  [ref=* (unit (set monk)) =term =beam]
@@ -1726,7 +1744,9 @@
     ::  if the actual scry produces a value, use that value; otherwise use local
     ::
     ~&  [%scry-internal term beam]
-    =/  scry-response  (scry +<.$)
+    =/  scry-response  `(unit (unit cage))```[%bar !>(42)]
+    ::  TODO: reinstate
+    :: =/  scry-response  (scry +<.$)
     ~&  [%real-scry-response scry-response]
     ::
     ?^  scry-response

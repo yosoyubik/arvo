@@ -350,7 +350,7 @@
   (expect-ford-empty ford-gate ~nul)
 ::  TODO: make this work
 ::
-++  failing-test-nttr-sync-succeed  ^-  tang
+++  test-nttr-sync-succeed  ^-  tang
   ::
   =^  results1  ford-gate
     %-  ford-call-with-comparator  :*
@@ -392,8 +392,8 @@
                 -:!>([%made ~1111.1.1 %complete *(each vase tang)])
         ::
           %+  expect-eq
-            !>  [%made ~1111.1.1 %complete %& !>([~ %bar 42])]
-            !>  |4.i.moves
+            !>  [~ %bar 42]
+            [-:!>([~ %bar 42]) +:|4:|4.i.moves]
     ==  ==
   ::
   %+  welp
