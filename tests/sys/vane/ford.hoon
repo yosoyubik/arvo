@@ -140,56 +140,106 @@
   %+  welp
     results1
   (expect-ford-empty ford-gate ~nul)
-::::
-::++  test-autocons-same  ^-  tang
-::  ::
-::  =^  results1  ford-gate
-::    %-  ford-call  :*
-::      ford-gate
-::      now=~1234.5.6
-::      scry=scry-is-forbidden
-::      ::  if we autocons the same schematic, we should get two of it as a result
-::      ::
-::      ^=  call-args
-::        :*  duct=~  type=~  %build  ~nul  live=%.n
-::            [[%$ %noun !>(**)] [%$ %noun !>(**)]]
-::        ==
-::      ::
-::      ^=  moves
-::        :~  :*  duct=~  %give  %made  ~1234.5.6  %complete
-::                %success
-::                [%success %$ %noun !>(**)]
-::                [%success %$ %noun !>(**)]
-::    ==  ==  ==
-::  ::
-::  %+  welp
-::    results1
-::  (expect-ford-empty ford-gate ~nul)
-::::
-::++  test-autocons-different  ^-  tang
-::  ::
-::  =^  results1  ford-gate
-::    %-  ford-call  :*
-::      ford-gate
-::      now=~1234.5.6
-::      scry=scry-is-forbidden
-::      :: if we autocons different schematics, we get different values
-::      ::
-::      ^=  call-args
-::        :*  duct=~  type=~  %build  ~nul  live=%.n
-::            [[%$ %noun !>(42)] [%$ %noun !>(43)]]
-::        ==
-::      ::
-::      ^=  moves
-::        :~  :*  duct=~  %give  %made  ~1234.5.6  %complete
-::                %success
-::                [%success %$ %noun !>(42)]
-::                [%success %$ %noun !>(43)]
-::    ==  ==  ==
-::  ::
-::  %+  welp
-::    results1
-::    (expect-ford-empty ford-gate ~nul)
+::
+++  test-autocons-same  ^-  tang
+  ::
+  =^  results1  ford-gate
+    %-  ford-call-with-comparator  :*
+      ford-gate
+      now=~1111.1.1
+      scry=scry-is-forbidden
+      ::  if we autocons the same schematic, we should get two of it as a result
+      ::
+      ^=  call-args
+        :*  duct=~[/autocons-same]  type=~  %build  ~nul  live=%.n
+            [[%ntdt !>(~)] [%ntdt !>(~)]]
+        ==
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ^-  tang
+        ::
+        ?.  ?=([* ~] moves)
+          [%leaf "wrong number of moves: {<(lent moves)>}"]~
+        ::
+        ;:  weld
+          %+  expect-eq
+            !>  duct=~[/autocons-same]
+            !>  &1.i.moves
+        ::
+          %+  expect-eq
+            !>  %give
+            !>  &2.i.moves
+        ::
+          %+  expect-eq
+            !>  %meta
+            !>  &3.i.moves
+        ::
+          %+  expect-eq
+            !>  %.y
+            !>  =<  -
+                %+  ~(nets wa *worm)
+                  &4.i.moves
+                -:!>([%made ~1111.1.1 %complete *(each vase tang)])
+        ::
+          %+  expect-eq
+            !>  [%made ~1111.1.1 %complete %& !>([~ ~])]
+            !>  |4.i.moves
+    ==  ==
+  ::
+  %+  welp
+    results1
+  (expect-ford-empty ford-gate ~nul)
+::
+++  test-autocons-different  ^-  tang
+  ::
+  =^  results1  ford-gate
+    %-  ford-call-with-comparator  :*
+      ford-gate
+      now=~1111.1.1
+      scry=scry-is-forbidden
+      ::  if we autocons the same schematic, we should get two of it as a result
+      ::
+      ^=  call-args
+        :*  duct=~[/autocons-same]  type=~  %build  ~nul  live=%.n
+            [[%ntdt !>(~)] [%ntdt !>(3)]]
+        ==
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ^-  tang
+        ::
+        ?.  ?=([* ~] moves)
+          [%leaf "wrong number of moves: {<(lent moves)>}"]~
+        ::
+        ;:  weld
+          %+  expect-eq
+            !>  duct=~[/autocons-same]
+            !>  &1.i.moves
+        ::
+          %+  expect-eq
+            !>  %give
+            !>  &2.i.moves
+        ::
+          %+  expect-eq
+            !>  %meta
+            !>  &3.i.moves
+        ::
+          %+  expect-eq
+            !>  %.y
+            !>  =<  -
+                %+  ~(nets wa *worm)
+                  &4.i.moves
+                -:!>([%made ~1111.1.1 %complete *(each vase tang)])
+        ::
+          %+  expect-eq
+            !>  [%made ~1111.1.1 %complete %& !>([~ 3])]
+            !>  |4.i.moves
+    ==  ==
+  ::
+  %+  welp
+    results1
+  (expect-ford-empty ford-gate ~nul)
 ::::
 ::++  test-scry-clay-succeed  ^-  tang
 ::  ::
