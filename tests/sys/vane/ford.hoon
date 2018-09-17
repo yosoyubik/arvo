@@ -93,7 +93,7 @@
       !>  |3.q.move
   ==
 ::
-++  test-literal  ^-  tang
+++  test-ntdt  ^-  tang
   ::
   =^  results1  ford-gate
     %-  ford-call-with-comparator  :*
@@ -201,7 +201,7 @@
       ::  if we autocons the same schematic, we should get two of it as a result
       ::
       ^=  call-args
-        :*  duct=~[/autocons-same]  type=~  %build  ~nul  live=%.n
+        :*  duct=~[/autocons-different]  type=~  %build  ~nul  live=%.n
             [[%ntdt !>(~)] [%ntdt !>(3)]]
         ==
       ::
@@ -214,7 +214,7 @@
         ::
         ;:  weld
           %+  expect-eq
-            !>  duct=~[/autocons-same]
+            !>  duct=~[/autocons-different]
             !>  &1.i.moves
         ::
           %+  expect-eq
@@ -240,29 +240,217 @@
   %+  welp
     results1
   (expect-ford-empty ford-gate ~nul)
-::::
-::++  test-scry-clay-succeed  ^-  tang
-::  ::
-::  =^  results1  ford-gate
-::    %-  ford-call  :*
-::      ford-gate
-::      now=~1234.5.6
-::      scry=(scry-succeed ~1234.5.6 [%noun !>(42)])
-::      ::  test a pinned scry which succeeds
-::      ::
-::      ^=  call-args
-::        :*  duct=~  type=~  %build  ~nul  live=%.n
-::            [%scry %c ren=%x rail=[[~nul %desk] /bar/foo]]
-::        ==
-::      ::
-::      ^=  moves
-::        :~  :*  duct=~  %give  %made  ~1234.5.6  %complete  %success
-::                [%scry %noun !>(42)]
-::    ==  ==  ==
-::  ::
-::  %+  welp
-::    results1
-::  (expect-ford-empty ford-gate ~nul)
+::
+++  test-ntbn  ^-  tang
+  ::
+  =^  results1  ford-gate
+    %-  ford-call-with-comparator  :*
+      ford-gate
+      now=~1111.1.1
+      scry=scry-is-forbidden
+      ::  test a once scry that succeeds
+      ::
+      ^=  call-args
+        :*  duct=~[/ntbn]  type=~  %build  ~nul  live=%.n
+            :+  %ntbn
+              [%ntdt !>(foo=42)]
+            [%ntcb [%limb %foo]]
+        ==
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ^-  tang
+        ::
+        ?.  ?=([* ~] moves)
+          [%leaf "wrong number of moves: {<(lent moves)>}"]~
+        ::
+        ;:  weld
+          %+  expect-eq
+            !>  duct=~[/ntbn]
+            !>  &1.i.moves
+        ::
+          %+  expect-eq
+            !>  %give
+            !>  &2.i.moves
+        ::
+          %+  expect-eq
+            !>  %meta
+            !>  &3.i.moves
+        ::
+          %+  expect-eq
+            !>  %.y
+            !>  =<  -
+                %+  ~(nets wa *worm)
+                  &4.i.moves
+                -:!>([%made ~1111.1.1 %complete *(each vase tang)])
+        ::
+          %+  expect-eq
+            !>  [%made ~1111.1.1 %complete %& !>(42)]
+            !>  |4.i.moves
+    ==  ==
+  ::
+  %+  welp
+    results1
+  (expect-ford-empty ford-gate ~nul)
+::
+++  test-ntcb  ^-  tang
+  ::
+  =^  results1  ford-gate
+    %-  ford-call-with-comparator  :*
+      ford-gate
+      now=~1111.1.1
+      scry=scry-is-forbidden
+      ::  send a pinned literal, expects a %made response with same literal
+      ::
+      ^=  call-args
+        [duct=~[/ntcb] type=~ %build ~nul live=%.n [%ntcb [%limb %hoon-version]]]
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ^-  tang
+        ::
+        ?.  ?=([* ~] moves)
+          [%leaf "wrong number of moves: {<(lent moves)>}"]~
+        ::
+        ;:  weld
+          %+  expect-eq
+            !>  duct=~[/ntcb]
+            !>  &1.i.moves
+        ::
+          %+  expect-eq
+            !>  %give
+            !>  &2.i.moves
+        ::
+          %+  expect-eq
+            !>  %meta
+            !>  &3.i.moves
+        ::
+          %+  expect-eq
+            !>  %.y
+            !>  =<  -
+                %+  ~(nets wa *worm)
+                  &4.i.moves
+                -:!>([%made ~1111.1.1 %complete %& !>(141)])
+        ::
+          %+  expect-eq
+            !>  [%made ~1111.1.1 %complete %&]
+            !>  [&1 &2 &3 &4]:|4.i.moves
+        ::
+          %+  expect-eq
+            !>  %.y
+            !>  -:(~(nets wa *worm) &5:|4.i.moves -:!>(141))
+        ::
+          %+  expect-eq
+            !>  141
+            [-:!>(141) +:|4:|4.i.moves]
+    ==  ==
+  ::
+  %+  welp
+    results1
+  (expect-ford-empty ford-gate ~nul)
+::  TODO: make this work
+::
+++  failing-test-nttr-sync-succeed  ^-  tang
+  ::
+  =^  results1  ford-gate
+    %-  ford-call-with-comparator  :*
+      ford-gate
+      now=~1111.1.1
+      scry=(scry-succeed ~1111.1.1 [%bar !>(42)])
+      ::  test a once scry that succeeds
+      ::
+      ^=  call-args
+        :*  duct=~[/nttr-sync-succeed]  type=~  %build  ~nul  live=%.n
+            [%nttr %cx rail=[%ntdt -:!>(*rail:ford) [[~nul %home] /bar/foo]]]
+        ==
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ^-  tang
+        ::
+        ?.  ?=([* ~] moves)
+          [%leaf "wrong number of moves: {<(lent moves)>}"]~
+        ::
+        ;:  weld
+          %+  expect-eq
+            !>  duct=~[/nttr-sync-succeed]
+            !>  &1.i.moves
+        ::
+          %+  expect-eq
+            !>  %give
+            !>  &2.i.moves
+        ::
+          %+  expect-eq
+            !>  %meta
+            !>  &3.i.moves
+        ::
+          %+  expect-eq
+            !>  %.y
+            !>  =<  -
+                %+  ~(nets wa *worm)
+                  &4.i.moves
+                -:!>([%made ~1111.1.1 %complete *(each vase tang)])
+        ::
+          %+  expect-eq
+            !>  [%made ~1111.1.1 %complete %& !>([~ %bar 42])]
+            !>  |4.i.moves
+    ==  ==
+  ::
+  %+  welp
+    results1
+  (expect-ford-empty ford-gate ~nul)
+::
+++  test-ntts  ^-  tang
+  ::
+  =^  results1  ford-gate
+    %-  ford-call-with-comparator  :*
+      ford-gate
+      now=~1111.1.1
+      scry=scry-is-forbidden
+      ::  test a once scry that succeeds
+      ::
+      ^=  call-args
+        :*  duct=~[/ntts]  type=~  %build  ~nul  live=%.n
+            :+  %ntbn
+              [%ntts %foo [%ntdt !>(42)]]
+            [%ntcb [%limb %foo]]
+        ==
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ^-  tang
+        ::
+        ?.  ?=([* ~] moves)
+          [%leaf "wrong number of moves: {<(lent moves)>}"]~
+        ::
+        ;:  weld
+          %+  expect-eq
+            !>  duct=~[/ntts]
+            !>  &1.i.moves
+        ::
+          %+  expect-eq
+            !>  %give
+            !>  &2.i.moves
+        ::
+          %+  expect-eq
+            !>  %meta
+            !>  &3.i.moves
+        ::
+          %+  expect-eq
+            !>  %.y
+            !>  =<  -
+                %+  ~(nets wa *worm)
+                  &4.i.moves
+                -:!>([%made ~1111.1.1 %complete *(each vase tang)])
+        ::
+          %+  expect-eq
+            !>  [%made ~1111.1.1 %complete %& !>(42)]
+            !>  |4.i.moves
+    ==  ==
+  ::
+  %+  welp
+    results1
+  (expect-ford-empty ford-gate ~nul)
 ::::
 ::++  test-scry-clay-fail  ^-  tang
 ::  ::
@@ -6719,7 +6907,7 @@
   ::
   ~|  scry-succeed+[beam+beam term+term]
   ?>  =(term %cx)
-  ?>  =(beam [[~nul %desk %da date] /bar/foo])
+  ?>  =(beam [[~nul %home %da date] /bar/foo])
   ::
   [~ ~ result]
 ::  +scry-fail: produces a scry function with a known request and failed answer
@@ -6734,7 +6922,7 @@
   ::
   ~|  scry-fail+[beam+beam term+term]
   ?>  =(term %cx)
-  ?>  =(beam [[~nul %desk %da date] /bar/foo])
+  ?>  =(beam [[~nul %home %da date] /bar/foo])
   ::
   [~ ~]
 ::  +scry-block: produces a scry function with known request and blocked answer
@@ -6749,7 +6937,7 @@
   ::
   ~|  scry-block+[beam+beam term+term]
   ?>  =(term %cx)
-  ?>  =(beam [[~nul %desk %da date] /bar/foo])
+  ?>  =(beam [[~nul %home %da date] /bar/foo])
   ::
   ~
 ::  +scry-blocks: block on a file at multiple dates; does not include %reef
