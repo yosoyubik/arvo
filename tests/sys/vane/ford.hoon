@@ -423,7 +423,9 @@
             ^-  hoon
             :+  %clhp
               [%rock %tas %ntcb]
-            [%limb %foo]
+            :+  %clhp
+              [%rock %tas %limb]
+            [%rock %tas %foo]
         ==
       ::
       ^=  comparator
@@ -446,26 +448,24 @@
             !>  %meta
             !>  &3.i.moves
         ::
-          ~&  |5:|4.i.moves
-          `tang`~
-::          %+  expect-eq
-::            !>  %.y
-::            !>  =<  -
-::                %+  ~(nets wa *worm)
-::                  &4.i.moves
-::                -:!>([%made ~1111.1.1 %complete %& !>(42)])
-::        ::
-::          %+  expect-eq
-::            !>  [%made ~1111.1.1 %complete %& !>(42)]
-::            !>  |4.i.moves
-::        ::
-::          %+  expect-eq
-::            !>  %.y
-::            !>  -:(~(nets wa *worm) &5:|4.i.moves -:!>(42))
-::        ::
-::          %+  expect-eq
-::            !>  42
-::            [-:!>(42) |5:|4.i.moves]
+          %+  expect-eq
+            !>  %.y
+            !>  =<  -
+                %+  ~(nets wa *worm)
+                  &4.i.moves
+                -:!>([%made ~1111.1.1 %complete %& !>(42)])
+        ::
+          %+  expect-eq
+            !>  [%made ~1111.1.1 %complete %& !>(42)]
+            !>  |4.i.moves
+        ::
+          %+  expect-eq
+            !>  %.y
+            !>  -:(~(nets wa *worm) &5:|4.i.moves -:!>(42))
+        ::
+          %+  expect-eq
+            !>  42
+            [-:!>(42) |5:|4.i.moves]
     ==  ==
   ::
   %+  welp

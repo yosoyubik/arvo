@@ -1466,7 +1466,6 @@
     ++  cast-raw-result
       |=  raw-product=*
       ^-  [product ^progress]
-      ~&  %cast-raw-result
       ::
       =/  result    -.raw-product
       =/  progress  +.raw-product
