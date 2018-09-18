@@ -3,7 +3,7 @@
   ::
 /?  309
 /-  hall
-/+  collections
+/+  collections, cram
 ::
 ::  cols:
 ::
@@ -151,9 +151,19 @@
   |=  [pax=path raw=raw-item]
   ^-  json
   =/  owner  (fall (~(get by meta.raw) %owner) ~.anon)
-  =/  dat  (fall (~(get by meta.raw) %last-modified) (scot %da now.bol))
-  =/  nom  (fall (~(get by meta.raw) %name) ~.no-title)
-  =/  typ  (fall (~(get by meta.raw) %type) ~.no-type)
+  =/  dat    (fall (~(get by meta.raw) %last-modified) (scot %da now.bol))
+  =/  nom    (fall (~(get by meta.raw) %name) ~.no-title)
+  =/  typ    (fall (~(get by meta.raw) %type) ~.no-type)
+  ::
+  =/  elm=manx   elm:(static:cram (ream data.raw))
+  =/  snip=marl  tal:(hedtal +.elm)
+  =/  inner      (crip (en-xml:html -.snip))    :: inner html
+  ::
+  =/  parent-spur  [%collections-config (slag 1 (flop pax))]
+  =/  bek=beak     byk.bol(r [%da now.bol])
+  =/  parent-path  (en-beam:format [bek parent-spur])
+  =/  parent-conf  (config-to-json .^(config %cx parent-path))
+  ::
   %-  pairs:enjs:format
   :~  ['owner' [%s owner]]
       ['path' [%a (turn pax |=(a=@ta `json`[%s a]))]]
@@ -161,6 +171,8 @@
       ['date' [%s dat]]
       ['type' [%s typ]]
       ['content' [%s data.raw]]
+      ['snip' [%s inner]]
+      ['parent-config' parent-conf]
   ==
 ::
 ::  +front-to-wain: XX
