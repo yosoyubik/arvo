@@ -586,9 +586,78 @@
             !>  i.t.moves
     ==  ==
   ::
-  %+  welp
+  =^  results2  ford-gate
+    %-  ford-take-with-comparator  :*
+      ford-gate
+      now=~2222.2.2
+      scry=(scry-succeed ~2222.2.2 [%bar !>(43)])
+      ::
+      ^=  take-args
+        :*  wire=/~nul/clay-sub/~nul/home/~1111.1.1  duct=~[/nttr-live]
+            ^=  wrapped-sign  ^-  (hypo sign:ford-gate)  :-  *type
+            [%c %wris [%da ~2222.2.2] (sy [%x /foo/bar]~)]
+        ==
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ^-  tang
+        ::
+        ?.  ?=([* * ~] moves)
+          [%leaf "wrong number of moves: {<(lent moves)>}"]~
+        ::
+        ;:  weld
+          %+  expect-eq
+            !>  duct=~[/nttr-live]
+            !>  &1.i.moves
+        ::
+          %+  expect-eq
+            !>  %give
+            !>  &2.i.moves
+        ::
+          %+  expect-eq
+            !>  %meta
+            !>  &3.i.moves
+        ::
+          %+  expect-eq
+            !>  %.y
+            !>  =<  -
+                %+  ~(nets wa *worm)
+                  &4.i.moves
+                -:!>([%made ~1111.1.1 %complete *(each vase tang)])
+        ::
+          %+  expect-eq
+            !>  [~ %bar 43]
+            [-:!>([~ %bar 43]) |5:|4.i.moves]
+        ::
+          %+  expect-eq
+            !>  :*  duct=~[/nttr-live]  %pass
+                wire=/~nul/clay-sub/~nul/home/~2222.2.2
+                %c  %warp  [~nul ~nul]  %home
+                `[%mult [%da ~2222.2.2] (sy [%x /foo/bar]~)]
+            ==
+            !>  i.t.moves
+    ==  ==
+  ::
+  =^  results3  ford-gate
+    %-  ford-call  :*
+      ford-gate
+      now=~1234.5.8
+      scry=scry-is-forbidden
+      ::
+      call-args=[duct=~[/nttr-live] type=~ %kill ~nul]
+      ::
+      ^=  moves
+        :~  :*  duct=~[/nttr-live]  %pass
+                wire=/~nul/clay-sub/~nul/home/~2222.2.2
+                %c  %warp  [~nul ~nul]  %home  ~
+    ==  ==  ==
+  ::
+  ;:  welp
     results1
-  (expect-ford-empty ford-gate ~nul)
+    results2
+    results3
+    (expect-ford-empty ford-gate ~nul)
+  ==
 ::
 ++  test-nttr-sync-succeed  ^-  tang
   ::
@@ -7323,26 +7392,25 @@
   =/  default-state  *ford-state:ford
   ::
   %+  welp  results1
-  %+  expect-eq
-    !>  [lookup=~ queue=~ size=0 max-size=0 depth=1]
-    !>  compiler-cache.state
-::  ::
-::  ?:  =(default-state state)
-::    ~
-::  ::
-::  =/  build-state=(list tank)
-::    %-  zing
-::    %+  turn  ~(tap by builds.state)
-::    |=  [build=build:ford build-status=build-status:ford]
-::    :~  [%leaf (build-to-tape:ford build)]
-::        [%leaf "requesters: {<requesters.build-status>}"]
-::        [%leaf "clients: {<~(tap in ~(key by clients.build-status))>}"]
-::    ==
-::  ::
-::  =/  braces  [[' ' ' ' ~] ['{' ~] ['}' ~]]
-::  ::
-::  :~  [%leaf "failed to cleanup"]
-::      [%leaf "builds.state:"]
-::      [%rose braces build-state]
-::  ==
+  %+  welp
+    %+  expect-eq
+      !>  [lookup=~ queue=~ size=0 max-size=0 depth=1]
+      !>  compiler-cache.state
+  ::
+  ?:  =(default-state state(compiler-cache compiler-cache.default-state))
+    `tang`~
+  ::
+  =/  duct-state=(list tank)
+    %-  zing
+    %+  turn  ~(tap by ducts.state)
+    |=  [duct duct-status=duct-status:ford]
+    :~  [%leaf "duct: {<duct>}"]
+        ::  TODO: print parts of duct-status
+    ==
+  ::
+  =/  braces  [[' ' ' ' ~] ['{' ~] ['}' ~]]
+  ::
+  :~  [%leaf "failed to cleanup state:"]
+      [%rose braces duct-state]
+  ==
 --
