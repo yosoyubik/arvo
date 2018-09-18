@@ -1135,7 +1135,6 @@
             %ntbn
           =^  new-subject  progress  $(schematic subject.schematic)
           ?~  new-subject
-            ~&  %ntbn-subject-block
             block
           ?:  ?=([~ %| *] new-subject)
             (wrap-error p.u.new-subject [%leaf "ford: /> failed:"]~)
@@ -1250,24 +1249,19 @@
           --
         ::
             %ntcb
-          ~&  %run-ntcb
           ::
           =/  cache-key  [%ride hoon.schematic subject]
           =^  cache-result  progress  (access-cache cache-key)
           ::
           ?^  cache-result
-            ~&  %ntcb-cache
             [cache-result progress]
           ::  TODO: cache %slim separately
           ::
           =/  slap-trap  |.((mule |.((run-gate slap [subject hoon.schematic]))))
-          ~&  %ntcb-slap-trap
           =/  result  .*(slap-trap [9 2 0 1])
-          ~&  %ntcb-result
           ::
           =.  cache.progress  (put-in-cache cache-key result)
           ::
-          =-  ~&  %cast-ntcb-result  -
           (cast-raw-result `result progress)
         ::
             %ntdt
@@ -1370,13 +1364,11 @@
           $(schematic [%ntkt [%ntdt !>(rail)] rail.schematic])
         ::
         ?~  rail-result
-          ~&  %nttr-rail-block
           block
         ?:  ?=([~ %| *] rail-result)
           (wrap-error p.u.rail-result [%leaf "ford: /* rail build failed:"]~)
         ::
         =/  =rail  ((hard rail) q.p.u.rail-result)
-        ~&  [%nttr-rail rail]
         ::
         =?    live-resources.progress
             live
@@ -1388,7 +1380,6 @@
         ::
         =/  vane=(unit %c)         ((soft ,%c) (end 3 1 term.schematic))
         ?~  vane
-          ~&  [%nttr-no-vane term.schematic]
           =/  scry-result=(unit (unit))  ((sloy scry) term.schematic beam)
           ?~  scry-result
             ::  TODO: figure out how to handle %incomplete
@@ -1400,7 +1391,6 @@
         ::
         =/  care=(unit care:clay)  ((soft care:clay) (rsh 3 1 term.schematic))
         ?~  care
-          ~&  [%nttr-no-care term.schematic]
           =/  scry-result=(unit (unit))  ((sloy scry) term.schematic beam)
           ?~  scry-result
             ::  TODO: figure out how to handle %incomplete
@@ -1410,9 +1400,7 @@
           ::
           (handle-scry-result u.scry-result)
         ::
-        ~&  [%term term.schematic %beam beam]
         =/  =scry-request  [u.vane u.care beam]
-        ~&  [%scry-request-wut scry-request]
         ::
         =/  local-result=(unit (unit (unit cage)))
           %.  scry-request
@@ -1423,7 +1411,6 @@
           (~(got by ducts.state) duct)
         ::
         ?~  local-result
-          ~&  [%nttr-no-local term.schematic beam]
           =/  scry-result
             (scry [%141 %noun] ~ term.schematic beam)
           ::
@@ -1433,7 +1420,6 @@
               =/  put-in  ~(put in *(set ^scry-request))
               %+  run-gate  put-in(+>+< blocks.progress)
               scry-request
-            ~&  [%nttr-blocks-sig ?=(~ blocks.progress)]
             ::
             block
           ::
@@ -1551,12 +1537,10 @@
       ^-  [product ^progress]
       ::
       ?~  scry-result
-        ~&  %scry-empty-path
         (succeed !>(~))
-      ~&  %scry-full-path
       ::
       =/  =cage  u.scry-result
-      =/  result-vase=vase  (slop !>(p.cage) q.cage)
+      =/  result-vase=vase  :(slop !>(~) !>(p.cage) q.cage)
       ::
       (succeed result-vase)
     ::  +put-in-cache: place :product in :cache.progress
@@ -1564,7 +1548,6 @@
     ++  put-in-cache
       |=  [=compiler-cache-key product=*]
       ^+  cache.progress
-      ~&  %put-in-cache
       ::
       =/  put-gate  ~(put (by-clock * *) *(clock))
       %+  run-gate  put-gate(+>+< cache.progress)
@@ -1593,10 +1576,8 @@
     ~&  %on-build-blocked
     ::
     =>  .(blocks ((hard (set scry-request)) blocks))
-    ~&  %harded-blocks
     ::
     =/  block-list=(list scry-request)  ~(tap in blocks)
-    ~&  [%listed-blocks block-list]
     ::
     |-  ^+  event-core
     ?~  block-list  event-core
@@ -1743,11 +1724,7 @@
     !:
     ::  if the actual scry produces a value, use that value; otherwise use local
     ::
-    ~&  [%scry-internal term beam]
-    =/  scry-response  `(unit (unit cage))```[%bar !>(42)]
-    ::  TODO: reinstate
-    :: =/  scry-response  (scry +<.$)
-    ~&  [%real-scry-response scry-response]
+    =/  scry-response  (scry +<.$)
     ::
     ?^  scry-response
       scry-response

@@ -391,9 +391,11 @@
                   &4.i.moves
                 -:!>([%made ~1111.1.1 %complete *(each vase tang)])
         ::
+          ~&  %printing
+          ~&  [%four |5:|4.i.moves]
           %+  expect-eq
             !>  [~ %bar 42]
-            [-:!>([~ %bar 42]) +:|4:|4.i.moves]
+            [-:!>([~ %bar 42]) |5:|4.i.moves]
     ==  ==
   ::
   %+  welp
