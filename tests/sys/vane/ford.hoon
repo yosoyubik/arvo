@@ -582,6 +582,129 @@
     results1
   (expect-ford-empty ford-gate ~nul)
 ::
+++  test-nttr-sync-empty  ^-  tang
+  ::
+  =^  results1  ford-gate
+    %-  ford-call-with-comparator  :*
+      ford-gate
+      now=~1111.1.1
+      scry=(scry-fail ~1111.1.1)
+      ::  test a once scry that succeeds
+      ::
+      ^=  call-args
+        :*  duct=~[/nttr-sync-empty]  type=~  %build  ~nul  live=%.n
+            [%nttr %cx rail=[%ntdt -:!>(*rail:ford) [[~nul %home] /bar/foo]]]
+        ==
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ^-  tang
+        ::
+        ?.  ?=([* ~] moves)
+          [%leaf "wrong number of moves: {<(lent moves)>}"]~
+        ::
+        ;:  weld
+          %+  expect-eq
+            !>  duct=~[/nttr-sync-empty]
+            !>  &1.i.moves
+        ::
+          %+  expect-eq
+            !>  %give
+            !>  &2.i.moves
+        ::
+          %+  expect-eq
+            !>  %meta
+            !>  &3.i.moves
+        ::
+          %+  expect-eq
+            !>  %.y
+            !>  =<  -
+                %+  ~(nets wa *worm)
+                  &4.i.moves
+                -:!>([%made ~1111.1.1 %complete *(each vase tang)])
+        ::
+          %+  expect-eq
+            !>  ~
+            [-:!>(~) |5:|4.i.moves]
+    ==  ==
+  ::
+  %+  welp
+    results1
+  (expect-ford-empty ford-gate ~nul)
+::
+++  test-nttr-block  ^-  tang
+  ::
+  =^  results1  ford-gate
+    %-  ford-call  :*
+      ford-gate
+      now=~1111.1.1
+      scry=(scry-block ~1111.1.1)
+      ::  test a once scry that succeeds
+      ::
+      ^=  call-args
+        :*  duct=~[/nttr-block]  type=~  %build  ~nul  live=%.n
+            [%nttr %cx rail=[%ntdt -:!>(*rail:ford) [[~nul %home] /bar/foo]]]
+        ==
+      ::
+      ^=  moves
+        :~  :*  duct=~[/nttr-block]  %pass
+                wire=/~nul/scry-request/cx/~nul/home/~1111.1.1/foo/bar
+                %c  %warp  [~nul ~nul]  %home
+                ~  %sing  %x  [%da ~1111.1.1]  /foo/bar
+    ==  ==  ==
+  ::
+  =^  results2  ford-gate
+    %-  ford-take-with-comparator  :*
+      ford-gate
+      now=~2222.2.2
+      scry=scry-is-forbidden
+      ::  when clay responds, send a %made
+      ::
+      ^=  take-args
+        :*  wire=/~nul/scry-request/cx/~nul/home/~1111.1.1/foo/bar
+            duct=~[/nttr-block]
+            ^=  wrapped-sign  ^-  (hypo sign:ford-gate)  :-  *type
+            [%c %writ ~ [%x [%da ~1111.1.1] %home] /bar/foo %bar !>(42)]
+        ==
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ^-  tang
+        ::
+        ?.  ?=([* ~] moves)
+          [%leaf "wrong number of moves: {<(lent moves)>}"]~
+        ::
+        ;:  weld
+          %+  expect-eq
+            !>  duct=~[/nttr-block]
+            !>  &1.i.moves
+        ::
+          %+  expect-eq
+            !>  %give
+            !>  &2.i.moves
+        ::
+          %+  expect-eq
+            !>  %meta
+            !>  &3.i.moves
+        ::
+          %+  expect-eq
+            !>  %.y
+            !>  =<  -
+                %+  ~(nets wa *worm)
+                  &4.i.moves
+                -:!>([%made ~1111.1.1 %complete *(each vase tang)])
+        ::
+          %+  expect-eq
+            !>  [~ %bar 42]
+            [-:!>([~ %bar 42]) |5:|4.i.moves]
+    ==  ==
+  ::
+  ;:  welp
+    results1
+    results2
+    (expect-ford-empty ford-gate ~nul)
+  ==
+::
 ++  test-ntts  ^-  tang
   ::
   =^  results1  ford-gate
@@ -633,31 +756,6 @@
   %+  welp
     results1
   (expect-ford-empty ford-gate ~nul)
-::::
-::++  test-scry-clay-fail  ^-  tang
-::  ::
-::  =^  results1  ford-gate
-::    %-  ford-call  :*
-::      ford-gate
-::      now=~1234.5.6
-::      scry=(scry-fail ~1234.5.6)
-::      ::  attempting to scry a path which fails should produce an error
-::      ::
-::      ^=  call-args
-::        :*  duct=~  type=~  %build  ~nul  live=%.n
-::            [%scry %c ren=%x rail=[[~nul %desk] /bar/foo]]
-::        ==
-::      ::
-::      ^=  moves
-::        :~  :*  duct=~  %give  %made  ~1234.5.6  %complete
-::                %error
-::                :~  leaf+"scry failed for"
-::                    leaf+"%cx /~nul/desk/~1234.5.6/foo/bar"
-::    ==  ==  ==  ==
-::  ::
-::  %+  weld
-::    results1
-::    (expect-ford-empty ford-gate ~nul)
 ::::
 ::++  test-scry-clay-block  ^-  tang
 ::  ::
