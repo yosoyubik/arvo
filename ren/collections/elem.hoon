@@ -59,7 +59,12 @@
   |=  col=collection:collections
   ^-  manx
   ;ul.vanilla
-    ;*  %+  turn  ~(tap by data.col)
+    ;*  %+  turn  
+          %+  sort  ~(tap by data.col)
+          |=  [[knot a=item:collections] [knot b=item:collections]]
+          =/  a-dat  (extract-date-created a)
+          =/  b-dat  (extract-date-created b)
+          (gth a-dat b-dat)
         |=  [nom=knot ite=item:collections]
         ^-  manx
         ;li.collection-post.mt-6
@@ -109,7 +114,12 @@
       ==
       ::
       ;ul
-      ;*  %+  turn  ~(tap by data.col)  :: XX TODO: sort
+      ;*  %+  turn
+            %+  sort  ~(tap by data.col)
+            |=  [[knot a=item:collections] [knot b=item:collections]]
+            =/  a-dat  (extract-date-created a)
+            =/  b-dat  (extract-date-created b)
+            (gth a-dat b-dat)
           |=  [nom=knot ite=item:collections]
           ^-  manx
           ::  XX TODO: accept types other than comments
@@ -138,6 +148,16 @@
         =urb-ship       "{(scow %p p.bem.gas)}";
     ==
   ==
+::
+++  extract-date-created
+  |=  i=item:collections
+  ^-  @da
+  ?-  -.i
+    %collection  date-created.meta.col.i
+    %both        date-created.meta.col.i
+    %raw         (slav %da (~(got by meta.raw.i) %date-created))
+  ==
+::
 ::
 ::
 ++  item-to-snip
