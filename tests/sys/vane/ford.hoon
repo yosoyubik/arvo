@@ -60,7 +60,7 @@
   ::
   =/  call-card  [%build ~nul live=%.n [%ntdt !>(~)]]
   =+  [[moves wom] vane-vase]=(swim.wink %g ~ ~[/literal] %& !>(call-card))
-  ~&  %moved
+  ::
   ?.  ?=([* ~] moves)
     [%leaf "wrong number of moves: {<(lent moves)>}"]~
   ::
@@ -79,7 +79,6 @@
       !>  %|
       !>  &2.q.move
   ::
-    ~&  %about-to-nets
     %+  expect-eq
       !>  %.y
       !>  =<  -
@@ -87,7 +86,6 @@
             &3.q.move
           -:!>([%made ~1111.1.1 %complete %& !>(~)])
   ::
-    ~&  %checking-card
     %+  expect-eq
       !>  [%made ~1111.1.1 %complete %& !>(~)]
       !>  |3.q.move

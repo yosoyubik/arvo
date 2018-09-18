@@ -1088,7 +1088,7 @@
   ++  run-root-build
     |=  [root-build=build =^duct live=?]
     ^+  event-core
-    ~&  %run-root-build
+    ::  ~&  %run-root-build
     ::
     =+  [product progress]=(run-build root-build live)
     ::
@@ -1115,7 +1115,7 @@
     ::
     |^  ^-  [product ^progress]
         ::
-        ~&  [%run-build ?@(-.schematic -.schematic '^')]
+        ::  ~&  [%run-build ?@(-.schematic -.schematic '^')]
         ::
         ?-    -.schematic
             ^
@@ -1445,7 +1445,7 @@
         (succeed p.u.sub-result)
       ::
           %ntvt
-        $(date date.schematic, schematic rest.schematic)
+        $(date date.schematic, schematic rest.schematic, live %.n)
       ::
           %ntwt
         =^  if  progress  $(schematic [%ntkt [%ntdt !>(?)] if.schematic])
@@ -1572,7 +1572,7 @@
   ++  on-build-blocked
     |=  [=build =^duct blocks=*]
     ^+  event-core
-    ~&  %on-build-blocked
+    ::  ~&  %on-build-blocked
     ::
     =>  .(blocks ((hard (set scry-request)) blocks))
     ::
@@ -1589,7 +1589,7 @@
   ++  on-once-build-completed
     |=  [=build result=(each [p=* q=*] tang) =^duct]
     ^+  event-core
-    ~&  %on-once-build-completed
+    ::  ~&  %on-once-build-completed
     ::
     =.  ducts.state  (~(del by ducts.state) duct)
     ::
@@ -1603,7 +1603,7 @@
             live-resources=*
         ==
     ^+  event-core
-    ~&  %on-live-build-completed
+    ::  ~&  %on-live-build-completed
     ::  cast :live-resources to a usable type
     ::
     =>  .(live-resources ((hard (set ,[=term =rail])) live-resources))
