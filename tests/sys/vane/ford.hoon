@@ -532,6 +532,64 @@
     results1
   (expect-ford-empty ford-gate ~nul)
 ::
+++  test-nttr-live  ^-  tang
+  ::
+  =^  results1  ford-gate
+    %-  ford-call-with-comparator  :*
+      ford-gate
+      now=~1111.1.1
+      scry=(scry-succeed ~1111.1.1 [%bar !>(42)])
+      ::  test a live scry that succeeds
+      ::
+      ^=  call-args
+        :*  duct=~[/nttr-live]  type=~  %build  ~nul  live=%.y
+            [%nttr %cx rail=[%ntdt -:!>(*rail:ford) [[~nul %home] /bar/foo]]]
+        ==
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ^-  tang
+        ::
+        ?.  ?=([* * ~] moves)
+          [%leaf "wrong number of moves: {<(lent moves)>}"]~
+        ::
+        ;:  weld
+          %+  expect-eq
+            !>  duct=~[/nttr-live]
+            !>  &1.i.moves
+        ::
+          %+  expect-eq
+            !>  %give
+            !>  &2.i.moves
+        ::
+          %+  expect-eq
+            !>  %meta
+            !>  &3.i.moves
+        ::
+          %+  expect-eq
+            !>  %.y
+            !>  =<  -
+                %+  ~(nets wa *worm)
+                  &4.i.moves
+                -:!>([%made ~1111.1.1 %complete *(each vase tang)])
+        ::
+          %+  expect-eq
+            !>  [~ %bar 42]
+            [-:!>([~ %bar 42]) |5:|4.i.moves]
+        ::
+          %+  expect-eq
+            !>  :*  duct=~[/nttr-live]  %pass
+                wire=/~nul/clay-sub/~nul/home/~1111.1.1
+                %c  %warp  [~nul ~nul]  %home
+                `[%mult [%da ~1111.1.1] (sy [%x /foo/bar]~)]
+            ==
+            !>  i.t.moves
+    ==  ==
+  ::
+  %+  welp
+    results1
+  (expect-ford-empty ford-gate ~nul)
+::
 ++  test-nttr-sync-succeed  ^-  tang
   ::
   =^  results1  ford-gate
@@ -756,115 +814,6 @@
   %+  welp
     results1
   (expect-ford-empty ford-gate ~nul)
-::::
-::++  test-scry-clay-block  ^-  tang
-::  ::
-::  =^  results1  ford-gate
-::    %-  ford-call  :*
-::      ford-gate
-::      now=~1234.5.6
-::      scry=(scry-block ~1234.5.6)
-::      ::  when we scry on a blocked path, expect a subscription move
-::      ::
-::      ^=  call-args
-::        :*  duct=~  type=~  %build  ~nul  live=%.n
-::            [%scry %c ren=%x rail=[[~nul %desk] /bar/foo]]
-::        ==
-::      ::
-::      ^=  moves
-::        :~  :*  duct=~  %pass
-::                wire=/~nul/scry-request/cx/~nul/desk/~1234.5.6/foo/bar
-::                %c  %warp  [~nul ~nul]  %desk
-::                ~  %sing  %x  [%da ~1234.5.6]  /foo/bar
-::    ==  ==  ==
-::  ::
-::  =^  results2  ford-gate
-::    %-  ford-take  :*
-::      ford-gate
-::      now=~1234.5.7
-::      scry=scry-is-forbidden
-::      ::  when clay responds, send a %made
-::      ::
-::      ^=  take-args
-::        :*  wire=/~nul/scry-request/cx/~nul/desk/~1234.5.6/foo/bar  duct=~
-::            ^=  wrapped-sign  ^-  (hypo sign:ford-gate)  :-  *type
-::            [%c %writ ~ [%x [%da ~1234.5.6] %desk] /bar/foo %noun !>(42)]
-::        ==
-::      ::
-::      ^=  moves
-::        :~  :*  duct=~  %give  %made  ~1234.5.6  %complete  %success
-::                [%scry %noun !>(42)]
-::    ==  ==  ==
-::  ::
-::  ;:  welp
-::    results1
-::    results2
-::    (expect-ford-empty ford-gate ~nul)
-::  ==
-::::
-::++  test-scry-clay-multiblock  ^-  tang
-::  ::
-::  =^  results1  ford-gate
-::    %-  ford-call  :*
-::      ford-gate
-::      now=~1234.5.6
-::      scry=(scry-block ~1234.5.6)
-::      ::  when we scry on a blocked path, expect a subscription move
-::      ::
-::      ^=  call-args
-::        :*  duct=~[/one]  type=~  %build  ~nul  live=%.n
-::            [%scry %c ren=%x rail=[[~nul %desk] /bar/foo]]
-::        ==
-::      ::
-::      ^=  moves
-::        :~  :*  duct=~[/one]  %pass
-::                wire=/~nul/scry-request/cx/~nul/desk/~1234.5.6/foo/bar
-::                %c  %warp  [~nul ~nul]  %desk
-::                ~  %sing  %x  [%da ~1234.5.6]  /foo/bar
-::    ==  ==  ==
-::  ::
-::  =^  results2  ford-gate
-::    %-  ford-call  :*
-::      ford-gate
-::      now=~1234.5.7
-::      scry=(scry-block ~1234.5.6)
-::      ::  when we scry on a blocked path, expect a subscription move
-::      ::
-::      ^=  call-args
-::        :*  duct=~[/two]  type=~  %build  ~nul  live=%.n
-::            [%pin ~1234.5.6 [%scry %c ren=%x rail=[[~nul %desk] /bar/foo]]]
-::        ==
-::      ::
-::      ^=  moves  ~
-::    ==
-::  ::
-::  =^  results3  ford-gate
-::    %-  ford-take  :*
-::      ford-gate
-::      now=~1234.5.8
-::      scry=scry-is-forbidden
-::      ::  when clay responds, send a %made
-::      ::
-::      ^=  take-args
-::        :*  wire=/~nul/scry-request/cx/~nul/desk/~1234.5.6/foo/bar  duct=~
-::            ^=  wrapped-sign  ^-  (hypo sign:ford-gate)  :-  *type
-::            [%c %writ ~ [%x [%da ~1234.5.6] %desk] /bar/foo %noun !>(42)]
-::        ==
-::      ::
-::      ^=  moves
-::        :~  :*  duct=~[/one]  %give  %made  ~1234.5.6  %complete  %success
-::                [%scry %noun !>(42)]
-::            ==
-::            :*  duct=~[/two]  %give  %made  ~1234.5.7  %complete  %success
-::                [%scry %noun !>(42)]
-::    ==  ==  ==
-::  ::
-::  ;:  welp
-::    results1
-::    results2
-::    results3
-::    (expect-ford-empty ford-gate ~nul)
-::  ==
 ::::
 ::++  test-scry-clay-cancel  ^-  tang
 ::  ::
