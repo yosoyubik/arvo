@@ -235,7 +235,7 @@
   ^-  (quip move _this)
   ?:  ?=([%o [[%onboard %b ?] ~ ~]] jon)
     =<  ta-done
-    (ta-write:ta /web/landscape/onboard/atom [%atom !>(p.q.n.p.jon)])
+    (ta-write:ta /web/landscape/onboard/json [%json !>(jon)])
   [~ this]
 ::
 ::  +ta: main event core for collections
