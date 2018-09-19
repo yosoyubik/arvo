@@ -580,11 +580,11 @@
     ++  action-newdm
       ::  copy all behavior of create, permit, and source in that order
       ::
-      |=  {sis/(set ship)}
+      |=  {hos/ship sis/(set ship)}
       =/  nom/name
       %^  rsh  3  1
       %+  roll
-        %+  sort  %+  turn  (weld ~(tap in sis) [our.bol ~])
+        %+  sort  %+  turn  ~(tap in (~(put in sis) our.bol))
         |=  p/ship
         ^-  cord
         (scot %p p)
@@ -593,26 +593,33 @@
       ^-  @tas
       (crip "{(trip `@t`nam)}.{(slag 1 (trip p))}")
       =/  dels/(list delta)
-      :~
-      :*
-          %story
-          %inbox
-          %follow
-          &
-          [[[our.bol nom] ~] ~ ~]
+      :~  :*  %story
+              %inbox
+              %follow
+              &
+              [[[our.bol nom] ~] ~ ~]
+          ==
+          :*  %story
+              nom
+              %new
+              [[[our.bol nom] ~] ~ ~]
+              'dm'
+              ~
+              *filter
+              [%village (~(put in sis) our.bol)]
+              0
+          ==
       ==
-      :*
-          %story
-          nom
-          %new
-          [[[our.bol nom] ~] ~ ~]
-          'dm'
-          ~
-          *filter
-          [%village (~(put in sis) our.bol)]
-          0
-      ==
-      ==
+      ::  if we did not initiate the dm, source to the initiators copy
+      ::
+      =?  dels  !=(our.bol hos)
+        :_  dels
+        :*  %story
+            nom
+            %follow
+            &
+            [[[hos nom] ~] ~ ~]
+        ==
       (ta-deltas dels)
     ::
     ::  #  %messaging
