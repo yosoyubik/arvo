@@ -1115,7 +1115,7 @@
     ::
     |^  ^-  [product ^progress]
         ::
-        ::  ~&  [%run-build ?@(-.schematic -.schematic '^')]
+        ~&  [%run-build ?@(-.schematic -.schematic '^')]
         ::
         ?-    -.schematic
             ^
@@ -1249,16 +1249,66 @@
           --
         ::
             %ntcb
+          ~&  [%ntcb-hoon hoon.schematic]
           ::
           =/  cache-key  [%ride hoon.schematic subject]
           =^  cache-result  progress  (access-cache cache-key)
           ::
           ?^  cache-result
             [cache-result progress]
+          ::
+          |^  =^  slim-result  progress  (run-slim hoon.schematic p.subject)
+              ?:  ?=([~ %| *] slim-result)
+                (wrap-error slim-result [%leaf "ford: /_ slim failed:"]~)
+              ::
+              =^  mock-result  progress  (run-mock q.p.u.slim-result q.subject)
+              ?~  mock-result
+                block
+              ::
+              =.  cache.progress  (put-in-cache cache-key u.mock-result)
+              ::
+              ?:  ?=([~ %| *] mock-result)
+                (wrap-error mock-result [%leaf "ford: /_ failed:"]~)
+              ::
+              %-  cast-raw-result
+              [mock-result progress]
+          ::
+          ++  run-slim
+            |=  [=hoon subject-type=type]
+            ^-  [product ^progress]
+            ::
+            =/  slim-key  [%slim hoon.schematic p.subject]
+            =^  slim-result  progress  (access-cache slim-key)
+            ?^  slim-result
+              [slim-result progress]
+            ::
+            =/  compiled=(each (pair type nock) tang)
+              (mule |.((~(mint ut subject-type) [%noun hoon])))
+            ::
+            =.  cache.progress  (put-in-cache slim-key compiled)
+            ::
+            [`compiled progress]
+          ::
+          ++  run-mock
+            |=  [raw-nock=* raw-subject=*]
+            %-  run-gate
+            :_  [raw-nock raw-subject]
+            |=  [=nock subject=vase]
+            ^-  [product ^progress]
+            ::
+            
+            
+          ::
+          ?^  slim-result
           ::  TODO: cache %slim separately
           ::
+          ~&  %about-to-slap
           =/  slap-trap  |.((mule |.((run-gate slap [subject hoon.schematic]))))
           =/  result  .*(slap-trap [9 2 0 1])
+          ~&  %slapped
+          ::
+          =?  result  ?=(%| -.result)
+            result(+ [[%leaf "ford: /_ failed:"] +.result])
           ::
           =.  cache.progress  (put-in-cache cache-key result)
           ::
@@ -1314,6 +1364,7 @@
         (cast-raw-result raw-product)
       ::
           %ntpd
+        ::  TODO: define these helper functions outside this arm
         ::
         =/  parse-at-rail
           |=  [=rail source=@t]
@@ -1431,6 +1482,7 @@
         (handle-scry-result u.u.local-result)
       ::
           %ntts
+        ~&  [%ntts-face face.schematic]
         =^  sub-result  progress  $(schematic rest.schematic)
         ?~  sub-result
           block
@@ -1572,7 +1624,7 @@
   ++  on-build-blocked
     |=  [=build =^duct blocks=*]
     ^+  event-core
-    ::  ~&  %on-build-blocked
+    ~&  %on-build-blocked
     ::
     =>  .(blocks ((hard (set scry-request)) blocks))
     ::
@@ -1589,7 +1641,7 @@
   ++  on-once-build-completed
     |=  [=build result=(each [p=* q=*] tang) =^duct]
     ^+  event-core
-    ::  ~&  %on-once-build-completed
+    ~&  %on-once-build-completed
     ::
     =.  ducts.state  (~(del by ducts.state) duct)
     ::
@@ -1603,7 +1655,7 @@
             live-resources=*
         ==
     ^+  event-core
-    ::  ~&  %on-live-build-completed
+    ~&  %on-live-build-completed
     ::  cast :live-resources to a usable type
     ::
     =>  .(live-resources ((hard (set ,[=term =rail])) live-resources))

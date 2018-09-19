@@ -1190,7 +1190,7 @@
           ==
           ::  %keep: reset cache sizes
           ::
-          [%keep compiler-cache=@ud]
+          [%keep compiler-cache-size=@ud]
           ::  %kill: stop a build; send on same duct as original %build request
           ::
           $:  %kill
@@ -1260,6 +1260,7 @@
   ::  +schematic: ford build request, as a function of time
   ::
   +$  schematic
+    $~  [%ntdt !>(~)]
     ::    If the head of the +schematic is a pair, it's an auto-cons
     ::    schematic. Its result will be the pair of results of its
     ::    sub-schematics.

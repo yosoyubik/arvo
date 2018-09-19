@@ -583,6 +583,61 @@
     results1
   (expect-ford-empty ford-gate ~nul)
 ::
+++  test-ntpd  ^-  tang
+  ::
+  =^  results1  ford-gate
+    %-  ford-call-with-comparator  :*
+      ford-gate
+      now=~1111.1.1
+      ^=  scry
+        %-  scry-with-results
+        %-  ~(gas by *(map [term beam] cage))
+        :~  :-  [%cx [[~nul %home %da ~1111.1.1] /hoon/foo]]
+            [%hoon !>('hoon-version')]
+        ==
+      ::
+      ^=  call-args
+        :*  duct=~[/ntpd]  type=~  %build  ~nul  live=%.n
+            [%ntpd rail=[%ntdt -:!>(*rail:ford) [[~nul %home] /hoon/foo]]]
+        ==
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ^-  tang
+        ::
+        ?.  ?=([* ~] moves)
+          [%leaf "wrong number of moves: {<(lent moves)>}"]~
+        ::
+        ;:  weld
+          %+  expect-eq
+            !>  duct=~[/ntpd]
+            !>  &1.i.moves
+        ::
+          %+  expect-eq
+            !>  %give
+            !>  &2.i.moves
+        ::
+          %+  expect-eq
+            !>  %meta
+            !>  &3.i.moves
+        ::
+        *tang
+::          %+  expect-eq
+::            !>  %.y
+::            !>  =<  -
+::                %+  ~(nets wa *worm)
+::                  &4.i.moves
+::                -:!>([%made ~1111.1.1 %complete *(each vase tang)])
+::        ::
+::          %+  expect-eq
+::            !>  141
+::            [-:!>(141) |5:|4.i.moves]
+    ==  ==
+  ::
+  %+  welp
+    results1
+  (expect-ford-empty ford-gate ~nul)
+::
 ++  test-nttr-live  ^-  tang
   ::
   =^  results1  ford-gate
