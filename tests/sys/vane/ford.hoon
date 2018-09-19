@@ -621,17 +621,16 @@
             !>  %meta
             !>  &3.i.moves
         ::
-        *tang
-::          %+  expect-eq
-::            !>  %.y
-::            !>  =<  -
-::                %+  ~(nets wa *worm)
-::                  &4.i.moves
-::                -:!>([%made ~1111.1.1 %complete *(each vase tang)])
-::        ::
-::          %+  expect-eq
-::            !>  141
-::            [-:!>(141) |5:|4.i.moves]
+          %+  expect-eq
+            !>  %.y
+            !>  =<  -
+                %+  ~(nets wa *worm)
+                  &4.i.moves
+                -:!>([%made ~1111.1.1 %complete *(each vase tang)])
+        ::
+          %+  expect-eq
+            !>  141
+            [-:!>(141) |5:|4.i.moves]
     ==  ==
   ::
   %+  welp

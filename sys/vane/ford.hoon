@@ -796,6 +796,7 @@
   ::
   ++  finalize
     ^-  [(list move) ford-state]
+    ~&  %finalize
     [(flop moves) state]
   ::  |entry-points: externally fired arms
   ::
@@ -969,7 +970,7 @@
     ::    of +wipe with anything other than 100% retention rate will
     ::    always eventually remove every build.
     ::
-    =/  num-completed-builds=@ud  
+    =/  num-completed-builds=@ud
       %-  (hard @ud)
       %+  run-gate
         |=((clock * *) size)
@@ -1109,21 +1110,27 @@
       [blocks=`*`~ live-resources=`*`~ cache=`*`compiler-cache.state]
     ::
     =/  subject=vase  pit
+    =/  depth=@ud  0
     ::
     |=  [[date=@da =schematic] live=?]
     ^-  [product ^progress]
     ::
     |^  ^-  [product ^progress]
+        =.  depth  +(depth)
         ::
-        ~&  [%run-build ?@(-.schematic -.schematic '^')]
+        ~&  (pad ?@(-.schematic `tape`['%' (trip `@t`-.schematic)] "^"))
         ::
         ?-    -.schematic
             ^
+          ~&  (pad "^ head start")
           =^  head  progress  $(schematic -.schematic)
+          ~&  (pad "^ head end")
           ?:  ?=([~ %| *] head)
             (wrap-error p.u.head [%leaf "ford: head of cell build failed:"]~)
           ::
+          ~&  (pad "^ tail start")
           =^  tail  progress  $(schematic +.schematic)
+          ~&  (pad "^ tail end")
           ?:  ?=([~ %| *] tail)
             (wrap-error p.u.tail [%leaf "ford: tail of cell build failed:"]~)
           ::
@@ -1133,24 +1140,32 @@
           (succeed [[%cell p.p.u.head p.p.u.tail] q.p.u.head q.p.u.tail])
         ::
             %ntbn
+          ~&  (pad "%ntbn subject start")
           =^  new-subject  progress  $(schematic subject.schematic)
+          ~&  (pad "%ntbn subject end")
           ?~  new-subject
             block
           ?:  ?=([~ %| *] new-subject)
             (wrap-error p.u.new-subject [%leaf "ford: /> failed:"]~)
           ::
+          ~&  (pad "%ntbn rest start")
           =/  raw-gate  ..^$(subject p.u.new-subject, schematic rest.schematic)
           ::
+          =-  ~&  (pad "%ntbn rest end")  -
           %-  cast-raw-result
           .*(raw-gate [9 2 0 1])
         ::
             %ntbs
+          ~&  (pad "%ntbs start gate")
           =^  gate  progress  $(schematic gate.schematic)
+          ~&  (pad "%ntbs end gate")
           ::
           ?:  ?=([~ %| *] gate)
             (wrap-error p.u.gate [%leaf "ford: /$ gate build failed"]~)
           ::
+          ~&  (pad "%ntbs start sample")
           =^  sample  progress  $(schematic sample.schematic)
+          ~&  (pad "%ntbs end sample")
           ::
           ?:  ?=([~ %| *] sample)
             (wrap-error p.u.sample [%leaf "ford: /$ sample build failed"]~)
@@ -1158,20 +1173,33 @@
           ?~  gate    block
           ?~  sample  block
           ::
+          ?^  -.p.p.u.gate
+            ~&  [%gate -.p.p.u.gate]
+            ~&  [%sample -.p.p.u.sample]
+            !!
+          ::
+          ?^  -.p.p.u.sample
+            ~&  [%gate -.p.p.u.gate]
+            ~&  [%sample -.p.p.u.sample]
+            !!
+          ::
           |^  ^-  [product ^progress]
               ::
+              ~&  (pad "%ntbs about to infer")
               =^  inferred-product-type  progress
                 %-  cast-raw-result
                 (run-gate infer-product-type p.p.u.gate p.p.u.sample)
+              ~&  (pad "%ntbs inferred")
               ::
               ?<  ?=(~ inferred-product-type)
               ::
               ?:  ?=([~ %| *] inferred-product-type)
                 (fail p.u.inferred-product-type)
               ::
+              =-  ~&  (pad "%ntbs done")  -
               %-  cast-raw-result
               %+  run-gate  perform-call
-              [p.u.inferred-product-type q.p.u.gate q.p.u.sample]
+              [p.p.u.inferred-product-type q.p.u.gate q.p.u.sample]
           ::
           ++  infer-product-type
             |=  [gate-type=type sample-type=type]
@@ -1187,6 +1215,7 @@
               (mule |.((slit gate-type sample-type)))
             ::
             ?:  ?=(%| -.product)
+              ~&  (pad "%ntbs slit failed")
               ::  flesh out error message if failed
               ::
               =.  p.product
@@ -1199,12 +1228,14 @@
               =.  cache.progress  (put-in-cache cache-key product)
               ::
               [`product progress]
+            ~&  (pad "%ntbs slit succeeded")
             ::  contrive a vase out of the slit result; we'll only use the type
             ::
             ::    This is a bit ugly, but it means we don't need a special
             ::    type of cache line for +slit.
             ::
             =/  product-vase=vase  [p.product 0]
+            ~&  (pad "%ntbs slit product {<-.p.product>}")
             ::
             =.  cache.progress  (put-in-cache cache-key [%& product-vase])
             ::
@@ -1221,6 +1252,7 @@
               [cache-result progress]
             ::
             =/  product  (mong [gate sample] intercepted-scry)
+            ~&  (pad "%ntbs-ran-product")
             ?-    -.product
                 %0
               =/  success=vase  [product-type p.product]
@@ -1249,29 +1281,33 @@
           --
         ::
             %ntcb
-          ~&  [%ntcb-hoon hoon.schematic]
           ::
-          =/  cache-key  [%ride hoon.schematic subject]
-          =^  cache-result  progress  (access-cache cache-key)
+          =/  ride-key  [%ride hoon.schematic subject]
+          =^  ride-result  progress  (access-cache ride-key)
           ::
-          ?^  cache-result
-            [cache-result progress]
+          ?^  ride-result
+            [ride-result progress]
           ::
           |^  =^  slim-result  progress  (run-slim hoon.schematic p.subject)
+              ?<  ?=(~ slim-result)
               ?:  ?=([~ %| *] slim-result)
-                (wrap-error slim-result [%leaf "ford: /_ slim failed:"]~)
+                (wrap-error p.u.slim-result [%leaf "ford: /_ slim failed:"]~)
+              ~&  (pad "%ntcb-ran-slim")
               ::
-              =^  mock-result  progress  (run-mock q.p.u.slim-result q.subject)
+              =^  mock-result  progress  (run-mock q.subject q.p.u.slim-result)
+              ~&  (pad "%ntcb-ran-mock")
               ?~  mock-result
                 block
               ::
-              =.  cache.progress  (put-in-cache cache-key u.mock-result)
+              =/  full-result=(each [p=* q=*] tang)
+                ?:  ?=([~ %| *] mock-result)
+                  [%| [[%leaf "ford: /_ failed:"] p.u.mock-result]]
+                [%& p.p.u.slim-result q.p.u.mock-result]
               ::
-              ?:  ?=([~ %| *] mock-result)
-                (wrap-error mock-result [%leaf "ford: /_ failed:"]~)
+              =.  cache.progress  (put-in-cache ride-key full-result)
               ::
               %-  cast-raw-result
-              [mock-result progress]
+              [`full-result progress]
           ::
           ++  run-slim
             |=  [=hoon subject-type=type]
@@ -1290,29 +1326,29 @@
             [`compiled progress]
           ::
           ++  run-mock
-            |=  [raw-nock=* raw-subject=*]
-            %-  run-gate
-            :_  [raw-nock raw-subject]
-            |=  [=nock subject=vase]
+            |=  [raw-subject=* raw-formula=*]
             ^-  [product ^progress]
             ::
-            
-            
-          ::
-          ?^  slim-result
-          ::  TODO: cache %slim separately
-          ::
-          ~&  %about-to-slap
-          =/  slap-trap  |.((mule |.((run-gate slap [subject hoon.schematic]))))
-          =/  result  .*(slap-trap [9 2 0 1])
-          ~&  %slapped
-          ::
-          =?  result  ?=(%| -.result)
-            result(+ [[%leaf "ford: /_ failed:"] +.result])
-          ::
-          =.  cache.progress  (put-in-cache cache-key result)
-          ::
-          (cast-raw-result `result progress)
+            =/  mock-result  (mock [raw-subject raw-formula] intercepted-scry)
+            ::
+            ?-  -.mock-result
+                %0
+              (succeed -:!>(**) p.mock-result)
+            ::
+                %1
+              =/  blocked-paths=(list path)  ((hard (list path)) p.mock-result)
+              =.  blocks.progress
+                %+  run-gate
+                  =/  gate  ~(gas in *(set [=term =beam]))
+                  gate(+>+< a=blocks.progress)
+                (turn blocked-paths path-to-scry-request)
+              ::
+              block
+            ::
+                %2
+              (fail p.mock-result)
+            ==
+          --
         ::
             %ntdt
           (succeed literal.schematic)
@@ -1330,6 +1366,7 @@
             :-  %ntcb
             ^-  hoon
             [%kthp [%like ~[%spec] ~] [%limb %rest]]
+          ~&  (pad "%ntkt-new-schematic")
           ::
           $(schematic new-schematic)
       ::
@@ -1338,10 +1375,12 @@
       ::
           %ntnt
         =^  new-subject  progress  $(schematic subject.schematic)
+        ~&  (pad "%ntnt-ran-subject")
         ::  ensure type safety inside the build so we get a real schematic
         ::
         =^  new-schematic  progress
           $(schematic [%ntkt [%ntdt !>(^schematic)] schematic.schematic])
+        ~&  (pad "%ntnt-ran-schematic")
         ::
         ?~  new-subject    block
         ?~  new-schematic  block
@@ -1360,6 +1399,7 @@
           ..^$(subject p.u.new-subject, schematic q.p.u.new-schematic)
         ::
         =/  raw-product=*  .*(raw-run-build-gate [9 2 0 1])
+        ~&  (pad "%ntnt-ran-product")
         ::
         (cast-raw-result raw-product)
       ::
@@ -1369,16 +1409,21 @@
         =/  parse-at-rail
           |=  [=rail source=@t]
           ^-  hoon
+          !:
+          ~&  (pad "%parse-at-rail {<rail>}")
           =/  parse-path=path  (en-beam [[ship.disc desk.disc %ud 0] spur]:rail)
           (rain parse-path source)
         ::
         =/  extract-source
           |=  [=rail result=(unit [mark=term data=@t])]
           ^-  @t
+          !:
+          ~&  (pad "%ntpd extracting")
           ?~  result
             ~|  "ford: /& failed: file not found at {<rail>}"  !!
           ?.  =(%hoon mark.u.result)
             ~|  "ford: /& failed: bad mark {<mark.u.result>} at {<rail>}"  !!
+          ~&  (pad "%ntpd extracted")
           ::
           data.u.result
         ::
@@ -1482,7 +1527,7 @@
         (handle-scry-result u.u.local-result)
       ::
           %ntts
-        ~&  [%ntts-face face.schematic]
+        ~&  (pad "%ntts-face {<face.schematic>}")
         =^  sub-result  progress  $(schematic rest.schematic)
         ?~  sub-result
           block
@@ -1513,6 +1558,10 @@
           %|  $(schematic else.schematic)
         ==
       ==
+    ++  pad
+      |=  a=tape
+      ^-  tape
+      (weld `tape`(reap depth ' ') a)
     ::  +cast-raw-result: runtime cast to placate the type system
     ::
     ++  cast-raw-result
@@ -1564,7 +1613,7 @@
     ++  succeed
       |=  success=*
       ^-  [product ^progress]
-      ::  must nest in +vase
+      ::  :success is really a vase, but we can't prove that
       ::
       ?>  ?=(^ success)
       ::
@@ -1597,7 +1646,7 @@
     ::  +put-in-cache: place :product in :cache.progress
     ::
     ++  put-in-cache
-      |=  [=compiler-cache-key product=*]
+      |=  [compiler-cache-key=* product=*]
       ^+  cache.progress
       ::
       =/  put-gate  ~(put (by-clock * *) *(clock))
@@ -1695,7 +1744,7 @@
     ::  TODO: don't send move if result is same as previous result
     ::
     =.  event-core  (send-complete date.build result duct)
-    :: 
+    ::
     =/  subscription=(unit subscription)
       ?~  resources-by-disc
         ~
@@ -1800,7 +1849,7 @@
       =<  scry-results
       %-  current-status
       (~(got by ducts.state) duct)
-    :: 
+    ::
     ?~  local-result
       ~
     ?~  u.local-result
@@ -2003,16 +2052,13 @@
 ::    and %wipe requests work across all identities stored in Ford, though.
 ::
 ++  call
-  |=  [=duct type=* wrapped-task=(hobo task:able)]
+  |=  [=duct type=* task=(hobo task:able)]
   ^-  [p=(list move) q=_ford-gate]
-  ::  unwrap :task from :wrapped-task
+  ::  make sure :task is not a %soft +hobo
   ::
-  ::    TODO: this will fail if actually called, since it calls (hard type)
-  ::
-  =/  task=task:able
-    ?.  ?=(%soft -.wrapped-task)
-      wrapped-task
-    ((hard task:able) p.wrapped-task)
+  ?:  ?=(%soft -.task)
+    ~&  %ford-cannot-soft-task
+    [~ ford-gate]
   ::
   ?-    -.task
       ::  %build: request to perform a build
