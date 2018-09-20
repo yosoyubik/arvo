@@ -5150,6 +5150,106 @@
       (some (~(run by lum) need))
     --  ::dejs-soft
   --
+++  marker
+  =>
+  |%
+  +$  mark-descriptor
+    $:  sample-mold=mold
+        grows=(set term)
+        grabs=(set term)
+        grad=(each delegate=term form=term)
+    ==
+  --
+  |%
+  ++  cast
+    |=  [data=* [start=[=mark =disc] end=[=mark =disc]]]
+    ^-  schematic:ford
+    ::
+    :+  %ntls  [%ntts %start-descriptor (build-mark-analyzer start)]
+    :+  %ntls  [%ntts %end-descriptor (build-mark-analyzer end)]
+    ::
+    !!
+  ::
+  ++  validate
+    |=  [data=* mark=term =disc]
+    ^-  schematic:ford
+    ::
+    :+  %ntls  [%ntts %analyzed (build-mark-analyzer mark disc)]
+    :+  %ntkt  [%ntcb [%wing ~[%sample-mold %descriptor %analyzed]]]
+    ::
+    :+  %ntbs  :-  %ntcb
+               ^-  hoon
+               :+  %tsld  [%limb %noun]
+               :+  %tsld  [%limb %grab]
+               [%wing ~[%core %analyzed]]
+    ::
+    [%ntdt %noun data]
+  ::
+  ++  build-mark-loader
+    |=  [mark=term =disc]
+    ^-  schematic:ford
+    ::  TODO: support marks loading libraries; maybe fix /&
+    ::
+    :-  %ntpd
+    ::  TODO: convert mark/in/folder to mark-in-folder
+    ::
+    :-  %ntdt
+    !>([disc /hoon/[mark]/mar])
+  ::
+  ++  build-mark-analyzer
+    |=  [mark=term =disc]
+    ^-  schematic:ford
+    ::
+    ::  /^  /.  mark-descriptor
+    ::  /+  /=  mark-core  (build-mark-loader mark disc)
+    ::  ::
+    ::  :-  /=  sample-mold  _+<:mark-core
+    ::  /$  /.  analyze-mark-core
+    ::  :-  /.  mark
+    ::  !>(mark-core)
+    ::
+    ::  load :mark-core from source
+    ::
+    :+  %ntls  [%ntts %mark-core (build-mark-loader mark disc)]
+    ::  produce cell of mark :core and :descriptor
+    ::
+    :-  [%ntts %core [%ntcb [%limb %mark-core]]]
+    ::  cast :descriptor product to +mark-descriptor
+    ::
+    :+  %ntts  %descriptor
+    :+  %ntkt  [%ntdt !>(mark-descriptor)]
+    ::  extract mark sample mold at _+<:mark-core
+    ::
+    :-  [%ntcb (ream '_+<:mark-core')]
+    ::  call +analyze-mark-core to get the rest of the +mark-descriptor
+    ::
+    :+  %ntbs  [%ntdt !>(analyze-mark-core)]
+    :-  [%ntdt !>(mark)]
+    [%ntcb (ream '!>(mark-core)')]
+  ::  +analyze-mark-core: produce [grows grabs grad] of a mark-descriptor
+  ::
+  ++  analyze-mark-core
+    |=  [mark=term mark-core=vase]
+    ^+  +:*mark-descriptor
+    ::
+    =/  sample-mold  (mold q:(slap mark-core ~ ~]))
+    ::
+    =/  grows  (~(gas in *(set term)) (sloe -:(slap mark-core [%limb %grow])))
+    =/  grabs  (~(gas in *(set term)) (sloe -:(slap mark-core [%limb %grab])))
+    ::
+    =/  grad-vase  (slap mark-core [%limb %grad])
+    ?@  q.grad-vase
+      ~|  [%bad-grad-arm mark=mark]
+      ?>  ((sane %tas) q.grad-vase)
+      ::
+      [sample-mold grows grabs grad=[%& delegate=`@tas`q.grad-vase]]
+    ::
+    =/  form-vase  (slap grad-vase [%limb %form])
+    ~|  [%bad-grad-form mark=mark]
+    ?>  ((sane %tas) q.form-vase)
+    ::
+    [sample-mold grows grabs grad=[%| form=`@tas`q.form-vase]]
+  --
 ::                                                      ::
 ::::                      ++differ                      ::  (2d) hunt-mcilroy
   ::                                                    ::::
