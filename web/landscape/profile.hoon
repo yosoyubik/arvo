@@ -10,7 +10,7 @@
 --
 ^-  manx
 ;div.profile-page
-  ;input(type "hidden", name "urb-header", value "profile", ship "{(scow %p p.bem.gas)}");
+  ;input(type "hidden", name "urb-header", value "header-profile", ship "{(scow %p p.bem.gas)}");
   ;div.container
     ;div.row
       ;div.col-sm-offset-2.col-sm-10
@@ -23,7 +23,7 @@
     ;div.row
       ;div.col-sm-offset-2.col-sm-10
         ;div(urb-component "ChatList", urb-hostship "{(scow %p p.bem.gas)}");
-        ;div.text-600.mt-8: Meta
+        ;div.text-700.mt-8: Meta
         ;div.mt-2.text-500.row
           ;span.col-sm-2: Started:
           ;span.col-sm-10.text-mono: ~2018.4.12..6.45.12
