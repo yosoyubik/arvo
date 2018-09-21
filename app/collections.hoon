@@ -157,7 +157,10 @@
   ::
   =/  elm=manx   elm:(static:cram (ream data.raw))
   =/  snip=marl  tal:(hedtal +.elm)
-  =/  inner      (crip (en-xml:html -.snip))    :: inner html
+  =/  inner
+    ?~  snip 
+      (crip (en-xml:html elm)) 
+    (crip (en-xml:html i.snip))    :: inner html
   ::
   =/  parent-spur  [%collections-config (slag 1 (flop pax))]
   =/  bek=beak     byk.bol(r [%da now.bol])
