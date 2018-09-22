@@ -5155,38 +5155,84 @@
   |%
   +$  mark-descriptor
     $:  sample-mold=mold
-        grows=(set term)
-        grabs=(set term)
-        grad=(each delegate=term form=term)
+        grows=(set mark)
+        grabs=(set mark)
+        grad=(each delegate=mark form=mark)
     ==
+  +$  mark-conversion  [arm=?(%grab %grow) source=mark target=mark]
   --
   |%
-  ++  cast
-    |=  [data=* [start=[=mark =disc] end=[=mark =disc]]]
-    ^-  schematic:ford
-    ::
-    :+  %ntls  [%ntts %start-descriptor (build-mark-analyzer start)]
-    :+  %ntls  [%ntts %end-descriptor (build-mark-analyzer end)]
-    ::
-    !!
+  ::  +bunt: produce the default value for a :mark on a :disc
   ::
-  ++  validate
-    |=  [data=* mark=term =disc]
+  ++  bunt
+    |=  [=mark =disc]
     ^-  schematic:ford
     ::
     :+  %ntls  [%ntts %analyzed (build-mark-analyzer mark disc)]
-    :+  %ntkt  [%ntcb [%wing ~[%sample-mold %descriptor %analyzed]]]
     ::
-    :+  %ntbs  :-  %ntcb
-               ^-  hoon
-               :+  %tsld  [%limb %noun]
-               :+  %tsld  [%limb %grab]
-               [%wing ~[%core %analyzed]]
+    [%ntcb ^~((ream '*sample-mold.analyzed'))]
+  ::  +cast: convert :data from mark :start to mark :end
+  ::
+  ++  cast
+    |=  [data=vase start=[=mark =disc] end=[=mark =disc]]
+    ^-  schematic:ford
     ::
+    :+  %ntbs
+      (build-mark-converter start end)
+    [%ntdt data]
+  ::  +build-mark-converter: build a gate to transform :start data to :end
+  ::
+  ++  build-mark-converter
+    |=  [start=[=mark =disc] end=[=mark =disc]]
+    ^-  schematic:ford
+    ::
+    :+  %ntls  [%ntts %start (build-mark-analyzer start)]
+    :+  %ntls  [%ntts %end (build-mark-analyzer end)]
+    ::  make sure we produce a gate with the right type signature
+    ::
+    :+  %ntkt
+      :-  %ntcb
+      ^~((ream '$-(sample-mold.descriptor.start sample-mold.descriptor.end)'))
+    ::
+    :^  %ntwt  [%ntcb ^~((ream '(~(has in grabs.descriptor.end) start-mark'))]
+      ::
+      [%ntcb ^~((ream (cat 3 mark.start ':grab:core.end')))]
+    ::
+    :-  %ntcb
+    ^-  hoon
+    :+  %brts
+      [%like ~[%sample-mold %descriptor %start] ~]
+    :+  %tsld
+      [%limb mark.start]
+    [%cnsg ~[%grow] [%wing ~[%core %start]] [%cnts [%.y p=6]~ ~]~]
+  ::
+  ++  diff
+    !!
+  ++  join
+    !!
+  ++  patch
+    !!
+  ::
+  ++  validate
+    |=  [data=* =mark =disc]
+    ^-  schematic:ford
+    ::
+    :+  %ntls  [%ntts %analyzed (build-mark-analyzer mark disc)]
+    ::
+    :+  %ntkt  [%ntcb ^~((ream 'sample-mold.descriptor.analyzed'))]
+    ::
+    :+  %ntbs
+      [%ntcb ^~((ream 'grab:noun:core.analyzed'))]
     [%ntdt %noun data]
   ::
+  ++  build-mark-conversion
+    |=  [=mark-conversion =disc]
+    ^-  schematic:ford
+    ::
+    !!
+  ::
   ++  build-mark-loader
-    |=  [mark=term =disc]
+    |=  [=mark =disc]
     ^-  schematic:ford
     ::  TODO: support marks loading libraries; maybe fix /&
     ::
@@ -5195,9 +5241,14 @@
     ::
     :-  %ntdt
     !>([disc /hoon/[mark]/mar])
+  ::  +build-mark-analyzer: produce a ford build to analyze a mark on a disc
+  ::
+  ::    Analyzes a mark on a disc, producing a cell of:
+  ::      :core is the mark core, as loaded and compiled from source.
+  ::      :descriptor is a +mark-descriptor that is the result of the analysis.
   ::
   ++  build-mark-analyzer
-    |=  [mark=term =disc]
+    |=  [=mark =disc]
     ^-  schematic:ford
     ::
     ::  /^  /.  mark-descriptor
@@ -5220,16 +5271,16 @@
     :+  %ntkt  [%ntdt !>(mark-descriptor)]
     ::  extract mark sample mold at _+<:mark-core
     ::
-    :-  [%ntcb (ream '_+<:mark-core')]
+    :-  [%ntcb ^~((ream '_+<:mark-core'))]
     ::  call +analyze-mark-core to get the rest of the +mark-descriptor
     ::
     :+  %ntbs  [%ntdt !>(analyze-mark-core)]
     :-  [%ntdt !>(mark)]
-    [%ntcb (ream '!>(mark-core)')]
+    [%ntcb ^~((ream '!>(mark-core)'))]
   ::  +analyze-mark-core: produce [grows grabs grad] of a mark-descriptor
   ::
   ++  analyze-mark-core
-    |=  [mark=term mark-core=vase]
+    |=  [=mark mark-core=vase]
     ^+  +:*mark-descriptor
     ::
     =/  sample-mold  (mold q:(slap mark-core ~ ~]))
