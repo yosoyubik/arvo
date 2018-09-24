@@ -5168,9 +5168,9 @@
     |=  [=mark =disc]
     ^-  schematic:ford
     ::
-    :+  %ntls  [%ntts %analyzed (build-mark-analyzer mark disc)]
-    ::
-    [%ntcb ^~((ream '*sample-mold.analyzed'))]
+    :+  %ntbn
+      (build-mark-analyzer mark disc)
+    [%ntcb ^~((ream '*sample-mold.descriptor'))]
   ::  +cast: convert :data from mark :start to mark :end
   ::
   ++  cast
@@ -5204,10 +5204,83 @@
       [%like ~[%sample-mold %descriptor %start] ~]
     :+  %tsld
       [%limb mark.start]
-    [%cnsg ~[%grow] [%wing ~[%core %start]] [%cnts [%.y p=6]~ ~]~]
+    [%cnsg ~[%grow] [%wing ~[%core %start]] [%cnts [%& 6]~ ~]~]
+  ::  +diff: produce a diff between two nouns of mark :mark
+  ::
+  ::    The result of the build will be (a vase of) a pair of
+  ::    the mark of the diff and the noun representing the diff.
   ::
   ++  diff
-    !!
+    |=  [start=vase end=vase =mark =disc]
+    ^-  schematic:ford
+    ::
+    :+  %ntbs
+      (build-mark-differ mark disc)
+    [[%ntdt start] [%ntdt end]]
+  ::  +build-mark-differ: build a gate to diff two nouns of mark :mark
+  ::
+  ++  build-mark-differ
+    |=  [=mark =disc]
+    ^-  schematic:ford
+    ::
+    :+  %ntls  [%ntts %analyzed (build-mark-analyzer mark disc)]
+    ::
+    :^    %ntwt
+        [%ntcb ^~((ream '?=(%| -.grad.descriptor.analyzed)'))]
+      ::  :mark defines its own diffing; build a gate from that
+      ::
+      :+  %brts
+        :-  %bscl
+        :~  [%bsts %start [%like ~[%sample-mold %descriptor %analyzed] ~]]
+            [%bsts %end [%like ~[%sample-mold %descriptor %analyzed] ~]]
+        ==
+      ::
+      :+  %clhp
+        :+  %ktts  %mark
+        :+  %wtbn
+          ^~((ream '?=(%| -.grad.descriptor.analyzed)'))
+        ^~((ream 'p.grad.descriptor.analyzed'))
+      ::
+      ^~((ream '(~(diff core.analyzed start) end)'))
+    ::  :mark delegates its diffing to the :delegate mark; recurse on that
+    ::
+    :+  %ntls  :+  %ntts  %delegate
+      :-  %ntcb
+      ^-  hoon
+      :+  %wtbn
+        ^~((ream '?=(%& -.grad.descriptor.analyzed)'))
+      ^~((ream 'p.grad.descriptor.analyzed'))
+    ::
+    :+  %ntls  [%ntts %build-mark-converter [%ntdt !>(build-mark-converter)]]
+    :+  %ntls  [%ntts %build-mark-differ [%ntdt !>(build-mark-differ)]]
+    ::  create a :converter gate that can convert data to the :delegate mark
+    ::
+    :+  %ntls  :+  %ntts  %converter
+      :+  %ntnt
+        [%ntcb ^~((ream '.'))]
+      :-  %ntcb
+      ^-  hoon
+      :^    %clls
+          ^~((ream '%ntbs'))
+        ^~((ream '[%ntcb [%limb %build-mark-converter]]'))
+      ^~((ream '[[mark disc] [delegate disc]]'))
+    ::  produce the delegate differ gate by recursing
+    ::
+    :+  %ntls  :+  %ntts  %delegate-differ
+      :+  %ntnt
+        [%ntcb ^~((ream '.'))]
+      [%ntcb ^~((ream '(build-mark-differ delegate disc)'))]
+    ::  now produce the full differ gate
+    ::
+    :+  %ntcb
+    ^-  hoon
+    :+  %brts
+      :-  %bscl
+      :~  [%bsts %start [%like ~[%sample-mold %descriptor %analyzed] ~]]
+          [%bsts %end [%like ~[%sample-mold %descriptor %analyzed] ~]]
+      ==
+    ^~((ream '(delegate-differ (converter start) (converter end))'))
+  ::
   ++  join
     !!
   ++  patch
@@ -5224,12 +5297,6 @@
     :+  %ntbs
       [%ntcb ^~((ream 'grab:noun:core.analyzed'))]
     [%ntdt %noun data]
-  ::
-  ++  build-mark-conversion
-    |=  [=mark-conversion =disc]
-    ^-  schematic:ford
-    ::
-    !!
   ::
   ++  build-mark-loader
     |=  [=mark =disc]
