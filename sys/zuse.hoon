@@ -5241,7 +5241,7 @@
           ^~((ream '?=(%| -.grad.descriptor.analyzed)'))
         ^~((ream 'p.grad.descriptor.analyzed'))
       ::
-      ^~((ream '(~(diff core.analyzed start) end)'))
+      ^~((ream '(diff:~(grad core.analyzed start) end)'))
     ::  :mark delegates its diffing to the :delegate mark; recurse on that
     ::
     :+  %ntls  :+  %ntts  %delegate
@@ -5260,10 +5260,7 @@
         [%ntcb ^~((ream '.'))]
       :-  %ntcb
       ^-  hoon
-      :^    %clls
-          ^~((ream '%ntbs'))
-        ^~((ream '[%ntcb [%limb %build-mark-converter]]'))
-      ^~((ream '[[mark disc] [delegate disc]]'))
+      ^~((ream '(build-mark-converter [[mark disc] [delegate disc]])'))
     ::  produce the delegate differ gate by recursing
     ::
     :+  %ntls  :+  %ntts  %delegate-differ
