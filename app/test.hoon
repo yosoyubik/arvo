@@ -166,6 +166,7 @@
     :-  /ren/x-collections-snip          "temporarily disabled"
     :-  /ren/x-collections-json          "temporarily disabled"
     :-  /ren/urb            "temporarily disabled"
+    :-  /ren/code            "temporarily disabled"
   ::
     :-  /app/gh             "hangs for some reason"
     :-  /mar/gh             "hangs for some reason"
@@ -190,6 +191,7 @@
     :-  /web/pack/js/tree-urb                          "obsolete syntax"
     :-  /web/unmark/all       "obsolete syntax"
     :-  /web/landscape      "/$ doensn't work in tests"
+    :-  /web/code           "/$ doensn't work in tests"
   ==
 ::
 ++  failing
