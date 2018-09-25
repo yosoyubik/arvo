@@ -1,4 +1,4 @@
-/+  *test
+/+  *test, marker
 ::
 /=  ford-base   /:  /===/sys/vane/ford  /!noun/
 /=  arvo-core   /:  /===/sys/arvo       /!noun/ 
@@ -25,6 +25,213 @@
 =/  wink  (wink.vane ~1111.1.1 0xdead.beef *sley)
 ::
 |%
+++  test-marker-analyze  ^-  tang
+  ::
+  =/  hoon-src-type=type  -:!>('')
+  =/  mark-core
+    =>  ..zuse
+    |_  foo-sample=[@ @]
+    ++  grow
+      |%
+      ++  bar  foo-sample
+      ++  baz  foo-sample
+      --
+    ++  grab
+      |%
+      ++  noun  ,[@ @]
+      ++  baz   ,[@ @]
+      --
+    ++  grad  %bar
+    --
+  ::
+  =/  scry
+    %-  scry-with-results
+    ^-  (map [term beam] cage)
+    %-  my  :~
+      :-  [%cx [[~nul %home %da ~1111.1.1] /hoon/foo/mar]]
+      :+  %hoon  hoon-src-type
+      '''
+      |_  foo-sample=[@ @]
+      ++  grow
+        |%
+        ++  bar  foo-sample
+        ++  baz  foo-sample
+        --
+      ++  grab
+        |%
+        ++  noun  ,[@ @]
+        ++  baz   ,[@ @]
+        --
+      ++  grad  %bar
+      --
+      '''
+    ==
+  ::
+  =/  schematic=schematic:ford:marker
+    (build-mark-analyzer:marker %foo [~nul %home])
+  ::
+  =^  results1  ford-gate
+    %-  ford-call-with-comparator  :*
+      ford-gate
+      now=~1111.1.1
+      scry=scry
+      call-args=[duct=~[/analyze] type=~ %build ~nul live=%.n schematic]
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ^-  tang
+        ::
+        ?.  ?=([* ~] moves)
+          [%leaf "wrong number of moves: {<(lent moves)>}"]~
+        ::
+        =/  result             |5:|4.i.moves
+        =/  result-core        -.result
+        =/  result-descriptor  +.result
+        ::
+        ;:  weld
+          %+  expect-eq
+            !>  duct=~[/analyze]
+            !>  &1.i.moves
+        ::
+          %+  expect-eq
+            !>  %give
+            !>  &2.i.moves
+        ::
+          %+  expect-eq
+            !>  %meta
+            !>  &3.i.moves
+        ::
+          %+  expect-eq
+            !>  %.y
+            !>  =<  -
+                %+  ~(nets wa *worm)
+                  &4.i.moves
+                -:!>([%made ~1111.1.1 %complete *(each vase tang)])
+        ::
+          %+  expect-eq
+            !>  %.y
+            !>  =<  -
+                %+  ~(nets wa *worm)
+                  &5:|4.i.moves
+                -:!>([core=mark-core descriptor=*mark-descriptor:marker])
+        ::  check the :sample-mold.descriptor by bunting it in raw nock
+        ::
+          %+  expect-eq
+            !>  [0 0]
+            :-  -:!>(*[@ @])
+            .*(-.result-descriptor [9 2 0 1])
+        ::
+          %+  expect-eq
+            !>  :*  grows=(sy %bar %baz ~)
+                    grabs=(sy %noun %baz ~)
+                    grad=[%& %bar]
+                ==
+            :-  -:!>([+:*mark-descriptor:marker])
+            +.result-descriptor
+    ==  ==
+  ::
+  ;:  welp
+    results1
+    (expect-ford-empty ford-gate ~nul)
+  ==
+::
+++  test-marker-bunt  ^-  tang
+  ::
+  =/  hoon-src-type=type  -:!>('')
+  =/  mark-core
+    =>  ..zuse
+    |_  foo-sample=[@ @]
+    ++  grow
+      |%
+      ++  bar  foo-sample
+      ++  baz  foo-sample
+      --
+    ++  grab
+      |%
+      ++  noun  ,[@ @]
+      ++  baz   ,[@ @]
+      --
+    ++  grad  %bar
+    --
+  ::
+  =/  scry
+    %-  scry-with-results
+    ^-  (map [term beam] cage)
+    %-  my  :~
+      :-  [%cx [[~nul %home %da ~1111.1.1] /hoon/foo/mar]]
+      :+  %hoon  hoon-src-type
+      '''
+      |_  foo-sample=[@ @]
+      ++  grow
+        |%
+        ++  bar  foo-sample
+        ++  baz  foo-sample
+        --
+      ++  grab
+        |%
+        ++  noun  ,[@ @]
+        ++  baz   ,[@ @]
+        --
+      ++  grad  %bar
+      --
+      '''
+    ==
+  ::
+  =/  schematic=schematic:ford:marker  (bunt:marker %foo [~nul %home])
+  ::
+  =^  results1  ford-gate
+    %-  ford-call-with-comparator  :*
+      ford-gate
+      now=~1111.1.1
+      scry=scry
+      call-args=[duct=~[/bunt] type=~ %build ~nul live=%.n schematic]
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ^-  tang
+        ::
+        ?.  ?=([* ~] moves)
+          [%leaf "wrong number of moves: {<(lent moves)>}"]~
+        ::
+        ;:  weld
+          %+  expect-eq
+            !>  duct=~[/bunt]
+            !>  &1.i.moves
+        ::
+          %+  expect-eq
+            !>  %give
+            !>  &2.i.moves
+        ::
+          %+  expect-eq
+            !>  %meta
+            !>  &3.i.moves
+        ::
+          %+  expect-eq
+            !>  %.y
+            !>  =<  -
+                %+  ~(nets wa *worm)
+                  &4.i.moves
+                -:!>([%made ~1111.1.1 %complete *(each vase tang)])
+        ::
+          %+  expect-eq
+            !>  %.y
+            !>  =<  -
+                %+  ~(nets wa *worm)
+                  &5:|4.i.moves
+                -:!>([0 0])
+        ::  check the :sample-mold.descriptor by bunting it in raw nock
+        ::
+          %+  expect-eq
+            !>  [0 0]
+            :-  -:!>(*[@ @])
+            |5:|4.i.moves
+    ==  ==
+  ::
+  ;:  welp
+    results1
+    (expect-ford-empty ford-gate ~nul)
+  ==
+::
 ++  test-tear  ^-  tang
   ::
   ;:  welp
