@@ -162,10 +162,20 @@
       (crip (en-xml:html elm)) 
     (crip (en-xml:html i.snip))    :: inner html
   ::
-  =/  parent-spur  [%collections-config (slag 1 (flop pax))]
+  =/  parent-spur  (slag 1 (flop pax))
   =/  bek=beak     byk.bol(r [%da now.bol])
   =/  parent-path  (en-beam:format [bek parent-spur])
-  =/  parent-conf  (config-to-json .^(config %cx parent-path))
+  =/  parent-dir   .^(arch %cy parent-path)
+  ::
+  =/  parent-conf=json
+    ?:  (~(has in dir.parent-dir) ~.umd ~)
+      %-  meta-to-json
+      %-  umd-to-front 
+      .^(@t %cx (weld parent-path /umd))
+    ?:  (~(has in dir.parent-dir) ~.collections-config ~)
+      %-  config-to-json
+      .^(config %cx (weld parent-path /collections-config))
+    ~
   ::
   %-  pairs:enjs:format
   :~  ['owner' [%s owner]]
