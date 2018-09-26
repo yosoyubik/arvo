@@ -230,8 +230,8 @@
       ::
       :+  %brts
         :-  %bscl
-        :~  [%bsts %start [%like ~[%sample-mold %descriptor %analyzed] ~]]
-            [%bsts %end [%like ~[%sample-mold %descriptor %analyzed] ~]]
+        :~  [%bsts %start [%bscb [%cnts ~[[%& 6] %core %analyzed] ~]]]
+            [%bsts %end [%bscb [%cnts ~[[%& 6] %core %analyzed] ~]]]
         ==
       ::
       :+  %clhp
@@ -272,8 +272,8 @@
     ^-  hoon
     :+  %brts
       :-  %bscl
-      :~  [%bsts %start [%like ~[%sample-mold %descriptor %analyzed] ~]]
-          [%bsts %end [%like ~[%sample-mold %descriptor %analyzed] ~]]
+        :~  [%bsts %start [%bscb [%cnts ~[[%& 6] %core %analyzed] ~]]]
+            [%bsts %end [%bscb [%cnts ~[[%& 6] %core %analyzed] ~]]]
       ==
     ^~((ream '(delegate-differ (converter start) (converter end))'))
   ::

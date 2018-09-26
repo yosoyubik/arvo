@@ -418,6 +418,95 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
+++  test-marker-diff  ^-  tang
+  ::
+  =/  hoon-src-type=type  -:!>('')
+  ::
+  =/  scry
+    %-  scry-with-results
+    ^-  (map [term beam] cage)
+    %-  my  :~
+      :-  [%cx [[~nul %home %da ~1111.1.1] /hoon/foo/mar]]
+      :+  %hoon  hoon-src-type
+      '''
+      |_  foo-sample=[@ @]
+      ++  grow
+        |%
+        ++  baz  foo-sample
+        --
+      ++  grab
+        |%
+        ++  noun  ,[@ @]
+        --
+      ++  grad
+        |%
+        ++  diff  |=(_foo-sample +<)
+        ++  form  %foo
+        --
+      --
+      '''
+    ==
+  ::
+  =/  schematic=schematic:ford:marker
+    %-  diff:marker
+    [!>(['p' 12]) !>(['q' 13]) mark=%foo disc=[~nul %home]]
+  ::
+  =^  results1  ford-gate
+    %-  ford-call-with-comparator  :*
+      ford-gate
+      now=~1111.1.1
+      scry=scry
+      call-args=[duct=~[/diff] type=~ %build ~nul live=%.n schematic]
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ^-  tang
+        ::
+        ?.  ?=([* ~] moves)
+          [%leaf "wrong number of moves: {<(lent moves)>}"]~
+        ::
+        ;:  weld
+          %+  expect-eq
+            !>  duct=~[/diff]
+            !>  &1.i.moves
+        ::
+          %+  expect-eq
+            !>  %give
+            !>  &2.i.moves
+        ::
+          %+  expect-eq
+            !>  %meta
+            !>  &3.i.moves
+        ::
+          ~&  %ok1
+          ::~&  [%res ((slog ((hard tang) |5:|4.i.moves)) ~)]
+          %+  expect-eq
+            !>  %.y
+            !>  =<  -
+                %+  ~(nets wa *worm)
+                  &4.i.moves
+                -:!>([%made ~1111.1.1 %complete *(each vase tang)])
+        ::
+          ~&  %ok2
+          %+  expect-eq
+            !>  %.y
+            !>  =<  -
+                %+  ~(nets wa *worm)
+                  &5:|4.i.moves
+                -:!>(['foo' 'q' 13])
+      ::
+          ~&  %ok3
+          %+  expect-eq
+            !>  ['foo' 'q' 13]
+            :-  -:!>(['foo' 'q' 13])
+            |5:|4.i.moves
+    ==  ==
+  ::
+  ;:  welp
+    results1
+    (expect-ford-empty ford-gate ~nul)
+  ==
+::
 ++  test-tear  ^-  tang
   ::
   ;:  welp
