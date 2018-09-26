@@ -3147,5 +3147,21 @@
     :_  +>
     :_  ~
     (wire-to-peer /report/(crip (slag 10 (trip a))))
+  ::
+  ::
+  ?:  =(a 'kill-all-subs')
+    :_  +>
+    %-  ~(rep by sup.bol)
+    |=  [[b=bone (pair ship path)] out=(list move)]
+    [[b %quit ~] out]
+  ::
+  ?:  =(a 'kill-our-subs')
+    :_  +>
+    %-  ~(rep by sup.bol)
+    |=  [[b=bone a=(pair ship path)] out=(list move)]
+    ?:  =(our.bol p.a)
+      [[b %quit ~] out]
+    out
+  ::
   [~ +>]
 --
