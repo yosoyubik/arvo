@@ -84,10 +84,6 @@
         ?.  ?=([* ~] moves)
           [%leaf "wrong number of moves: {<(lent moves)>}"]~
         ::
-        =/  result             |5:|4.i.moves
-        =/  result-core        -.result
-        =/  result-descriptor  +.result
-        ::
         ;:  weld
           %+  expect-eq
             !>  duct=~[/analyze]
@@ -114,20 +110,14 @@
                 %+  ~(nets wa *worm)
                   &5:|4.i.moves
                 -:!>([core=mark-core descriptor=*mark-descriptor:marker])
-        ::  check the :sample-mold.descriptor by bunting it in raw nock
-        ::
-          %+  expect-eq
-            !>  [0 0]
-            :-  -:!>(*[@ @])
-            .*(-.result-descriptor [9 2 0 1])
         ::
           %+  expect-eq
             !>  :*  grows=(sy %bar %baz ~)
                     grabs=(sy %noun %baz ~)
                     grad=[%& %bar]
                 ==
-            :-  -:!>([+:*mark-descriptor:marker])
-            +.result-descriptor
+            :-  -:!>(*mark-descriptor:marker)
+            +.|5:|4.i.moves
     ==  ==
   ::
   ;:  welp

@@ -149,12 +149,10 @@
   =>
   |%
   +$  mark-descriptor
-    $:  sample-mold=mold
-        grows=(set mark)
+    $:  grows=(set mark)
         grabs=(set mark)
         grad=(each delegate=mark form=mark)
     ==
-  +$  mark-conversion  [arm=?(%grab %grow) source=mark target=mark]
   --
   |%
   ::  +bunt: produce the default value for a :mark on a :disc
@@ -164,8 +162,8 @@
     ^-  schematic:ford
     ::
     :+  %ntbn
-      (build-mark-analyzer mark disc)
-    [%ntcb ^~((ream '*sample-mold.descriptor'))]
+      (build-mark-loader mark disc)
+    [%ntcb ^~((ream '*_+<'))]
   ::  +cast: convert :data from mark :start to mark :end
   ::
   ++  cast
@@ -288,12 +286,12 @@
     |=  [data=* =mark disc=disc:ford]
     ^-  schematic:ford
     ::
-    :+  %ntls  [%ntts %analyzed (build-mark-analyzer mark disc)]
+    :+  %ntls  [%ntts %mark-core (build-mark-loader mark disc)]
     ::
-    :+  %ntkt  [%ntcb ^~((ream 'sample-mold.descriptor.analyzed'))]
+    :+  %ntkt  [%ntcb ^~((ream '_+<.mark-core'))]
     ::
     :+  %ntbs
-      [%ntcb ^~((ream 'grab:noun:core.analyzed'))]
+      [%ntcb ^~((ream 'noun:grab:mark-core'))]
     [%ntdt %noun data]
   ::
   ++  build-mark-loader
@@ -319,7 +317,6 @@
     ::  /^  /.  mark-descriptor
     ::  /+  /=  mark-core  (build-mark-loader mark disc)
     ::  ::
-    ::  :-  /=  sample-mold  _+<:mark-core
     ::  /$  /.  analyze-mark-core
     ::  :-  /.  mark
     ::  !>(mark-core)
@@ -334,9 +331,6 @@
     ::
     :+  %ntts  %descriptor
     :+  %ntkt  [%ntdt !>(mark-descriptor)]
-    ::  extract mark sample mold at _+<:mark-core
-    ::
-    :-  [%ntcb ^~((ream '_+<.mark-core'))]
     ::  call +analyze-mark-core to get the rest of the +mark-descriptor
     ::
     :+  %ntbs  [%ntdt !>(analyze-mark-core)]
@@ -346,7 +340,7 @@
   ::
   ++  analyze-mark-core
     |=  [=mark mark-core=vase]
-    ^+  +:*mark-descriptor
+    ^-  mark-descriptor
     ::
     =/  grows  (~(gas in *(set term)) (sloe -:(slap mark-core [%limb %grow])))
     =/  grabs  (~(gas in *(set term)) (sloe -:(slap mark-core [%limb %grab])))

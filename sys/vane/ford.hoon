@@ -1367,7 +1367,6 @@
             :-  %ntcb
             ^-  hoon
             [%kthp [%like ~[%spec] ~] [%limb %rest]]
-          ~&  (pad "%ntkt spec {<-.spec.schematic>} rest {<-.rest.schematic>}")
           ::
           $(schematic new-schematic)
       ::
