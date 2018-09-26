@@ -275,7 +275,8 @@
     ==
   ::
   =/  schematic=schematic:ford:marker
-    (cast:marker !>(['q' 13 *@da]) start=[%bar [~nul %home]] end=[%foo [~nul %home]])
+    %-  cast:marker
+    [!>(['q' 13 *@da]) start=[%bar [~nul %home]] end=[%foo [~nul %home]]]
   ::
   =^  results1  ford-gate
     %-  ford-call-with-comparator  :*
@@ -294,6 +295,104 @@
         ;:  weld
           %+  expect-eq
             !>  duct=~[/cast-grow]
+            !>  &1.i.moves
+        ::
+          %+  expect-eq
+            !>  %give
+            !>  &2.i.moves
+        ::
+          %+  expect-eq
+            !>  %meta
+            !>  &3.i.moves
+        ::
+          %+  expect-eq
+            !>  %.y
+            !>  =<  -
+                %+  ~(nets wa *worm)
+                  &4.i.moves
+                -:!>([%made ~1111.1.1 %complete *(each vase tang)])
+        ::
+          %+  expect-eq
+            !>  %.y
+            !>  =<  -
+                %+  ~(nets wa *worm)
+                  &5:|4.i.moves
+                -:!>([`@`%q `@`13])
+        ::
+          %+  expect-eq
+            !>  [`@`%q `@`13]
+            :-  -:!>(*[@ @])
+            |5:|4.i.moves
+    ==  ==
+  ::
+  ;:  welp
+    results1
+    (expect-ford-empty ford-gate ~nul)
+  ==
+::
+++  test-marker-cast-grab  ^-  tang
+  ::
+  =/  hoon-src-type=type  -:!>('')
+  ::
+  =/  scry
+    %-  scry-with-results
+    ^-  (map [term beam] cage)
+    %-  my  :~
+      :-  [%cx [[~nul %home %da ~1111.1.1] /hoon/foo/mar]]
+      :+  %hoon  hoon-src-type
+      '''
+      |_  foo-sample=[@ @]
+      ++  grow
+        |%
+        ++  baz  foo-sample
+        --
+      ++  grab
+        |%
+        ++  bar  |=(bar-sample=[@tas @ud @da] [&1 &2]:bar-sample)
+        ++  noun  ,[@ @]
+        --
+      ++  grad  %qux
+      --
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1111.1.1] /hoon/bar/mar]]
+      :+  %hoon  hoon-src-type
+      '''
+      |_  bar-sample=[@tas @ud @da]
+      ++  grow
+        |%
+        ++  qux  bar-sample
+        --
+      ++  grab
+        |%
+        ++  noun  ,[@tas @ud @da]
+        --
+      ++  grad  %qux
+      --
+      '''
+    ==
+  ::
+  =/  schematic=schematic:ford:marker
+    %-  cast:marker
+    [!>(['q' 13 *@da]) start=[%bar [~nul %home]] end=[%foo [~nul %home]]]
+  ::
+  =^  results1  ford-gate
+    %-  ford-call-with-comparator  :*
+      ford-gate
+      now=~1111.1.1
+      scry=scry
+      call-args=[duct=~[/cast-grab] type=~ %build ~nul live=%.n schematic]
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ^-  tang
+        ::
+        ?.  ?=([* ~] moves)
+          [%leaf "wrong number of moves: {<(lent moves)>}"]~
+        ::
+        ;:  weld
+          %+  expect-eq
+            !>  duct=~[/cast-grab]
             !>  &1.i.moves
         ::
           %+  expect-eq
