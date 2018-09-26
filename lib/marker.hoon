@@ -187,7 +187,7 @@
     ::
     :+  %ntkt
       :-  %ntcb
-      ^~((ream '$-(sample-mold.descriptor.start sample-mold.descriptor.end)'))
+      ^~((ream '$-(_+<.core.start _+<.core.end)'))
     ::  can we grab from the end, or do we have to grow from the start?
     ::
     :^  %ntwt  :-  %ntcb
@@ -198,21 +198,12 @@
       ::  we can grab, so run +grab from :end
       ::
       [%ntcb ^~((ream (cat 3 mark.start ':grab:core.end')))]
-    :+  %ntls  :-  %ntcb
-      ::ream '~&([%grew ~(grow core.start *sample-mold.descriptor.start)] ~)')
-      (ream '~&([%mold *_+<.core.start] ~)')
     ::  no grab available; fall back to running +grow on :start
     ::
     :-  %ntcb
     ^-  hoon
     ^~  %-  ream  %-  crip
-    "|=(data=_+<.core.start ~(grow core.start data))"
-    ::"|=(data=_+<.core.start {(trip mark.end)}:~(grow core.start data))"
-::    :+  %brts  [%bsts %data [%bscb [%cnts ~[[%& 6] %core %start] ~]]]
-::    :+  %kthp  [%bscb [%cnts ~[[%& 6] %core %end] ~]]
-::    :+  %tsld
-::      [%limb mark.end]
-::    ^~((ream '~(grow core.start data)'))
+    "|=(data=_+<.core.start {(trip mark.end)}:~(grow core.start data))"
   ::  +diff: produce a diff between two nouns of mark :mark
   ::
   ::    The result of the build will be (a vase of) a pair of

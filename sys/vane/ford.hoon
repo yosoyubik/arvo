@@ -1291,7 +1291,7 @@
           |^  =^  slim-result  progress  (run-slim hoon.schematic p.subject)
               ?<  ?=(~ slim-result)
               ?:  ?=([~ %| *] slim-result)
-                ~&  (pad "%ntcb slim fail {<hoon.schematic>}")
+                ~&  (pad "%ntcb slim fail")
                 (wrap-error p.u.slim-result [%leaf "ford: /_ slim failed:"]~)
               ~&  (pad "%ntcb-ran-slim")
               ::
@@ -1359,7 +1359,7 @@
           ::
           ::  />  :-  /=  spec  spec
           ::          /=  rest  rest
-          ::  `spec`rest
+          ::  ^-(spec rest)
           ::
           =/  new-schematic=^schematic
             :+  %ntbn
@@ -1367,7 +1367,7 @@
             :-  %ntcb
             ^-  hoon
             [%kthp [%like ~[%spec] ~] [%limb %rest]]
-          ~&  (pad "%ntkt-new-schematic")
+          ~&  (pad "%ntkt spec {<-.spec.schematic>} rest {<-.rest.schematic>}")
           ::
           $(schematic new-schematic)
       ::

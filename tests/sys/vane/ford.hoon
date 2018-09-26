@@ -245,7 +245,7 @@
       |_  foo-sample=[@ @]
       ++  grow
         |%
-        ++  bar  foo-sample
+        ++  baz  foo-sample
         --
       ++  grab
         |%
@@ -261,13 +261,13 @@
       |_  bar-sample=[@tas @ud @da]
       ++  grow
         |%
-        ++  foo  bar-sample
+        ++  foo  [&1 &2]:bar-sample
         ++  baz  bar-sample
         ++  qux  bar-sample
         --
       ++  grab
         |%
-        ++  noun  ,[@tas @ud]
+        ++  noun  ,[@tas @ud @da]
         --
       ++  grad  %qux
       --
@@ -275,7 +275,7 @@
     ==
   ::
   =/  schematic=schematic:ford:marker
-    (cast:marker !>(['q' 13]) start=[%bar [~nul %home]] end=[%foo [~nul %home]])
+    (cast:marker !>(['q' 13 *@da]) start=[%bar [~nul %home]] end=[%foo [~nul %home]])
   ::
   =^  results1  ford-gate
     %-  ford-call-with-comparator  :*
@@ -304,29 +304,24 @@
             !>  %meta
             !>  &3.i.moves
         ::
-          ~&  %ok1
-          ~&  [%res ((slog ((hard tang) |5:|4:i.moves)) ~)]
-          ::~&  [%res |5:|4:i.moves]
           %+  expect-eq
             !>  %.y
             !>  =<  -
                 %+  ~(nets wa *worm)
                   &4.i.moves
                 -:!>([%made ~1111.1.1 %complete *(each vase tang)])
-::        ::
-::          ~&  %ok2
-::          %+  expect-eq
-::            !>  %.y
-::            !>  =<  -
-::                %+  ~(nets wa *worm)
-::                  &5:|4.i.moves
-::                -:!>([`@`%q `@`13])
-::        ::
-::          ~&  %ok3
-::          %+  expect-eq
-::            !>  [`@`%q `@`13]
-::            :-  -:!>(*[@ @])
-::            |5:|4.i.moves
+        ::
+          %+  expect-eq
+            !>  %.y
+            !>  =<  -
+                %+  ~(nets wa *worm)
+                  &5:|4.i.moves
+                -:!>([`@`%q `@`13])
+        ::
+          %+  expect-eq
+            !>  [`@`%q `@`13]
+            :-  -:!>(*[@ @])
+            |5:|4.i.moves
     ==  ==
   ::
   ;:  welp
