@@ -188,18 +188,31 @@
     :+  %ntkt
       :-  %ntcb
       ^~((ream '$-(sample-mold.descriptor.start sample-mold.descriptor.end)'))
+    ::  can we grab from the end, or do we have to grow from the start?
     ::
-    :^  %ntwt  [%ntcb ^~((ream '(~(has in grabs.descriptor.end) start-mark'))]
+    :^  %ntwt  :-  %ntcb
+               ^-  hoon
+               :+  %cncl
+                 ^~((ream '~(has in grabs.descriptor.end)'))
+               [%rock %tas mark.start]~
+      ::  we can grab, so run +grab from :end
       ::
       [%ntcb ^~((ream (cat 3 mark.start ':grab:core.end')))]
+    :+  %ntls  :-  %ntcb
+      ::ream '~&([%grew ~(grow core.start *sample-mold.descriptor.start)] ~)')
+      (ream '~&([%mold *_+<.core.start] ~)')
+    ::  no grab available; fall back to running +grow on :start
     ::
     :-  %ntcb
     ^-  hoon
-    :+  %brts
-      [%like ~[%sample-mold %descriptor %start] ~]
-    :+  %tsld
-      [%limb mark.start]
-    [%cnsg ~[%grow] [%wing ~[%core %start]] [%cnts [%& 6]~ ~]~]
+    ^~  %-  ream  %-  crip
+    "|=(data=_+<.core.start ~(grow core.start data))"
+    ::"|=(data=_+<.core.start {(trip mark.end)}:~(grow core.start data))"
+::    :+  %brts  [%bsts %data [%bscb [%cnts ~[[%& 6] %core %start] ~]]]
+::    :+  %kthp  [%bscb [%cnts ~[[%& 6] %core %end] ~]]
+::    :+  %tsld
+::      [%limb mark.end]
+::    ^~((ream '~(grow core.start data)'))
   ::  +diff: produce a diff between two nouns of mark :mark
   ::
   ::    The result of the build will be (a vase of) a pair of
@@ -332,7 +345,7 @@
     :+  %ntkt  [%ntdt !>(mark-descriptor)]
     ::  extract mark sample mold at _+<:mark-core
     ::
-    :-  [%ntcb ^~((ream '_+<:mark-core'))]
+    :-  [%ntcb ^~((ream '_+<.mark-core'))]
     ::  call +analyze-mark-core to get the rest of the +mark-descriptor
     ::
     :+  %ntbs  [%ntdt !>(analyze-mark-core)]

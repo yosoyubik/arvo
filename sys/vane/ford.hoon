@@ -1146,7 +1146,7 @@
           ?~  new-subject
             block
           ?:  ?=([~ %| *] new-subject)
-            (wrap-error p.u.new-subject [%leaf "ford: /> failed:"]~)
+            (wrap-error p.u.new-subject [%leaf "ford: /> subject failed:"]~)
           ::
           ~&  (pad "%ntbn rest start")
           =/  raw-gate  ..^$(subject p.u.new-subject, schematic rest.schematic)
@@ -1291,6 +1291,7 @@
           |^  =^  slim-result  progress  (run-slim hoon.schematic p.subject)
               ?<  ?=(~ slim-result)
               ?:  ?=([~ %| *] slim-result)
+                ~&  (pad "%ntcb slim fail {<hoon.schematic>}")
                 (wrap-error p.u.slim-result [%leaf "ford: /_ slim failed:"]~)
               ~&  (pad "%ntcb-ran-slim")
               ::
