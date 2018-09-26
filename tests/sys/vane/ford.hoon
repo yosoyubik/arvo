@@ -507,6 +507,126 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
+++  test-marker-diff-delegate  ^-  tang
+  ::
+  =/  hoon-src-type=type  -:!>('')
+  ::
+  =/  scry
+    %-  scry-with-results
+    ^-  (map [term beam] cage)
+    %-  my  :~
+      :-  [%cx [[~nul %home %da ~1111.1.1] /hoon/date-as-cord/mar]]
+      :+  %hoon  hoon-src-type
+      '''
+      |_  date-as-cord=cord
+      ++  grow
+        |%
+        ::++  date  `@da`(slav %da date-as-cord)
+        ++  noun  date-as-cord
+        --
+      ++  grab
+        |%
+        ++  noun  cord
+        --
+      ++  grad  %date
+      --
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1111.1.1] /hoon/date/mar]]
+      :+  %hoon  hoon-src-type
+      '''
+      |_  date=@da
+      ++  grow
+        |%
+        ++  baz  date
+        --
+      ++  grab
+        |%
+        ++  noun  ,[@ @]
+        ++  date-as-cord  |=(date-as-cord=cord `@da`(slav %da date-as-cord))
+        --
+      ++  grad
+        |%
+        ++  diff  |=(other=@da `@dr`(sub other date))
+        ++  form  %rel-date
+        --
+      --
+      '''
+    ::
+      :-  [%cx [[~nul %home %da ~1111.1.1] /hoon/rel-date/mar]]
+      :+  %hoon  hoon-src-type
+      '''
+      |_  interval=@dr
+      ++  grow
+        |%
+        ++  baz  interval
+        --
+      ++  grab
+        |%
+        ++  noun  @dr
+        --
+      ++  grad  %qux
+      --
+      '''
+    ==
+  ::
+  =/  schematic=schematic:ford:marker
+    %-  diff:marker
+    [!>('~2000.1.1') !>('~2000.1.2') mark=%date-as-cord disc=[~nul %home]]
+  ::
+  =^  results1  ford-gate
+    %-  ford-call-with-comparator  :*
+      ford-gate
+      now=~1111.1.1
+      scry=scry
+      call-args=[duct=~[/diff-delegate] type=~ %build ~nul live=%.n schematic]
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ^-  tang
+        ::
+        ?.  ?=([* ~] moves)
+          [%leaf "wrong number of moves: {<(lent moves)>}"]~
+        ::
+        ;:  weld
+          %+  expect-eq
+            !>  duct=~[/diff-delegate]
+            !>  &1.i.moves
+        ::
+          %+  expect-eq
+            !>  %give
+            !>  &2.i.moves
+        ::
+          %+  expect-eq
+            !>  %meta
+            !>  &3.i.moves
+        ::
+          ::~&  [%res ((slog ((hard tang) |5:|4.i.moves)) ~)]
+          %+  expect-eq
+            !>  %.y
+            !>  =<  -
+                %+  ~(nets wa *worm)
+                  &4.i.moves
+                -:!>([%made ~1111.1.1 %complete *(each vase tang)])
+        ::
+          %+  expect-eq
+            !>  %.y
+            !>  =<  -
+                %+  ~(nets wa *worm)
+                  &5:|4.i.moves
+                -:!>(['rel-date' *@dr])
+      ::
+          %+  expect-eq
+            !>  ['rel-date' ~d1]
+            :-  -:!>(['rel-date' *@dr])
+            |5:|4.i.moves
+    ==  ==
+  ::
+  ;:  welp
+    results1
+    (expect-ford-empty ford-gate ~nul)
+  ==
+::
 ++  test-tear  ^-  tang
   ::
   ;:  welp

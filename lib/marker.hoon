@@ -220,6 +220,7 @@
     |=  [=mark disc=disc:ford]
     ^-  schematic:ford
     ::
+    :+  %ntls  [%ntdt !>([mark=mark disc=disc])]
     :+  %ntls  [%ntts %analyzed (build-mark-analyzer mark disc)]
     ::
     :^    %ntwt
@@ -233,6 +234,7 @@
         :~  [%bsts %start [%bscb [%cnts ~[[%& 6] %core %analyzed] ~]]]
             [%bsts %end [%bscb [%cnts ~[[%& 6] %core %analyzed] ~]]]
         ==
+      ::  :^  %sgpd  0  ^~((ream '[%diffing start end]'))
       ::
       :+  %clhp
         :+  %ktts  %mark
@@ -275,6 +277,7 @@
         :~  [%bsts %start [%bscb [%cnts ~[[%& 6] %core %analyzed] ~]]]
             [%bsts %end [%bscb [%cnts ~[[%& 6] %core %analyzed] ~]]]
       ==
+    ::  :^  %sgpd  0  ^~((ream '[%delegating start end]'))
     ^~((ream '(delegate-differ (converter start) (converter end))'))
   ::
   ++  join
