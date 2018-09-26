@@ -50,6 +50,9 @@
     %-  my  :~
       :-  [%cx [[~nul %home %da ~1111.1.1] /hoon/foo/mar]]
       :+  %hoon  hoon-src-type
+      %-  crip
+      """
+      :-  %ntcb  %-  ream
       '''
       |_  foo-sample=[@ @]
       ++  grow
@@ -65,6 +68,7 @@
       ++  grad  %bar
       --
       '''
+      """
     ==
   ::
   =/  schematic=schematic:ford:marker
@@ -150,6 +154,9 @@
     %-  my  :~
       :-  [%cx [[~nul %home %da ~1111.1.1] /hoon/foo/mar]]
       :+  %hoon  hoon-src-type
+      %-  crip
+      """
+      :-  %ntcb  %-  ream
       '''
       |_  foo-sample=[@ @]
       ++  grow
@@ -165,6 +172,7 @@
       ++  grad  %bar
       --
       '''
+      """
     ==
   ::
   =/  schematic=schematic:ford:marker  (bunt:marker %foo [~nul %home])
@@ -231,6 +239,9 @@
     %-  my  :~
       :-  [%cx [[~nul %home %da ~1111.1.1] /hoon/foo/mar]]
       :+  %hoon  hoon-src-type
+      %-  crip
+      """
+      :-  %ntcb  %-  ream
       '''
       |_  foo-sample=[@ @]
       ++  grow
@@ -244,9 +255,13 @@
       ++  grad  %qux
       --
       '''
+      """
     ::
       :-  [%cx [[~nul %home %da ~1111.1.1] /hoon/bar/mar]]
       :+  %hoon  hoon-src-type
+      %-  crip
+      """
+      :-  %ntcb  %-  ream
       '''
       |_  bar-sample=[@tas @ud @da]
       ++  grow
@@ -262,6 +277,7 @@
       ++  grad  %qux
       --
       '''
+      """
     ==
   ::
   =/  schematic=schematic:ford:marker
@@ -330,6 +346,9 @@
     %-  my  :~
       :-  [%cx [[~nul %home %da ~1111.1.1] /hoon/foo/mar]]
       :+  %hoon  hoon-src-type
+      %-  crip
+      """
+      :-  %ntcb  %-  ream
       '''
       |_  foo-sample=[@ @]
       ++  grow
@@ -344,9 +363,13 @@
       ++  grad  %qux
       --
       '''
+      """
     ::
       :-  [%cx [[~nul %home %da ~1111.1.1] /hoon/bar/mar]]
       :+  %hoon  hoon-src-type
+      %-  crip
+      """
+      :-  %ntcb  %-  ream
       '''
       |_  bar-sample=[@tas @ud @da]
       ++  grow
@@ -360,6 +383,7 @@
       ++  grad  %qux
       --
       '''
+      """
     ==
   ::
   =/  schematic=schematic:ford:marker
@@ -428,6 +452,9 @@
     %-  my  :~
       :-  [%cx [[~nul %home %da ~1111.1.1] /hoon/foo/mar]]
       :+  %hoon  hoon-src-type
+      %-  crip
+      """
+      :-  %ntcb  %-  ream
       '''
       |_  foo-sample=[@ @]
       ++  grow
@@ -445,6 +472,7 @@
         --
       --
       '''
+      """
     ==
   ::
   =/  schematic=schematic:ford:marker
@@ -478,7 +506,6 @@
             !>  %meta
             !>  &3.i.moves
         ::
-          ~&  %ok1
           ::~&  [%res ((slog ((hard tang) |5:|4.i.moves)) ~)]
           %+  expect-eq
             !>  %.y
@@ -487,7 +514,6 @@
                   &4.i.moves
                 -:!>([%made ~1111.1.1 %complete *(each vase tang)])
         ::
-          ~&  %ok2
           %+  expect-eq
             !>  %.y
             !>  =<  -
@@ -495,7 +521,6 @@
                   &5:|4.i.moves
                 -:!>(['foo' 'q' 13])
       ::
-          ~&  %ok3
           %+  expect-eq
             !>  ['foo' 'q' 13]
             :-  -:!>(['foo' 'q' 13])
@@ -517,6 +542,9 @@
     %-  my  :~
       :-  [%cx [[~nul %home %da ~1111.1.1] /hoon/date-as-cord/mar]]
       :+  %hoon  hoon-src-type
+      %-  crip
+      """
+      :-  %ntcb  %-  ream
       '''
       |_  date-as-cord=cord
       ++  grow
@@ -531,9 +559,13 @@
       ++  grad  %date
       --
       '''
+      """
     ::
       :-  [%cx [[~nul %home %da ~1111.1.1] /hoon/date/mar]]
       :+  %hoon  hoon-src-type
+      %-  crip
+      """
+      :-  %ntcb  %-  ream
       '''
       |_  date=@da
       ++  grow
@@ -552,9 +584,13 @@
         --
       --
       '''
+      """
     ::
       :-  [%cx [[~nul %home %da ~1111.1.1] /hoon/rel-date/mar]]
       :+  %hoon  hoon-src-type
+      %-  crip
+      """
+      :-  %ntcb  %-  ream
       '''
       |_  interval=@dr
       ++  grow
@@ -568,6 +604,7 @@
       ++  grad  %qux
       --
       '''
+      """
     ==
   ::
   =/  schematic=schematic:ford:marker
@@ -1195,7 +1232,7 @@
         %-  scry-with-results
         %-  ~(gas by *(map [term beam] cage))
         :~  :-  [%cx [[~nul %home %da ~1111.1.1] /hoon/foo]]
-            [%hoon !>('hoon-version')]
+            [%hoon !>('[%ntcb %limb %hoon-version]')]
         ==
       ::
       ^=  call-args
@@ -1602,7 +1639,7 @@
         %-  scry-with-results
         %-  ~(gas by *(map [term beam] cage))
         :~  :-  [%cx [[~nul %home %da ~1111.1.1] /hoon/foo]]
-            [%hoon !>('hoon-version')]
+            [%hoon !>('[%ntcb %limb %hoon-version]')]
         ==
       ::
       ^=  call-args

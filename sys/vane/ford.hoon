@@ -1427,10 +1427,13 @@
           data.u.result
         ::
         =/  new-schematic=^schematic
+          ::  load source file
+          ::
           :+  %ntls
             :+  %ntts  %rail
             :+  %ntkt  [%ntdt !>(rail)]
             rail.schematic
+          ::  parse source file's contents to a +hoon
           ::
           :+  %ntls
             :+  %ntts  %parsed-hoon
@@ -1441,14 +1444,22 @@
               [%ntdt !>(extract-source)]
             :-  [%ntcb [%limb %rail]]
             [%nttr %cx [%ntcb [%limb %rail]]]
+          ::  ride :parsed-hoon against the standard library to get a +schematic
+          ::
+          :+  %ntls
+            :+  %ntts  %source-schematic
+            :+  %ntnt
+              [%ntdt pit]
+            :-  %ntcb
+            ^-  hoon
+            :+  %clhp
+              [%rock %tas %ntcb]
+            [%limb %parsed-hoon]
+          ::  evaluate :source-schematic with the standard library as subject
           ::
           :+  %ntnt
             [%ntdt pit]
-          :-  %ntcb
-          ^-  hoon
-          :+  %clhp
-            [%rock %tas %ntcb]
-          [%limb %parsed-hoon]
+          [%ntcb %limb %source-schematic]
         ::
         $(schematic new-schematic)
       ::
