@@ -796,7 +796,6 @@
   ::
   ++  finalize
     ^-  [(list move) ford-state]
-    ~&  %finalize
     [(flop moves) state]
   ::  |entry-points: externally fired arms
   ::
@@ -1118,19 +1117,19 @@
     |^  ^-  [product ^progress]
         =.  depth  +(depth)
         ::
-        ~&  (pad ?@(-.schematic `tape`['%' (trip `@t`-.schematic)] "^"))
+        ::~&  (pad ?@(-.schematic `tape`['%' (trip `@t`-.schematic)] "^"))
         ::
         ?-    -.schematic
             ^
-          ~&  (pad "^ head start")
+          ::~&  (pad "^ head start")
           =^  head  progress  $(schematic -.schematic)
-          ~&  (pad "^ head end")
+          ::~&  (pad "^ head end")
           ?:  ?=([~ %| *] head)
             (wrap-error p.u.head [%leaf "ford: head of cell build failed:"]~)
           ::
-          ~&  (pad "^ tail start")
+          ::~&  (pad "^ tail start")
           =^  tail  progress  $(schematic +.schematic)
-          ~&  (pad "^ tail end")
+          ::~&  (pad "^ tail end")
           ?:  ?=([~ %| *] tail)
             (wrap-error p.u.tail [%leaf "ford: tail of cell build failed:"]~)
           ::
@@ -1140,32 +1139,32 @@
           (succeed [[%cell p.p.u.head p.p.u.tail] q.p.u.head q.p.u.tail])
         ::
             %ntbn
-          ~&  (pad "%ntbn subject start")
+          ::~&  (pad "%ntbn subject start")
           =^  new-subject  progress  $(schematic subject.schematic)
-          ~&  (pad "%ntbn subject end")
+          ::~&  (pad "%ntbn subject end")
           ?~  new-subject
             block
           ?:  ?=([~ %| *] new-subject)
             (wrap-error p.u.new-subject [%leaf "ford: /> subject failed:"]~)
           ::
-          ~&  (pad "%ntbn rest start")
+          ::~&  (pad "%ntbn rest start")
           =/  raw-gate  ..^$(subject p.u.new-subject, schematic rest.schematic)
           ::
-          =-  ~&  (pad "%ntbn rest end")  -
+          ::=-  ~&  (pad "%ntbn rest end")  -
           %-  cast-raw-result
           .*(raw-gate [9 2 0 1])
         ::
             %ntbs
-          ~&  (pad "%ntbs start gate")
+          ::~&  (pad "%ntbs start gate")
           =^  gate  progress  $(schematic gate.schematic)
-          ~&  (pad "%ntbs end gate")
+          ::~&  (pad "%ntbs end gate")
           ::
           ?:  ?=([~ %| *] gate)
             (wrap-error p.u.gate [%leaf "ford: /$ gate build failed"]~)
           ::
-          ~&  (pad "%ntbs start sample")
+          ::~&  (pad "%ntbs start sample")
           =^  sample  progress  $(schematic sample.schematic)
-          ~&  (pad "%ntbs end sample")
+          ::~&  (pad "%ntbs end sample")
           ::
           ?:  ?=([~ %| *] sample)
             (wrap-error p.u.sample [%leaf "ford: /$ sample build failed"]~)
@@ -1185,18 +1184,18 @@
           ::
           |^  ^-  [product ^progress]
               ::
-              ~&  (pad "%ntbs about to infer")
+              ::~&  (pad "%ntbs about to infer")
               =^  inferred-product-type  progress
                 %-  cast-raw-result
                 (run-gate infer-product-type p.p.u.gate p.p.u.sample)
-              ~&  (pad "%ntbs inferred")
+              ::~&  (pad "%ntbs inferred")
               ::
               ?<  ?=(~ inferred-product-type)
               ::
               ?:  ?=([~ %| *] inferred-product-type)
                 (fail p.u.inferred-product-type)
               ::
-              =-  ~&  (pad "%ntbs done")  -
+              ::=-  ~&  (pad "%ntbs done")  -
               %-  cast-raw-result
               %+  run-gate  perform-call
               [p.p.u.inferred-product-type q.p.u.gate q.p.u.sample]
@@ -1215,7 +1214,7 @@
               (mule |.((slit gate-type sample-type)))
             ::
             ?:  ?=(%| -.product)
-              ~&  (pad "%ntbs slit failed")
+              ::~&  (pad "%ntbs slit failed")
               ::  flesh out error message if failed
               ::
               =.  p.product
@@ -1228,14 +1227,14 @@
               =.  cache.progress  (put-in-cache cache-key product)
               ::
               [`product progress]
-            ~&  (pad "%ntbs slit succeeded")
+            ::~&  (pad "%ntbs slit succeeded")
             ::  contrive a vase out of the slit result; we'll only use the type
             ::
             ::    This is a bit ugly, but it means we don't need a special
             ::    type of cache line for +slit.
             ::
             =/  product-vase=vase  [p.product 0]
-            ~&  (pad "%ntbs slit product {<-.p.product>}")
+            ::~&  (pad "%ntbs slit product {<-.p.product>}")
             ::
             =.  cache.progress  (put-in-cache cache-key [%& product-vase])
             ::
@@ -1252,7 +1251,7 @@
               [cache-result progress]
             ::
             =/  product  (mong [gate sample] intercepted-scry)
-            ~&  (pad "%ntbs-ran-product")
+            ::~&  (pad "%ntbs-ran-product")
             ?-    -.product
                 %0
               =/  success=vase  [product-type p.product]
@@ -1291,12 +1290,12 @@
           |^  =^  slim-result  progress  (run-slim hoon.schematic p.subject)
               ?<  ?=(~ slim-result)
               ?:  ?=([~ %| *] slim-result)
-                ~&  (pad "%ntcb slim fail")
+                ::~&  (pad "%ntcb slim fail")
                 (wrap-error p.u.slim-result [%leaf "ford: /_ slim failed:"]~)
-              ~&  (pad "%ntcb-ran-slim")
+              ::~&  (pad "%ntcb-ran-slim")
               ::
               =^  mock-result  progress  (run-mock q.subject q.p.u.slim-result)
-              ~&  (pad "%ntcb-ran-mock")
+              ::~&  (pad "%ntcb-ran-mock")
               ?~  mock-result
                 block
               ::
@@ -1375,12 +1374,12 @@
       ::
           %ntnt
         =^  new-subject  progress  $(schematic subject.schematic)
-        ~&  (pad "%ntnt-ran-subject")
+        ::~&  (pad "%ntnt-ran-subject")
         ::  ensure type safety inside the build so we get a real schematic
         ::
         =^  new-schematic  progress
           $(schematic [%ntkt [%ntdt !>(^schematic)] schematic.schematic])
-        ~&  (pad "%ntnt-ran-schematic")
+        ::~&  (pad "%ntnt-ran-schematic")
         ::
         ?~  new-subject    block
         ?~  new-schematic  block
@@ -1399,7 +1398,7 @@
           ..^$(subject p.u.new-subject, schematic q.p.u.new-schematic)
         ::
         =/  raw-product=*  .*(raw-run-build-gate [9 2 0 1])
-        ~&  (pad "%ntnt-ran-product")
+        ::~&  (pad "%ntnt-ran-product")
         ::
         (cast-raw-result raw-product)
       ::
@@ -1410,7 +1409,7 @@
           |=  [=rail source=@t]
           ^-  hoon
           !:
-          ~&  (pad "%parse-at-rail {<rail>}")
+          ::~&  (pad "%parse-at-rail {<rail>}")
           =/  parse-path=path  (en-beam [[ship.disc desk.disc %ud 0] spur]:rail)
           (rain parse-path source)
         ::
@@ -1418,12 +1417,12 @@
           |=  [=rail result=(unit [mark=term data=@t])]
           ^-  @t
           !:
-          ~&  (pad "%ntpd extracting")
+          ::~&  (pad "%ntpd extracting")
           ?~  result
             ~|  "ford: /& failed: file not found at {<rail>}"  !!
           ?.  =(%hoon mark.u.result)
             ~|  "ford: /& failed: bad mark {<mark.u.result>} at {<rail>}"  !!
-          ~&  (pad "%ntpd extracted")
+          ::~&  (pad "%ntpd extracted")
           ::
           data.u.result
         ::
@@ -1527,7 +1526,7 @@
         (handle-scry-result u.u.local-result)
       ::
           %ntts
-        ~&  (pad "%ntts-face {<face.schematic>}")
+        ::~&  (pad "%ntts-face {<face.schematic>}")
         =^  sub-result  progress  $(schematic rest.schematic)
         ?~  sub-result
           block
@@ -1673,7 +1672,7 @@
   ++  on-build-blocked
     |=  [=build =^duct blocks=*]
     ^+  event-core
-    ~&  %on-build-blocked
+    ::~&  %on-build-blocked
     ::
     =>  .(blocks ((hard (set scry-request)) blocks))
     ::
@@ -1690,7 +1689,7 @@
   ++  on-once-build-completed
     |=  [=build result=(each [p=* q=*] tang) =^duct]
     ^+  event-core
-    ~&  %on-once-build-completed
+    ::~&  %on-once-build-completed
     ::
     =.  ducts.state  (~(del by ducts.state) duct)
     ::
@@ -1704,7 +1703,7 @@
             live-resources=*
         ==
     ^+  event-core
-    ~&  %on-live-build-completed
+    ::~&  %on-live-build-completed
     ::  cast :live-resources to a usable type
     ::
     =>  .(live-resources ((hard (set ,[=term =rail])) live-resources))
