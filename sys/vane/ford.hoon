@@ -1172,16 +1172,6 @@
           ?~  gate    block
           ?~  sample  block
           ::
-          ?^  -.p.p.u.gate
-            ~&  [%gate -.p.p.u.gate]
-            ~&  [%sample -.p.p.u.sample]
-            !!
-          ::
-          ?^  -.p.p.u.sample
-            ~&  [%gate -.p.p.u.gate]
-            ~&  [%sample -.p.p.u.sample]
-            !!
-          ::
           |^  ^-  [product ^progress]
               ::
               ::~&  (pad "%ntbs about to infer")
