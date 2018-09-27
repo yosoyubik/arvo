@@ -314,6 +314,83 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
+++  test-marker-validate-nest-fail  ^-  tang
+  ::
+  =/  hoon-src-type=type  -:!>('')
+  ::
+  =/  scry
+    %-  scry-with-results
+    ^-  (map [term beam] cage)
+    %-  my  :~
+      :-  [%cx [[~nul %home %da ~1111.1.1] /hoon/foo/mar]]
+      :+  %hoon  hoon-src-type
+      %-  crip
+      """
+      :-  %ntcb  %-  ream
+      '''
+      |_  foo-sample=[@ @]
+      ++  grow
+        |%
+        ++  baz  foo-sample
+        --
+      ++  grab
+        |%
+        ++  noun  ,[@ @]
+        --
+      ++  grad  %bar
+      --
+      '''
+      """
+    ==
+  ::
+  =/  schematic=schematic:ford:marker
+    (validate:marker 42 %foo [~nul %home])
+  ::
+  =^  results1  ford-gate
+    %-  ford-call-with-comparator  :*
+      ford-gate
+      now=~1111.1.1
+      scry=scry
+      call-args=[duct=~[/validate-fail] type=~ %build ~nul live=%.n schematic]
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ^-  tang
+        ::
+        ?.  ?=([* ~] moves)
+          [%leaf "wrong number of moves: {<(lent moves)>}"]~
+        ::
+        ;:  weld
+          %+  expect-eq
+            !>  duct=~[/validate-fail]
+            !>  &1.i.moves
+        ::
+          %+  expect-eq
+            !>  %give
+            !>  &2.i.moves
+        ::
+          %+  expect-eq
+            !>  %meta
+            !>  &3.i.moves
+        ::
+          %+  expect-eq
+            !>  %.y
+            !>  =<  -
+                %+  ~(nets wa *worm)
+                  &4.i.moves
+                -:!>([%made ~1111.1.1 %complete *(each vase tang)])
+        ::
+          ::~&  ((slog ((hard tang) |5:|4.i.moves)) ~)
+          %+  expect-eq
+            !>  %|
+            !>  &4:|4.i.moves
+    ==  ==
+  ::
+  ;:  welp
+    results1
+    (expect-ford-empty ford-gate ~nul)
+  ==
+::
 ++  test-marker-cast-grow  ^-  tang
   ::
   =/  hoon-src-type=type  -:!>('')

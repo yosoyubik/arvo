@@ -300,8 +300,6 @@
   ++  build-mark-loader
     |=  [=mark disc=disc:ford]
     ^-  schematic:ford
-    ::  TODO: support marks loading libraries; maybe fix /&
-    ::
     :-  %ntpd
     ::  TODO: convert mark/in/folder to mark-in-folder
     ::
