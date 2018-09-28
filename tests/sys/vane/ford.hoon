@@ -699,10 +699,11 @@
   =/  hoon-src-type=type  -:!>('')
   ::
   =/  scry
-    %-  scry-with-results
-    ^-  (map [term beam] cage)
+    %-  scry-with-results-and-failures
+    ^-  (map [term beam] (unit cage))
     %-  my  :~
       :-  [%cx [[~nul %home %da ~1111.1.1] /hoon/date-as-cord/mar]]
+      :-  ~
       :+  %hoon  hoon-src-type
       %-  crip
       """
@@ -723,7 +724,17 @@
       '''
       """
     ::
+      :-  [%cx [[~nul %home %da ~1111.1.1] /hoon/as-cord/date/mar]]
+      ~
+    ::
+      :-  [%cx [[~nul %home %da ~1111.1.1] /hoon/cord/date-as/mar]]
+      ~
+    ::
+      :-  [%cx [[~nul %home %da ~1111.1.1] /hoon/cord/as/date/mar]]
+      ~
+    ::
       :-  [%cx [[~nul %home %da ~1111.1.1] /hoon/date/mar]]
+      :-  ~
       :+  %hoon  hoon-src-type
       %-  crip
       """
@@ -749,6 +760,7 @@
       """
     ::
       :-  [%cx [[~nul %home %da ~1111.1.1] /hoon/rel-date/mar]]
+      :-  ~
       :+  %hoon  hoon-src-type
       %-  crip
       """
@@ -767,6 +779,9 @@
       --
       '''
       """
+    ::
+      :-  [%cx [[~nul %home %da ~1111.1.1] /hoon/date/rel/mar]]
+      ~
     ==
   ::
   =/  schematic=schematic:ford:marker
@@ -824,37 +839,6 @@
   ;:  welp
     results1
     (expect-ford-empty ford-gate ~nul)
-  ==
-::
-++  test-tear  ^-  tang
-  ::
-  ;:  welp
-    %+  expect-eq
-      !>  ~['a' 'bc' 'de']
-      !>  (tear:ford-gate 'a-bc-de')
-  ::
-    %+  expect-eq
-      !>  ~['abc']
-      !>  (tear:ford-gate 'abc')
-  ::
-    %+  expect-eq
-      !>  ~['ab/c']
-      !>  (tear:ford-gate 'ab/c')
-  ==
-::
-++  test-resource-wire-encoding  ^-  tang
-  ::
-  ;:  welp
-    %+  expect-eq
-      !>  /cx/~nul/desk/~1111.1.1/bar/foo
-      !>  ^-  path
-          %-  scry-request-to-path:ford-gate
-          [%c care=%x [[~nul %desk [%da ~1111.1.1]] /foo/bar]]
-  ::
-    %+  expect-eq
-      !>  [%c care=%x [[~nul %desk [%da ~1111.1.1]] /foo/bar]]
-      !>  %-  need
-          (path-to-scry-request:ford-gate /cx/~nul/desk/~1111.1.1/bar/foo)
   ==
 ::
 ++  test-literal-metavase  ^-  tang

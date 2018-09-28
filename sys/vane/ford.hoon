@@ -608,93 +608,6 @@
   |=  [=scry-request scry-result=(unit (unit cage))]
   ::
   ?=(^ scry-result)
-::  +tear: split a +term into segments delimited by `-`
-::
-::  Example:
-::  ```
-::  dojo> (tear 'foo-bar-baz')
-::  ['foo' 'bar' 'baz']
-::  ```
-::
-++  tear
-  |=  a=term
-  ^-  (list term)
-  ::  sym-no-heps: a parser for terms with no heps and a leading letter
-  ::
-  =/  sym-no-heps  (cook crip ;~(plug low (star ;~(pose low nud))))
-  ::
-  (fall (rush a (most hep sym-no-heps)) /[a])
-::  +segments: compute all paths from :path-part, replacing some `/`s with `-`s
-::
-::    For example, when passed a :path-part of 'foo-bar-baz',
-::    the product will contain:
-::    ```
-::    dojo> (segments 'foo-bar-baz')
-::    [/foo/bar/baz /foo/bar-baz /foo-bar/baz /foo-bar-baz]
-::    ```
-::
-++  segments
-  |=  path-part=@tas
-  ^-  (list path)
-  ::
-  =/  join  |=([a=@tas b=@tas] (crip "{(trip a)}-{(trip b)}"))
-  ::
-  =/  torn=(list @tas)  (tear path-part)
-  ::
-  |-  ^-  (list (list @tas))
-  ::
-  ?<  ?=(~ torn)
-  ::
-  ?:  ?=([@ ~] torn)
-    ~[torn]
-  ::
-  %-  zing
-  %+  turn  $(torn t.torn)
-  |=  s=(list @tas)
-  ^-  (list (list @tas))
-  ::
-  ?>  ?=(^ s)
-  ~[[i.torn s] [(join i.torn i.s) t.s]]
-::  +rail-to-beam: convert :rail to a +beam, filling in the case with `[%ud 0]`
-::
-++  rail-to-beam
-  |=  =rail
-  ^-  beam
-  [[ship.disc.rail desk.disc.rail [%ud 0]] spur.rail]
-::  +rail-to-path: pretty-printable rail
-::
-++  rail-to-path
-  |=  =rail
-  ^-  path
-  (en-beam (rail-to-beam rail))
-::  +path-to-resource: decode a +resource from a +wire
-::
-++  path-to-resource
-  |=  =path
-  ^-  (unit resource)
-  ::
-  =/  scry-request=(unit scry-request)  (path-to-scry-request path)
-  ?~  scry-request
-    ~
-  =+  [vane care bem]=u.scry-request
-  =/  =beam  bem
-  =/  =rail  [disc=[p.beam q.beam] spur=s.beam]
-  `[vane care rail]
-::  +scry-request-to-path: encode a +scry-request in a +wire
-::
-::    Example:
-::    ```
-::    dojo> %-  scry-request-to-path
-::          [%c %x [[~zod %home [%da ~2018.1.1]] /hoon/bar]])
-::
-::    /cx/~zod/home/~2018.1.1/bar/hoon
-::    ```
-::
-++  scry-request-to-path
-  |=  =scry-request
-  ^-  path
-  =/  =term  (cat 3 [vane care]:scry-request)
-  [term (en-beam beam.scry-request)]
 ::  +path-to-scry-request: parse :path's components into :vane, :care, and :rail
 ::
 ++  path-to-scry-request
@@ -712,23 +625,6 @@
   ?.  ?=(%da -.r.u.beam)
     ~
   `[u.vane u.care u.beam]
-::  +extract-beam: obtain a +beam from a +resource
-::
-::    Fills case with [%ud 0] for live resources if :date is `~`.
-::    For once resources, ignore :date.
-::
-++  extract-beam
-  |=  [=resource date=(unit @da)]  ^-  beam
-  ::
-  =/  =case  ?~(date [%ud 0] [%da u.date])
-  ::
-  =,  rail.resource
-  [[ship.disc desk.disc case] spur]
-::  +extract-disc: obtain a +disc from a +resource
-::
-++  extract-disc
-  |=  =resource  ^-  disc
-  disc.rail.resource
 ::  +get-request-ducts: all ducts waiting on this request
 ::
 ++  get-request-ducts
@@ -2010,12 +1906,13 @@
     =.  moves  [`move`[u.originator [%pass wire note]] moves]
     ::
     event-core
-  ::  +scry-request-wire
+  ::  +scry-request-wire: wire identifying a +scry-request
   ::
   ++  scry-request-wire
     |=  =scry-request
     ^-  wire
-    (welp /(scot %p our)/scry-request (scry-request-to-path scry-request))
+    =/  =term  (cat 3 [vane care]:scry-request)
+    (weld /(scot %p our)/scry-request/[term] (en-beam beam.scry-request))
   --
 --
 ::

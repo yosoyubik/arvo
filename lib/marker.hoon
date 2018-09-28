@@ -153,6 +153,17 @@
         grabs=(set mark)
         grad=(each delegate=mark form=mark)
     ==
+  ::  +build-list: coalesce a list of schematics into a single schematic
+  ::
+  ::    TODO: move to ford:zuse
+  ::
+  ++  build-list
+    |=  schematics=(list schematic:ford)
+    ^-  schematic:ford
+    ::
+    ?~  schematics
+      [%ntdt !>(~)]
+    [i.schematics $(schematics t.schematics)]
   --
   |%
   ::  +bunt: produce the default value for a :mark on a :disc
@@ -300,11 +311,47 @@
   ++  build-mark-loader
     |=  [=mark disc=disc:ford]
     ^-  schematic:ford
-    :-  %ntpd
-    ::  TODO: convert mark/in/folder to mark-in-folder
     ::
-    :-  %ntdt
-    !>([disc /hoon/[mark]/mar])
+    =/  mark-paths=(list path)  (segments mark)
+    =/  rails=(list rail:ford)
+      (turn mark-paths |=(path [disc :(welp /hoon (flop +<) /mar)]))
+    ::
+    =/  loads=(list schematic:ford)
+      (turn rails |=(rail:ford [%nttr %cx %ntdt !>(+<)]))
+    ::
+    :+  %ntls  [%ntts %mark [%ntdt !>(mark)]]
+    :+  %ntls  [%ntts %rails [%ntdt !>(rails)]]
+    :+  %ntls  [%ntts %loads `schematic:ford`(build-list loads)]
+    ::
+    :-  %ntpd
+    ::
+    :+  %ntbs
+      [%ntdt !>(filter-mark-loads)]
+    [%ntcb [%clls [%limb %mark] [%limb %rails] [%limb %loads]]]
+  ::  +filter-mark-loads: try all rails for mark, producing the rail that worked
+  ::
+  ++  filter-mark-loads
+    |=  [=mark rails=(list rail:ford) results=(list (unit [=mark data=*]))]
+    ^-  rail:ford
+    ::
+    =/  successes=(list rail:ford)
+      |-  ^-  (list rail:ford)
+      ?~  rails  ~
+      ::
+      ?<  ?=(~ results)
+      ::
+      ?~  i.results
+        $(rails t.rails, results t.results)
+      [i.rails $(rails t.rails, results t.results)]
+    ::
+    ?~  successes
+      ~|  [%no-file-for-mark mark %tried rails]
+      !!
+    ?^  t.successes
+      ~|  [%two-files-for-mark mark i.successes i.t.successes]
+      !!
+    ::
+    i.successes
   ::  +build-mark-analyzer: produce a ford build to analyze a mark on a disc
   ::
   ::    Analyzes a mark on a disc, producing a cell of:
@@ -359,4 +406,51 @@
     ?>  ((sane %tas) q.form-vase)
     ::
     [grows grabs grad=[%| form=`@tas`q.form-vase]]
+  ::  +tear: split a +term into segments delimited by `-`
+  ::
+  ::  Example:
+  ::  ```
+  ::  dojo> (tear 'foo-bar-baz')
+  ::  ['foo' 'bar' 'baz']
+  ::  ```
+  ::
+  ++  tear
+    |=  a=term
+    ^-  (list term)
+    ::  sym-no-heps: a parser for terms with no heps and a leading letter
+    ::
+    =/  sym-no-heps  (cook crip ;~(plug low (star ;~(pose low nud))))
+    ::
+    (fall (rush a (most hep sym-no-heps)) /[a])
+  ::  +segments: get all paths from :path-part, replacing some `/`s with `-`s
+  ::
+  ::    For example, when passed a :path-part of 'foo-bar-baz',
+  ::    the product will contain:
+  ::    ```
+  ::    dojo> (segments 'foo-bar-baz')
+  ::    [/foo/bar/baz /foo/bar-baz /foo-bar/baz /foo-bar-baz]
+  ::    ```
+  ::
+  ++  segments
+    |=  path-part=@tas
+    ^-  (list path)
+    ::
+    =/  join  |=([a=@tas b=@tas] (crip "{(trip a)}-{(trip b)}"))
+    ::
+    =/  torn=(list @tas)  (tear path-part)
+    ::
+    |-  ^-  (list (list @tas))
+    ::
+    ?<  ?=(~ torn)
+    ::
+    ?:  ?=([@ ~] torn)
+      ~[torn]
+    ::
+    %-  zing
+    %+  turn  $(torn t.torn)
+    |=  s=(list @tas)
+    ^-  (list (list @tas))
+    ::
+    ?>  ?=(^ s)
+    ~[[i.torn s] [(join i.torn i.s) t.s]]
   --
