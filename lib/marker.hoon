@@ -262,37 +262,101 @@
       :+  %wtbn
         ^~((ream '?=(%& -.grad.descriptor.analyzed)'))
       ^~((ream 'p.grad.descriptor.analyzed'))
-    ::
-    :+  %ntls  [%ntts %build-mark-converter [%ntdt !>(build-mark-converter)]]
-    :+  %ntls  [%ntts %build-mark-differ [%ntdt !>(build-mark-differ)]]
     ::  create a :converter gate that can convert data to the :delegate mark
     ::
+    :+  %ntls  [%ntts %build-mark-converter [%ntdt !>(build-mark-converter)]]
     :+  %ntls  :+  %ntts  %converter
       :+  %ntnt
-        [%ntcb ^~((ream '.'))]
-      :-  %ntcb
-      ^-  hoon
-      ^~((ream '(build-mark-converter [[mark disc] [delegate disc]])'))
+        [%ntcb ^~((ream '..zuse'))]
+      :+  %ntbs
+        [%ntcb %limb %build-mark-converter]
+      [%ntcb ^~((ream '[[mark disc] [delegate disc]]'))]
     ::  produce the delegate differ gate by recursing
     ::
+    :+  %ntls  [%ntts %build-mark-differ [%ntdt !>(build-mark-differ)]]
     :+  %ntls  :+  %ntts  %delegate-differ
       :+  %ntnt
-        [%ntcb ^~((ream '.'))]
-      [%ntcb ^~((ream '(build-mark-differ delegate disc)'))]
+        [%ntcb ^~((ream '..zuse'))]
+      :+  %ntbs
+        [%ntcb %limb %build-mark-differ]
+      [%ntcb ^~((ream '[delegate disc]'))]
     ::  now produce the full differ gate
-    ::
     :-  %ntcb
     ^-  hoon
-    :+  %brts
-      :-  %bscl
-        :~  [%bsts %start [%bscb [%cnts ~[[%& 6] %core %analyzed] ~]]]
-            [%bsts %end [%bscb [%cnts ~[[%& 6] %core %analyzed] ~]]]
-      ==
-    ::  :^  %sgpd  0  ^~((ream '[%delegating start end]'))
-    ^~((ream '(delegate-differ (converter start) (converter end))'))
+    ^~  %-  ream
+    '''
+    |=  [start=_+<.core.analyzed end=_+<.core.analyzed]
+    (delegate-differ (converter start) (converter end))
+    '''
+  ::  +join: join two diffs into a single diff, or `[%null ~]` on conflict
   ::
   ++  join
+    |=  [first=vase second=vase =mark disc=disc:ford]
+    ^-  schematic:ford
+    ::
+    :+  %ntbs
+      (build-mark-joiner mark disc)
+    [[%ntdt first] [%ntdt second]]
+  ::  +build-mark-joiner: produce a gate that can combine two diffs
+  ::
+  ++  build-mark-joiner
+    |=  [=mark disc=disc:ford]
+    ^-  schematic:ford
+    ::
+    :+  %ntls  [%ntts %initial-mark (build-mark-analyzer mark disc)]
+    ::
+    :^     %ntwt
+        [%ntcb ^~((ream '?=(%| -.grad.descriptor.initial-mark)'))]
+      ^-  schematic:ford
+      ::  :mark defines its own joining; build a gate from that
+      ::
+      :+  %ntls  [%ntts %build-mark-loader [%ntdt !>(build-mark-loader)]]
+      :+  %ntls  [%ntts %form [%ntcb ^~((ream 'form:grad:core.initial-mark'))]]
+      ::  load the mark specified by +form:grad
+      ::
+      :+  %ntls  :+  %ntts  %form-mark
+        :+  %ntnt
+          [%ntcb ^~((ream '..zuse'))]
+        :+  %ntbs
+          [%ntcb [%limb %build-mark-loader]]
+        [[%ntcb %limb %form] [%ntdt !>(disc)]]
+      ::  produce the gate
+      ::
+      :-  %ntcb
+      ^~  %-  ream
+      '''
+      |=  [start=_+<.form-mark end=_+<.form-mark]
+      ^-  [term (unit _+<.form-mark)]
+      ::
+      =/  result=(unit _+<.form-mark)  (join:grad:core.initial-mark start end)
+      ?~  result
+        [%null ~]
+      [form result]
+      '''
+    ^-  schematic:ford
+    ::  :mark delegates its diffing machinery to :delegate; recurse
+    ::
+    :+  %ntls  :+  %ntts  %delegate
+      :-  %ntcb
+      ^-  hoon
+      :+  %wtbn
+        ^~((ream '?=(%& -.grad.descriptor.analyzed)'))
+      ^~((ream 'p.grad.descriptor.analyzed'))
+    ^-  schematic:ford
+    ::  produce the delegate joiner gate by recursing
+    ::
+    :+  %ntls  [%ntts %build-mark-joiner [%ntdt !>(build-mark-joiner)]]
+    :+  %ntnt
+      [%ntcb ^~((ream '..zuse'))]
+    :+  %ntbs
+      [%ntcb %limb %build-mark-joiner]
+    [%ntcb ^~((ream '[delegate disc]'))]
+  ::  +mash: TODO
+  ::
+  ++  mash
     !!
+  ::  +patch: TODO
+  ::
   ++  patch
     !!
   ::
