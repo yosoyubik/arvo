@@ -1784,12 +1784,12 @@
       (pass-note:abet [%of ire (gsig a)] b)
     ::
     ++  init
-      =.  die  (add ~d1 now)
+      =.  die  (add ~h2 now)
       abet(mow :_(mow [`/ %pass ow+/[ire] [%b %wait die]]))
     ::
     ++  refresh
       =.  mow  :_(mow [`/ %pass ow+/[ire] [%b %rest die]])
-      =.  die  (add ~d1 now)
+      =.  die  (add ~h2 now)
       done(mow :_(mow [`/ %pass ow+/[ire] [%b %wait die]]))
     ::
     ++  add-even
