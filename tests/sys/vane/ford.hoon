@@ -1069,6 +1069,116 @@
     (expect-ford-empty ford-gate ~nul)
   ==
 ::
+++  test-marker-patch  ^-  tang
+  ::
+  =/  hoon-src-type=type  -:!>('')
+  ::
+  =/  scry
+    %-  scry-with-results
+    ^-  (map [term beam] cage)
+    %-  my  :~
+      :-  [%cx [[~nul %home %da ~1111.1.1] /hoon/foo/mar]]
+      :+  %hoon  hoon-src-type
+      %-  crip
+      """
+      :-  %ntcb  %-  ream
+      '''
+      |_  foo-sample=@
+      ++  grow
+        |%
+        ++  baz  foo-sample
+        --
+      ++  grab
+        |%
+        ++  noun  ,[@ @]
+        --
+      ++  grad
+        |%
+        ++  pact  |=(diff=[@tas @ud] +.diff)
+        ++  form  %bar
+        --
+      --
+      '''
+      """
+    ::
+      :-  [%cx [[~nul %home %da ~1111.1.1] /hoon/bar/mar]]
+      :+  %hoon  hoon-src-type
+      %-  crip
+      """
+      :-  %ntcb  %-  ream
+      '''
+      |_  bar-sample=[@tas @ud]
+      ++  grow
+        |%
+        ++  baz  bar-sample
+        --
+      ++  grab
+        |%
+        ++  noun  ,[@tas @ud]
+        --
+      ++  grad  %baz
+      --
+      '''
+      """
+    ==
+  ::
+  =/  schematic=schematic:ford:marker
+    %-  patch:marker
+    [mark=%foo disc=[~nul %home] start=!>(12) diff=!>(['q' 13])]
+  ::
+  =^  results1  ford-gate
+    %-  ford-call-with-comparator  :*
+      ford-gate
+      now=~1111.1.1
+      scry=scry
+      call-args=[duct=~[/patch] type=~ %build ~nul live=%.n schematic]
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ^-  tang
+        ::
+        ?.  ?=([* ~] moves)
+          [%leaf "wrong number of moves: {<(lent moves)>}"]~
+        ::
+        ;:  weld
+          %+  expect-eq
+            !>  duct=~[/patch]
+            !>  &1.i.moves
+        ::
+          %+  expect-eq
+            !>  %give
+            !>  &2.i.moves
+        ::
+          %+  expect-eq
+            !>  %meta
+            !>  &3.i.moves
+        ::
+          ::~&  [%res ((slog ((hard tang) |5:|4.i.moves)) ~)]
+          %+  expect-eq
+            !>  %.y
+            !>  =<  -
+                %+  ~(nets wa *worm)
+                  &4.i.moves
+                -:!>([%made ~1111.1.1 %complete *(each vase tang)])
+        ::
+          %+  expect-eq
+            !>  %.y
+            !>  =<  -
+                %+  ~(nets wa *worm)
+                  &5:|4.i.moves
+                -:!>(*@)
+      ::
+          %+  expect-eq
+            !>  13
+            :-  -:!>(*@)
+            |5:|4.i.moves
+    ==  ==
+  ::
+  ;:  welp
+    results1
+    (expect-ford-empty ford-gate ~nul)
+  ==
+::
 ++  test-literal-metavase  ^-  tang
   ::
   =/  call-card  [%build ~nul live=%.n [%ntdt !>(~)]]

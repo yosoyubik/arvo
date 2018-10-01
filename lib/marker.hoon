@@ -236,24 +236,28 @@
     ::
     :^    %ntwt
         [%ntcb ^~((ream '?=(%| -.grad.descriptor.initial-mark)'))]
-      :-  %ntcb
-      ^-  hoon
       ::  :mark defines its own diffing; build a gate from that
       ::
-      :+  %brts
-        :-  %bscl
-        :~  [%bsts %start [%bscb [%cnts ~[[%& 6] %core %initial-mark] ~]]]
-            [%bsts %end [%bscb [%cnts ~[[%& 6] %core %initial-mark] ~]]]
-        ==
-      ::  :^  %sgpd  0  ^~((ream '[%diffing start end]'))
+      :+  %ntls  :+  %ntts  %form-mark
+        ::  load the mark specified by +form:grad
+        ::
+        :+  %ntnt
+          [%ntcb ^~((ream '..zuse'))]
+        :+  %ntbs
+          [%ntdt !>(build-mark-loader)]
+        :_  [%ntcb %limb %disc]
+        [%ntcb ^~((ream 'form:grad:core.initial-mark'))]
       ::
-      :+  %clhp
-        :+  %ktts  %mark
-        :+  %wtbn
-          ^~((ream '?=(%| -.grad.descriptor.initial-mark)'))
-        ^~((ream 'p.grad.descriptor.initial-mark'))
+      :-  %ntcb
+      ^-  hoon
+      ^~  %-  ream
+      '''
+      |=  [start=_+<.core.initial-mark end=_+<.core.initial-mark]
+      ^-  [term _+<.form-mark]
       ::
-      ^~((ream '(diff:~(grad core.initial-mark start) end)'))
+      :-  form:grad:core.initial-mark
+      (diff:~(grad core.initial-mark start) end)
+      '''
     ::  :mark delegates its diffing to the :delegate mark; recurse on that
     ::
     :+  %ntls  :+  %ntts  %delegate
@@ -371,6 +375,7 @@
         ==
     ^-  schematic:ford
     ::
+    :+  %ntls  [%ntdt !>([mark=mark disc=disc first=first second=second])]
     :+  %ntls  [%ntts %initial-mark (build-mark-analyzer mark disc)]
     ::
     :^    %ntwt
@@ -380,7 +385,6 @@
       ::
       ::    TODO: check equality first
       ::
-      :+  %ntls  [%ntdt !>([mark=mark disc=disc first=first second=second])]
       :+  %ntls  [%ntts %form [%ntcb ^~((ream 'form:grad:core.initial-mark'))]]
       ::
       :+  %ntls  :+  %ntts  %form-mark
@@ -388,7 +392,7 @@
           [%ntcb ^~((ream '..zuse'))]
         :+  %ntbs
           [%ntdt !>(build-mark-loader)]
-        :_  [%ntdt !>(disc)]
+        :_  [%ntcb %limb %disc]
         [%ntcb ^~((ream 'form:grad:core.initial-mark'))]
       ::  produce the gate
       ::
@@ -417,10 +421,61 @@
     :+  %ntbs
       [%ntdt !>(build-mark-masher)]
     [%ntcb ^~((ream '[delegate disc first second]'))]
-  ::  +patch: TODO
+  ::  +patch: apply a diff to a marked noun
   ::
   ++  patch
-    !!
+    |=  [=mark disc=disc:ford start=vase diff=vase]
+    ^-  schematic:ford
+    ::
+    :+  %ntbs
+      (build-mark-patcher mark disc)
+    [[%ntdt start] [%ntdt diff]]
+  ::  +build-mark-patcher: produce a gate that applies a diff to a marked noun
+  ::
+  ++  build-mark-patcher
+    |=  [=mark disc=disc:ford]
+    ^-  schematic:ford
+    ::
+    :+  %ntls  [%ntdt !>(disc=disc)]
+    :+  %ntls  [%ntts %initial-mark (build-mark-analyzer mark disc)]
+    ::
+    :^    %ntwt
+        [%ntcb ^~((ream '?=(%| -.grad.descriptor.initial-mark)'))]
+      ::  :mark defines its own patching; build a gate from that
+      ::
+      :+  %ntls  :+  %ntts  %form-mark
+        :+  %ntnt
+          [%ntcb ^~((ream '..zuse'))]
+        :+  %ntbs
+          [%ntdt !>(build-mark-loader)]
+        :_  [%ntcb %limb %disc]
+        [%ntcb ^~((ream 'form:grad:core.initial-mark'))]
+      ::  produce the gate
+      ::
+      :-  %ntcb
+      ^~  %-  ream
+      '''
+      |=  [start=_+<.core.initial-mark diff=_+<.form-mark]
+      ^+  +<.core.initial-mark
+      ::
+      (pact:~(grad core.initial-mark start) diff)
+      '''
+    ::  :mark delegates its diffing machinery to :delegate; recurse
+    ::
+    :+  %ntls  :+  %ntts  %delegate
+      :-  %ntcb
+      ^-  hoon
+      :+  %wtbn
+        ^~((ream '?=(%& -.grad.descriptor.initial-mark)'))
+      ^~((ream 'p.grad.descriptor.initial-mark'))
+    ::  produce the delegate mark's patcher by recursing
+    ::
+    :+  %ntnt
+      [%ntcb ^~((ream '..zuse'))]
+    :+  %ntbs
+      [%ntdt !>(build-mark-patcher)]
+    [%ntcb ^~((ream '[delegate disc]'))]
+  ::  +validate: ensure a noun nests inside :mark's sample
   ::
   ++  validate
     |=  [data=* =mark disc=disc:ford]
