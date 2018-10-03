@@ -51749,6 +51749,18 @@ function () {
       });
     }
   }, {
+    key: "wipeSubscription",
+    value: function wipeSubscription(path) {
+      api$1.hall({
+        wipe: {
+          sub: [{
+            hos: api$1.authTokens.ship,
+            pax: path
+          }]
+        }
+      });
+    }
+  }, {
     key: "bindShortcuts",
     value: function bindShortcuts() {
       mousetrap.bind(["mod+k"], function () {
@@ -51764,13 +51776,13 @@ function () {
       api$1.bind("/circles/~".concat(api$1.authTokens.ship), "PUT");
       warehouse$1.pushCallback('circles', function (rep) {
         // inbox local + remote configs, remote presences
-        api$1.bind("/circle/inbox/config/group-r/0", "PUT"); // grab the config for the root collection circle
-        // api.bind("/circle/c/config/group-r/0", "PUT");
-        // inbox messages
+        api$1.bind("/circle/inbox/config/group-r/0", "PUT"); // inbox messages
 
         api$1.bind("/circle/inbox/grams/-50", "PUT");
         return true;
-      }); // parses client-specific info (ship nicknames, glyphs, etc)
+      }); // grab the config for the root collection circle
+      // api.bind("/circle/c/config/group-r/0", "PUT");
+      // parses client-specific info (ship nicknames, glyphs, etc)
       // this.bind("/client", "PUT");
       // public membership
 
@@ -51810,6 +51822,12 @@ function () {
           console.log('beat');
 
           _this2.runPoll();
+        } else if (data.type === "quit") {
+          console.log("rebinding: ", data);
+          api$1.bind(data.from.path, "PUT", data.from.ship, data.from.appl);
+          _this2.seqn++;
+
+          _this2.runPoll();
         } else {
           console.log("new server data: ", data);
 
@@ -51839,6 +51857,7 @@ function () {
   return UrbitOperator;
 }();
 var operator = new UrbitOperator();
+window.operator = operator;
 
 var IconInbox =
 /*#__PURE__*/
@@ -52385,7 +52404,7 @@ function (_Component) {
           headerData = {
             title: {
               display: "Inbox",
-              href: "/~~/landscape"
+              href: "/~~"
             },
             icon: 'icon-inbox'
           };
@@ -52396,7 +52415,7 @@ function (_Component) {
           headerData = {
             title: {
               display: "Inbox",
-              href: "/~~/landscape"
+              href: "/~~"
             },
             icon: 'icon-inbox'
           };
@@ -52430,7 +52449,7 @@ function (_Component) {
             'inbox-link': true,
             'inbox-link-active': warehouse.store.views.inbox === "inbox-recent"
           });
-          var allClass = classnames({
+          var listClass = classnames({
             'vanilla': true,
             'inbox-link': true,
             'inbox-link-active': warehouse.store.views.inbox === "inbox-list"
@@ -52445,7 +52464,7 @@ function (_Component) {
               _this2.navigateSubpage('inbox', 'inbox-recent');
             }
           }, "Recent"), react.createElement("a", {
-            className: allClass,
+            className: listClass,
             onClick: function onClick() {
               _this2.navigateSubpage('inbox', 'inbox-list');
             }
@@ -52463,6 +52482,32 @@ function (_Component) {
           }, react.createElement("span", {
             className: "text-mono text-300 text-small"
           }, this.props.data.dateCreated.slice(0, -6))));
+          break;
+
+        case "header-profile":
+          var onSettingsPage = window.location.href.includes("settings");
+          var indexClass = classnames({
+            'vanilla': true,
+            'mr-8': true,
+            'inbox-link': true,
+            'inbox-link-active': !onSettingsPage
+          });
+          var settingsClass = classnames({
+            'vanilla': true,
+            'inbox-link': true,
+            'inbox-link-active': onSettingsPage
+          });
+          return react.createElement(react.Fragment, null, react.createElement("div", {
+            className: "flex-col-2"
+          }), react.createElement("div", {
+            className: "flex-col-x text-heading text-squat"
+          }, react.createElement("a", {
+            className: indexClass,
+            href: "/~~/".concat(this.props.data.owner, "/==/web/landscape/profile")
+          }, "Profile"), react.createElement("a", {
+            className: settingsClass,
+            href: "/~~/".concat(this.props.data.owner, "/==/web/landscape/profile/settings")
+          }, "Settings")));
           break;
       }
     }
@@ -72627,7 +72672,7 @@ function (_Component) {
       return [{
         name: "inbox",
         action: function action() {
-          _this8.props.transitionTo('/~~/landscape');
+          _this8.props.transitionTo('/~~');
         },
         displayText: "inbox",
         helpText: "Go to the inbox"
@@ -73356,7 +73401,7 @@ function getStationDetails(station) {
 
   switch (ret.type) {
     case "aggregator-inbox":
-      ret.stationUrl = "/~~/landscape";
+      ret.stationUrl = "/~~";
       ret.stationTitle = ret.cir;
       break;
 
