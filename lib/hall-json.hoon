@@ -353,6 +353,18 @@
     |=  a/audience
     ^-  json
     (sa a circ)
+  ::
+  ++  subs
+    |=  a/(list (pair @p path))
+    ^-  json
+    :-  %a
+    %+  turn  a
+    |=  [p=@p q=path]
+    ^-  json
+    %-  pairs
+    :~  hos+(ship p)
+        pax+s+(spat q)
+    ==
   --
 ::
 ++  dejs                                                :::  json to sur
@@ -602,5 +614,9 @@
   ++  audi                                              :::  audience
     ^-  $-(json (unit audience))
     (as circ)
+  ::
+  ++  subs
+    ^-  $-(json (unit (list (pair ship path))))
+    (ar (ot hos+(su fed:ag) pax+(su ;~(pfix net (more net urs:ab))) ~))
   --
 --

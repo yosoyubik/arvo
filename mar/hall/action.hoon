@@ -36,6 +36,7 @@
         nick+(ot who+(su fed:ag) nic+so ~)
         ::
         public+(ot add+bo cir+circ ~)
+        wipe+(ot sub+subs ~)
     ==
   --
 ::
@@ -69,6 +70,7 @@
       $nick    ~[who+(ship who.act) nic+s+nic.act]
       ::
       $public  ~[add+b+add.act cir+(circ cir.act)]
+      $wipe    ~[sub+(subs sub.act)]
     ==
   --
 --

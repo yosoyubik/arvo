@@ -160,6 +160,7 @@
       {$nick who/ship nic/nick}                         ::  new identity
       ::  misc changes                                  ::
       {$public add/? cir/circle}                        ::  show/hide membership
+      {$wipe sub/(list (pair ship path))}               ::  wipe subscriptions
   ==                                                    ::
 ::
 ::  #
