@@ -1845,7 +1845,9 @@
     ::
     ++  get-quit
       |=  a/whir-of  ^+  ..ix
-      (get-even [%quit [[(slav %p p.a) q.a] s.a]])
+      =/  doc=dock  [(slav %p p.a) q.a]
+      =.  sus  (~(del in sus) [doc %json s.a s.a])
+      (get-even [%quit [doc s.a]])
     ::
     ++  get-ack
       |=  {a/whir-of b/(unit {term tang})}  ^+  ..ix
