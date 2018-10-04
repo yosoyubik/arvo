@@ -51695,9 +51695,24 @@ function () {
   }, {
     key: "setCleanupTasks",
     value: function setCleanupTasks() {
+      var _this = this;
+
       window.addEventListener("beforeunload", function (e) {
-        api$1.bind("/circles/~".concat(api$1.authTokens.ship), "DELETE");
-        api$1.bind("/public", "DELETE");
+        api$1.bindPaths.forEach(function (p) {
+          _this.wipeSubscription(p);
+        });
+      });
+    }
+  }, {
+    key: "wipeSubscription",
+    value: function wipeSubscription(path) {
+      api$1.hall({
+        wipe: {
+          sub: [{
+            hos: api$1.authTokens.ship,
+            pax: path
+          }]
+        }
       });
     }
   }, {
@@ -51731,35 +51746,23 @@ function () {
   }, {
     key: "bindQuietDmInvites",
     value: function bindQuietDmInvites() {
-      var _this = this;
+      var _this2 = this;
 
       // Automatically accept DM invite messages
       warehouse$1.pushCallback('circles', function (rep) {
         warehouse$1.pushCallback('circle.gram', function (rep) {
-          _this.quietlyAcceptDmInvites([rep.data.gam]);
+          _this2.quietlyAcceptDmInvites([rep.data.gam]);
 
           return false;
         });
         warehouse$1.pushCallback('circle.nes', function (rep) {
-          _this.quietlyAcceptDmInvites(rep.data.map(function (m) {
+          _this2.quietlyAcceptDmInvites(rep.data.map(function (m) {
             return m.gam;
           }));
 
           return false;
         });
         return true;
-      });
-    }
-  }, {
-    key: "wipeSubscription",
-    value: function wipeSubscription(path) {
-      api$1.hall({
-        wipe: {
-          sub: [{
-            hos: api$1.authTokens.ship,
-            pax: path
-          }]
-        }
       });
     }
   }, {
@@ -51796,7 +51799,7 @@ function () {
   }, {
     key: "runPoll",
     value: function runPoll() {
-      var _this2 = this;
+      var _this3 = this;
 
       console.log('fetching... ', this.seqn); // const controller = new AbortController();
       // const signal = controller.signal;
@@ -51823,13 +51826,13 @@ function () {
         if (data.beat) {
           console.log('beat');
 
-          _this2.runPoll();
+          _this3.runPoll();
         } else if (data.type === "quit") {
           console.log("rebinding: ", data);
           api$1.bind(data.from.path, "PUT", data.from.ship, data.from.appl);
-          _this2.seqn++;
+          _this3.seqn++;
 
-          _this2.runPoll();
+          _this3.runPoll();
         } else {
           console.log("new server data: ", data);
 
@@ -51837,9 +51840,9 @@ function () {
             warehouse$1.storePollResponse(data);
           }
 
-          _this2.seqn++;
+          _this3.seqn++;
 
-          _this2.runPoll();
+          _this3.runPoll();
         }
       }).catch(function (error) {
         console.error('error = ', error); // warehouse.storeReports([{
@@ -73846,6 +73849,7 @@ function () {
     key: "setAuthTokens",
     value: function setAuthTokens(authTokens) {
       this.authTokens = authTokens;
+      this.bindPaths = [];
     } // keep default bind to hall, since its bind procedure more complex for now AA
 
   }, {
@@ -73854,6 +73858,7 @@ function () {
       var ship = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : this.authTokens.ship;
       var appl = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : "hall";
       console.log('binding to ...', appl, ", path: ", path, ", as ship: ", ship, ", by method: ", method);
+      this.bindPaths = lodash.uniq(_toConsumableArray(this.bindPaths).concat([path]));
       var params = {
         appl: appl,
         mark: "json",
