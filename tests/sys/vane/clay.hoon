@@ -1,6 +1,7 @@
 /+  *test, test-ford
 ::
-/=  clay-raw  /:  /===/sys/vane/clay  /!noun/
+::/=  clay-raw  /:  /===/sys/vane/clay  /!noun/
+/=  clay-raw  /:  /===/lib/clay  /!noun/
 ::
 !:
 =,  format
