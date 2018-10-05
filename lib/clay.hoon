@@ -1178,17 +1178,7 @@
             =(((hard mime) q.q.cag) u.cached)
           ::
           $(p.lem t.p.lem)
-        ::  if the :mis mark is the target mark and the value is the same, no-op
-        ::
-        ?:  =/  target-mark=mark  =+(spur=(flop pax) ?~(spur !! i.spur))
-            ?.  =(target-mark p.cag)
-              %.n
-            ::
-            =/  stored=cage  (need (need (read-x:ze let.dom pax)))
-            =(q.q.stored-cage q.q.cag)
-          ::
-          $(p.lem t.p.lem)
-        ::  the value differs from what's stored, so register mutation
+        ::  we don't have this cached, so register it in :mut.nuz
         ::
         $(p.lem t.p.lem, mut.nuz [i.p.lem mut.nuz])
       ==
@@ -1206,41 +1196,10 @@
       %-  emil
       ^-  (list move)
       :~  :*  hen  %pass
-              [%inserting (scot %p her) syd (scot %da wen) ~]
-              %f  %build  our  live=%.n  %pin  wen  %list
-              ^-  (list schematic:ford)
-              %+  turn  ins.nuz
-              |=  {pax/path mis/miso}
-              ?>  ?=($ins -.mis)
-              :-  [%$ %path -:!>(*path) pax]
-              =+  =>((flop pax) ?~(. %$ i))
-              [%cast [her syd] - [%$ p.mis]]
-          ==
-          :*  hen  %pass
-              [%diffing (scot %p her) syd (scot %da wen) ~]
-              %f  %build  our  live=%.n  %pin  wen  %list
-              ^-  (list schematic:ford)
-              %+  turn  dif.nuz
-              |=  {pax/path mis/miso}
-              ?>  ?=($dif -.mis)
-              =+  (need (need (read-x:ze let.dom pax)))
-              ?>  ?=(%& -<)
-              :-  [%$ %path -:!>(*path) pax]
-              [%pact [her syd] [%$ p.-] [%$ p.mis]]
-          ==
-          :*  hen  %pass
-              [%castifying (scot %p her) syd (scot %da wen) ~]
-              %f  %build  our  live=%.n  %pin  wen  %list
-              ::~  [her syd %da wen]  %tabl
-              ^-  (list schematic:ford)
-              %+  turn  mut.nuz
-              |=  {pax/path mis/miso}
-              ?>  ?=($mut -.mis)
-              :-  [%$ %path -:!>(*path) pax]
-              =+  (lobe-to-mark:ze (~(got by q:(aeon-to-yaki:ze let.dom)) pax))
-              [%cast [her syd] - [%$ p.mis]]
-          ==
-      ==
+              [%editing (scot %p her) syd (scot %da wen) ~]
+              %f  %build  our  live=%.n
+              %ntvt  wen  (build-edit [ins dif mut]:nuz)
+      ==  ==
     %_    +>.$
         dok
       ::
@@ -1314,50 +1273,128 @@
     ==
   ::
   ++  build-edit
-    |=  $:  wen=@da
-            ins=(list (pair path miso))
+    |=  $:  ins=(list (pair path miso))
             dif=(list (pair path miso))
             mut=(list (pair path miso))
         ==
     ^-  schematic:ford
     ::
     =/  disc=disc:marker  [her syd]
+    ::  produce a tuple of three list-style schematics: %ins, %dif, and %mut
     ::
-    :+  %ntls  :+  %ntts  %clay-state
-      !!
+    ::    Each of %ins, %dif, and %mut produces a list of [path value] pairs,
+    ::    where the value is different for each type of schematic and for each
+    ::    mark.
     ::
-    :+  %ntls  :+  %ntts  %changes
-      :+  :+  %ntts  %ins
-          %-  build-list:marker
-          %+  turn  ins
-          ::
-          |=  [=path =miso]
-          ^-  schematic:ford
-          ::  extract :cage from :miso and :mark from the last :path segment
-          ::
-          =/  =cage  ?>(?=(%ins -.miso) p.miso)
-          =/  result-mark=mark  =+(spur=(flop path) ?~(spur !! i.spur))
-          ::
-          :-  [%ntdt !>(path=path)]
-          ::
-          %-  cast:marker
-          [data=q.cage start=[mark=p.cage disc] end=[result-mark disc]]
+    :+  ::  %ins: insertions of new files; cast each to its target mark
         ::
-        :+  %ntts  %dif
+        :+  %ntts  %ins
         %-  build-list:marker
-        %+  turn  dif
+        %+  turn  ins
         ::
         |=  [=path =miso]
         ^-  schematic:ford
+        ::  extract :cage from :miso and :mark from the last :path segment
         ::
-
-
+        =/  =cage  ?>(?=(%ins -.miso) p.miso)
+        =/  result-mark=mark  =+(spur=(flop path) ?~(spur !! i.spur))
+        ::
+        :-  [%ntdt !>(path=path)]
+        ::
+        %-  cast:marker
+        [data=q.cage start=[mark=p.cage disc] end=[result-mark disc]]
+      ::  %dif: changes expressed as diffs to existing files; run +patch:marker
       ::
-      :+  %ntts  %mut
-      !!
+      :+  %ntts  %dif
+      ::
+      =/  lobes  q:(aeon-to-yaki:ze let.dom)
+      ::
+      %-  build-list:marker
+      %+  turn  dif
+      ::
+      |=  [=path =miso]
+      ^-  schematic:ford
+      ::
+      :-  [%ntdt !>(path=path)]
+      ::
+      =/  diff-cage=cage    ?>(?=(%dif -.miso) p.miso)
+      =/  stored            (need (need (read-x:ze let.dom path)))
+      =/  stored-cage=cage  ?>(?=(%& -.stored) p.stored)
+      ::
+      %-  patch:marker
+      [mark=p.stored-cage disc start=q.stored-cage diff=q.diff-cage]
+    ::  %mut: changed files expressed as their new values; cast, hash, and diff
     ::
-
-
+    ::    For each file in :mut, check if it's the same as the existing file.
+    ::    If not, make a schematic that computes [path hash diff], where
+    ::    :hash is the hash of the new file contents and :diff is a marked
+    ::    diff from old contents to new.
+    ::
+    :+  %ntts  %mut
+    ::
+    =/  lobes  q:(aeon-to-yaki:ze let.dom)
+    ::
+    %-  build-list:marker
+    %+  murn  mut
+    ::
+    |=  [=path =miso]
+    ^-  (unit schematic:ford)
+    ::
+    =/  mut-cage=cage     ?>(?=(%mut -.miso) p.miso)
+    =/  =lobe             (~(got by lobes) path)
+    =/  result-mark=mark  (lobe-to-mark:ze lobe)
+    =/  stored            (need (need (read-x let.dom path)))
+    =/  stored-cage=cage  ?>(?=(%& -.stored) p.stored)
+    ::  if the :mis mark is the target mark and the value is the same, no-op
+    ::
+    ?:  ?&  =(result-mark p.mut-cage)
+            =(q.q.stored-cage q.q.mut-cage)
+        ==
+      ~
+    :-  ~
+    ^-  schematic:ford
+    ::  this schematic produces [path hash diff]
+    ::
+    :-  [%ntdt !>(path=path)]
+    ::  cast the new data to the :result-mark
+    ::
+    :+  %ntls  :+  %ntts  %new
+      %-  cast:marker
+      [data=q.mut-cage start=[mark=p.mut-cage disc] end=[result-mark disc]]
+    ::  compute the :hash of the new data
+    ::
+    :-  [%ntts %hash [%ntcb ^~((ream '(shax (jam new))'))]]
+    ::  compute the diff from existing content to new data
+    ::
+    :+  %ntts  %diff
+    ::
+    :+  %ntls  :+  %ntts  %stored  [%ntdt (cage-to-vase:marker stored-cage)]
+    ::
+    :+  %ntbs
+      (build-mark-differ result-mark disc)
+    [%ntcb ^~((ream '[stored new]'))]
+  ::
+  ::
+  ++  take-editing
+    |=  [wen=@da res=made-result:ford]
+    ^+  +>
+    ::
+    ?~  dok
+      ~&  %clay-take-editing-unexpected-made  +>.$
+    ?.  ?=(~ ins.u.dok)
+      ~&  %clay-take-editing-redundant-made  +>.$
+    ?.  ?=(%complete -.res)
+      ~&  %clay-take-editing-incomplete-made  +>.$
+    ?.  ?=(%& -.result.res)
+      ~&  %clay-take-editing-error-made  ((slog p.result.res) +>.$)
+    ::
+    =.  ins.u.dok  :-  ~
+    ::
+    ?:  ?&  ?=(^ dif.u.dok)
+            ?=(^ mut.u.dok)
+        ==
+      (apply-edit wen)
+    +>.$
   ::
   ::  Handle result of insertion.
   ::
@@ -4161,6 +4198,16 @@
       $made
     ?~  tea  !!
     ?+    -.tea  !!
+        %editing
+      ?>  ?=([@ @ @ ~] t.tea)
+      =+  our=(slav %p i.t.tea)
+      =+  syd=(slav %tas i.t.t.tea)
+      =+  wen=(slav %da i.t.t.t.tea)
+      =+  mos=ruf
+        =+  den=((de now hen ruf) [. .]:our syd)
+        abet:(take-editing:den wen result.q.hin)
+      [mos ..^$]
+    ::
         $inserting
       ?>  ?=({@ @ @ ~} t.tea)
       =+  our=(slav %p i.t.tea)
