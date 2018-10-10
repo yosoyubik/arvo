@@ -230,6 +230,10 @@
     [[%ntdt start] [%ntdt end]]
   ::  +build-mark-differ: build a gate to diff two nouns of mark :mark
   ::
+  ::    If :start and :end are the same noun, this gate will produce
+  ::    `[%null ~]`. Otherwise, it will behave according to the mark
+  ::    definition.
+  ::
   ++  build-mark-differ
     |=  [=mark disc=disc:ford]
     ^-  schematic:ford
@@ -250,6 +254,20 @@
           [%ntdt !>(build-mark-loader)]
         :_  [%ntcb %limb %disc]
         [%ntcb ^~((ream 'form:grad:core.initial-mark'))]
+      ::  wrap :original-gate with an equality check so we get `[%null ~]`
+      ::
+      :+  %ntbs
+        :+  %ntbn  [%ntcb ^~((ream '..zuse'))]
+        :-  %ntcb
+        ^~  %-  ream
+        '''
+        |*  original-gate=$-(* *)
+        |*  [start=* end=*]
+        ::
+        ?:  =(start end)
+          [%null ~]
+        (original-gate start end)
+        '''
       ::
       :-  %ntcb
       ^-  hoon

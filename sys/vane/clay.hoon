@@ -1131,6 +1131,8 @@
     ^+  +>
     ?:  ?=(%| -.lem)
       =^  hat  +>.$
+        ::  TODO: specialize this flow, since it's probably broken now
+        ::
         (execute-changes:ze wen lem)
       ?~  hat
         +>.$
@@ -2168,9 +2170,10 @@
       |=  [disc=disc:ford a=page]
       ^-  schematic:ford
       ::
-      ?.  ?=($hoon p.a)  [%volt disc a]
+      ?.  ?=(%hoon p.a)  (validate data=q.a mark=p.a disc)
       ::  %hoon bootstrapping
-      [%$ p.a [%atom %t ~] q.a]
+      ::
+      [%ntdt [%cell [%atom %tas ~] [%atom %t ~]] a]
     ::
     ::  Creates a schematic out of a lobe (content hash).
     ::

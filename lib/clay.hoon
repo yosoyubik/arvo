@@ -1363,7 +1363,12 @@
       [data=q.mut-cage start=[mark=p.mut-cage disc] end=[result-mark disc]]
     ::  compute the :hash of the new data
     ::
-    :-  [%ntts %hash [%ntcb ^~((ream '(shax (jam new))'))]]
+    :-  :+  %ntts  %hash
+      :+  %ntbs
+        :+  %ntbn
+          [%ntcb ^~((ream '..zuse'))]
+        [%ntcb  ^~((ream '(corl shax jam)'))]
+      [%ntcb %limb %new]
     ::  compute the diff from existing content to new data
     ::
     :+  %ntts  %diff
@@ -1384,17 +1389,21 @@
     ?.  ?=(~ ins.u.dok)
       ~&  %clay-take-editing-redundant-made  +>.$
     ?.  ?=(%complete -.res)
-      ~&  %clay-take-editing-incomplete-made  +>.$
+      ~&  %clay-take-editing-ford-incomplete-made  +>.$
     ?.  ?=(%& -.result.res)
-      ~&  %clay-take-editing-error-made  ((slog p.result.res) +>.$)
+      ~&  %clay-take-editing-ford-error-made  ((slog p.result.res) +>.$)
+    ::  TODO: probably wrong, need to update state and call +print-changes
     ::
-    =.  ins.u.dok  :-  ~
+    ?:  =(0 let.dom)
+      ~&  %take-editing-initial-commit-no-op  +>.$
     ::
-    ?:  ?&  ?=(^ dif.u.dok)
-            ?=(^ mut.u.dok)
-        ==
-      (apply-edit wen)
-    +>.$
+    =/  parent=tako  (aeon-to-tako let.dom)
+    ::
+    
+
+
+
+
   ::
   ::  Handle result of insertion.
   ::
@@ -2250,9 +2259,10 @@
       |=  [disc=disc:ford a=page]
       ^-  schematic:ford
       ::
-      ?.  ?=($hoon p.a)  [%volt disc a]
+      ?.  ?=(%hoon p.a)  (validate:marker data=q.a mark=p.a disc)
       ::  %hoon bootstrapping
-      [%$ p.a [%atom %t ~] q.a]
+      ::
+      [%ntdt [%cell [%atom %tas ~] [%atom %t ~]] a]
     ::
     ::  Creates a schematic out of a lobe (content hash).
     ::
@@ -2265,17 +2275,35 @@
             ~
           q:(aeon-to-yaki let.dom)
       =+  lol=`(unit lobe)`?.(=(~ ref) `0vsen.tinel (~(get by hat) pax))
+      ::
+      =|  $=  rek
+          $:  deltas=(list [hash=lobe from=[=mark =lobe] diff=page])
+              direct=[hash=lobe contents=page]
+          ==
+      ::
+      =.  rek
+        |-  ^+  rek
+        =+  bol=(~(got by lat.ran) lob)
+        ::
+        ?:  ?=(%direct -.bol)
+          rek(direct [p q]:bol)
+        $(lob q.q.bol, deltas.rek [[p q r]:bol deltas.rek])
+      ::
+      =/  mark-from-path=mark  =+(spur=(flop pax) ?~(spur !! `@tas`i.spur))
+      ::
       |-  ^-  schematic:ford
-      ?:  =([~ lob] lol)
-        =+  (need (need (read-x let.dom pax)))
-        ?>  ?=(%& -<)
-        [%$ p.-]
-      =+  bol=(~(got by lat.ran) lob)
-      ?-  -.bol
-        $direct     (page-to-schematic disc q.bol)
-        $delta      ~|  delta+q.q.bol
-                    [%pact disc $(lob q.q.bol) (page-to-schematic disc r.bol)]
-      ==
+      ::
+      ?~  deltas.rek
+        ::  TODO: avoid repeat validation? also check hoon bootstrapping
+        ::
+        (validate q.direct.rek mark-from-path disc)
+      ::
+      :+  %ntbs
+        (build-mark-patcher mark-from-path disc)
+      ::
+      :-  start=$(deltas.rek t.deltas.rek)
+      ::
+      diff=(page-to-schematic diff.i.deltas)
     ::
     ::  Hashes a page to get a lobe.
     ::
