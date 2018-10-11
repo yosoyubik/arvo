@@ -1,4 +1,5 @@
 /+  marker
+=,  marker  ::  TODO remove once zuse has new ford
 !:
 ::  clay (4c), revision control
 ::
@@ -362,7 +363,7 @@
               {$writ p/riot}                            ::
           ==  ==                                        ::
               $:  $f                                    ::
-          $%  [%made date=@da result=made-result:ford]  ::
+          $%  [%made date=@da result=made-result:ford]  ::  TODO remove ^
           ==  ==                                        ::
               $:  $b                                    ::
           $%  {$wake ~}                                ::  timer activate
@@ -484,97 +485,57 @@
     =+  nao=(case-to-aeon:ze q.mun)
     ::  ~&  [%aver-mun nao [%from syd lim q.mun]]
     ?~(nao ~ (read-at-aeon:ze for u.nao mun))
+  ::  +result-to-list: convert a ford build result to (list vase)
   ::
-  ++  ford-fail  |=(tan/tang ~|(%ford-fail (mean tan)))
-  ::
-  ::  Takes either a result or a stack trace.  If it's a stack trace, we crash;
-  ::  else, we produce the result.
-  ::
-  ++  unwrap-tang
-    |*  res/(each * tang)
-    ?:(?=(%& -.res) p.res (mean p.res))
-  ::
-  ::  Parse a gage to a list of pairs of cages, crashing on error.
-  ::
-  ::  Composition of ++gage-to-cages-or-error and ++unwrap-tang.  Maybe same as
-  ::  ++gage-to-success-cages?
-  ::
-  ++  made-result-to-cages
+  ++  result-to-list
     |=  result=made-result:ford
-    ^-  (list (pair cage cage))
-    (unwrap-tang (made-result-to-cages-or-error result))
+    ^-  (list vase)
+    ::
+    ?.  ?=(%complete -.result)
+      ~|  %ford-incomplete-in-clay
+      (mean tang.result)
+    ::
+    ?.  ?=(%& -.result.result)
+      ~|  %ford-fail-in-clay
+      (mean p.result.result)
+    ::
+    =/  vaz=vase  p.result.result
+    ::
+    |-  ^-  (list vase)
+    ?~  q.vaz  ~
+    ::
+    [i=(slot 2 vaz) t=$(vaz (slot 3 vaz))]
+  ::  +result-to-pairs: convert a ford build result to (list [=path =vase])
   ::
-  ::  Same as ++gage-to-cages-or-error except crashes on error.  Maybe same as
-  ::  ++gage-to-cages?
-  ::
-  ++  made-result-to-success-cages
+  ++  result-to-pairs
     |=  result=made-result:ford
-    ^-  (list (pair cage cage))
-    ?.  ?=([%complete %success %list *] result)
-      (ford-fail >%strange-ford-result< ~)
-    ::  process each row in the list, filtering out errors
+    ^-  (list [=path =vase])
     ::
-    %+  murn  results.build-result.result
-    |=  row=build-result:ford
-    ^-  (unit [cage cage])
+    =/  vases=(list vase)  (result-to-list result)
     ::
-    ?:  ?=([%error *] row)
-      ~&  [%clay-whole-build-failed message.row]
-      ~
-    ?:  ?=([%success [%error *] *] row)
-      ~&  [%clay-first-failure message.head.row]
-      ~
-    ?:  ?=([%success [%success *] [%error *]] row)
-      ~&  [%clay-second-failure message.tail.row]
-      ~
-    ?.  ?=([%success [%success *] [%success *]] row)
-      ~
-    `[(result-to-cage:ford head.row) (result-to-cage:ford tail.row)]
+    |-  ^-  (list [=path =vase])
+    ?~  vases  ~
+    ::
+    =/  path-vase=vase  (slot 2 i.vases)
+    =/  data-vase=vase  (slot 3 i.vases)
+    ::
+    =/  =path  ((hard path) q.path-vase)
+    ::
+    [i=[path data-vase] t=$(vases t.vases)]
+  ::  +result-to-cages: convert a ford build result to (list [=path =cage])
   ::
-  ::  Expects a single-level gage (i.e. a list of pairs of cages).  If the
-  ::  result is of a different form, or if some of the computations in the gage
-  ::  failed, we produce a stack trace.  Otherwise, we produce the list of pairs
-  ::  of cages.
-  ::
-  ++  made-result-to-cages-or-error
+  ++  result-to-cages
     |=  result=made-result:ford
-    ^-  (each (list (pair cage cage)) tang)
+    ^-  (list [=path =cage])
     ::
-    ?:  ?=([%incomplete *] result)
-      (mule |.(`~`(ford-fail tang.result)))
-    ?.  ?=([%complete %success %list *] result)
-      (mule |.(`~`(ford-fail >%strange-ford-result -.build-result.result< ~)))
-    =/  results=(list build-result:ford)
-      results.build-result.result
-    =<  ?+(. [%& .] {@ *} .)
-    |-
-    ^-  ?((list [cage cage]) (each ~ tang))
-    ?~  results  ~
+    =/  pairs=(list [=path =vase])  (result-to-pairs result)
     ::
-    ?.  ?=([%success ^ *] i.results)
-      (mule |.(`~`(ford-fail >%strange-ford-result< ~)))
-    ?:  ?=([%error *] head.i.results)
-      (mule |.(`~`(ford-fail message.head.i.results)))
-    ?:  ?=([%error *] tail.i.results)
-      (mule |.(`~`(ford-fail message.tail.i.results)))
+    |-  ^-  (list [=path =cage])
+    ?~  pairs  ~
     ::
-    =+  $(results t.results)
-    ?:  ?=([@ *] -)  -
-    :_  -
-    [(result-to-cage:ford head.i.results) (result-to-cage:ford tail.i.results)]
-  ::
-  ::  Assumes the list of pairs of cages is actually a listified map of paths
-  ::  to cages, and converts it to (map path cage) or a stack trace on error.
-  ::
-  ++  cages-to-map
-    |=  tay/(list (pair cage cage))
-    =|  can/(map path cage)
-    |-  ^-  (each (map path cage) tang)
-    ?~  tay   [%& can]
-    =*  pax  p.i.tay
-    ?.  ?=($path p.pax)
-      (mule |.(`~`~|([%expected-path got=p.pax] !!)))
-    $(tay t.tay, can (~(put by can) ((hard path) q.q.pax) q.i.tay))
+    =/  =cage  (vase-to-cage:marker vase.i.pairs)
+    ::
+    [i=[path.i.pairs cage] t=$(pairs t.pairs)]
   ::
   ::  Queue a move.
   ::
@@ -622,8 +583,8 @@
       (emit hen %give %writ ~ [p.mun q.mun syd] r.mun p.dat)
     %-  emit
     :*  hen  %pass  [%blab p.mun (scot q.mun) syd r.mun]
-        %f  %build  our  live=%.n  %pin
-        (case-to-date q.mun)
+        %f  %build  our  live=%.n
+        %ntvt  (case-to-date q.mun)
         (lobe-to-schematic:ze [her syd] r.mun p.dat)
     ==
   ::
@@ -826,6 +787,8 @@
   ::
   ::  Initializes a new mount point.
   ::
+  ::  TODO: duplicate code with +take-patch
+  ::
   ++  mont
     |=  {pot/term bem/beam}
     ^+  +>
@@ -835,19 +798,31 @@
     =+  mus=(skim can |=(paf/path =(pax (scag (lent pax) paf))))
     ?~  mus
       +>.$
+    ::
+    =/  disc=disc:ford  [her syd]
+    ::
     %-  emit
     ^-  move
     :*  hen  %pass  [%ergoing (scot %p her) syd ~]  %f
-        %build  our  live=%.n  %list
-        ^-  (list schematic:ford)
+        %build  our  live=%.n
+        %-  build-list:marker
         %+  turn  `(list path)`mus
-        |=  a/path
-        :-  [%$ %path !>(a)]
-        :^  %cast  [her syd]  %mime
-        =+  (need (need (read-x:ze cas a)))
-        ?:  ?=(%& -<)
-          [%$ p.-]
-        (lobe-to-schematic:ze [her syd] a p.-)
+        |=  pax=path
+        ^-  schematic:ford
+        ::
+        :-  [%ntdt !>(path=pax)]
+        ::
+        :+  %ntbs
+          =/  mark-from-path=mark  (path-to-mark:ze pax)
+          ::
+          %-  build-mark-converter:marker
+          [start=[mark-from-path disc] end=[%mime disc]]
+        ::
+        =/  stored  (need (need (read-x:ze let.dom pax)))
+        ::
+        ?:  ?=(%& -.stored)
+          [%ntdt (cage-to-vase:marker p.stored)]
+        (lobe-to-schematic:ze disc pax p.stored)
     ==
   ::
   ::  Set permissions for a node.
@@ -1178,7 +1153,19 @@
             =(((hard mime) q.q.cag) u.cached)
           ::
           $(p.lem t.p.lem)
-        ::  we don't have this cached, so register it in :mut.nuz
+        ::  if the :mis mark is the target mark and the value is the same, no-op
+        ::
+        ?:  =/  target-mark=mark  =+(spur=(flop pax) ?~(spur !! i.spur))
+            ?.  =(target-mark p.cag)
+              %.n
+            ::
+            =/  stored            (need (need (read-x:ze let.dom pax)))
+            =/  stored-cage=cage  ?>(?=(%& -.stored) p.stored)
+            ::
+            =(q.q.stored-cage q.q.cag)
+          ::
+          $(p.lem t.p.lem)
+        ::  the value differs from what's stored, so register mutation
         ::
         $(p.lem t.p.lem, mut.nuz [i.p.lem mut.nuz])
       ==
@@ -1192,14 +1179,70 @@
       (sort ink.nuz sort-by-head)
     ==
     ::
+    =/  disc=disc:ford  [her syd]
+    =/  lobes  q:(aeon-to-yaki:ze let.dom)
+    ::
     =.  +>.$
       %-  emil
       ^-  (list move)
       :~  :*  hen  %pass
-              [%editing (scot %p her) syd (scot %da wen) ~]
+              [%inserting (scot %p her) syd (scot %da wen) ~]
               %f  %build  our  live=%.n
-              %ntvt  wen  (build-edit [ins dif mut]:nuz)
-      ==  ==
+              %ntvt  wen
+              %-  build-list:marker
+              %+  turn  ins.nuz
+              |=  [=path =miso]
+              ^-  schematic:ford
+              ::
+              :-  [%ntdt !>(path=path)]
+              ::
+              =/  =cage             ?>(?=(%ins -.miso) p.miso)
+              =/  target-mark=mark  (path-to-mark:ze path)
+              ::
+              %-  cast:marker
+              [data=q.cage start=[mark=p.cage disc] end=[target-mark disc]]
+          ==
+          :*  hen  %pass
+              [%diffing (scot %p her) syd (scot %da wen) ~]
+              %f  %build  our  live=%.n
+              %ntvt  wen
+              %-  build-list:marker
+              %+  turn  dif.nuz
+              |=  [=path =miso]
+              ^-  schematic:ford
+              ::
+              :-  [%ntdt !>(path=path)]
+              ::
+              =/  diff-cage=cage    ?>(?=(%dif -.miso) p.miso)
+              =/  stored            (need (need (read-x:ze let.dom path)))
+              =/  stored-cage=cage  ?>(?=(%& -.stored) p.stored)
+              ::
+              %-  patch:marker
+              [mark=p.stored-cage disc start=q.stored-cage diff=q.diff-cage]
+          ==
+          :*  hen  %pass
+              [%castifying (scot %p her) syd (scot %da wen) ~]
+              %f  %build  our  live=%.n
+              %ntvt  wen
+              %-  build-list:marker
+              %+  turn  mut.nuz
+              |=  [=path =miso]
+              ^-  schematic:ford
+              ::
+              :-  [%ntdt !>(path=path)]
+              ::
+              =/  new-cage=cage     ?>(?=(%mut -.miso) p.miso)
+              =/  =lobe             (~(got by lobes) path)
+              =/  result-mark=mark  (lobe-to-mark:ze lobe)
+              =/  stored            (need (need (read-x:ze let.dom path)))
+              =/  stored-cage=cage  ?>(?=(%& -.stored) p.stored)
+              ::
+              %^    cast:marker
+                  data=q.new-cage
+                start=[mark=p.new-cage disc]
+              end=[result-mark disc]
+          ==
+      ==
     %_    +>.$
         dok
       ::
@@ -1272,139 +1315,6 @@
       ==
     ==
   ::
-  ++  build-edit
-    |=  $:  ins=(list (pair path miso))
-            dif=(list (pair path miso))
-            mut=(list (pair path miso))
-        ==
-    ^-  schematic:ford
-    ::
-    =/  disc=disc:marker  [her syd]
-    ::  produce a tuple of three list-style schematics: %ins, %dif, and %mut
-    ::
-    ::    Each of %ins, %dif, and %mut produces a list of [path value] pairs,
-    ::    where the value is different for each type of schematic and for each
-    ::    mark.
-    ::
-    :+  ::  %ins: insertions of new files; cast each to its target mark
-        ::
-        :+  %ntts  %ins
-        %-  build-list:marker
-        %+  turn  ins
-        ::
-        |=  [=path =miso]
-        ^-  schematic:ford
-        ::  extract :cage from :miso and :mark from the last :path segment
-        ::
-        =/  =cage  ?>(?=(%ins -.miso) p.miso)
-        =/  result-mark=mark  =+(spur=(flop path) ?~(spur !! i.spur))
-        ::
-        :-  [%ntdt !>(path=path)]
-        ::
-        %-  cast:marker
-        [data=q.cage start=[mark=p.cage disc] end=[result-mark disc]]
-      ::  %dif: changes expressed as diffs to existing files; run +patch:marker
-      ::
-      :+  %ntts  %dif
-      ::
-      =/  lobes  q:(aeon-to-yaki:ze let.dom)
-      ::
-      %-  build-list:marker
-      %+  turn  dif
-      ::
-      |=  [=path =miso]
-      ^-  schematic:ford
-      ::
-      :-  [%ntdt !>(path=path)]
-      ::
-      =/  diff-cage=cage    ?>(?=(%dif -.miso) p.miso)
-      =/  stored            (need (need (read-x:ze let.dom path)))
-      =/  stored-cage=cage  ?>(?=(%& -.stored) p.stored)
-      ::
-      %-  patch:marker
-      [mark=p.stored-cage disc start=q.stored-cage diff=q.diff-cage]
-    ::  %mut: changed files expressed as their new values; cast, hash, and diff
-    ::
-    ::    For each file in :mut, check if it's the same as the existing file.
-    ::    If not, make a schematic that computes [path hash diff], where
-    ::    :hash is the hash of the new file contents and :diff is a marked
-    ::    diff from old contents to new.
-    ::
-    :+  %ntts  %mut
-    ::
-    =/  lobes  q:(aeon-to-yaki:ze let.dom)
-    ::
-    %-  build-list:marker
-    %+  murn  mut
-    ::
-    |=  [=path =miso]
-    ^-  (unit schematic:ford)
-    ::
-    =/  mut-cage=cage     ?>(?=(%mut -.miso) p.miso)
-    =/  =lobe             (~(got by lobes) path)
-    =/  result-mark=mark  (lobe-to-mark:ze lobe)
-    =/  stored            (need (need (read-x let.dom path)))
-    =/  stored-cage=cage  ?>(?=(%& -.stored) p.stored)
-    ::  if the :mis mark is the target mark and the value is the same, no-op
-    ::
-    ?:  ?&  =(result-mark p.mut-cage)
-            =(q.q.stored-cage q.q.mut-cage)
-        ==
-      ~
-    :-  ~
-    ^-  schematic:ford
-    ::  this schematic produces [path hash diff]
-    ::
-    :-  [%ntdt !>(path=path)]
-    ::  cast the new data to the :result-mark
-    ::
-    :+  %ntls  :+  %ntts  %new
-      %-  cast:marker
-      [data=q.mut-cage start=[mark=p.mut-cage disc] end=[result-mark disc]]
-    ::  compute the :hash of the new data
-    ::
-    :-  :+  %ntts  %hash
-      :+  %ntbs
-        :+  %ntbn
-          [%ntcb ^~((ream '..zuse'))]
-        [%ntcb  ^~((ream '(corl shax jam)'))]
-      [%ntcb %limb %new]
-    ::  compute the diff from existing content to new data
-    ::
-    :+  %ntts  %diff
-    ::
-    :+  %ntls  :+  %ntts  %stored  [%ntdt (cage-to-vase:marker stored-cage)]
-    ::
-    :+  %ntbs
-      (build-mark-differ result-mark disc)
-    [%ntcb ^~((ream '[stored new]'))]
-  ::
-  ::
-  ++  take-editing
-    |=  [wen=@da res=made-result:ford]
-    ^+  +>
-    ::
-    ?~  dok
-      ~&  %clay-take-editing-unexpected-made  +>.$
-    ?.  ?=(~ ins.u.dok)
-      ~&  %clay-take-editing-redundant-made  +>.$
-    ?.  ?=(%complete -.res)
-      ~&  %clay-take-editing-ford-incomplete-made  +>.$
-    ?.  ?=(%& -.result.res)
-      ~&  %clay-take-editing-ford-error-made  ((slog p.result.res) +>.$)
-    ::  TODO: probably wrong, need to update state and call +print-changes
-    ::
-    ?:  =(0 let.dom)
-      ~&  %take-editing-initial-commit-no-op  +>.$
-    ::
-    =/  parent=tako  (aeon-to-tako let.dom)
-    ::
-    
-
-
-
-
-  ::
   ::  Handle result of insertion.
   ::
   ::  For commit flow overview, see ++edit.
@@ -1420,18 +1330,10 @@
       ~&  %clay-take-inserting-unexpected-made  +>.$
     ?.  =(~ ins.u.dok)
       ~&  %clay-take-inserting-redundant-made  +>.$
-    =-  =.  ins.u.dok  `-
-        ?:  ?&  ?=(^ dif.u.dok)
-                ?=(^ mut.u.dok)
-            ==
-          (apply-edit wen)
-        +>.$
-    ^-  (list (pair path cage))
-    %+  turn  (made-result-to-success-cages res)
-    |=  {pax/cage cay/cage}
-    ?.  ?=($path p.pax)
-      ~|(%clay-take-inserting-strange-path-mark !!)
-    [((hard path) q.q.pax) cay]
+    ::
+    =.  ins.u.dok  `(result-to-cages res)
+    ::
+    (apply-edit-if-done wen)
   ::
   ::  Handle result of diffing.
   ::
@@ -1448,20 +1350,17 @@
       ~&  %clay-take-diffing-unexpected-made  +>.$
     ?.  =(~ dif.u.dok)
       ~&  %clay-take-diffing-redundant-made  +>.$
-    =-  =.  dif.u.dok  `-
-        ?:  ?&  ?=(^ ins.u.dok)
-                ?=(^ mut.u.dok)
-            ==
-          (apply-edit wen)
-        +>.$
-    ^-  (list (trel path lobe cage))
-    %+  turn  (made-result-to-cages res)
-    |=  {pax/cage cay/cage}
-    ^-  (pair path (pair lobe cage))
-    ?.  ?=($path p.pax)
-      ~|(%clay-take-diffing-strange-path-mark !!)
-    =+  paf=((hard path) q.q.pax)
-    [paf (page-to-lobe:ze [p q.q]:cay) (~(got by dig.u.dok) paf)]
+    ::
+    =.  dif.u.dok
+      :-  ~
+      ^-  (list (trel path lobe cage))
+      %+  turn  (result-to-cages res)
+      |=  [pax=path cay=cage]
+      ^-  (pair path (pair lobe cage))
+      ::
+      [pax (page-to-lobe:ze [p q.q]:cay) (~(got by dig.u.dok) pax)]
+    ::
+    (apply-edit-if-done wen)
   ::
   ::  Handle result of casting mutations.
   ::
@@ -1479,27 +1378,37 @@
       ~&  %clay-take-castifying-unexpected-made  +>.$
     ?.  =(~ muh.u.dok)
       ~&  %clay-take-castifying-redundant-made  +>.$
-    =+  ^-  cat/(list (pair path cage))
-        %+  turn  (made-result-to-cages res)
-        |=  {pax/cage cay/cage}
-        ?.  ?=($path p.pax)
-          ~|(%castify-bad-path-mark !!)
-        [((hard path) q.q.pax) cay]
+    ::
+    =/  cat=(list (pair path cage))  (result-to-cages res)
+    ::
     =.  muh.u.dok
-          %-  malt
-          %+  turn  cat
-          |=  {pax/path cay/cage}
-          [pax (page-to-lobe:ze [p q.q]:cay)]
+      %-  malt
+      %+  turn  cat
+      |=  [pax=path cay=cage]
+      [pax (page-to-lobe:ze [p q.q]:cay)]
+    ::
+    =/  disc=disc:ford  [her syd]
+    ::
     %-  emit
     :*  hen  %pass
         [%mutating (scot %p her) syd (scot %da wen) ~]
-        %f  %build  our  live=%.n  %pin  wen  %list
-        ^-  (list schematic:ford)
+        %f  %build  our  live=%.n
+        %ntvt  wen
+        %-  build-list:marker
         %+  turn  cat
-        |=  {pax/path cay/cage}
-        :-  [%$ %path -:!>(*path) pax]
-        =+  (lobe-to-schematic:ze [her syd] pax (~(got by q:(aeon-to-yaki:ze let.dom)) pax))
-        [%diff [her syd] - [%$ cay]]
+        |=  [pax=path cay=cage]
+        ^-  schematic:ford
+        ::
+        :-  [%ntdt !>(path=pax)]
+        ::  produce a schematic that runs (diff old-value new-value)
+        ::
+        :+  %ntbs
+          (build-mark-differ:marker mark=p.cay disc)
+        ::
+        :-  %^  lobe-to-schematic:ze  disc  pax
+            (~(got by q:(aeon-to-yaki:ze let.dom)) pax)
+        ::
+        [%ntdt (cage-to-vase:marker cay)]
     ==
   ::
   ::  Handle result of diffing mutations.
@@ -1518,22 +1427,29 @@
       ~&  %clay-take-mutating-unexpected-made  +>.$
     ?.  =(~ mut.u.dok)
       ~&  %clay-take-mutating-redundant-made  +>.$
-    =-  =.  mut.u.dok  `-
-        ?:  ?&  ?=(^ ins.u.dok)
-                ?=(^ dif.u.dok)
-            ==
-          (apply-edit wen)
-        +>.$
-    ^-  (list (trel path lobe cage))
-    %+  murn  (made-result-to-cages res)
-    |=  {pax/cage cay/cage}
-    ^-  (unit (pair path (pair lobe cage)))
-    ?.  ?=($path p.pax)
-      ~|(%clay-take-mutating-strange-path-mark !!)
-    ?:  ?=($null p.cay)
-      ~
-    =+  paf=((hard path) q.q.pax)
-    `[paf (~(got by muh.u.dok) paf) cay]
+    ::
+    =.  mut.u.dok
+      :-  ~
+      ^-  (list (trel path lobe cage))
+      %+  murn  (result-to-cages res)
+      |=  [pax=path cay=cage]
+      ^-  (unit (pair path (pair lobe cage)))
+      ::  disregard empty diffs
+      ::
+      ?:  ?=(%null p.cay)
+        ~
+      `[pax (~(got by muh.u.dok) pax) cay]
+    ::
+    (apply-edit-if-done wen)
+  ::  +apply-edit-if-done: call +apply-edit if first step in commit flow is done
+  ::
+  ++  apply-edit-if-done
+    |=  wen=@da
+    ^+  +>
+    ::
+    ?.  &(?=(^ dok) ?=(^ dif.u.dok) ?=(^ ins.u.dok) ?=(^ mut.u.dok))
+      +>.$
+    (apply-edit wen)
   ::
   ::  Now that dok is completely filled, we can apply the changes in the commit.
   ::
@@ -1585,18 +1501,25 @@
   ::  Specifically, we tell ford to convert each lobe into a blob, then we call
   ::  ++take-patch to apply the result to our current ankh and update unix.
   ::
+  ::  TODO: do we need a :wen argument to lock the Ford build to a time?
+  ::
   ++  checkout-ankh
     |=  hat/(map path lobe)
     ^+  +>
+    ::
+    =/  disc=disc:ford  [her syd]
+    ::
     %-  emit
     :*  hen  %pass  [%patching (scot %p her) syd ~]  %f
-        %build  our  live=%.n  %list
-        ^-  (list schematic:ford)
+        %build  our  live=%.n
+        %-  build-list:marker
         %+  turn  (sort ~(tap by hat) sort-by-head)
-        |=  {a/path b/lobe}
+        |=  [pax=path lob=lobe]
         ^-  schematic:ford
-        :-  [%$ %path-hash !>([a b])]
-        (lobe-to-schematic:ze [her syd] a b)
+        ::
+        :+  [%ntdt !>(path=pax)]
+          [%ntdt !>(lobe=lob)]
+        (lobe-to-schematic:ze disc pax lob)
     ==
   ::
   ::  Handle the result of the ford call in ++checkout-ankh.
@@ -1613,9 +1536,12 @@
     |=  res/made-result:ford
     ^+  +>
     ::  ~&  %taking-patch
-    ?.  ?=([%complete %success *] res)
+    ?.  ?=([%complete %& *] res)
       =.  dok  ~
-      =*  message  (made-result-as-error:ford res)
+      =/  message=tang
+        ?:  ?=(%incomplete -.res)
+          tang.res
+        p.result.res
       (print-to-dill '!' %rose [" " "" ""] leaf+"clay patch failed" message)
     ::  ~&  %editing
     =+  ^-  sim/(list (pair path misu))
@@ -1650,12 +1576,20 @@
         (print-changes now %& sim)
       ==
     ?~  dok  ~&  %no-dok  +>.$
-    =+  ^-  cat/(list (trel path lobe cage))
-        %+  turn  (made-result-to-cages res)
-        |=  {pax/cage cay/cage}
-        ?.  ?=($path-hash p.pax)
-          ~|(%patch-bad-path-mark !!)
-        [-< -> +]:[((hard {path lobe}) q.q.pax) cay]
+    ::
+    =/  cat=(list (trel path lobe cage))
+      ::
+      %+  turn  (result-to-pairs res)
+      |=  [pax=path vaz=vase]
+      ^-  [path lobe cage]
+      ::
+      =/  lobe-vase=vase  (slot 2 vaz)
+      =/  data-vase=vase  (slot 3 vaz)
+      ::
+      =/  lob=lobe  ((hard lobe) q.lobe-vase)
+      =/  cay=cage  (vase-to-cage:marker data-vase)
+      ::
+      [pax lob cay]
     ::  ~&  %canned
     ::  ~&  %checking-out
     =.  ank.dom  (map-to-ankh:ze (malt cat))
@@ -1667,32 +1601,47 @@
     =+  mus=(must-ergo (turn sim head))
     ?:  =(~ mus)
       +>.$(dok ~)
+    ::
     =+  ^-  sum/(set path)
         =+  (turn ~(tap by mus) (corl tail tail))
         %+  roll  -
         |=  {pak/(set path) acc/(set path)}
         (~(uni in acc) pak)
-    =+  can=(malt sim)
+    ::
+    =+  changes=(malt sim)
+    ::
+    =/  disc=disc:ford  [her syd]
     ::  ~&  %forming-ergo
     ::  =-  ~&  %formed-ergo  -
     %-  emit(dok ~)
     :*  hen  %pass  [%ergoing (scot %p her) syd ~]  %f
-        %build  our  live=%.n  %list
-        ^-  (list schematic:ford)
+        %build  our  live=%.n
+        %-  build-list:marker
         %+  turn  ~(tap in sum)
-        |=  a/path
+        |=  pax=path
         ^-  schematic:ford
-        :-  [%$ %path !>(a)]
-        =+  b=(~(got by can) a)
-        ?:  ?=($del -.b)
-          [%$ %null !>(~)]
-        =+  (~(get by mim.dom) a)
-        ?^  -  [%$ %mime !>(u.-)]
-        :^  %cast  [her syd]  %mime
-        =+  (need (need (read-x:ze let.dom a)))
-        ?:  ?=(%& -<)
-          [%$ p.-]
-        (lobe-to-schematic:ze [her syd] a p.-)
+        ::
+        :-  [%ntdt !>(path=pax)]
+        ::
+        =+  change-on-path=(~(got by changes) pax)
+        ::
+        ?:  ?=(%del -.change-on-path)
+          [%ntdt (cage-to-vase:marker [%null !>(~)])]
+        ::
+        ?^  mime-cache=(~(get by mim.dom) pax)
+          [%ntdt (cage-to-vase:marker [%mime !>(u.mime-cache)])]
+        ::
+        :+  %ntbs
+          =/  mark-from-path=mark  (path-to-mark:ze pax)
+          ::
+          %-  build-mark-converter:marker
+          [start=[mark-from-path disc] end=[%mime disc]]
+        ::
+        =/  stored  (need (need (read-x:ze let.dom pax)))
+        ::
+        ?:  ?=(%& -.stored)
+          [%ntdt (cage-to-vase:marker p.stored)]
+        (lobe-to-schematic:ze disc pax p.stored)
     ==
   ::
   ::  Send new data to unix.
@@ -1704,22 +1653,25 @@
   ++  take-ergo
     |=  res/made-result:ford
     ^+  +>
-    ?:  ?=([%incomplete *] res)
+    ?:  ?=(%incomplete -.res)
       (print-to-dill '!' %rose [" " "" ""] leaf+"clay ergo failed" tang.res)
-    ?.  ?=([%complete %success *] res)
-      =*  message  message.build-result.res
+    ?:  ?=([%complete %| *] res)
+      =*  message  p.result.res
       (print-to-dill '!' %rose [" " "" ""] leaf+"clay ergo failed" message)
     ?~  hez  ~|(%no-sync-duct !!)
+    ::
     =+  ^-  can/(map path (unit mime))
         %-  malt  ^-  mode
-        %+  turn  (made-result-to-cages res)
-        |=  {pax/cage mim/cage}
-        ?.  ?=($path p.pax)
-          ~|(%ergo-bad-path-mark !!)
-        :-  ((hard path) q.q.pax)
-        ?.  ?=($mime p.mim)
+        %+  turn  (result-to-cages res)
+        |=  [pax=path mim=cage]
+        ^-  [path (unit mime)]
+        ::
+        :-  pax
+        ::
+        ?.  ?=(%mime p.mim)
           ~
         `((hard mime) q.q.mim)
+    ::
     =+  mus=(must-ergo (turn ~(tap by can) head))
     %-  emil
     %+  turn  ~(tap by mus)
@@ -1851,8 +1803,8 @@
     %-  emit
     :*  hen  %pass
         [%foreign-x (scot %p our) (scot %p her) syd car (scot cas) pax]
-        %f  %build  our  live=%.n  %pin
-        (case-to-date cas)
+        %f  %build  our  live=%.n
+        %ntvt  (case-to-date cas)
         (vale-page [her syd] peg)
     ==
   ::
@@ -1864,9 +1816,17 @@
   ++  vale-page
     |=  [disc=disc:ford a=page]
     ^-  schematic:ford
-    ?.  ?=($hoon p.a)  [%vale disc a]
-    ?.  ?=(@t q.a)  [%dude |.(>%weird-hoon<) %ride [%zpzp ~] %$ *cage]
-    [%$ p.a [%atom %t ~] q.a]
+    ::  if we're not bootstrapping hoon, do a full mark validation
+    ::
+    ?.  ?=(%hoon p.a)
+      (validate:marker data=q.a mark=p.a disc)
+    ::  create a failing ford build if the mark is %hoon but the type is wrong
+    ::
+    ?.  ?=(@t q.a)
+      [%ntcb ^~((ream '~|  %clay-bad-hoon-type  !!'))]
+    ::  don't bother validating hoon, since we need it to bootstrap
+    ::
+    [%ntdt (cage-to-vase:marker [mark=p.a vase=[[%atom %t ~] q.a]])]
   ::
   ::  Verify the foreign data is of the the mark it claims to be.
   ::
@@ -1875,14 +1835,20 @@
   ++  take-foreign-x
     |=  {car/care cas/case pax/path res/made-result:ford}
     ^+  +>
+    ::
     ?>  ?=(^ ref)
-    ?.  ?=([%complete %success *] res)
+    ::
+    ?:  ?=(%incomplete -.res)
+      ~|  "validate foreign x ford-incomplete"
+      (mean tang.res)
+    ::
+    ?:  ?=([%complete %| *] res)
       ~|  "validate foreign x failed"
-      =+  why=(made-result-as-error:ford res)
-      ~>  %mean.|.(%*(. >[%plop-fail %why]< |1.+> why))
-      !!
-    =*  as-cage  `(result-to-cage:ford build-result.res)
-    wake(haw.u.ref (~(put by haw.u.ref) [car cas pax] as-cage))
+      (mean p.result.res)
+    ::
+    =/  =cage  (vase-to-cage:marker p.result.res)
+    ::
+    wake(haw.u.ref (~(put by haw.u.ref) [car cas pax] `cage))
   ::
   ::  When we get a %w foreign update, store this in our state.
   ::
@@ -1960,15 +1926,21 @@
     %-  emit
     :*  hen  %pass
         [%foreign-plops (scot %p our) (scot %p her) syd lum ~]
-        %f  %build  our  live=%.n  %pin  (case-to-date cas)
-        %list
-        ^-  (list schematic:ford)
+        %f  %build  our  live=%.n
+        %ntvt  (case-to-date cas)
+        %-  build-list:marker
         %+  turn  ~(tap in pop)
-        |=  a/plop
-        ?-  -.a
-          $direct  [[%$ %blob !>([%direct p.a *page])] (vale-page [her syd] p.q.a q.q.a)]
-          $delta
-            [[%$ %blob !>([%delta p.a q.a *page])] (vale-page [her syd] p.r.a q.r.a)]
+        |=  a=plop
+        ^-  schematic:ford
+        ::
+        ?-    -.a
+            %direct
+          :-  [%ntdt (cage-to-vase:marker [%blob !>([%direct p.a *page])])]
+          (vale-page [her syd] p.q.a q.q.a)
+        ::
+            %delta
+          :-  [%ntdt (cage-to-vase:marker [%blob !>([%delta p.a q.a *page])])]
+          (vale-page [her syd] p.r.a q.r.a)
         ==
     ==
   ::
@@ -1981,12 +1953,10 @@
     ?>  ?=(^ ref)
     ?>  ?=(^ nak.u.ref)
     =+  ^-  lat/(list blob)
-        %+  turn  ~|("validate foreign plops failed" (made-result-to-cages res))
-        |=  {bob/cage cay/cage}
-        ?.  ?=($blob p.bob)
-          ~|  %plop-not-blob
-          !!
-        =+  bol=((hard blob) q.q.bob)
+        %+  turn  ~|("validate foreign plops failed" (result-to-cages res))
+        |=  [bol=path cay=cage]
+        ^-  blob
+        ::
         ?-  -.bol
           $delta      [-.bol p.bol q.bol p.cay q.q.cay]
           $direct     [-.bol p.bol p.cay q.q.cay]
@@ -2252,12 +2222,25 @@
         $delta      p.q
         $direct     p.q
       ==
+    ::  +path-to-mark: extract the mark from the last path segment, or crash
+    ::
+    ++  path-to-mark
+      |=  =path
+      ^-  mark
+      ::
+      ?~  spur=(flop path)
+        ~|  %no-mark-for-empty-path  !!
+      ?.  ((sane %tas) i.spur)
+        ~|  [%bad-mark-from-path i.spur]  !!
+      ::
+      i.spur
     ::
     ::  Creates a schematic out of a page (which is a [mark noun]).
     ::
     ++  page-to-schematic
       |=  [disc=disc:ford a=page]
       ^-  schematic:ford
+      ::  TODO: avoid repeat validation
       ::
       ?.  ?=(%hoon p.a)  (validate:marker data=q.a mark=p.a disc)
       ::  %hoon bootstrapping
@@ -2274,11 +2257,11 @@
           ?:  =(let.dom 0)
             ~
           q:(aeon-to-yaki let.dom)
-      =+  lol=`(unit lobe)`?.(=(~ ref) `0vsen.tinel (~(get by hat) pax))
+      ::  build up a chain of diffs from a starting value
       ::
       =|  $=  rek
-          $:  deltas=(list [hash=lobe from=[=mark =lobe] diff=page])
-              direct=[hash=lobe contents=page]
+          $:  deltas=(list page)
+              direct=page
           ==
       ::
       =.  rek
@@ -2286,24 +2269,33 @@
         =+  bol=(~(got by lat.ran) lob)
         ::
         ?:  ?=(%direct -.bol)
-          rek(direct [p q]:bol)
-        $(lob q.q.bol, deltas.rek [[p q r]:bol deltas.rek])
+          rek(direct q.bol)
+        $(lob q.q.bol, deltas.rek [r.bol deltas.rek])
       ::
       =/  mark-from-path=mark  =+(spur=(flop pax) ?~(spur !! `@tas`i.spur))
+      =/  lol=(unit lobe)      ?.(=(~ ref) `0vsen.tinel (~(get by hat) pax))
+      ::  memoize +build-mark-patcher:marker (possibly premature)
+      ::
+      =/  get-patcher=(trap schematic:ford)
+        =>  [mark-from-path=mark-from-path disc=disc marker=marker]
+        |.  ~+  (build-mark-patcher:marker mark-from-path disc)
       ::
       |-  ^-  schematic:ford
+      ::  TODO: document this base case
+      ::
+      ?:  =([~ lob] lol)
+        =/  stored            (need (need (read-x let.dom pax)))
+        =/  stored-cage=cage  ?>(?=(%& -.stored) p.stored)
+        ::
+        [%ntdt (cage-to-vase:marker stored-cage)]
       ::
       ?~  deltas.rek
-        ::  TODO: avoid repeat validation? also check hoon bootstrapping
-        ::
-        (validate q.direct.rek mark-from-path disc)
+        (page-to-schematic disc direct.rek)
+      ::  call +build-mark-patcher:marker on [start diff], recursing on start
       ::
-      :+  %ntbs
-        (build-mark-patcher mark-from-path disc)
+      :+  %ntbs  (get-patcher)
       ::
-      :-  start=$(deltas.rek t.deltas.rek)
-      ::
-      diff=(page-to-schematic diff.i.deltas)
+      [$(deltas.rek t.deltas.rek) (page-to-schematic disc i.deltas.rek)]
     ::
     ::  Hashes a page to get a lobe.
     ::
@@ -3282,11 +3274,13 @@
         :*  hen  %pass
             =+  (cat 3 %diff- nam)
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali - ~]
-            %f  %build  p.bob  live=%.n  %pin  (case-to-date r.oth)  %list
-            ^-  (list schematic:ford)
+            %f  %build  p.bob  live=%.n
+            %ntvt  (case-to-date r.oth)
+            %-  build-list:marker
             %+  murn  ~(tap by q.bas.dat)
-            |=  {pax/path lob/lobe}
+            |=  [pax=path lob=lobe]
             ^-  (unit schematic:ford)
+            ::
             =+  a=(~(get by q.yak) pax)
             ?~  a
               ~
@@ -3299,8 +3293,16 @@
               ~
             :-  ~
             =/  disc  [p.oth q.oth]
-            :-  [%$ %path !>(pax)]
-            [%diff disc (lobe-to-schematic disc pax lob) (lobe-to-schematic disc pax u.a)]
+            ::
+            :-  [%ntdt !>(path=pax)]
+            ::  call (diff start end)
+            ::
+            :+  %ntbs
+              %-  build-mark-differ:marker
+              [mark=(path-to-mark:ze pax) disc]
+            ::
+            :-  (lobe-to-schematic disc pax lob)
+            (lobe-to-schematic disc pax u.a)
         ==
       ::
       ::  Diff ali's commit against the mergebase.
@@ -3315,12 +3317,17 @@
       ++  diffed-ali
         |=  res/made-result:ford
         ^+  +>
-        =+  tay=(made-result-to-cages-or-error res)
-        ?:  ?=(%| -.tay)
-          (error:he %diff-ali-bad-made leaf+"merge diff ali failed" p.tay)
-        =+  can=(cages-to-map p.tay)
-        ?:  ?=(%| -.can)
-          (error:he %diff-ali p.can)
+        ::
+        ?:  ?=(%incomplete -.res)
+          (error:he %diff-ali-incomplete leaf+"merge diff ali failed" tang.res)
+        ::
+        ?:  ?=(%| -.result.res)
+          %^  error:he  %diff-ali-bad-made
+            leaf+"merge diff ali failed"
+          p.result.res
+        ::
+        =/  can=(map path cage)  (malt (result-to-cages res))
+        ::
         ?:  ?=(%| -.gon.dat)
           +>.$
         =.  new.dal.dat
@@ -3341,7 +3348,7 @@
               ==
             ~
           `[pax +.a]
-        =.  can.dal.dat  p.can
+        =.  can.dal.dat  can
         =.  old.dal.dat
           %-  malt  ^-  (list {path ~})
           %+  murn  ~(tap by q.bas.dat)
@@ -3363,12 +3370,17 @@
       ++  diffed-bob
         |=  res/made-result:ford
         ^+  +>
-        =+  tay=(made-result-to-cages-or-error res)
-        ?:  ?=(%| -.tay)
-          (error:he %diff-bob-bad-made leaf+"merge diff bob failed" p.tay)
-        =+  can=(cages-to-map p.tay)
-        ?:  ?=(%| -.can)
-          (error:he %diff-bob p.can)
+        ::
+        ?:  ?=(%incomplete -.res)
+          (error:he %diff-ali-incomplete leaf+"merge diff bob failed" tang.res)
+        ::
+        ?:  ?=(%| -.result.res)
+          %^  error:he  %diff-bob-bad-made
+            leaf+"merge diff bob failed"
+          p.result.res
+        ::
+        =/  can=(map path cage)  (malt (result-to-cages res))
+        ::
         ?:  ?=(%| -.gon.dat)
           +>.$
         =.  new.dob.dat
@@ -3389,7 +3401,7 @@
               ==
             ~
           `[pax +.b]
-        =.  can.dob.dat  p.can
+        =.  can.dob.dat  can
         =.  old.dob.dat
           %-  malt  ^-  (list {path ~})
           %+  murn  ~(tap by q.bas.dat)
@@ -3411,18 +3423,23 @@
           %-  emit(wat.dat %merge)
           :*  hen  %pass
               [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %merge ~]
-              %f  %build  p.bob  live=%.n  %list
-              ^-  (list schematic:ford)
+              %f  %build  p.bob  live=%.n
+              %-  build-list:marker
               %+  turn  ~(tap by (~(int by can.dal.dat) can.dob.dat))
-              |=  {pax/path *}
+              |=  [pax=path *]
               ^-  schematic:ford
+              ::
+              :-  [%ntdt !>(path=pax)]
+              ::
+              :+  %ntbs
+                %-  build-mark-joiner:marker
+                [mark=(path-to-mark:ze pax) disc=[p.bob q.bob]]
+              ::
               =+  cal=(~(got by can.dal.dat) pax)
               =+  cob=(~(got by can.dob.dat) pax)
-              =+  ^=  her
-                  =+  (slag (dec (lent pax)) pax)
-                  ?~(- %$ i.-)
-              :-  [%$ %path !>(pax)]
-              [%join [p.bob q.bob] her [%$ cal] [%$ cob]]
+              ::
+              :-  [%ntdt (cage-to-vase:marker cal)]
+              [%ntdt (cage-to-vase:marker cob)]
           ==
         ==
       ::
@@ -3430,13 +3447,18 @@
       ::
       ++  merged
         |=  res/made-result:ford
-        =+  tay=(made-result-to-cages-or-error res)
-        ?:  ?=(%| -.tay)
-          (error:he %merge-bad-made leaf+"merging failed" p.tay)
-        =+  can=(cages-to-map p.tay)
-        ?:  ?=(%| -.can)
-          (error:he %merge p.can)
-        =+  bof=(~(run by p.can) (flit |=({a/mark ^} !?=($null a))))
+        ::
+        ?:  ?=(%incomplete -.res)
+          (error:he %diff-ali-incomplete leaf+"merge diff bob failed" tang.res)
+        ::
+        ?:  ?=(%| -.result.res)
+          %^  error:he  %diff-bob-bad-made
+            leaf+"merge diff bob failed"
+          p.result.res
+        ::
+        =/  can=(map path cage)  (malt (result-to-cages res))
+        ::
+        =+  bof=(~(run by can) (flit |=({a/mark ^} !?=($null a))))
         ?:  ?=(%| -.gon.dat)
           +>.$
         =.  bof.dat  bof
@@ -3449,22 +3471,33 @@
       ++  build
         ^+  .
         %-  emit(wat.dat %build)
+        ::  TODO: is this the right disc?
+        ::
+        =/  disc=disc:ford  [p.bob q.bob]
+        ::
         :*  hen  %pass
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %build ~]
-            %f  %build  p.bob  live=%.n  %list
-            ^-  (list schematic:ford)
+            %f  %build  p.bob  live=%.n
+            %-  build-list:marker
             %+  murn  ~(tap by bof.dat)
-            |=  {pax/path cay/(unit cage)}
+            |=  [pax=path cay=(unit cage)]
             ^-  (unit schematic:ford)
+            ::
             ?~  cay
               ~
             :-  ~
-            :-  [%$ %path !>(pax)]
-            =+  (~(get by q.bas.dat) pax)
-            ?~  -
-              ~|  %mate-strange-diff-no-base
+            :-  [%ntdt !>(path=pax)]
+            ::
+            ?~  zag=(~(get by q.bas.dat) pax)
+              ~|  [%mate-strange-diff-no-base pax]
               !!
-            [%pact [p.bob q.bob] (lobe-to-schematic [p.bob q.bob] pax u.-) [%$ u.cay]]
+            ::
+            :+  %ntbs
+              %-  build-mark-patcher:marker
+              [mark=(path-to-mark:ze pax) disc]
+            ::
+            :-  (lobe-to-schematic disc pax u.zag)
+            [%ntdt (cage-to-vase:marker u.cay)]
         ==
       ::
       ::  Create new commit.
@@ -3479,15 +3512,20 @@
       ++  built
         |=  res/made-result:ford
         ^+  +>
-        =+  tay=(made-result-to-cages-or-error res)
-        ?:  ?=(%| -.tay)
-          (error:he %build-bad-made leaf+"delta building failed" p.tay)
-        =+  bop=(cages-to-map p.tay)
-        ?:  ?=(%| -.bop)
-          (error:he %built p.bop)
+        ::
+        ?:  ?=(%incomplete -.res)
+          (error:he %built-incomplete leaf+"delta building failed" tang.res)
+        ::
+        ?:  ?=(%| -.result.res)
+          %^  error:he  %built-error
+            leaf+"merge built failed"
+          p.result.res
+        ::
+        =/  bop=(map path cage)  (malt (result-to-cages res))
+        ::
         ?:  ?=(%| -.gon.dat)
           +>.$
-        =.  bop.dat  p.bop
+        =.  bop.dat  bop
         =+  ^-  con/(map path *)                        ::  2-change conflict
             %-  molt
             %+  skim  ~(tap by bof.dat)
@@ -3597,15 +3635,18 @@
         %-  emit(wat.dat %checkout)
         :*  hen  %pass
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %checkout ~]
-            %f  %build  p.bob  live=%.n  %pin  (case-to-date r.val)  %list
-::            ~  val  %tabl
-            ^-  (list schematic:ford)
+            %f  %build  p.bob  live=%.n
+            %ntvt  (case-to-date r.val)
+            %-  build-list:marker
             %+  murn  ~(tap by q.new.dat)
-            |=  {pax/path lob/lobe}
+            |=  [pax=path lob=lobe]
             ^-  (unit schematic:ford)
+            ::
             ?:  (~(has by bop.dat) pax)
               ~
-            `[[%$ %path !>(pax)] (merge-lobe-to-schematic:he [p q]:val pax lob)]
+            :-  ~
+            :-  [%ntdt !>(path=pax)]
+            (merge-lobe-to-schematic:he [p q]:val pax lob)
         ==
       ::
       ::  Apply the new commit to our state and, if we need to tell unix about
@@ -3614,19 +3655,24 @@
       ++  checked-out
         |=  res/made-result:ford
         ^+  +>
-        =+  tay=(made-result-to-cages-or-error res)
-        ?:  ?=(%| -.tay)
-          (error:he %checkout-bad-made leaf+"merge checkout failed" p.tay)
-        =+  can=(cages-to-map p.tay)
-        ?:  ?=(%| -.can)
-          (error:he %checkout p.can)
+        ::
+        ?:  ?=(%incomplete -.res)
+          (error:he %checkout-incomplete leaf+"checkout failed" tang.res)
+        ::
+        ?:  ?=(%| -.result.res)
+          %^  error:he  %checkout-failed
+            leaf+"ergo checkout failed"
+          p.result.res
+        ::
+        =/  can=(map path cage)  (malt (result-to-cages res))
+        ::
         ?:  ?=(%| -.gon.dat)
           +>.$
         =.  let.dom  +(let.dom)
         =.  hit.dom  (~(put by hit.dom) let.dom r.new.dat)
         =.  ank.dat
           %-  map-to-ankh:ze
-          %-  ~(run by (~(uni by bop.dat) p.can))
+          %-  ~(run by (~(uni by bop.dat) can))
           |=(cage [(page-to-lobe p q.q) +<])
         =.  ank.dom  ank.dat
         =>  .(..wake wake)
@@ -3655,18 +3701,26 @@
         %-  emit(wat.dat %ergo)
         :*  hen  %pass
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %ergo ~]
-            %f  %build  p.bob  live=%.n  %pin  (case-to-date r.val)  %list
-            ^-  (list schematic:ford)
+            %f  %build  p.bob  live=%.n
+            %ntvt  (case-to-date r.val)
+            %-  build-list:marker
             %+  turn  ~(tap in sum)
-            |=  a/path
+            |=  pax=path
             ^-  schematic:ford
-            :-  [%$ %path !>(a)]
-            =+  b=(~(got by erg.dat) a)
-            ?.  b
-              [%$ %null !>(~)]
+            ::
+            :-  [%ntdt !>(path=pax)]
+            ::
+            ?.  zag=(~(got by erg.dat) pax)
+              [%ntdt (cage-to-vase:marker [%null !>(~)])]
+            ::
             =/  disc  [p q]:val
-            :^  %cast  disc  %mime
-            (lobe-to-schematic:zez disc a (~(got by q.new.dat) a))
+            =/  mark-from-path=mark  (path-to-mark:ze pax)
+            ::
+            :+  %ntbs
+              %-  build-mark-converter:marker
+              [start=[mark=mark-from-path disc] end=[%mime disc]]
+            ::
+            (lobe-to-schematic:ze disc pax (~(got by q.new.dat) pax))
         ==
       ::
       ::  Tell unix about the changes made by the merge.
@@ -3674,20 +3728,20 @@
       ++  ergoed
         |=  res/made-result:ford
         ^+  +>
-        =+  tay=(made-result-to-cages-or-error res)
-        ?:  ?=(%| -.tay)
-          (error:he %ergo-bad-made leaf+"merge ergo failed" p.tay)
-        =+  =|  nac/mode
-            |-  ^-  tan/$^(mode {p/term q/tang})
-            ?~  p.tay  nac
-            =*  pax  p.i.p.tay
-            ?.  ?=($path p.pax)
-              [%ergo >[%expected-path got=p.pax]< ~]
-            =*  mim  q.i.p.tay
-            =+  mit=?.(?=($mime p.mim) ~ `((hard mime) q.q.mim))
-            $(p.tay t.p.tay, nac :_(nac [((hard path) q.q.pax) mit]))
-        ?:  ?=({@ *} tan)  (error:he tan)
-        =+  `can/(map path (unit mime))`(malt tan)
+        ::
+        ~|  %ergo-bad-made
+        =/  cages  (result-to-cages res)
+        ::
+        =|  nac=mode
+        =.  nac
+          |-  ^+  nac
+          ?~  cages  nac
+          =*  pax  path.i.cages
+          =*  mim  cage.i.cages
+          =+  mit=?.(?=(%mime p.mim) ~ `((hard mime) q.q.mim))
+          $(cages t.cages, nac :_(nac [pax mit]))
+        ::
+        =/  can=(map path (unit mime))  (malt nac)
         ?~  hez
           (error:he %ergo-no-hez ~)
         ?:  ?=(%| -.gon.dat)
@@ -3733,25 +3787,51 @@
         ++  merge-lobe-to-schematic
           |=  [disc=disc:ford pax=path lob=lobe]
           ^-  schematic:ford
+          ::
           =+  hat=q.ali.dat
           =+  hot=q.bob.dat
           =+  ^=  lal
               %+  biff  alh
               |=  had/dome
               (~(get by q:(tako-to-yaki (~(got by hit.had) let.had))) pax)
+          ::  build up a chain of diffs from a starting value
+          ::
+          =|  $=  rek
+              $:  deltas=(list page)
+                  direct=page
+              ==
+          ::
+          =.  rek
+            |-  ^+  rek
+            =+  bol=(~(got by lat.ran) lob)
+            ::
+            ?:  ?=(%direct -.bol)
+              rek(direct q.bol)
+            $(lob q.q.bol, deltas.rek [r.bol deltas.rek])
+          ::
           =+  lol=(~(get by hot) pax)
+          =/  mark-from-path=mark  (path-to-mark:ze pax)
+          ::  memoize +build-mark-patcher:marker (possibly premature)
+          ::
+          =/  get-patcher=(trap schematic:ford)
+            =>  [mark-from-path=mark-from-path disc=disc marker=marker]
+            |.  ~+  (build-mark-patcher:marker mark-from-path disc)
+          ::
           |-  ^-  schematic:ford
+          ::  TODO: document this base case
+          ::
           ?:  =([~ lob] lol)
-            =+  (need (need (read-x let.dom pax)))
-            ?>  ?=(%& -<)
-            [%$ p.-]
-          ?:  =([~ lob] lal)
-            [%$ +:(need fil.ank:(descend-path:(zu ank:(need alh)) pax))]
-          =+  bol=(~(got by lat.ran) lob)
-          ?-  -.bol
-            $direct     (page-to-schematic disc q.bol)
-            $delta      [%pact disc $(lob q.q.bol) (page-to-schematic disc r.bol)]
-          ==
+            :-  %ntdt
+            %-  cage-to-vase:marker
+            +:(need fil.ank:(descend-path:(zu ank:(need alh)) pax))
+          ::
+          ?~  deltas.rek
+            (page-to-schematic disc direct.rek)
+          ::  patch from start to diff, recursing to obtain start
+          ::
+          :+  %ntbs  (get-patcher)
+          ::
+          [$(deltas.rek t.deltas.rek) (page-to-schematic disc i.deltas.rek)]
         ::
         ::  Find the most recent common ancestor(s).
         ::
@@ -4206,7 +4286,7 @@
     [mos ..^$]
   ?:  ?=({$blab care @ @ *} tea)
     ?>  ?=($made +<.q.hin)
-    ?.  ?=([%complete %success *] result.q.hin)
+    ?.  ?=([%complete %& *] result.q.hin)
       ~|  %blab-fail
       ~>  %mean.|.((made-result-as-error:ford result.q.hin))
       !!                              ::  interpolate ford fail into stack trace
@@ -4226,16 +4306,6 @@
       $made
     ?~  tea  !!
     ?+    -.tea  !!
-        %editing
-      ?>  ?=([@ @ @ ~] t.tea)
-      =+  our=(slav %p i.t.tea)
-      =+  syd=(slav %tas i.t.t.tea)
-      =+  wen=(slav %da i.t.t.t.tea)
-      =+  mos=ruf
-        =+  den=((de now hen ruf) [. .]:our syd)
-        abet:(take-editing:den wen result.q.hin)
-      [mos ..^$]
-    ::
         $inserting
       ?>  ?=({@ @ @ ~} t.tea)
       =+  our=(slav %p i.t.tea)

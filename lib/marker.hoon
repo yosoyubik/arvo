@@ -4,6 +4,16 @@
   |%
   +$  disc  [=ship =desk]
   +$  rail  [=disc =spur]
+  ::  +made-result: the main payload for a %made +gift
+  ::
+  +$  made-result
+    $%  ::  %complete: contains the result of the completed build
+        ::
+        [%complete result=(each vase tang)]
+        ::  %incomplete: couldn't finish build; contains error message
+        ::
+        [%incomplete =tang]
+    ==
   +$  schematic
     $~  [%ntdt !>(~)]
     ::    If the head of the +schematic is a pair, it's an auto-cons
@@ -304,6 +314,7 @@
         [%ntdt !>(build-mark-differ)]
       [%ntcb ^~((ream '[delegate disc]'))]
     ::  now produce the full differ gate
+    ::
     :-  %ntcb
     ^-  hoon
     ^~  %-  ream
