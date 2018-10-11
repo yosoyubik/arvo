@@ -616,6 +616,7 @@
       =.  inv  %+  sort  inv
         |=  {a/telegram b/telegram}
         (lte wen.a wen.b)
+      ::  create our side of the dm and source it to our inbox
       ::
       =/  dels/(list delta)
       :~  :*  %story
@@ -635,17 +636,30 @@
               0
           ==
       ==
+      ::  if we did initiate the dm, send out invites
+      ::
+      ?:  ?=(~ inv)
+        =.  ..ta-action  (ta-deltas dels)
+        %-  action-convey
+        ^-  (list thought)
+        %+  turn  ~(tap in sis)
+        |=  a=ship
+        ^-  thought
+        :*  uid=(shaf a eny.bol)
+            aud=(sy [a %i] ~)
+            wen=now.bol
+            sep=[%inv & [our.bol nom]]
+        ==
       ::  if we did not initiate the dm, source to the initiators copy
       ::
-      =?  dels  !?=(~ inv)
-        ?<  ?=(~ inv)
-        :_  dels
-        :*  %story
-            nom
-            %follow
-            &
-            [[[aut.i.inv nom] ~] ~ ~]
-        ==
+      =.  dels
+      :_  dels
+      :*  %story
+          nom
+          %follow
+          &
+          [[[aut.i.inv nom] ~] ~ ~]
+      ==
       (ta-deltas dels)
     ::
     ::  #  %messaging
