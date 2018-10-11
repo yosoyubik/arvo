@@ -1180,7 +1180,9 @@
     ==
     ::
     =/  disc=disc:ford  [her syd]
-    =/  lobes  q:(aeon-to-yaki:ze let.dom)
+    ::  we can't call this if =(0 let.dom), so make a memoized trap
+    ::
+    =/  get-lobes  |.  ~+  q:(aeon-to-yaki:ze let.dom)
     ::
     =.  +>.$
       %-  emil
@@ -1195,9 +1197,12 @@
               ^-  schematic:ford
               ::
               :-  [%ntdt !>(path=path)]
+              ~&  [%inserting path]
               ::
               =/  =cage             ?>(?=(%ins -.miso) p.miso)
               =/  target-mark=mark  (path-to-mark:ze path)
+              ::
+              :-  [%ntdt !>(target-mark)]
               ::
               %-  cast:marker
               [data=q.cage start=[mark=p.cage disc] end=[target-mark disc]]
@@ -1212,10 +1217,13 @@
               ^-  schematic:ford
               ::
               :-  [%ntdt !>(path=path)]
+              ~&  [%diffing path]
               ::
               =/  diff-cage=cage    ?>(?=(%dif -.miso) p.miso)
               =/  stored            (need (need (read-x:ze let.dom path)))
               =/  stored-cage=cage  ?>(?=(%& -.stored) p.stored)
+              ::
+              :-  [%ntdt !>(p.stored-cage)]
               ::
               %-  patch:marker
               [mark=p.stored-cage disc start=q.stored-cage diff=q.diff-cage]
@@ -1230,12 +1238,15 @@
               ^-  schematic:ford
               ::
               :-  [%ntdt !>(path=path)]
+              ~&  [%castifying path]
               ::
               =/  new-cage=cage     ?>(?=(%mut -.miso) p.miso)
-              =/  =lobe             (~(got by lobes) path)
+              =/  =lobe             (~(got by (get-lobes)) path)
               =/  result-mark=mark  (lobe-to-mark:ze lobe)
               =/  stored            (need (need (read-x:ze let.dom path)))
               =/  stored-cage=cage  ?>(?=(%& -.stored) p.stored)
+              ::
+              :-  [%ntdt !>(result-mark)]
               ::
               %^    cast:marker
                   data=q.new-cage
@@ -1248,24 +1259,24 @@
       ::
       :-  ~
       ^-  dork
-      :*  (turn del.nuz |=({pax/path mis/miso} ?>(?=($del -.mis) pax)))
+      :*  (turn del.nuz |=({pax/path mis/miso} ?>(?=(%del -.mis) pax)))
       ::
           %+  turn  ink.nuz
           |=  {pax/path mis/miso}
           ^-  (pair path cage)
-          ?>  ?=($ins -.mis)
+          ?>  ?=(%ins -.mis)
           =+  =>((flop pax) ?~(. %$ i))
           [pax - [%atom %t ~] ((hard @t) +>.q.q.p.mis)]
       ::
           ~
       ::
           %-  malt
-          (turn dif.nuz |=({pax/path mis/miso} ?>(?=($dif -.mis) [pax p.mis])))
+          (turn dif.nuz |=({pax/path mis/miso} ?>(?=(%dif -.mis) [pax p.mis])))
       ::
           ~
       ::
           %-  malt
-          (turn mut.nuz |=({pax/path mis/miso} ?>(?=($mut -.mis) [pax p.mis])))
+          (turn mut.nuz |=({pax/path mis/miso} ?>(?=(%mut -.mis) [pax p.mis])))
       ::
           ~
       ::
@@ -1517,8 +1528,8 @@
         |=  [pax=path lob=lobe]
         ^-  schematic:ford
         ::
-        :+  [%ntdt !>(path=pax)]
-          [%ntdt !>(lobe=lob)]
+        :+  [%ntdt !>(pax)]
+          [%ntdt !>(lob)]
         (lobe-to-schematic:ze disc pax lob)
     ==
   ::
@@ -1923,6 +1934,7 @@
     |=  {cas/case lem/(unit @da) pop/(set plop)}
     ^+  +>
     =+  lum=(scot %da (fall lem *@da))
+    =/  blob-type=type  -:!>(*blob)
     %-  emit
     :*  hen  %pass
         [%foreign-plops (scot %p our) (scot %p her) syd lum ~]
@@ -1935,11 +1947,11 @@
         ::
         ?-    -.a
             %direct
-          :-  [%ntdt (cage-to-vase:marker [%blob !>([%direct p.a *page])])]
+          :-  [%ntdt blob-type [%direct p.a *page]]
           (vale-page [her syd] p.q.a q.q.a)
         ::
             %delta
-          :-  [%ntdt (cage-to-vase:marker [%blob !>([%delta p.a q.a *page])])]
+          :-  [%ntdt blob-type [%delta p.a q.a *page]]
           (vale-page [her syd] p.r.a q.r.a)
         ==
     ==
@@ -1953,13 +1965,19 @@
     ?>  ?=(^ ref)
     ?>  ?=(^ nak.u.ref)
     =+  ^-  lat/(list blob)
-        %+  turn  ~|("validate foreign plops failed" (result-to-cages res))
-        |=  [bol=path cay=cage]
+        %+  turn  ~|("validate foreign plops failed" (result-to-list res))
+        |=  res-item=vase
         ^-  blob
         ::
+        =/  blob-vase=vase  (slot 2 res-item)
+        =/  data-vase=vase  (slot 3 res-item)
+        ::
+        =/  bol=blob  ((hard blob) q.blob-vase)
+        =/  cay=cage  (vase-to-cage:marker data-vase)
+        ::
         ?-  -.bol
-          $delta      [-.bol p.bol q.bol p.cay q.q.cay]
-          $direct     [-.bol p.bol p.cay q.q.cay]
+          %delta   [-.bol p.bol q.bol p.cay q.q.cay]
+          %direct  [-.bol p.bol p.cay q.q.cay]
         ==
     %^    apply-foreign-update
         lem
@@ -2290,9 +2308,11 @@
         [%ntdt (cage-to-vase:marker stored-cage)]
       ::
       ?~  deltas.rek
+        :-  [%ntdt !>(mark-from-path)]
         (page-to-schematic disc direct.rek)
       ::  call +build-mark-patcher:marker on [start diff], recursing on start
       ::
+      :-  [%ntdt !>(mark-from-path)]
       :+  %ntbs  (get-patcher)
       ::
       [$(deltas.rek t.deltas.rek) (page-to-schematic disc i.deltas.rek)]
@@ -3896,6 +3916,7 @@
   |=  $:  hen/duct
           hic/(hypo (hobo task:able))
       ==
+  ~&  %clay-call
   =*  req  q.hic
   =>  %=    .                                         ::  XX temporary
           req
@@ -4266,6 +4287,7 @@
 ++  take                                              ::  accept response
   |=  {tea/wire hen/duct hin/(hypo sign)}
   ^+  [p=*(list move) q=..^$]
+  ~&  %clay-take
   ?:  ?=({$merge @ @ @ @ @ ~} tea)
     ?>  ?=(?($writ $made) +<.q.hin)
     =+  our=(slav %p i.t.tea)
@@ -4288,7 +4310,11 @@
     ?>  ?=($made +<.q.hin)
     ?.  ?=([%complete %& *] result.q.hin)
       ~|  %blab-fail
-      ~>  %mean.|.((made-result-as-error:ford result.q.hin))
+      =/  =tang
+        ?:  ?=(%complete -.result.q.hin)
+          p.result.result.q.hin
+        tang.result.q.hin
+      ~>  %mean.|.(tang)
       !!                              ::  interpolate ford fail into stack trace
     :_  ..^$  :_  ~
     :*  hen  %give  %writ  ~
@@ -4296,7 +4322,7 @@
         [i.t.tea ((hard case) +>:(slay i.t.t.tea)) i.t.t.t.tea]
     ::
         `path`t.t.t.t.tea
-        `cage`(result-to-cage:ford build-result.result.q.hin)
+        (vase-to-cage:marker p.result.result.q.hin)
     ==
   ?-    -.+.q.hin
   ::

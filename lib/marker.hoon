@@ -175,8 +175,15 @@
       [%ntdt !>(~)]
     [i.schematics $(schematics t.schematics)]
   ::
-  ++  cage-to-vase  |=(=cage (slop [[%atom %tas ~] p.cage] q.cage))
-  ++  vase-to-cage  |=(=vase [p=((hard @tas) q:(slot 2 vase)) q=(slot 3 vase)])
+  ++  cage-to-vase
+    |=  =cage
+    ^-  vase
+    (slop [[%atom %tas ~] p.cage] q.cage)
+  ::
+  ++  vase-to-cage
+    |=  =vase
+    ^-  cage
+    [p=((hard @tas) q:(slot 2 vase)) q=(slot 3 vase)]
   --
   |%
   ::  +bunt: produce the default value for a :mark on a :disc

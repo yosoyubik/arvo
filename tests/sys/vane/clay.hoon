@@ -1,4 +1,4 @@
-/+  *test, test-ford
+/+  *test, test-ford, *marker
 ::
 ::/=  clay-raw  /:  /===/sys/vane/clay  /!noun/
 /=  clay-raw  /:  /===/lib/clay  /!noun/
@@ -20,6 +20,7 @@
       expected-moves=~
     ==
   ::
+  ~&  %1
   =^  results1  clay-gate
     %-  clay-call-with-comparator  :*
       clay-gate
@@ -32,8 +33,8 @@
         ^-  nori:clay
         :-  %&
         ^-  soba:clay
-        :~  [/file1/noun `miso:clay`[%ins [%noun %noun 'file1']]]
-            [/file2/noun `miso:clay`[%ins [%noun %noun 'file2']]]
+        :~  [`path`/file1/noun `miso:clay`[%ins [%noun %noun 'file1']]]
+            [`path`/file2/noun `miso:clay`[%ins [%noun %noun 'file2']]]
         ==
       ^=  move-comparator
         |=  moves=(list move:clay-gate)
@@ -51,7 +52,7 @@
                 :+  %pass  /castifying/~nul/home/~1111.1.1
                 ^-  note:clay-gate
                 :-  %f
-                [%build ~nul live=%.n [%pin ~1111.1.1 [%list ~]]]
+                [%build ~nul live=%.n [%ntvt ~1111.1.1 [%ntdt !>(~)]]]
             !>  i.moves
         ::
           %+  expect-eq
@@ -61,7 +62,7 @@
                 :+  %pass  /diffing/~nul/home/~1111.1.1
                 ^-  note:clay-gate
                 :-  %f
-                [%build ~nul live=%.n [%pin ~1111.1.1 [%list ~]]]
+                [%build ~nul live=%.n [%ntvt ~1111.1.1 [%ntdt !>(~)]]]
             !>  i.t.moves
         ::
           ^-  tang
@@ -95,18 +96,20 @@
           %-  expect-schematic:test-ford
           :_  schematic.note
           ^-  schematic:ford
-          :+  %pin  ~1111.1.1
-          :-  %list
-          :~  :-  [%$ %path -:!>(*path) /file1/noun]
-              :^  %cast  [~nul %home]  %noun
-              [%$ %noun %noun 'file1']
+          :+  %ntvt  ~1111.1.1
+          :*  :+  [%ntdt !>(`path`/file1/noun)]
+                [%ntdt !>(`@tas`%noun)]
+              (cast [%noun 'file1'] [%noun [~nul %home]] [%noun [~nul %home]])
           ::
-              :-  [%$ %path -:!>(*path) /file2/noun]
-              :^  %cast  [~nul %home]  %noun
-              [%$ %noun %noun 'file2']
+              :+  [%ntdt !>(`path`/file2/noun)]
+                [%ntdt !>(`@tas`%noun)]
+              (cast [%noun 'file2'] [%noun [~nul %home]] [%noun [~nul %home]])
+          ::
+              [%ntdt !>(~)]
           ==
     ==  ==
   ::
+  ~&  %2
   =^  results2  clay-gate
     %-  clay-take-with-comparator  :*
       clay-gate
@@ -117,7 +120,7 @@
             duct=~[/info]
             -:!>(*sign:clay-gate)
             ^-  sign:clay-gate
-            [%f %made ~1111.1.1 %complete %success %list ~]
+            [%f %made ~1111.1.1 %complete %& !>(~)]
         ==
       ^=  comparator
         |=  moves=(list move:clay-gate)
@@ -155,9 +158,10 @@
         %-  expect-schematic:test-ford
         :_  schematic.note
         ^-  schematic:ford
-        [%pin ~1111.1.1 %list ~]
+        [%ntvt ~1111.1.1 %ntdt !>(~)]
     ==
   ::
+  ~&  %3
   =^  results3  clay-gate
     %-  clay-take  :*
       clay-gate
@@ -168,11 +172,12 @@
             duct=~[/info]
             -:!>(*sign:clay-gate)
             ^-  sign:clay-gate
-            [%f %made ~1111.1.1 %complete %success %list ~]
+            [%f %made ~1111.1.1 %complete %& !>(~)]
         ==
       expected-moves=~
     ==
   ::
+  ~&  %4
   =^  results4  clay-gate
     %-  clay-take  :*
       clay-gate
@@ -183,11 +188,12 @@
             duct=~[/info]
             -:!>(*sign:clay-gate)
             ^-  sign:clay-gate
-            [%f %made ~1111.1.1 %complete %success %list ~]
+            [%f %made ~1111.1.1 %complete %& !>(~)]
         ==
       expected-moves=~
     ==
   ::
+  ~&  %5
   =^  results5  clay-gate
     %-  clay-take-with-comparator  :*
       clay-gate
@@ -198,15 +204,9 @@
             duct=~[/info]
             -:!>(*sign:clay-gate)
             ^-  sign:clay-gate
-            :*  %f  %made  ~1111.1.1  %complete  %success  %list
-                ^-  (list build-result:ford)
-                :~  :+  %success
-                      [%success %$ %path -:!>(*path) /file1/noun]
-                    [%success %cast %noun %noun 'file1']
-                ::
-                    :+  %success
-                      [%success %$ %path -:!>(*path) /file2/noun]
-                    [%success %cast %noun %noun 'file2']
+            :*  %f  %made  ~1111.1.1  %complete  %&  !>
+                :~  [`path`/file1/noun %noun `*`'file1']
+                    [`path`/file2/noun %noun `*`'file2']
         ==  ==  ==
       ^=  comparator
         |=  moves=(list move:clay-gate)
@@ -241,24 +241,28 @@
         %+  weld
           (expect-eq !>(%.n) !>(live.note))
         ::
+::        *tang  ==
         %-  expect-schematic:test-ford
         :_  schematic.note
         ^-  schematic:ford
-        :-  %list
-        ^-  (list schematic:ford)
-        :~  :-  :^  %$  %path-hash  -:!>([*path *@uvI])
-                :-  /file1/noun
-                0v1u.egg7f.h1o7a.22g2g.torgm.2kcfj.k8b3s.n5hlf.57i21.5m1nn.bhob7
+        :*  :+  [%ntdt !>(/file1/noun)]
+              :-  %ntdt  !>
+              0v1u.egg7f.h1o7a.22g2g.torgm.2kcfj.k8b3s.n5hlf.57i21.5m1nn.bhob7
             ::
-            [%volt [~nul %home] %noun 'file1']
+            :-  [%ntdt !>(%noun)]
+            (validate `*`'file1' %noun [~nul %home])
         ::
-            :-  :^  %$  %path-hash  -:!>([*path *@uvI])
-                :-  /file2/noun
-                0vj.5f6kr.5o1of.dubnd.6k5a7.jprgp.8ifgp.0ljbi.dqau7.7c0q0.fj144
+            :+  [%ntdt !>(/file2/noun)]
+              :-  %ntdt  !>
+              0vj.5f6kr.5o1of.dubnd.6k5a7.jprgp.8ifgp.0ljbi.dqau7.7c0q0.fj144
             ::
-            [%volt [~nul %home] %noun 'file2']
+            :-  [%ntdt !>(%noun)]
+            (validate `*`'file2' %noun [~nul %home])
+        ::
+            [%ntdt !>(~)]
     ==  ==
   ::
+  ~&  %6
   =^  results6  clay-gate
     %-  clay-take  :*
       clay-gate
@@ -269,23 +273,16 @@
             duct=~[/info]
             -:!>(*sign:clay-gate)
             ^-  sign:clay-gate
-            :*  %f  %made  ~1111.1.1  %complete  %success  %list
-                ^-  (list build-result:ford)
-                :~  :+  %success
-                      :*  %success  %$  %path-hash  -:!>([*path *@uvI])
-                          /file1/noun
-                          0v1u.egg7f.h1o7a.22g2g.torgm.2kcfj.
-                          k8b3s.n5hlf.57i21.5m1nn.bhob7
-                      ==
-                    [%success %volt %noun %noun 'file1']
+            :*  %f  %made  ~1111.1.1  %complete  %&  !>
+                :~  :+  `path`/file1/noun
+                      0v1u.egg7f.h1o7a.22g2g.torgm.2kcfj.
+                      k8b3s.n5hlf.57i21.5m1nn.bhob7
+                    [%noun `*`'file1']
                 ::
-                    :+  %success
-                      :*  %success  %$  %path-hash  -:!>([*path *@uvI])
-                          /file2/noun
-                          0vj.5f6kr.5o1of.dubnd.6k5a7.jprgp.
-                          8ifgp.0ljbi.dqau7.7c0q0.fj144
-                      ==
-                    [%success %volt %noun %noun 'file2']
+                    :+  `path`/file2/noun
+                      0vj.5f6kr.5o1of.dubnd.6k5a7.jprgp.
+                      8ifgp.0ljbi.dqau7.7c0q0.fj144
+                    [%noun `*`'file2']
         ==  ==  ==
       ^=  expected-moves
         :~  :*  duct=~[/init]  %give  %note  '+'  %rose  ["/" "/" ~]
@@ -381,7 +378,7 @@
                 :+  %pass  /castifying/~nul/home/~2222.2.2
                 ^-  note:clay-gate
                 :-  %f
-                [%build ~nul live=%.n [%pin ~2222.2.2 [%list ~]]]
+                [%build ~nul live=%.n [%ntvt ~2222.2.2 [%ntdt !>(~)]]]
             !>  i.moves
         ::
           %+  expect-eq
@@ -391,7 +388,7 @@
                 :+  %pass  /diffing/~nul/home/~2222.2.2
                 ^-  note:clay-gate
                 :-  %f
-                [%build ~nul live=%.n [%pin ~2222.2.2 [%list ~]]]
+                [%build ~nul live=%.n [%ntvt ~2222.2.2 [%ntdt !>(~)]]]
             !>  i.t.moves
         ::
           ^-  tang
@@ -425,15 +422,16 @@
           %-  expect-schematic:test-ford
           :_  schematic.note
           ^-  schematic:ford
-          :+  %pin  ~2222.2.2
-          :-  %list
-          :~  :-  [%$ %path -:!>(*path) /file3/noun]
-              :^  %cast  [~nul %home]  %noun
-              [%$ %noun %noun 'file3']
+          :+  %ntvt  ~2222.2.2
+          :*  :+  [%ntdt !>(`path`/file3/noun)]
+                [%ntdt !>(`@tas`%noun)]
+              (cast [%noun 'file3'] [%noun [~nul %home]] [%noun [~nul %home]])
           ::
-              :-  [%$ %path -:!>(*path) /file4/noun]
-              :^  %cast  [~nul %home]  %noun
-              [%$ %noun %noun 'file4']
+              :+  [%ntdt !>(`path`/file4/noun)]
+                [%ntdt !>(`@tas`%noun)]
+              (cast [%noun 'file4'] [%noun [~nul %home]] [%noun [~nul %home]])
+          ::
+              [%ntdt !>(~)]
           ==
     ==  ==
   ::
@@ -446,6 +444,7 @@
     results5
     results6
     results7
+    results8
   ==
 ::  |utilities: helper functions for testing
 ::
