@@ -642,7 +642,7 @@
         =.  ..ta-action  (ta-deltas dels)
         %-  action-convey
         ^-  (list thought)
-        %+  turn  ~(tap in sis)
+        %+  turn  ~(tap in (~(del in sis) our.bol))
         |=  a=ship
         ^-  thought
         :*  uid=(shaf a eny.bol)
