@@ -13,6 +13,10 @@
     ^-  manx
     =,  cram
     elm:(static (ream mud))
+  ++  x-urb-elem
+    ^-  manx
+    =,  cram
+    elm:(static (ream mud))
   ++  front  :: XX performance, types
     ^-  (map term knot)
     %-  ~(run by inf:(static:cram (ream mud)))
