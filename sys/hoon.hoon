@@ -6258,6 +6258,23 @@
       $:  ?($tape $manx $marl $call) 
           p/hoon
       ==
+  ::
+  +$  gear
+    $~  [%ntdt [%bust %null]]
+    $^  [head=gear tail=gear]
+    $%  [%ntbn subject=gear rest=gear]
+        [%ntbs gate=gear sample=gear]
+        [%ntcb =hoon]
+        [%ntdt =hoon]  ::  this hoon produces a vase
+        [%ntkt spec=gear rest=gear]
+        [%ntls head=gear rest=gear]
+        [%ntnt subject=gear schematic=gear]
+        [%ntpd rail=gear]
+        [%nttr =term rail=gear]
+        [%ntts =term rest=gear]
+        [%ntvt date=hoon rest=gear]
+        [%ntwt if=gear then=gear else=gear]
+    ==
   --                                                    ::
 +$  hoon                                                ::
   $~  [%zpzp ~]
@@ -6283,6 +6300,7 @@
     {$wing p/wing}                                      ::  take wing
     {$yell p/(list hoon)}                               ::  render as tank
     {$xray p/manx:hoot}                                 ::  ;foo; templating
+    {$gear p/gear:hoot}                                 ::  ford runes
   ::                                            ::::::  cores
     {$brcb p/spec q/alas r/(map term tome)}             ::  |_
     {$brcl p/hoon q/hoon}                               ::  |:
@@ -11540,6 +11558,7 @@
   %*(. vast bug bug, wer wer)                           ::  wer: where we are
 ::
 ++  vast                                                ::  main parsing core
+  !:
   =+  [bug=`?`| wer=*path]
   |%
   ++  gash  %+  cook                                    ::  parse path
@@ -11788,6 +11807,72 @@
         (cold | (just ']'))
       ==
     ==
+  ::  +rage: parse a +gear
+  ::
+  ++  rage
+    |%
+    ++  tall-top
+      %+  cook  |=(hoon +<)
+      %+  stag  %gear
+      main
+    ::  +main: entry point, in tall form
+    ::
+    ++  main
+      %+  knee  *gear:hoot  |.  ~+
+      ;~  pose
+        ::  parse an explicit +gear
+        ::
+        ;~  pfix  hax  ::  TODO: replace hax with net
+          %-  stew
+          ^.  stet  ^.  limo
+          ::  TODO: add autocons
+          ::
+          :~  ['>' (goon ban %ntbn g2)]
+              ['$' (goon bus %ntbs g2)]
+              ['.' (goon dot %ntdt expa:norm-core)]
+              ['^' (goon ket %ntkt g2)]
+              ['+' (goon lus %ntls g2)]
+              ['/' (goon net %ntnt g2)]
+              ['&' (goon pad %ntpd g1)]
+              ['*' (goon tar %nttr nttr)]
+              ['=' (goon tis %ntts ntts)]
+              ['@' (goon vat %ntvt ntvt)]
+              ['?' (goon wut %ntwt g3)]
+          ==
+        ==
+      ::  a bare hoon is parsed into a %ntcb
+      ::
+        (stag %ntcb loaf:norm-core)
+      ==
+    ::  +goon: create a parser for a particular gear tag; see +rune:norm:vast
+    ::
+    ++  goon
+      |*  [discriminator=rule tag=* parser=_g1]
+      ::
+      ;~(pfix discriminator (stag tag ;~(pfix gap $:parser)))
+    ::  +nttr: parse a symbol like %foo, followed by a gear
+    ::
+    ::    TODO: support arbitrary hoon, not just a %foo symbol?
+    ::
+    ++  nttr  |.(;~(mesh (cook term ;~(pfix cen sym)) main))
+    ::  +ntts: parse a face as a bare symbol, followed by a gear
+    :: 
+    ++  ntts  |.(;~(mesh (cook term sym) main))
+    ::  +ntvt: parse a hoon that should become a date, followed by a gear
+    ::
+    ++  ntvt  |.(;~(mesh loaf:norm-core main))
+    ::  +g1, +g2, +g3: parse one, two, or three gears
+    ::
+    ++  g1  |.(main)
+    ++  g2  |.(;~(mesh main main))
+    ++  g3  |.(;~(mesh main main main))
+    ::  +mesh: glue tall-form gears together with two or more spaces
+    ::
+    ++  mesh  ~+((glue gap))
+    ::  +norm-core: tall-form hoon parser
+    ::
+    ++  norm-core  ~+((norm:vast &))
+    --
   ::
   ::
   ++  sail                                              ::  xml template
@@ -13649,7 +13734,15 @@
     ==
   ++  tall                                              ::  full tall form
     %+  knee  *hoon
-    |.(~+((wart ;~(pose expression:(norm &) long lute apex:(sail &)))))
+    |.  ~+
+    %-  wart
+    ;~  pose
+      expression:(norm &)
+      long
+      lute
+      apex:(sail &)
+      tall-top:rage
+    ==
   ++  till                                              ::  mold tall form
     %+  knee  *spec
     |.(~+((wert ;~(pose structure:(norm &) scad))))
