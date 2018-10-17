@@ -7,7 +7,7 @@
 ++  test-ntcb-bare-hoon  ^-  tang
   %+  expect-eq
     !>  `hoon:hoon-gate`[%gear %ntcb %wing ~[%foo]]
-    !>  (scan "foo" tall-top:rage:vast:hoon-gate)
+    !>  (scan "foo" tall-top:(rage:vast:hoon-gate allow-bare-hoon=&))
 ::
 ++  test-ntbn  ^-  tang
   %+  expect-eq
@@ -68,6 +68,62 @@
   %+  expect-eq
     !>  ^-  hoon:hoon-gate
         :+  %gear  %ntwt
-        [[%ntdt %wing ~[%foo]] [%ntdt %wing ~[%bar]] [%ntdt %wing ~[%qux]]]
-    !>  (ream:hoon-gate '#?  #.  foo  #.  bar  #.  qux')
+        [[%ntdt %wing ~[%foo]] [%ntdt %wing ~[%bar]] [%ntdt %wing ~[%baz]]]
+    !>  (ream:hoon-gate '#?  #.  foo  #.  bar  #.  baz')
+::
+++  test-gear-clhp  ^-  tang
+  %+  expect-eq
+    !>  ^-  hoon:hoon-gate
+        :-  %gear
+        [[%ntdt %wing ~[%foo]] [%ntdt %wing ~[%bar]]]
+    !>  (scan ":-  #.  foo  #.  bar" tall-top:(rage:vast:hoon-gate |))
+::
+++  test-gear-clkt  ^-  tang
+  %+  expect-eq
+    !>  ^-  hoon:hoon-gate
+        :-  %gear
+        :^    [%ntdt %wing ~[%foo]]
+            [%ntdt %wing ~[%bar]]
+          [%ntdt %wing ~[%baz]]
+        [%ntdt %wing ~[%quz]]
+    ::
+    !>  %+  scan
+          ":^  #.  foo  #.  bar  #.  baz  #.  quz"
+        tall-top:(rage:vast:hoon-gate |)
+::
+++  test-gear-clls  ^-  tang
+  %+  expect-eq
+    !>  ^-  hoon:hoon-gate
+        :-  %gear
+        :+  [%ntdt %wing ~[%foo]]
+          [%ntdt %wing ~[%bar]]
+        [%ntdt %wing ~[%baz]]
+    ::
+    !>  %+  scan
+          ":+  #.  foo  #.  bar  #.  baz"
+        tall-top:(rage:vast:hoon-gate |)
+::
+++  test-gear-clsg  ^-  tang
+  %+  expect-eq
+    !>  ^-  hoon:hoon-gate
+        :-  %gear
+        :+  [%ntdt %wing ~[%foo]]
+          [%ntdt %wing ~[%bar]]
+        [%ntdt %bust %null]
+    ::
+    !>  %+  scan
+          ":~  #.  foo  #.  bar  =="
+        tall-top:(rage:vast:hoon-gate |)
+::
+++  test-gear-cltr  ^-  tang
+  %+  expect-eq
+    !>  ^-  hoon:hoon-gate
+        :-  %gear
+        :+  [%ntdt %wing ~[%foo]]
+          [%ntdt %wing ~[%bar]]
+        [%ntdt %wing ~[%baz]]
+    ::
+    !>  %+  scan
+          ":*  #.  foo  #.  bar  #.  baz  =="
+        tall-top:(rage:vast:hoon-gate |)
 --

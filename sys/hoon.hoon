@@ -11558,7 +11558,6 @@
   %*(. vast bug bug, wer wer)                           ::  wer: where we are
 ::
 ++  vast                                                ::  main parsing core
-  !:
   =+  [bug=`?`| wer=*path]
   |%
   ++  gash  %+  cook                                    ::  parse path
@@ -11810,11 +11809,20 @@
   ::  +rage: parse a +gear
   ::
   ++  rage
+    |=  allow-bare-hoon=?
     |%
+    ::  +tall-top: try to parse a +gear to a +hoon
+    ::
     ++  tall-top
       %+  cook  |=(hoon +<)
       %+  stag  %gear
+      ::
+      ?:  allow-bare-hoon
+        mail
       main
+    ::  +mail: either a gear or a bare hoon
+    ::
+    ++  mail  ;~(pose main bare-hoon)
     ::  +main: entry point, in tall form
     ::
     ++  main
@@ -11825,8 +11833,6 @@
         ;~  pfix  hax  ::  TODO: replace hax with net
           %-  stew
           ^.  stet  ^.  limo
-          ::  TODO: add autocons
-          ::
           :~  ['>' (goon ban %ntbn g2)]
               ['$' (goon bus %ntbs g2)]
               ['.' (goon dot %ntdt expa:norm-core)]
@@ -11840,10 +11846,23 @@
               ['?' (goon wut %ntwt g3)]
           ==
         ==
-      ::  a bare hoon is parsed into a %ntcb
+      ::  col runes in gear mode parse to autocons gears
       ::
-        (stag %ntcb loaf:norm-core)
+        ;~  pfix  col
+          %-  stew
+          ^.  stet  ^.  limo
+          :~  ['-' ;~(pfix ;~(plug hep gap) $:g2)]
+              ['^' ;~(pfix ;~(plug ket gap) $:g4)]
+              ['+' ;~(pfix ;~(plug lus gap) $:g3)]
+              ['~' (ifix [;~(plug sig gap) ;~(plug gap duz)] clsg)]
+              ['*' (ifix [;~(plug tar gap) ;~(plug gap duz)] cltr)]
+          ==
+        ==
       ==
+    ::  a bare hoon is parsed into a %ntcb
+    ::
+    ++  bare-hoon
+      (stag %ntcb loaf:norm-core)
     ::  +goon: create a parser for a particular gear tag; see +rune:norm:vast
     ::
     ++  goon
@@ -11854,18 +11873,53 @@
     ::
     ::    TODO: support arbitrary hoon, not just a %foo symbol?
     ::
-    ++  nttr  |.(;~(mesh (cook term ;~(pfix cen sym)) main))
+    ++  nttr  |.(;~(mesh (cook term ;~(pfix cen sym)) mail))
     ::  +ntts: parse a face as a bare symbol, followed by a gear
     :: 
-    ++  ntts  |.(;~(mesh (cook term sym) main))
+    ++  ntts  |.(;~(mesh (cook term sym) mail))
     ::  +ntvt: parse a hoon that should become a date, followed by a gear
     ::
-    ++  ntvt  |.(;~(mesh loaf:norm-core main))
-    ::  +g1, +g2, +g3: parse one, two, or three gears
+    ++  ntvt  |.(;~(mesh loaf:norm-core mail))
+    ::  +clsg: parse a list of gears into a gear that produces a list
     ::
-    ++  g1  |.(main)
-    ++  g2  |.(;~(mesh main main))
-    ++  g3  |.(;~(mesh main main main))
+    ++  clsg
+      %+  cook
+        |=  gears=(list gear:hoot)
+        ^-  gear:hoot
+        ::  replace trailing ~ with a gear whose result will be ~
+        ::
+        ?~  gears
+          [%ntdt %bust %null]
+        [i.gears $(gears t.gears)]
+      ::
+      (most gap mail)
+    ::  +cltr: parse a tuple of gears into an autocons of gears
+    ::
+    ++  cltr
+      %+  cook
+        |=  gears=(list gear:hoot)
+        ^-  gear:hoot
+        ::  reverse first so we can prepend items onto our result as we go
+        ::
+        =.  gears  (flop gears)
+        ::  +most parses at least one gear
+        ::
+        ?~  gears  !!
+        =/  out=gear:hoot  i.gears
+        =>  .(gears `(list gear:hoot)`t.gears)
+        ::
+        |-  ^+  out
+        ?~  gears  out
+        ::
+        $(gears t.gears, out `gear:hoot`[i.gears out])
+      ::
+      (most gap mail)
+    ::  +g1, +g2, +g3, +g4: parse one, two, three, or four gears
+    ::
+    ++  g1  |.(mail)
+    ++  g2  |.(;~(mesh mail mail))
+    ++  g3  |.(;~(mesh mail mail mail))
+    ++  g4  |.(;~(mesh mail mail mail mail))
     ::  +mesh: glue tall-form gears together with two or more spaces
     ::
     ++  mesh  ~+((glue gap))
@@ -13741,7 +13795,7 @@
       long
       lute
       apex:(sail &)
-      tall-top:rage
+      tall-top:(rage allow-bare-hoon=|)
     ==
   ++  till                                              ::  mold tall form
     %+  knee  *spec
