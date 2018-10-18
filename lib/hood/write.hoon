@@ -2,8 +2,15 @@
 ::
 ::::  /hoon/write/hood/lib
   ::
-/?    310
-/-    plan-diff, plan-acct
+::/?    310
+#+  #=  here-disc
+  =/  her=path  /==
+  ?>  ?=([* * *] her)
+  [(slav %p i.her) (slav %tas i.t.her)]
+::
+#+  #=  plan-diff   #&  :-  here-disc  #.  /hoon/diff/plan/sur
+#+  #=  hood-helm   #&  :-  here-disc  #.  /hoon/acct/plan/sur
+::
 =,  format
 =*  as-octs  as-octs:mimes:html
 =,  space:userlib

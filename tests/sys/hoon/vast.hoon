@@ -26,6 +26,11 @@
     !>  `hoon:hoon-gate`[%gear %ntdt %bust %null]
     !>  (ream:hoon-gate '#.  ~')
 ::
+++  test-ntdt-path-literal  ^-  tang
+  %+  expect-eq
+    !>  `hoon:hoon-gate`[%gear %ntdt (ream:hoon-gate '/some/path')]
+    !>  (ream:hoon-gate '#.  /some/path')
+::
 ++  test-ntkt  ^-  tang
   %+  expect-eq
     !>  ^-  hoon:hoon-gate
@@ -35,8 +40,8 @@
 ++  test-ntls  ^-  tang
   %+  expect-eq
     !>  ^-  hoon:hoon-gate
-        [%gear %ntls [%ntdt %wing ~[%foo]] [%ntdt %wing ~[%bar]]]
-    !>  (ream:hoon-gate '#+  #.  foo  #.  bar')
+        [%gear %ntls [%ntts %foo [%ntdt %wing ~[%foo]]] [%ntdt %wing ~[%bar]]]
+    !>  (ream:hoon-gate '#+  #=  foo  #.  foo  #.  bar')
 ::
 ++  test-ntnt  ^-  tang
   %+  expect-eq
@@ -48,6 +53,15 @@
   %+  expect-eq
     !>  `hoon:hoon-gate`[%gear %ntpd %ntdt [%sand %da ~2000.1.1]]
     !>  (ream:hoon-gate '#&  #.  ~2000.1.1')
+::
+++  test-ntpd-dynamic-path  ^-  tang
+  =/  =path  /~zod/home/~1111.1.1/app/hood/hoon
+  ::
+  %+  expect-eq
+    !>  ^-  hoon:hoon-gate
+        :-  %gear
+        [%ntdt (rain:hoon-gate path '/===/sole/lib/hoon')]
+    !>  (rain:hoon-gate path '#.  /===/sole/lib/hoon')
 ::
 ++  test-nttr  ^-  tang
   %+  expect-eq
@@ -123,7 +137,34 @@
           [%ntdt %wing ~[%bar]]
         [%ntdt %wing ~[%baz]]
     ::
-    !>  %+  scan
+    !>  %+  scan:hoon-gate
           ":*  #.  foo  #.  bar  #.  baz  =="
         tall-top:(rage:vast:hoon-gate |)
+::
+++  test-file-header  ^-  tang
+  =/  =path  /~zod/home/~1111.1.1/app/hood/hoon
+  ::
+  ~&  %+  scan:hoon-gate
+        """
+        #+  #=  here-disc
+          ::=/  her=path  /==
+          =/  her=path  /foo/bar
+          ?>  ?=([* * *] her)
+          [(slav %p i.her) (slav %tas i.t.her)]
+        ::
+        #+  #=  sole  #&  :-  here-disc  #.  /hoon/sole/lib
+        ::
+        sole
+        """
+      tall-top:(rage:(vang:hoon-gate | path) &)
+  ::
+  %+  expect-eq
+    !>  :-  %gear
+        :+  %ntls
+          [%ntts %sole [%ntpd [%ntdt (ream:hoon-gate '/some/path')]]]
+        [%ntcb %wing ~[%sole]]
+    ::
+    !>  %+  scan:hoon-gate
+          "#+  #=  sole  #&  #.  /some/path  sole"
+        tall-top:(rage:(vang:hoon-gate | path) &)
 --

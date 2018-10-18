@@ -1,10 +1,10 @@
+#+  #=  here-disc
+  =/  her=path  /==
+  ?>  ?=([* * *] her)
+  [(slav %p i.her) (slav %tas i.t.her)]
 ::
-::::  /lib/hall/hoon
-  ::
-/-    hall
+#+  #=  hall  #&  :-  here-disc  #.  /hoon/hall/sur
 ::
-::::
-  ::
 =,  hall
 |_  bol/bowl:gall
 ::

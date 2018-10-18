@@ -1,8 +1,15 @@
 ::                                                      ::  ::
 ::::  /hoon/womb/hood/lib                               ::  ::
   ::                                                    ::  ::
-/?    310                                               ::  version
-/+    hall, old-phon
+::/?    310                                               ::  version
+#+  #=  here-disc
+  =/  her=path  /==
+  ?>  ?=([* * *] her)
+  [(slav %p i.her) (slav %tas i.t.her)]
+::
+#+  #=  hall      #&  :-  here-disc  #.  /hoon/hall/lib
+#+  #=  old-phon  #&  :-  here-disc  #.  /hoon/old-phon/lib
+::
 =,  wired
 =,  title
 ::                                                      ::  ::

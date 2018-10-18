@@ -1,3 +1,4 @@
+/+  *marker
 !:
 ::  ::  %gall, agent execution  
 !?  163
@@ -159,8 +160,10 @@
     ::
     =/  build-result  result.made-result
     ::
-    ?:  ?=(%| -.build-result)
+    ?:  ?=([%| *] build-result)
       (mo-give %onto %| p.build-result)
+    ::
+    =/  result-cage=cage  (result-to-cage:ford build-result)
     ::
     =/  app-data=(unit seat)  (~(get by bum) dap)
     ?^  app-data
@@ -169,12 +172,12 @@
       =.  bum  (~(put by bum) dap u.app-data(byk byk))
       ::  magic update string from +mo-boon, "complete old boot"
       ::
-      ap-abet:(ap-peep:(ap-abed:ap dap [%high [~ our]]) p.build-result)
+      ap-abet:(ap-peep:(ap-abed:ap dap [%high [~ our]]) q.result-cage)
     ::  first install of the app
     ::
-    ?.  (mo-okay p.build-result)
+    ?.  (mo-okay q.result-cage)
       (mo-give %onto %| [%leaf "{<dap>}: bogus core"]~)
-    =.  +>.$  (mo-born dap byk p.build-result)
+    =.  +>.$  (mo-born dap byk q.result-cage)
     =+  old=+>.$
     =+  wag=(ap-prop:(ap-abed:ap dap [%high [~ our]]) ~)
     ?^  -.wag
@@ -205,7 +208,7 @@
     ^+  +>
     %+  mo-pass  [%sys %core dap (scot %p p.byk) q.byk (scot r.byk) ~]
     ^-  note-arvo
-    [%f %build our live=%.y [%ntpd [%ntdt !>([[p q]:byk /hoon/[dap]/app])]]]
+    [%f %build our live=%.y [%ntpd [p q]:byk /hoon/[dap]/app]]
   ::
   ++  mo-away                                           ::  foreign request
     |=  {him/ship caz/cush}                             ::  
@@ -317,12 +320,12 @@
       ?:  ?=([%incomplete *] result.sih)
         (mo-give %unto %coup `tang.result.sih)
       ::
-      =/  build-result  result.result.sih
+      =/  build-result  build-result.result.sih
       ::
-      ?:  ?=(%| -.build-result)
-        (mo-give %unto %coup `p.build-result)
+      ?:  ?=([%error *] build-result)
+        (mo-give %unto %coup `message.build-result)
       ::
-      (mo-give %unto %diff (vase-to-cage:forder p.build-result))
+      (mo-give %unto %diff (result-to-cage:ford build-result))
     ::
         $red                                            ::  diff ack
       ?>  ?=({@ @ @ ~} t.pax)
@@ -358,15 +361,15 @@
         ::  "XX should crash"
         (mo-give %mack `tang.result.sih)
       ::
-      =/  build-result  result.result.sih
+      =/  build-result  build-result.result.sih
       ::
-      ?:  ?=(%| -.build-result)
+      ?:  ?=([%error *] build-result)
         ::  "XX should crash"
-        (mo-give %mack `p.build-result)
+        (mo-give %mack `message.build-result)
       ::
       ::  "XX pump should ack"
       =.  +>.$  (mo-give %mack ~)
-      =*  result-cage  (vase-to-cage:forder p.build-result)
+      =*  result-cage  (result-to-cage:ford build-result)
       (mo-give(hen (mo-ball him num)) %unto %diff result-cage)
     ::
         $req                                            ::  inbound request
@@ -375,19 +378,17 @@
               dap=i.t.t.pax
               num=(slav %ud i.t.t.t.pax)
           ==
-      ?:  ?=({%f %made *} sih)
+      ?:  ?=({$f $made *} sih)
         ?:  ?=([%incomplete *] result.sih)
           ::  "XX should crash"
           (mo-give %mack `tang.result.sih)
         ::
-        =/  build-result  result.result.sih
+        =/  build-result  build-result.result.sih
         ::
-        ?:  ?=(%| -.build-result)
+        ?:  ?=([%error *] build-result)
           ::  "XX should crash"
-          (mo-give %mack `p.build-result)
-        ::
-        =/  cay=cage  (vase-to-cage:forder p.build-result)
-        ::
+          (mo-give %mack `message.build-result)
+        =/  cay/cage  (result-to-cage:ford build-result)
         (mo-pass [%sys pax] %g %deal [him our] i.t.t.pax %poke cay)
       ?:  ?=({$a $woot *} sih)  +>.$                    ::  quit ack, boring
       ?>  ?=({$g $unto *} sih)
@@ -409,12 +410,12 @@
       ?:  ?=([%incomplete *] result.sih)
         (mo-give %unto %coup `tang.result.sih)
       ::
-      =/  build-result  result.result.sih
+      =/  build-result  build-result.result.sih
       ::
-      ?:  ?=(%| -.build-result)
-        (mo-give %unto %coup `p.build-result)
+      ?:  ?=([%error *] build-result)
+        (mo-give %unto %coup `message.build-result)
       ::
-      =*  result-cage  (vase-to-cage:forder p.build-result)
+      =*  result-cage  (result-to-cage:ford build-result)
       (mo-clip dap `prey`[%high ~ him] [%poke result-cage])
     ::
         $way                                            ::  outbound request
@@ -471,8 +472,6 @@
     ^-  beak
     byk:(~(got by bum) dap)
   ::
-  ++  mo-disc  |=(dap/dude [p q]:(mo-beak dap))
-  ::
   ++  mo-peek
     |=  {dap/dude pry/prey ren/@tas tyl/path}
     ^-  (unit (unit cage))
@@ -480,35 +479,27 @@
   ::
   ++  mo-clip                                           ::  apply club
     |=  {dap/dude pry/prey cub/club}
+    ::
     ?:  ?=($puff -.cub)
-      %+  mo-pass  [%sys %val (scot %p q.q.pry) dap ~]
-      :-  %f
-      :^  %build  our  live=%.n
-      ^-  schematic:ford
-      ::
+      %+  mo-pass
+        [%sys %val (scot %p q.q.pry) dap ~]
       =/  =mark  p.cub
       =/  =noun  q.cub
       ::
-      :-  [%ntdt !>(mark)]
-      (validate:marker noun mark (mo-disc dap))
+      [%f %build our live=%.n (validate noun mark [p q]:(mo-beak dap))]
     ::
     ?:  ?=($punk -.cub)
-      %+  mo-pass  [%sys %val (scot %p q.q.pry) dap ~]
-      :-  %f
-      :^  %build  our  live=%.n
-      ^-  schematic:ford
+      %+  mo-pass
+        [%sys %val (scot %p q.q.pry) dap ~]
+      =/  =mark  p.cub
+      =/  =cage  q.cub
+      =/  =disc  [p q]:(mo-beak dap)
       ::
-      =/  data=vase        q.q.cub
-      =/  start-mark=mark  p.q.cub
-      =/  end-mark=mark    p.cub
-      =/  disc=disc:ford   (mo-disc dap)
-      ::
-      :-  [%ntdt !>(end-mark)]
-      (cast:marker data [start-mark disc] [end-mark disc])
-    ::
+      :*  %f  %build  our  live=%.n
+          (cast data=q.cage start=[p.cage disc] end=[mark disc])
+      ==
     ?:  ?=($peer-not -.cub)
       (mo-give %unto %reap (some p.cub))
-    ::
     ap-abet:(ap-club:(ap-abed:ap dap pry) cub)
   ::
   ++  mo-club                                           ::  local action
@@ -541,15 +532,10 @@
         $d
       %+  mo-pass
         [%sys %rep (scot %p him) dap (scot %ud num) ~]
-      :-  %f
-      :^  %build  our  live=%.n
-      ^-  schematic:ford
-      ::
       =/  =mark  p.ron
       =/  =noun  q.ron
       ::
-      :-  [%ntdt !>(mark)]
-      (validate:marker noun mark (mo-disc dap))
+      [%f %build our live=%.n (validate noun mark [p q]:(mo-beak dap))]
     ::
         $x  =.  +>  (mo-give %mack ~)                  ::  XX should crash
             (mo-give(hen (mo-ball him num)) %unto %quit ~)
@@ -627,17 +613,7 @@
         ?:  =(mar p.cay)  [%give %unto p.q.cov]
         :+  %pass
           [%sys %pel dap ~]
-        :-  %f
-        :^  %build  our  live=%.n
-        ^-  schematic:ford
-        ::
-        =/  data=vase        q.cay
-        =/  start-mark=mark  p.cay
-        =/  end-mark=mark    mar
-        =/  disc=disc:ford   (mo-disc dap)
-        ::
-        :-  [%ntdt !>(end-mark)]
-        (cast:marker data [start-mark disc] [end-mark disc])
+        [%f %build our live=%.n [%cast [p q]:(mo-beak dap) mar [%$ cay]]]
       ::
           $pass
         :+  %pass  `path`[%use dap p.q.cov]

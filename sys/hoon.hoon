@@ -8829,6 +8829,32 @@
         [(open-mane n) %knit v]
       --
     ::
+        {$gear *}
+      |-  ^-  hoon
+      ?-    -.p.gen
+          ^      [$(p.gen -.p.gen) $(p.gen +.p.gen)]
+          %ntbn  [[%rock %tas %ntbn] $(p.gen subject.p.gen) $(p.gen rest.p.gen)]
+          %ntbs  [[%rock %tas %ntbs] $(p.gen gate.p.gen) $(p.gen sample.p.gen)]
+          %ntcb  [[%rock %tas %ntcb] hoon.p.gen]
+          %ntdt  [[%rock %tas %ntdt] [%zpbn hoon.p.gen]]
+          %ntkt  [[%rock %tas %ntkt] $(p.gen spec.p.gen) $(p.gen rest.p.gen)]
+          %ntls  [[%rock %tas %ntls] $(p.gen head.p.gen) $(p.gen rest.p.gen)]
+          %ntnt
+        [[%rock %tas %ntnt] $(p.gen subject.p.gen) $(p.gen schematic.p.gen)]
+      ::
+          %ntpd  [[%rock %tas %ntpd] $(p.gen rail.p.gen)]
+          %nttr
+        [[%rock %tas %nttr] [%rock %tas term.p.gen] $(p.gen rail.p.gen)]
+      ::
+          %ntts
+        [[%rock %tas %ntts] [%rock %tas term.p.gen] $(p.gen rest.p.gen)]
+      ::
+          %ntvt  [[%rock %tas %ntvt] date.p.gen $(p.gen rest.p.gen)]
+          %ntwt
+        :-  [%rock %tas %ntwt]
+        [$(p.gen if.p.gen) $(p.gen then.p.gen) $(p.gen else.p.gen)]
+      ==
+    ::
         {$wtvt *}   [%wtcl [%wtts [%base %atom %$] p.gen] q.gen r.gen]
         {$wtsg *}   [%wtcl [%wtts [%base %null] p.gen] q.gen r.gen]
         {$wtts *}   [%fits ~(example ax fab p.gen) q.gen]

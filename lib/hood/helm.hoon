@@ -1,9 +1,16 @@
 ::                                                      ::  ::
 ::::  /hoon/helm/hood/lib                               ::  ::
   ::                                                    ::  ::
-/?    310                                               ::  version
-/-    sole, hall
-[. sole]
+::/?    310                                               ::  version
+#+  #=  here-disc
+  =/  her=path  /==
+  ?>  ?=([* * *] her)
+  [(slav %p i.her) (slav %tas i.t.her)]
+::
+#+  #=  sole  #&  :-  here-disc  #.  /hoon/sole/sur
+#+  #=  hall  #&  :-  here-disc  #.  /hoon/hall/sur
+::
+=>  [. sole]  ::  TODO ugly
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::

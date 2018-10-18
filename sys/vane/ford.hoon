@@ -1056,14 +1056,14 @@
           ::~&  (pad "%ntbs end gate")
           ::
           ?:  ?=([~ %| *] gate)
-            (wrap-error p.u.gate [%leaf "ford: /$ gate build failed"]~)
+            (wrap-error p.u.gate [%leaf "ford: /$ gate build failed:"]~)
           ::
           ::~&  (pad "%ntbs start sample")
           =^  sample  progress  $(schematic sample.schematic)
           ::~&  (pad "%ntbs end sample")
           ::
           ?:  ?=([~ %| *] sample)
-            (wrap-error p.u.sample [%leaf "ford: /$ sample build failed"]~)
+            (wrap-error p.u.sample [%leaf "ford: /$ sample build failed:"]~)
           ::
           ?~  gate    block
           ?~  sample  block
@@ -1106,7 +1106,7 @@
               =.  p.product
                 :*  (~(dunk ut sample-type) %have)
                     (~(dunk ut (~(peek ut gate-type) %free 6)) %want)
-                    leaf+"ford: %call: slit failed:"
+                    leaf+"ford: /$ product type inference failed:"
                     p.product
                 ==
               ::
@@ -1296,8 +1296,15 @@
           ^-  hoon
           !:
           ::~&  (pad "%parse-at-rail {<rail>}")
+          ~|  "ford: /& failed to parse file at {<rail>}"
           =/  parse-path=path  (en-beam [[ship.disc desk.disc %ud 0] spur]:rail)
-          (rain parse-path source)
+          ::
+          =/  hoon-parser       vast
+          =.  wer.hoon-parser   parse-path
+          =/  gear-parser       tall-top:(rage allow-bare-hoons=&):hoon-parser
+          =/  augmented-parser  (full (ifix [gay gay] gear-parser))
+          ::
+          (scan (trip source) augmented-parser)
         ::
         =/  extract-source
           |=  [=rail result=(unit [mark=term data=@t])]
