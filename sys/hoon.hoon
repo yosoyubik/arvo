@@ -11755,7 +11755,7 @@
   ++  posh
     |=  {pre/(unit tyke) pof/(unit {p/@ud q/tyke})}
     ^-  (unit (list hoon))
-    =-  ?^(- - ~&(%posh-fail -))
+    =-  ?^(- - ~&([%posh-fail pre=pre pof=pof wer=wer] -))
     =+  wom=(poof wer)
     %+  biff
       ?~  pre  `u=wom
@@ -11951,7 +11951,7 @@
     ++  mesh  ~+((glue gap))
     ::  +norm-core: tall-form hoon parser
     ::
-    ++  norm-core  ~+((norm:vast &))
+    ++  norm-core  ~+((norm &))
     --
   ::
   ::

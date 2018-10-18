@@ -54,14 +54,14 @@
     !>  `hoon:hoon-gate`[%gear %ntpd %ntdt [%sand %da ~2000.1.1]]
     !>  (ream:hoon-gate '#&  #.  ~2000.1.1')
 ::
-++  test-ntpd-dynamic-path  ^-  tang
+++  test-ntdt-dynamic-path  ^-  tang
   =/  =path  /~zod/home/~1111.1.1/app/hood/hoon
   ::
   %+  expect-eq
     !>  ^-  hoon:hoon-gate
         :-  %gear
-        [%ntdt (rain:hoon-gate path '/===/sole/lib/hoon')]
-    !>  (rain:hoon-gate path '#.  /===/sole/lib/hoon')
+        [%ntdt (rain:hoon-gate path '/===/lib/sole/hoon')]
+    !>  (rain:hoon-gate path '#.  /===/lib/sole/hoon')
 ::
 ++  test-nttr  ^-  tang
   %+  expect-eq
