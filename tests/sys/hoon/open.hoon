@@ -11,7 +11,7 @@
 ::
 ++  test-open-ntcb  ^-  tang
   %+  expect-eq
-    !>  [[%rock %tas %ntcb] [%zpcm [%kttr %like ~[%hoon] ~]] [%bust %null]]
+    !>  [[%rock %tas %ntcb] %zpcm [%kttr %like ~[%hoon] ~] %bust %null]
     !>  ~(open ap.hoon-gate [%gear %ntcb [%bust %null]])
 ::
 ::++  test-slap-ntdt  ^-  tang
