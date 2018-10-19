@@ -1266,6 +1266,7 @@
     ::    sub-schematics.
     ::
     $^  [head=schematic tail=schematic]
+    ::  TODO: %ntzp for adding trace printing and %spot for debug wrapping
     ::
     $%  ::  %ntbn: /> with :subject as subject, evaluate :rest
         ::
@@ -1399,6 +1400,26 @@
             ::  else: schematic to evaluate if conditional was false
             ::
             else=schematic
+        ==
+        ::  %ntzp: /! adds information to a stack trace if sub-schematic fails
+        ::
+        $:  %ntzp
+            ::  hoon: expression to be run against the subject to produce trace message
+            ::
+            =hoon
+            ::  rest: wrapped schematic
+            ::
+            rest=schematic
+        ==
+        ::  %spot: source location (file and line-column range) for stack traces
+        ::
+        $:  %spot
+            ::  spot: relative filepath (excluding +beak) and line+column range
+            ::
+            =spot
+            ::  rest: wrapped schematic
+            ::
+            rest=schematic
     ==  ==
   --
 ::                                                      ::::

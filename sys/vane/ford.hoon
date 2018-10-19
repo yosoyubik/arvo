@@ -132,214 +132,6 @@
 ::
 =>  =~
 |%
-  ::  TODO: move back to zuse
-  ++  able
-    |%
-    ::  +task:able:ford: requests to ford
-    ::
-    +$  task
-      $%  ::  %build: perform a build, either live or once
-          ::
-          $:  %build
-              ::  our: who our ship is (remove after cc-release)
-              ::
-              our=@p
-              ::  live: whether we run this build live
-              ::
-              ::    A live build will subscribe to further updates and keep the
-              ::    build around.
-              ::
-              live=?
-              ::  plan: the schematic to build
-              ::
-              =schematic
-          ==
-          ::  %keep: reset cache sizes
-          ::
-          [%keep compiler-cache-size=@ud]
-          ::  %kill: stop a build; send on same duct as original %build request
-          ::
-          $:  %kill
-              ::  our: who our ship is (remove after cc-release)
-              ::
-              our=@p
-          ==
-          ::  %wegh: produce memory usage information
-          ::
-          [%wegh ~]
-          ::  %wipe: wipes stored builds
-          ::
-          [%wipe percent-to-remove=@ud]
-      ==
-    ::  +gift:able:ford: responses from ford
-    ::
-    +$  gift
-      $%  ::  %mass: memory usage; response to %wegh +task
-          ::
-          [%mass p=mass]
-          ::  %made: build result; response to %build +task
-          ::
-          $:  %made
-              ::  date: formal date of the build
-              ::
-              date=@da
-              ::  result: result of the build; either complete build, or error
-              ::
-              result=made-result
-      ==  ==
-    --
-  ::  +made-result: the main payload for a %made +gift
-  ::
-  +$  made-result
-    $%  ::  %complete: contains the result of the completed build
-        ::
-        [%complete result=(each vase tang)]
-        ::  %incomplete: couldn't finish build; contains error message
-        ::
-        [%incomplete =tang]
-    ==
-  ::  +schematic: ford build request, as a function of time
-  ::
-  +$  schematic
-    $~  [%ntdt !>(~)]
-    ::    If the head of the +schematic is a pair, it's an auto-cons
-    ::    schematic. Its result will be the pair of results of its
-    ::    sub-schematics.
-    ::
-    $^  [head=schematic tail=schematic]
-    ::
-    $%  ::  %ntbn: /> with :subject as subject, evaluate :rest
-        ::
-        $:  %ntbn
-            ::  subject: schematic that becomes new subject
-            ::
-            subject=schematic
-            ::  rest: schematic to evaluate against result of :subject
-            ::
-            rest=schematic
-        ==
-        ::  %ntbs: /$ call a gate on a sample
-        ::
-        $:  %ntbs
-            ::  gate: schematic whose result is a gate
-            ::
-            gate=schematic
-            ::  sample:  schematic whose result will be the gate's sample
-            ::
-            sample=schematic
-        ==
-        ::  %ntdt: /. literal value. Produces its input unchanged.
-        ::
-        $:  %ntdt
-            ::  literal: the value to be produced by the build
-            ::
-            literal=vase
-        ==
-        ::  %ntkt: /^ cast the result of a schematic using ^-
-        ::
-        $:  %ntkt
-            ::  spec: schematic that produces a +spec to cast to
-            ::
-            spec=schematic
-            ::  rest: schematic whose result will be cast to :spec
-            ::
-            rest=schematic
-        ==
-        ::  %ntcb: /_ compile and evaluate a hoon against the current subject
-        ::
-        $:  %ntcb
-            ::  hoon: a hoon to be evaluated against the subject
-            ::
-            =hoon
-        ==
-        ::  %ntls: /+ prepend result of :head schematic to subject
-        ::
-        $:  %ntls
-            ::  head: schematic that produces new head of subject
-            ::
-            head=schematic
-            ::  rest: schematic to evaluate against augmented subject
-            ::
-            rest=schematic
-        ==
-        ::  %ntnt: // eval new schematic against new subject, like Nock 2
-        ::
-        $:  %ntnt
-            ::  subject: schematic that produces new subject
-            ::
-            subject=schematic
-            ::  schematic: schematic that produces new schematic
-            ::
-            =schematic
-        ==
-        ::  %ntpd: /& load and compile a hoon file against the standard library
-        ::
-        ::    Schematics can only be resolved when specifying a time,
-        ::    which will turn the +rail into a +beam (full absolute path).
-        ::
-        $:  %ntpd
-            ::  rail: schematic that evaluates to a hoon filepath to load
-            ::
-            rail=schematic
-        ==
-        ::  %ntts: /= wrap a face around result
-        ::
-        $:  %ntts
-            ::  face: the name of the face to wrap around the result
-            ::
-            face=term
-            ::  rest: a sub-schematic whose result will get labeled
-            ::
-            rest=schematic
-        ==
-        ::  %nttr: /* lookup a value from the urbit namespace (do a scry)
-        ::
-        $:  %nttr
-            ::  term: request type, e.g. %cx or %cz
-            ::
-            =term
-            ::  rail: schematic that evaluates to a :rail to load
-            ::
-            ::    Schematics can only be resolved when specifying a time,
-            ::    which will convert this +resource into a +scry-request.
-            ::
-            rail=schematic
-        ==
-        ::  %ntvt: /@ pins a sub-schematic to a date
-        ::
-        ::    There is a difference between live builds and once builds. In
-        ::    live builds, we produce results over and over again and aren't
-        ::    pinned to a specifc time. In once builds, we want to specify a
-        ::    specific date, which we apply recursively to any sub-schematics
-        ::    contained within :schematic.
-        ::
-        ::    If a build has a %pin at the top level, we consider it to be a
-        ::    once build. Otherwise, we consider it to be a live build. We do
-        ::    this so schematics which depend on the result of a once build can
-        ::    be cached, giving the client explicit control over the caching
-        ::    behaviour.
-        ::
-        $:  %ntvt
-            ::  date: time at which to perform the build
-            ::
-            date=@da
-            ::  schematic: wrapped schematic of pinned time
-            ::
-            rest=schematic
-        ==
-        ::  %ntwt: /? asynchronous conditional
-        ::
-        $:  %ntwt
-            ::  if: schematic that evaluates to a conditional
-            ::
-            if=schematic
-            ::  then: schematic to evaluate if conditional was true
-            ::
-            then=schematic
-            ::  else: schematic to evaluate if conditional was false
-            ::
-            else=schematic
-    ==  ==
 ::  +move: arvo moves that ford can emit
 ::
 +$  move
@@ -800,8 +592,6 @@
   ::
   ::    We pick up the build from where we left off, starting with the
   ::    %scry build that blocked on this resource last time we tried it.
-  ::
-  ::    TODO: rewrite from scratch
   ::
   ++  unblock
     ~/  %unblock
@@ -1297,7 +1087,7 @@
           !:
           ::~&  (pad "%parse-at-rail {<rail>}")
           ~|  "ford: /& failed to parse file at {<rail>}"
-          =/  parse-path=path  (en-beam [[ship.disc desk.disc %ud 0] spur]:rail)
+          =/  parse-path=path  (flop spur.rail)
           ::
           =/  hoon-parser       vast
           =.  wer.hoon-parser   parse-path
@@ -1322,37 +1112,26 @@
         =/  new-schematic=^schematic
           ::  load source file
           ::
-          :+  %ntls
-            :+  %ntts  %rail
-            :+  %ntkt  [%ntdt !>(rail)]
-            rail.schematic
+          #+  #=  rail
+            #^  #.  rail
+            #/  .
+            #.  rail.schematic
           ::  parse source file's contents to a +hoon
           ::
-          :+  %ntls
-            :+  %ntts  %parsed-hoon
-            :+  %ntbs
-              [%ntdt !>(parse-at-rail)]
-            :-  [%ntcb [%limb %rail]]
-            :+  %ntbs
-              [%ntdt !>(extract-source)]
-            :-  [%ntcb [%limb %rail]]
-            [%nttr %cx [%ntcb [%limb %rail]]]
+          #+  #=  parsed-hoon
+            #$  #.  parse-at-rail
+            :-  rail
+            #$  #.  extract-source
+            :-  rail
+            #*  %cx  rail
           ::  ride :parsed-hoon against the standard library to get a +schematic
           ::
-          :+  %ntls
-            :+  %ntts  %source-schematic
-            :+  %ntnt
-              [%ntdt pit]
-            :-  %ntcb
-            ^-  hoon
-            :+  %clhp
-              [%rock %tas %ntcb]
-            [%limb %parsed-hoon]
+          #+  #=  source-schematic
+            #/  #.  pit
+            [%ntcb parsed-hoon]
           ::  evaluate :source-schematic with the standard library as subject
           ::
-          :+  %ntnt
-            [%ntdt pit]
-          [%ntcb %limb %source-schematic]
+          #/  #.  pit  source-schematic
         ::
         $(schematic new-schematic)
       ::
@@ -1460,6 +1239,36 @@
           %&  $(schematic then.schematic)
           %|  $(schematic else.schematic)
         ==
+      ::
+          %ntzp
+        =^  rest  progress  $(schematic rest.schematic)
+        ?~  rest
+          block
+        ::
+        ?:  ?=([~ %& *] rest)
+          (succeed p.u.rest)
+        ::
+        =^  message  progress  $(schematic [%ntcb hoon.schematic])
+        ?~  message
+          block
+        ::
+        ?:  ?=([~ %| *] message)
+          %+  wrap-error  p.u.rest
+          [%leaf "ford: /! failed to wrap message around failure:"]~
+        ::
+        (wrap-error p.u.rest ~[((hard tank) (run-gate sell p.u.message))])
+      ::
+          %spot
+        =^  rest  progress  $(schematic rest.schematic)
+        ?~  rest
+          block
+        ::
+        ?:  ?=([~ %& *] rest)
+          (succeed p.u.rest)
+        ::
+        %+  wrap-error  p.u.rest
+        =,  spot.schematic
+        [%leaf "ford: error in file {<p>} at {<q>}:"]~
       ==
     ++  pad
       |=  a=tape

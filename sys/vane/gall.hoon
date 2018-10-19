@@ -205,7 +205,12 @@
     ^+  +>
     %+  mo-pass  [%sys %core dap (scot %p p.byk) q.byk (scot r.byk) ~]
     ^-  note-arvo
-    [%f %build our live=%.y [%ntpd [%ntdt !>([[p q]:byk /hoon/[dap]/app])]]]
+    :-  %f
+    :^  %build  our  live=%.y
+    ^-  schematic:ford
+    ::
+    :+  %ntzp  (ream (crip "leaf+\"gall: failed to start app {<dap>}\""))
+    [%ntpd [%ntdt !>([[p q]:byk /hoon/[dap]/app])]]
   ::
   ++  mo-away                                           ::  foreign request
     |=  {him/ship caz/cush}                             ::  

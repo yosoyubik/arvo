@@ -6274,6 +6274,8 @@
         [%ntts =term rest=gear]
         [%ntvt date=hoon rest=gear]
         [%ntwt if=gear then=gear else=gear]
+        [%ntzp =hoon rest=gear]
+        [%spot =spot rest=gear]
     ==
   --                                                    ::
 +$  hoon                                                ::
@@ -8835,8 +8837,8 @@
           ^      [$(p.gen -.p.gen) $(p.gen +.p.gen)]
           %ntbn  [[%rock %tas %ntbn] $(p.gen subject.p.gen) $(p.gen rest.p.gen)]
           %ntbs  [[%rock %tas %ntbs] $(p.gen gate.p.gen) $(p.gen sample.p.gen)]
-          %ntcb  [[%rock %tas %ntcb] hoon.p.gen]
-          %ntdt  [[%rock %tas %ntdt] [%zpbn hoon.p.gen]]
+          %ntcb  [[%rock %tas %ntcb] %zpcm [%kttr %like ~[%hoon] ~] hoon.p.gen]
+          %ntdt  [[%rock %tas %ntdt] %zpbn hoon.p.gen]
           %ntkt  [[%rock %tas %ntkt] $(p.gen spec.p.gen) $(p.gen rest.p.gen)]
           %ntls  [[%rock %tas %ntls] $(p.gen head.p.gen) $(p.gen rest.p.gen)]
           %ntnt
@@ -8853,6 +8855,21 @@
           %ntwt
         :-  [%rock %tas %ntwt]
         [$(p.gen if.p.gen) $(p.gen then.p.gen) $(p.gen else.p.gen)]
+      ::
+          %ntzp
+        :-  [%rock %tas %ntzp]
+        [[%zpcm [%kttr %like ~[%hoon] ~] hoon.p.gen] $(p.gen rest.p.gen)]
+      ::
+          %spot
+        :+  [%rock %tas %spot]
+          :-  [%clsg (turn p.spot.p.gen |=(@ta `hoon`[%rock %ta +<]))]
+          ::
+          =/  rud       |=(@ud `hoon`[%rock %ud +<])
+          =/  rag=pint  q.spot.p.gen
+          ::
+          [[(rud p.p.rag) (rud q.p.rag)] [(rud p.q.rag) (rud q.q.rag)]]
+        ::
+        $(p.gen rest.p.gen)
       ==
     ::
         {$wtvt *}   [%wtcl [%wtts [%base %atom %$] p.gen] q.gen r.gen]
@@ -11853,6 +11870,12 @@
     ::
     ++  main
       %+  knee  *gear:hoot  |.  ~+
+      ::  if we know our filepath, wrap the output in a %spot +gear for traces
+      ::
+      =-  ?:  =(*path wer)
+            -
+          (wrap-in-spot -)
+      ::
       ;~  pose
         ::  parse an explicit +gear
         ::
@@ -11870,6 +11893,7 @@
               ['=' (goon tis %ntts ntts)]
               ['@' (goon vat %ntvt ntvt)]
               ['?' (goon wut %ntwt g3)]
+              ['!' (goon zap %ntzp ntzp)]
           ==
         ==
       ::  col runes in gear mode parse to autocons gears
@@ -11889,6 +11913,16 @@
     ::
     ++  bare-hoon
       (stag %ntcb loaf:norm-core)
+    ::  +wrap-in-spot: wrap the produced gear in a %spot for stack trace info
+    ::
+    ++  wrap-in-spot
+      |*  zor=rule
+      %+  here
+        |=  [location=pint gear=gear:hoot]
+        ^-  gear:hoot
+        ::
+        [%spot [wer location] gear]
+      zor
     ::  +goon: create a parser for a particular gear tag; see +rune:norm:vast
     ::
     ++  goon
@@ -11906,6 +11940,9 @@
     ::  +ntvt: parse a hoon that should become a date, followed by a gear
     ::
     ++  ntvt  |.(;~(mesh loaf:norm-core mail))
+    ::  +ntzp: parse a hoon that will be used to augment a stack trace
+    ::
+    ++  ntzp  |.(;~(mesh loaf:norm-core mail))
     ::  +clsg: parse a list of gears into a gear that produces a list
     ::
     ++  clsg

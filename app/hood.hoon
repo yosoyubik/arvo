@@ -1,4 +1,5 @@
 #+  #=  here-disc
+  !:
   =/  her=path  /==
   ?>  ?=([* * *] her)
   [(slav %p i.her) (slav %tas i.t.her)]
@@ -10,6 +11,8 @@
 #+  #=  hood-womb   #&  :-  here-disc  #.  /hoon/womb/hood/lib
 #+  #=  hood-write  #&  :-  here-disc  #.  /hoon/write/hood/lib
 ::
+!:
+=>
 |%
 ++  hood-module
   ::  each hood module follows this general shape
@@ -29,7 +32,6 @@
 ::                                                      ::  ::
 ::::                                                    ::  ::  state handling
   ::                                                    ::  ::
-!:
 =>  |%                                                  ::
     ++  hood-old                                        ::  unified old-state
       {?($0 $1) lac/(map @tas hood-part-old)}           ::

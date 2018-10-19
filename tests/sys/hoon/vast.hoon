@@ -60,7 +60,9 @@
   %+  expect-eq
     !>  ^-  hoon:hoon-gate
         :-  %gear
+        :+  %spot  [/~zod/home/~1111.1.1/app/hood/hoon [[1 1] [1 23]]]
         [%ntdt (rain:hoon-gate path '/===/lib/sole/hoon')]
+    ::
     !>  (rain:hoon-gate path '#.  /===/lib/sole/hoon')
 ::
 ++  test-nttr  ^-  tang
@@ -144,20 +146,6 @@
 ++  test-file-header  ^-  tang
   =/  =path  /~zod/home/~1111.1.1/app/hood/hoon
   ::
-  ~&  %+  scan:hoon-gate
-        """
-        #+  #=  here-disc
-          ::=/  her=path  /==
-          =/  her=path  /foo/bar
-          ?>  ?=([* * *] her)
-          [(slav %p i.her) (slav %tas i.t.her)]
-        ::
-        #+  #=  sole  #&  :-  here-disc  #.  /hoon/sole/lib
-        ::
-        sole
-        """
-      tall-top:(rage:(vang:hoon-gate | path) &)
-  ::
   %+  expect-eq
     !>  :-  %gear
         :+  %ntls
@@ -166,5 +154,17 @@
     ::
     !>  %+  scan:hoon-gate
           "#+  #=  sole  #&  #.  /some/path  sole"
-        tall-top:(rage:(vang:hoon-gate | path) &)
+        tall-top:(rage:vast:hoon-gate &)
+::
+++  test-ntzp  ^-  tang
+  %+  expect-eq
+    !>  :-  %gear
+        [%ntzp [%rock %tas %error] %ntdt %wing ~[%foo]]
+    ::
+    !>  (ream:hoon-gate '#!  %error  #.  foo')
+::
+++  test-spot  ^-  tang
+  %+  expect-eq
+    !>  ~
+    !>  ~
 --
