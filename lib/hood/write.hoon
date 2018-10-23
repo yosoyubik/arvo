@@ -1,19 +1,18 @@
-::  File writer module
-::
-::::  /hoon/write/hood/lib
-  ::
-::/?    310
 #+  #=  here-disc
+  ^-  disc:ford
+  !:
   =/  her=path  /==
+  ~&  [%loading %]
   ?>  ?=([* * *] her)
   [(slav %p i.her) (slav %tas i.t.her)]
 ::
 #+  #=  plan-diff   #&  :-  here-disc  #.  /hoon/diff/plan/sur
-#+  #=  hood-helm   #&  :-  here-disc  #.  /hoon/acct/plan/sur
+#+  #=  plan-acct   #&  :-  here-disc  #.  /hoon/acct/plan/sur
 ::
 =,  format
 =*  as-octs  as-octs:mimes:html
 =,  space:userlib
+=>
 |%
 +$  part  {$write $0 pith}           :: no state
 +$  pith  ~
@@ -21,6 +20,7 @@
 ::
 ::::
   ::
+=>
 |%
 ++  data  $%({$json json} {$mime mime})
 ++  card  $%  {$build wire @p ? schematic:ford}
@@ -133,38 +133,40 @@
 ::
 ++  poke--data
   |=  {{ext/(unit @t) pax/path} dat/data}  ^+  abet
-  ?~  ext  $(ext [~ -.dat])
-  =+  cay=?-(-.dat $json [-.dat !>(+.dat)], $mime [-.dat !>(+.dat)])
-  ?:  =(u.ext -.dat)
-    (made pax now [%complete %success %$ cay])
-  =<  abet
-  %-  emit  :*
-    %build
-    write+pax
-    our
-    live=%.n                ::  XX defer %nice
-    ^-  schematic:ford   ::  SYNTAX ERROR AT START OF LINE?
-    =/  =beak  beak-now
-    [%cast [p q]:beak u.ext [%$ cay]]
-  ==
+  ::?~  ext  $(ext [~ -.dat])
+  ::=+  cay=?-(-.dat $json [-.dat !>(+.dat)], $mime [-.dat !>(+.dat)])
+  ::?:  =(u.ext -.dat)
+  ::  (made pax now [%complete %success %$ cay])
+  ::=<  abet
+  ::%-  emit  :*
+  ::  %build
+  ::  write+pax
+  ::  our
+  ::  live=%.n                ::  XX defer %nice
+  ::  ^-  schematic:ford   ::  SYNTAX ERROR AT START OF LINE?
+  ::  =/  =beak  beak-now
+  ::  [%cast [p q]:beak u.ext [%$ cay]]
+  ::==
+  !!
 ::
 ++  made
   |=  [pax=wire date=@da result=made-result:ford]
   ^+  abet
-  ::  |=  {pax/wire @ res/gage:ford}  ^+  abet
-  :: ?.  =(our src)
-  ::   ~|(foreign-write/[our=our src=src] !!)
-  ?:  ?=(%incomplete -.result)
-    (mean tang.result)
-  ::
-  =/  build-result  build-result.result
-  ::
-  ?:  ?=([%error *] build-result)
-    (mean message.build-result)
-  ::
-  =/  =cage  (result-to-cage:ford build-result)
-  ::
-  =-  abet:(emit %info write+~ our -)
-  ::
-  (foal :(welp (en-beam beak-now ~) pax /[-.cage]) cage)
+  ::::  |=  {pax/wire @ res/gage:ford}  ^+  abet
+  :::: ?.  =(our src)
+  ::::   ~|(foreign-write/[our=our src=src] !!)
+  ::?:  ?=(%incomplete -.result)
+  ::  (mean tang.result)
+  ::::
+  ::=/  build-result  build-result.result
+  ::::
+  ::?:  ?=([%error *] build-result)
+  ::  (mean message.build-result)
+  ::::
+  ::=/  =cage  (result-to-cage:ford build-result)
+  ::::
+  ::=-  abet:(emit %info write+~ our -)
+  ::::
+  ::(foal :(welp (en-beam beak-now ~) pax /[-.cage]) cage)
+  !!
 --

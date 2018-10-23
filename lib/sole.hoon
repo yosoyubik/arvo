@@ -2,7 +2,7 @@
   ^-  disc:ford
   !:
   =/  her=path  /==
-  ~&  [%her her]
+  ~&  [%loading %]
   ?>  ?=([* * *] her)
   [(slav %p i.her) (slav %tas i.t.her)]
 ::

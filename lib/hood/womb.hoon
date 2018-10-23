@@ -1,9 +1,8 @@
-::                                                      ::  ::
-::::  /hoon/womb/hood/lib                               ::  ::
-  ::                                                    ::  ::
-::/?    310                                               ::  version
 #+  #=  here-disc
+  ^-  disc:ford
+  !:
   =/  her=path  /==
+  ~&  [%loading %]
   ?>  ?=([* * *] her)
   [(slav %p i.her) (slav %tas i.t.her)]
 ::
@@ -16,6 +15,7 @@
 ::::                                                    ::  ::
   ::                                                    ::  ::
 !:
+=>
 |%
 ++  foil                                                ::  ship allocation map
   |*  a=mold                                             ::  entry mold
@@ -36,6 +36,7 @@
 ::                                                      ::
 ::::                                                    ::
   ::                                                    ::
+=>
 |%                                                      ::
 ::                                                      ::
 ++  divided                                             ::  get division state
@@ -107,6 +108,7 @@
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
+=>
 |%
 ++  part  {$womb $1 pith}                               ::  womb state
 ++  pith                                                ::  womb content
@@ -120,6 +122,7 @@
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
+=>
 |%                                                      ::  arvo structures
 ++  card                                                ::
   $%  {$flog wire flog:dill}                           ::
@@ -158,6 +161,7 @@
       {$reinvite aut/passcode new/passcode inv/invite}
   ==
 --
+=>
 |%
 ++  ames-grab                                           :: XX better ames scry
   |=  {a/term b/ames-tell}  ^-  *
