@@ -1,6 +1,8 @@
 #+  #=  here-disc
+  ^-  disc:ford
   !:
   =/  her=path  /==
+  ~&  [%loading %]
   ?>  ?=([* * *] her)
   [(slav %p i.her) (slav %tas i.t.her)]
 ::

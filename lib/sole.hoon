@@ -1,8 +1,12 @@
+#+  #=  here-disc
+  ^-  disc:ford
+  !:
+  =/  her=path  /==
+  ~&  [%her her]
+  ?>  ?=([* * *] her)
+  [(slav %p i.her) (slav %tas i.t.her)]
 ::
-::::  /hoon/sole/lib
-  ::
-::/?    310
-#+  #=  sole  #&  #.  /===/sur/sole/hoon
+#+  #=  sole  #&  :-  here-disc  #.  /hoon/sole/sur
 =,  sole
 ::
 ::::

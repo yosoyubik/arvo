@@ -1046,7 +1046,18 @@
           $(schematic new-schematic)
       ::
           %ntls
-        $(schematic [%ntbn [head.schematic [%ntdt subject]] rest.schematic])
+        =^  head  progress  $(schematic head.schematic)
+        ?~  head
+          block
+        ::
+        ?:  ?=(%| -.u.head)
+          (wrap-error p.u.head [%leaf "ford: /+ head failed:"]~)
+        ::
+        =/  new-subject  [[%cell p.p.u.head p.subject] [q.p.u.head q.subject]]
+        =/  raw-gate  ..^$(subject new-subject, schematic rest.schematic)
+        ::
+        %-  cast-raw-result
+        .*(raw-gate [9 2 0 1])
       ::
           %ntnt
         =^  new-subject  progress  $(schematic subject.schematic)
@@ -1073,10 +1084,8 @@
         =/  raw-run-build-gate=*
           ..^$(subject p.u.new-subject, schematic q.p.u.new-schematic)
         ::
-        =/  raw-product=*  .*(raw-run-build-gate [9 2 0 1])
-        ::~&  (pad "%ntnt-ran-product")
-        ::
-        (cast-raw-result raw-product)
+        %-  cast-raw-result
+        .*(raw-run-build-gate [9 2 0 1])
       ::
           %ntpd
         ::  TODO: define these helper functions outside this arm
@@ -1087,7 +1096,7 @@
           !:
           ::~&  (pad "%parse-at-rail {<rail>}")
           ~|  "ford: /& failed to parse file at {<rail>}"
-          =/  parse-path=path  (flop spur.rail)
+          =/  parse-path=path  (en-beam [[ship desk %ud 0]:disc spur]:rail)
           ::
           =/  hoon-parser       vast
           =.  wer.hoon-parser   parse-path
@@ -1110,7 +1119,7 @@
           data.u.result
         ::
         =/  new-schematic=^schematic
-          ::  load source file
+          ::  load source file by running :rail.schematic against build subject
           ::
           #+  #=  rail
             #^  #.  rail
@@ -1127,11 +1136,11 @@
           ::  ride :parsed-hoon against the standard library to get a +schematic
           ::
           #+  #=  source-schematic
-            #/  #.  pit
-            [%ntcb parsed-hoon]
+            #^  schematic:ford
+            #/  ..zuse  `schematic:ford`[%ntcb parsed-hoon]
           ::  evaluate :source-schematic with the standard library as subject
           ::
-          #/  #.  pit  source-schematic
+          #/  ..zuse  source-schematic
         ::
         $(schematic new-schematic)
       ::

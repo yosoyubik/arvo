@@ -3914,7 +3914,6 @@
   |=  $:  hen/duct
           hic/(hypo (hobo task:able))
       ==
-  ~&  %clay-call
   =*  req  q.hic
   =>  %=    .                                         ::  XX temporary
           req
@@ -3929,6 +3928,7 @@
         ~&  [%clay-call-flub (@tas `*`-.req)]
         ((hard task:able) req)
       ==
+  ~&  [%clay-call hen]
   ^+  [p=*(list move) q=..^$]
   ?-    -.req
       $boat
@@ -4285,7 +4285,7 @@
 ++  take                                              ::  accept response
   |=  {tea/wire hen/duct hin/(hypo sign)}
   ^+  [p=*(list move) q=..^$]
-  ~&  %clay-take
+  ~&  [%clay-take wire=tea hen=hen]
   ?:  ?=({$merge @ @ @ @ @ ~} tea)
     ?>  ?=(?($writ $made) +<.q.hin)
     =+  our=(slav %p i.t.tea)

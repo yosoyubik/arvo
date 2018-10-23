@@ -1,9 +1,8 @@
-::                                                      ::  ::
-::::  /hoon/helm/hood/lib                               ::  ::
-  ::                                                    ::  ::
-::/?    310                                               ::  version
 #+  #=  here-disc
+  ^-  disc:ford
+  !:
   =/  her=path  /==
+  ~&  [%loading %]
   ?>  ?=([* * *] her)
   [(slav %p i.her) (slav %tas i.t.her)]
 ::
@@ -14,6 +13,7 @@
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
+=>
 |%                                                      ::  ::
 ++  part  {$helm $0 pith}                               ::  helm state
 ++  pith                                                ::  helm content

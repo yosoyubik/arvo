@@ -1404,7 +1404,7 @@
         ::  %ntzp: /! adds information to a stack trace if sub-schematic fails
         ::
         $:  %ntzp
-            ::  hoon: expression to be run against the subject to produce trace message
+            ::  hoon: to be run against the subject to produce trace message
             ::
             =hoon
             ::  rest: wrapped schematic
