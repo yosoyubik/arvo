@@ -5565,6 +5565,7 @@
     ::
     =/  loads=(list schematic:ford)
       (turn rails |=(rail:ford [%nttr %cx %ntdt !>(+<)]))
+    :+  %ntzp  [%rock %tas mark]
     ::
     :+  %ntls  [%ntts %mark [%ntdt !>(mark)]]
     :+  %ntls  [%ntts %rails [%ntdt !>(rails)]]

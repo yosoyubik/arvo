@@ -1,10 +1,3 @@
-::
-::::  /hoon/json/mar
-  ::
-/?    310
-  ::
-::::  compute
-  ::
 =,  eyre
 =,  format
 =,  html
