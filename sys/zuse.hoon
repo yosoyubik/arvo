@@ -70,7 +70,7 @@
 ::
 ++  coop  (unit ares)                                   ::  possible error
 ++  json                                                ::  normal json value
-  $@  ~                                                ::  null
+  $@  ~                                                 ::  null
   $%  {$a p/(list json)}                                ::  array
       {$b p/?}                                          ::  boolean
       {$o p/(map @t json)}                              ::  object
@@ -102,7 +102,7 @@
   |%
   ++  rpc
     |%
-    ++  response  ::TODO  id and jsonrpc fields?
+    ++  response  ::TODO  id should be optional
       $%  [%result id=@t res=json]
           [%error id=@t code=@t message=@t]  ::TODO  data?
           [%batch bas=(list response)]
@@ -174,7 +174,7 @@
         [%eth-send-raw-transaction dat=@ux]
     ==
   ::
-  ::TODO
+  ::TODO  clean up & actually use
   ++  response
     $%  ::TODO
         [%eth-new-filter fid=@ud]
@@ -238,6 +238,8 @@
       $:  $=  own                                       ::  ownership
           $:  owner=address
               transfer-proxy=address
+              management-proxy=address
+              voting-proxy=address
           ==
         ::
           $=  net                                       ::  networking
@@ -272,8 +274,7 @@
     ++  eth-type
       |%
       ++  hull
-        :~  %address        ::  owner
-            %bool           ::  active
+        :~  %bool           ::  active
             [%bytes-n 32]   ::  encryptionKey
             [%bytes-n 32]   ::  authenticationKey
             %uint           ::  cryptoSuiteVersion
@@ -284,6 +285,11 @@
             %bool           ::  hasSponsor
             %bool           ::  escapeRequested
             %uint           ::  escapeRequestedTo
+        ==
+      ++  deed
+        :~  %address        ::  owner
+            %address        ::  managementProxy
+            %address        ::  votingProxy
             %address        ::  spawnProxy
             %address        ::  transferProxy
         ==
@@ -292,8 +298,7 @@
     ++  eth-noun
       |%
       ++  hull
-        $:  owner=address
-            active=?
+        $:  active=?
             encryption-key=octs
             authentication-key=octs
             crypto-suite=@ud
@@ -304,6 +309,11 @@
             has-sponsor=?
             escape-requested=?
             escape-to=@ud
+        ==
+      ++  deed
+        $:  owner=address
+            management-proxy=address
+            voting-proxy=address
             spawn-proxy=address
             transfer-proxy=address
         ==
@@ -313,6 +323,7 @@
       |%
       ++  ships
         $%  [%ships who=@p]
+            [%rights who=@p]
             [%get-spawned who=@p]
             [%dns-domains ind=@ud]
         ==
@@ -339,6 +350,8 @@
           [%continuity new=@ud]                         ::  BrokeContinuity
           [%sponsor new=(unit @p)]                      ::  EscapeAcc/LostSpons
           [%escape new=(unit @p)]                       ::  EscapeReq/Can
+          [%management-proxy new=address]               ::  ChangedManagementPro
+          [%voting-proxy new=address]                   ::  ChangedVotingProxy
           [%spawn-proxy new=address]                    ::  ChangedSpawnProxy
           [%transfer-proxy new=address]                 ::  ChangedTransferProxy
       ==
@@ -349,7 +362,7 @@
     ++  contracts
       |%
       ++  ships
-        0x6c22.3e68.fefe.b0d2.aaa1.3d5a.3b12.f50f.8b6b.498a
+        0x84b3.7fbc.6188.da8a.e866.1eae.322a.f4d9.2db4.5ecc
       --
     ::
     ::  hashes of ship event signatures
@@ -411,15 +424,15 @@
         0xcfe3.69b7.197e.7f0c.f067.93ae.2472.a9b1.
           3583.fecb.ed2f.78df.a14d.1f10.796b.847c
       ::
-      ::  ChangedManager(address,address)
-      ++  changed-manager
-        0x73cd.9f21.dac5.ada0.0bce.c622.ae57.b362.
-          3d62.867a.0104.48a4.fa99.19b1.af37.8de7
+      ::  ChangedManagementProxy(uint32,address)
+      ++  changed-management-proxy
+        0xab9c.9327.cffd.2acc.168f.afed.be06.139f.
+          5f55.cb84.c761.df05.e051.1c25.1e2e.e9bf
       ::
-      ::  ChangedDelegate(address,address)
-      ++  changed-delegate
-        0x3aca.0f3b.26ca.e754.a743.7b18.4417.8ce6.
-          07f2.1ca0.cbed.955e.0621.96d3.3c91.de6c
+      ::  ChangedVotingProxy(uint32,address)
+      ++  changed-voting-proxy
+        0xcbd6.269e.c714.57f2.c7b1.a227.74f2.46f6.
+          c5a2.eae3.795e.d730.0db5.1768.0c61.c805
       ::
       ::  ChangedDns(string,string,string)
       ++  changed-dns
@@ -1662,12 +1675,6 @@
     ::  lost information that the old life had.
     ::
     ++  hand  @uvH                                      ::  128-bit hash
-    ++  kest                                            ::  public key-set
-      $:  enc=pass                                      ::  encryption key
-          aut=pass                                      ::  authentication key
-          sut=@ud                                       ::  crypto-suite version
-      ==                                                ::
-    ++  kist  (map life kest)                           ::  public key history
     ++  mind  {who/ship lyf/life}                       ::  key identifier
     ++  name  (pair @ta @t)                             ::  ascii / unicode
     ++  oath  @                                         ::  signature
@@ -3704,21 +3711,26 @@
       ==
     ::
     ++  secp
-      |=  [w=@ p=@ a=@ b=@ g=pont n=@]
+      ~/  %secp
+      |=  [w=@ p=@ a=@ b=@ g=pont n=@]  :: being passed in from above
       =/  p  ~(. fo p)
       =/  n  ~(. fo n)
+      ~%  %helper  ..$  ~
       |%
       ++  compress-point
+        ~/  %compress-point
         |=  pont
         ^-  @
         (can 3 ~[w^x 1^(add 0x2 (cut 0 [0 1] y))])
       ::
       ++  serialize-point
+        ~/  %serialize-point
         |=  pont
         ^-  @
         (can 3 ~[w^y w^x 1^0x4])
       ::
       ++  decompress-point
+        ~/  %decompress-point
         |=  dat=@
         ^-  pont
         =+  x=(end 3 w a)
@@ -3731,11 +3743,13 @@
         !!
       ::
       ++  priv-to-pub                                   ::  get pub from priv
+        ~/  %priv-to-pub
         |=  prv=@
         ^-  pont
         (jc-mul g prv)
       ::
       ++  make-k                                        ::  deterministic nonce
+        ~/  %make-k
         =,  mimes:html
         |=  [has=@uvI prv=@]
         ^-  @
@@ -3749,6 +3763,7 @@
         (hmc w^k w^v)
       ::
       ++  ecdsa-raw-sign                                ::  generate signature
+        ~/  %ecdsa-raw-sign
         |=  [has=@uvI prv=@]
         ^-  [v=@ r=@ s=@]
         =/  z  has
@@ -3762,6 +3777,7 @@
         ==
       ::
       ++  ecdsa-raw-recover                             ::  get pubkey from sig
+        ~/  %ecdsa-raw-recover
         |=  [has=@uvI sig=[v=@ r=@ s=@]]
         ^-  pont
         ?>  (lte v.sig 7)
@@ -6360,9 +6376,6 @@
       ;~(plug auri (punt ;~(pfix hax (cook crip (star pque)))))
     ::                                                  ::  ++auri:de-purl:html
     ++  auri                                            ::  2396 URL
-      %+  cook
-        |=  a/purl
-        ?.(?=(hoke r.p.a) a a(p.p &))
       ;~  plug
         ;~(plug htts thor)
         ;~(plug ;~(pose apat (easy *pork)) yque)
@@ -7674,7 +7687,8 @@
       ::  enc(X) = head(X[0]) ... head(X[k-1]) tail(X[0]) ... tail(X[k-1])
       ::  where head and tail are defined for X[i] being of a static type as
       ::  head(X[i]) = enc(X[i]) and tail(X[i]) = "" (the empty string), or as
-      ::  head(X[i]) = enc(len(head(X[0])..head(X[k-1]) tail(X[0])..tail(X[i-1])))
+      ::  head(X[i]) = enc(len( head(X[0])..head(X[k-1])
+      ::                        tail(X[0])..tail(X[i-1]) ))
       ::  and tail(X[i]) = enc(X[i]) otherwise.
       ::
       ::  so: if it's a static type, data goes in the head. if it's a dynamic
@@ -7721,16 +7735,17 @@
       $(dat [%array-n p.dat])
     ::
         %bytes-n
-      ::  enc(X) is the sequence of bytes in X padded with zero-bytes to a length
-      ::  of 32.
+      ::  enc(X) is the sequence of bytes in X padded with zero-bytes to a
+      ::  length of 32.
       ::  Note that for any X, len(enc(X)) is a multiple of 32.
+      ?>  (lte p.p.dat 32)
       (pad-to-multiple (render-hex-bytes p.dat) 64 %right)
     ::
         %bytes  ::  of length k (which is assumed to be of type uint256)
       ::  enc(X) = enc(k) pad_right(X), i.e. the number of bytes is encoded as a
       ::  uint256 followed by the actual value of X as a byte sequence, followed
-      ::  by the minimum number of zero-bytes such that len(enc(X)) is a multiple
-      ::  of 32.
+      ::  by the minimum number of zero-bytes such that len(enc(X)) is a
+      ::  multiple of 32.
       %+  weld  $(dat [%uint p.p.dat])
       $(dat [%bytes-n p.dat])
     ::
@@ -7771,7 +7786,9 @@
   ::
   ++  pad-to-multiple
     |=  [wat=tape mof=@ud wer=?(%left %right)]
+    ^-  tape
     =+  len=(lent wat)
+    ?:  =(len mof)  wat
     =+  tad=(reap (sub mof (mod len mof)) '0')
     %-  weld
     ?:(?=(%left wer) [tad wat] [wat tad])
@@ -7789,12 +7806,16 @@
       `(cat 3 'b' (cat 8 q.aut q.enc))
     ::
     ++  hull-from-eth
-      |=  [who=@p hull:eth-noun]
+      |=  [who=@p hull:eth-noun deed:eth-noun]
       ^-  hull
       ::
       ::  ownership
       ::
-      :+  [owner transfer-proxy]
+      :+  :*  owner
+              management-proxy
+              voting-proxy
+              transfer-proxy
+          ==
         ::
         ::  network state
         ::
@@ -7874,6 +7895,16 @@
         =/  num=@  (decode-results data.log ~[%uint])
         `[who %continuity num]
       ::
+      ?:  =(event.log changed-management-proxy)
+        =+  ^-  [who=@ sox=address]
+            (decode-topics topics.log ~[%uint %address])
+        `[who %management-proxy sox]
+      ::
+      ?:  =(event.log changed-voting-proxy)
+        =+  ^-  [who=@ tox=address]
+            (decode-topics topics.log ~[%uint %address])
+        `[who %voting-proxy tox]
+      ::
       ?:  =(event.log changed-spawn-proxy)
         =+  ^-  [who=@ sox=address]
             (decode-topics topics.log ~[%uint %address])
@@ -7884,17 +7915,12 @@
             (decode-topics topics.log ~[%uint %address])
         `[who %transfer-proxy tox]
       ::
-      ~?  ?!
-          ?|  =(event.log changed-manager)
-            ::
-              =(event.log changed-delegate)
-            ::
-              ::  contract owner changed
-              .=  event.log
+      ::  warn about unimplemented events, but ignore
+      ::  the ones we know are harmless.
+      ~?  ?!  .=  event.log
               ::  OwnershipTransferred(address,address)
               0x8be0.079c.5316.5914.1344.cd1f.d0a4.f284.
                 1949.7f97.22a3.daaf.e3b4.186f.6b64.57e0
-          ==
         [%unimplemented-event event.log]
       ~
     ::
@@ -7915,6 +7941,8 @@
       ::
         %owner           hul(owner.own new.dif)
         %transfer-proxy  hul(transfer-proxy.own new.dif)
+        %management-proxy  hul(management-proxy.own new.dif)
+        %voting-proxy      hul(voting-proxy.own new.dif)
       ::
       ::  networking
       ::
@@ -7978,6 +8006,10 @@
           :-  (crip "ships({(scow %p who.cal)})")
           ['ships(uint32)' ~[uint+`@`who.cal]]
         ::
+            %rights
+          :-  (crip "rights({(scow %p who.cal)})")
+          ['rights(uint32)' ~[uint+`@`who.cal]]
+        ::
             %get-spawned
           :-  (crip "getSpawned({(scow %p who.cal)})")
           ['getSpawned(uint32)' ~[uint+`@`who.cal]]
@@ -7988,5 +8020,150 @@
         ==
       --
     --
+  --
+::  |dawn: pre-boot request/response de/serialization and validation
+::
+++  dawn
+  =>  |%
+      ::  +live: public network state of a ship
+      ::
+      +$  live  (unit [=life breach=?])
+      ::  +seed: private boot parameters
+      ::
+      +$  seed  [who=ship lyf=life key=ring sig=(unit oath:pki:jael)]
+      --
+  |%
+  ::  |give:dawn: produce requests for pre-boot validation
+  ::
+  ++  give
+    =/  tract  ships:contracts:constitution:ethe
+    |%
+    ::  +czar:give:dawn: Eth RPC for galaxy table
+    ::
+    ++  czar
+      ^-  octs
+      %-  as-octt:mimes:html
+      %-  en-json:html
+      %-  batch-read-request:ethereum
+      %+  turn  (gulf 0 255)
+      |=(gal=@ [`(scot %ud gal) tract ['getKeys(uint32)' [%uint gal]~]])
+    ::  +hull:give:dawn: Eth RPC for ship's contract state
+    ::
+    ++  hull
+      |=  who=ship
+      ^-  octs
+      %-  as-octt:mimes:html
+      %-  en-json:html
+      (read-request:ethereum [~ tract ['ships(uint32)' [%uint `@`who]~]])
+    ::  +turf:give:dawn: Eth RPC for network domains
+    ::
+    ++  turf
+      ^-  octs
+      %-  as-octt:mimes:html
+      %-  en-json:html
+      %-  batch-read-request:ethereum
+      %+  turn  (gulf 0 2)
+      |=(idx=@ [`(scot %ud idx) tract ['dnsDomains(uint256)' [%uint idx]~]])
+    --
+  ::  |take:dawn: parse responses for pre-boot validation
+  ::
+  ++  take
+    =,  dejs:format
+    |%
+    ::  +czar:take:dawn: parse galaxy table
+    ::
+    ++  czar
+      |=  rep=octs
+      ^-  (map ship [=life =pass])
+      =/  jon=json  (need (de-json:html q.rep))
+      =/  res=(list [@t @t])
+        ((ar (ot id+so result+so ~)) jon)
+      %+  roll  res
+      |=  $:  res=[id=@t result=@t]
+              kyz=(map ship [=life =pass])
+          ==
+      ^+  kyz
+      =/  who=ship  (slav %ud id.res)
+      =+  ^-  [enc=octs aut=octs sut=@ud rev=@ud]
+        %+  decode-results:ethereum
+          result.res
+        ~[[%bytes-n 32] [%bytes-n 32] %uint %uint]
+      =/  pub=(unit pass)
+        (pass-from-eth:constitution:ethereum enc aut sut)
+      ?~  pub  kyz
+      (~(put by kyz) who [rev u.pub])
+    ::  +hull:take:dawn: parse ship's contract state
+    ::
+    ++  hull
+      |=  [who=ship rep=octs]
+      ^-  hull:constitution:ethe
+      =/  jon=json  (need (de-json:html q.rep))
+      =/  res=cord  ((ot result+so ~) jon)
+      %+  hull-from-eth:constitution:ethereum
+        who
+      :_  *deed:eth-noun:constitution:ethereum
+      (decode-results:ethereum res hull:eth-type:constitution:ethe)
+    ::  +turf:take:dawn: parse network domains
+    ::
+    ++  turf
+      |=  rep=octs
+      ^-  (list [@ud (list @ta)])
+      =/  jon=json  (need (de-json:html q.rep))
+      =/  res=(list [@t @t])
+        ((ar (ot id+so result+so ~)) jon)
+      %+  turn  res
+      |=  [id=@t result=@t]
+      :-  (slav %ud id)
+      =/  dom=tape
+        (decode-results:ethereum result [%string]~)
+      =/  hot=host:eyre
+        (scan dom thos:de-purl:html)
+      ?>(?=(%& -.hot) p.hot)
+    --
+  ::  +veri:dawn: validate keys, life, discontinuity, &c
+  ::
+  ++  veri
+    |=  [=seed =hull:constitution:ethe =live]
+    ^-  $%  [%& ^seed (unit ship)]
+            [%| rank:ames @tas]
+        ==
+    =/  rac  (clan:title who.seed)
+    =/  cub  (nol:nu:crub:crypto key.seed)
+    ?-  rac
+        %pawn
+      ?.  =(who.seed `@`fig:ex:cub)
+        [%| rac %key-mismatch]
+      ?^  live
+        [%| rac %already-booted]
+      ?.  ?=(%1 lyf.seed)
+        [%| rac %invalid-life]
+      [%& seed ~]
+    ::
+        %earl
+      ?~  sig.seed
+        [%| rac %missing-sig]
+      ?~  net.hull
+        [%| rac %parent-not-keyed]
+        =/  loy  (com:nu:crub:crypto pass.u.net.hull)
+      =/  hax  (shaf %earl (sham lyf.seed pub:ex:cub))
+      ?.  =((some hax) (sure:as:loy u.sig.seed))
+        [%| rac %invalid-sig]
+      :: XX revisit for rekey
+      ?^  live
+        [%| rac %already-booted]
+      [%& seed ~]
+    ::
+        *
+      ?~  net.hull
+        [%| rac %not-keyed]
+      ?.  =(pub:ex:cub pass.u.net.hull)
+        [%| rac %key-mismatch]
+      ?:  ?&  ?=(^ live)
+              ?|  ?=(%| breach.u.live)
+                  (lte life.u.net.hull life.u.live)
+          ==  ==
+        [%| rac %already-booted]
+      [%& seed sponsor.u.net.hull]
+    ==
   --
 --  ::
