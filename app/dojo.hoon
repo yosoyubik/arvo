@@ -1300,12 +1300,26 @@
       ::  eny: a piece of random entropy
       ::
       ^-  vase
-      =+  sloop=|=({a/vase b/vase} ?:(=(*vase a) b ?:(=(*vase b) a (slop a b))))
-      %+  sloop
-        %-  ~(rep by var)
-        |=  {{a/term @ b/vase} c/vase}  ^-  vase
-        (sloop b(p face+[a p.b]) c)
-      !>([our=our now=now eny=eny]:hid)
+      ::  prepend the event information so it shadows user-defined variables
+      ::
+      %+  slop
+        !>([our=our now=now eny=eny]:hid)
+      ::  start from the standard library
+      ::
+      =/  subject=vase  !>(..zuse)
+      ::  prepend user-defined variables to the standard library
+      ::
+      =/  vars  ~(tap by var)
+      ::
+      |-  ^+  subject
+      ?~  vars  subject
+      ::
+      =/  var-name=term  p.i.vars
+      =/  value=vase     q.q.i.vars
+      ::
+      =.  subject  (slop [[%face var-name p.value] q.value] subject)
+      ::
+      $(vars t.vars)
     ::
     ++  dy-made-dial                                    ::  dialog product
       |=  vaz=vase
@@ -1411,6 +1425,8 @@
       ::
       :+  %ntbn
         [%ntdt dy-hoon-subject]
+      :+  %ntbn
+        [%ntcb ^~((ream '~&  dojo-subject=.  .'))]
       [%ntcb gen]
     ::
     ++  dy-step                                         ::  advance project

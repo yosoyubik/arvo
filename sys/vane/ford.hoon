@@ -1138,13 +1138,8 @@
             #$  #.  parse-at-rail
             :-  rail
             #$  #.  extract-source
-            #+  #=  res
-              :-  rail
-              #*  %cx  rail
-            ::
-            !:
-            ~?  =(/hoon/mime/mar spur.rail)  [%after-nttr res]
-            res
+            :-  rail
+            #*  %cx  rail
           ::  ride :parsed-hoon against the standard library to get a +schematic
           ::
           #+  #=  source-schematic
@@ -1373,12 +1368,12 @@
     ::  +put-in-cache: place :product in :cache.progress
     ::
     ++  put-in-cache
-      |=  [compiler-cache-key=* product=*]
+      |=  [raw-cache-key=* product=*]
       ^+  cache.progress
       ::
       =/  put-gate  ~(put (by-clock * *) *(clock))
-      %+  run-gate  put-gate(+>+< cache.progress)
-      [compiler-cache-key product]
+      %+  run-gate  put-gate(clock cache.progress)
+      [raw-cache-key product]
     ::  +access-cache: retrieve and freshen a cache entry
     ::
     ++  access-cache
@@ -1388,7 +1383,7 @@
       ::
       =+  ^=  [entry updated-cache]
           =/  get-gate  ~(get (by-clock * *) *(clock))
-          (run-gate get-gate(+>+< cache.progress) compiler-cache-key)
+          (run-gate get-gate(clock cache.progress) raw-cache-key)
       ::
       ?~  entry
         [~ progress]
