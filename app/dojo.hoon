@@ -10,6 +10,9 @@
 #+  #=  lens  #&  :-  here-disc  #.  /hoon/lens/sur
 #+  #=  sole  #&  :-  here-disc  #.  /hoon/sole/lib
 ::
+=/  pit=vase  !>(..zuse)
+~&  [%zuse-version (slap pit %limb %zuse)]
+::
 =,  sole
 =,  space:userlib
 =,  format
@@ -1306,7 +1309,7 @@
         !>([our=our now=now eny=eny]:hid)
       ::  start from the standard library
       ::
-      =/  subject=vase  !>(..zuse)
+      =/  subject=vase  pit
       ::  prepend user-defined variables to the standard library
       ::
       =/  vars  ~(tap by var)
@@ -1425,8 +1428,6 @@
       ::
       :+  %ntbn
         [%ntdt dy-hoon-subject]
-      :+  %ntbn
-        [%ntcb ^~((ream '~&  dojo-subject=.  .'))]
       [%ntcb gen]
     ::
     ++  dy-step                                         ::  advance project
