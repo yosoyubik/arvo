@@ -5235,8 +5235,6 @@
     |=  [start=[=mark disc=disc:ford] end=[=mark disc=disc:ford]]
     ^-  schematic:ford
     ::
-    ~&  [%build-mark-converter start=mark.start end=mark.end]
-    ::
     :+  %ntls  [%ntts %start (build-mark-analyzer start)]
     :+  %ntls  [%ntts %end (build-mark-analyzer end)]
     ::  make sure we produce a gate with the right type signature
@@ -5251,6 +5249,9 @@
                :+  %cncl
                  ^~((ream '~(has in grabs.descriptor.end)'))
                [%rock %tas mark.start]~
+      :+  %ntbn
+        :-  %ntcb
+        ^~((ream (crip "!:  ~&  [%grab {<mark.start>} {<mark.end>}]  .")))
       ::  we can grab, so run +grab from :end
       ::
       [%ntcb ^~((ream (cat 3 mark.start ':grab:core.end')))]
@@ -5259,6 +5260,7 @@
     :-  %ntcb
     ^-  hoon
     ^~  %-  ream  %-  crip
+    %+  weld  "!:  ~&  [%grow {<mark.start>} {<mark.end>}]  "
     "|=(data=_+<.core.start {(trip mark.end)}:~(grow core.start data))"
   ::  +diff: produce a diff between two nouns of mark :mark
   ::
@@ -5287,6 +5289,8 @@
     ::
     :^    %ntwt
         [%ntcb ^~((ream '?=(%| -.grad.descriptor.initial-mark)'))]
+      :+  %ntbn
+        [%ntcb ^~((ream '!:  ~&  [%differ-final initial-mark]  .'))]
       ::  :mark defines its own diffing; build a gate from that
       ::
       :+  %ntls  :+  %ntts  %form-mark
@@ -5331,6 +5335,9 @@
       :+  %wtbn
         ^~((ream '?=(%& -.grad.descriptor.initial-mark)'))
       ^~((ream 'p.grad.descriptor.initial-mark'))
+    ::
+    :+  %ntbn
+      [%ntcb ^~((ream '!:  ~&  [%differ-delegate initial-mark delegate]  .'))]
     ::  create a :converter gate that can convert data to the :delegate mark
     ::
     :+  %ntls  :+  %ntts  %converter
@@ -5563,19 +5570,15 @@
     =/  rails=(list rail:ford)
       (turn mark-paths |=(path [disc :(welp /hoon (flop +<) /mar)]))
     ::
-    =/  loads=(list schematic:ford)
-      (turn rails |=(rail:ford [%nttr %cx %ntdt !>(+<)]))
     :+  %ntzp  [%rock %tas mark]
-    ::
-    :+  %ntls  [%ntts %mark [%ntdt !>(mark)]]
-    :+  %ntls  [%ntts %rails [%ntdt !>(rails)]]
-    :+  %ntls  [%ntts %loads `schematic:ford`(build-list loads)]
     ::
     :-  %ntpd
     ::
     :+  %ntbs
       [%ntdt !>(filter-mark-loads)]
-    [%ntcb [%clls [%limb %mark] [%limb %rails] [%limb %loads]]]
+    :+  [%ntdt !>(mark)]
+      [%ntdt !>(rails)]
+    (build-list (turn rails |=(rail:ford [%nttr %cx %ntdt !>(+<)])))
   ::  +filter-mark-loads: try all rails for mark, producing the rail that worked
   ::
   ++  filter-mark-loads

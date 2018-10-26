@@ -511,29 +511,21 @@
     ::
     =/  vases=(list vase)  (result-to-list result)
     ::
-    |-  ^-  (list [=path =vase])
-    ?~  vases  ~
+    %+  turn  (result-to-list result)
+    |=  item=vase
+    ^-  [=path =vase]
     ::
-    =/  path-vase=vase  (slot 2 i.vases)
-    =/  data-vase=vase  (slot 3 i.vases)
-    ::
-    =/  =path  ((hard path) q.path-vase)
-    ::
-    [i=[path data-vase] t=$(vases t.vases)]
+    [path=((hard path) q:(slot 2 item)) data=(slot 3 item)]
   ::  +result-to-cages: convert a ford build result to (list [=path =cage])
   ::
   ++  result-to-cages
     |=  result=made-result:ford
     ^-  (list [=path =cage])
     ::
-    =/  pairs=(list [=path =vase])  (result-to-pairs result)
+    %+  turn  (result-to-pairs result)
+    |=  [=path =vase]
     ::
-    |-  ^-  (list [=path =cage])
-    ?~  pairs  ~
-    ::
-    =/  =cage  (vase-to-cage:forder vase.i.pairs)
-    ::
-    [i=[path.i.pairs cage] t=$(pairs t.pairs)]
+    [path (vase-to-cage:forder vase)]
   ::
   ::  Queue a move.
   ::
@@ -1635,9 +1627,13 @@
         =+  change-on-path=(~(got by changes) pax)
         ::
         ?:  ?=(%del -.change-on-path)
+          :+  %ntbn
+            [%ntcb ^~((ream '~&  %clay-ergo-null  .'))]
           [%ntdt (cage-to-vase:forder [%null !>(~)])]
         ::
         ?^  mime-cache=(~(get by mim.dom) pax)
+          :+  %ntbn
+            [%ntcb ^~((ream '~&  %clay-ergo-mime  .'))]
           [%ntdt (cage-to-vase:forder [%mime !>(u.mime-cache)])]
         ::
         :+  %ntbs
@@ -1649,7 +1645,12 @@
         =/  stored  (need (need (read-x:ze let.dom pax)))
         ::
         ?:  ?=(%& -.stored)
+          :+  %ntbn
+            [%ntcb ^~((ream '~&  %clay-ergo-cage-to-vase  .'))]
           [%ntdt (cage-to-vase:forder p.stored)]
+        ::
+        :+  %ntbn
+          [%ntcb ^~((ream '~&  %clay-ergo-lobe-to-schematic  .'))]
         (lobe-to-schematic:ze disc pax p.stored)
     ==
   ::
@@ -1809,6 +1810,7 @@
   ++  validate-x
     |=  {car/care cas/case pax/path peg/page}
     ^+  +>
+    ~&  %clay-validate-x
     %-  emit
     :*  hen  %pass
         [%foreign-x (scot %p our) (scot %p her) syd car (scot cas) pax]
@@ -1825,9 +1827,11 @@
   ++  vale-page
     |=  [disc=disc:ford a=page]
     ^-  schematic:ford
+    ~&  %clay-vale-page
     ::  if we're not bootstrapping hoon, do a full mark validation
     ::
     ?.  ?=(%hoon p.a)
+      :-  [%ntdt !>(mark=p.a)]
       (validate:marker data=q.a mark=p.a disc)
     ::  create a failing ford build if the mark is %hoon but the type is wrong
     ::
@@ -1931,6 +1935,7 @@
   ++  validate-plops
     |=  {cas/case lem/(unit @da) pop/(set plop)}
     ^+  +>
+    ~&  %clay-validate-plops
     =+  lum=(scot %da (fall lem *@da))
     =/  blob-type=type  -:!>(*blob)
     %-  emit
@@ -1960,6 +1965,7 @@
   ++  take-foreign-plops
     |=  {lem/(unit @da) res/made-result:ford}
     ^+  +>
+    ~&  %clay-take-foreign-plops
     ?>  ?=(^ ref)
     ?>  ?=(^ nak.u.ref)
     =+  ^-  lat/(list blob)
@@ -2258,10 +2264,13 @@
       ^-  schematic:ford
       ::  TODO: avoid repeat validation
       ::
-      ?.  ?=(%hoon p.a)  (validate:marker data=q.a mark=p.a disc)
+      ?.  ?=(%hoon p.a)
+        (validate:marker data=q.a mark=p.a disc)
       ::  %hoon bootstrapping
       ::
-      [%ntdt [%cell [%atom %tas ~] [%atom %t ~]] a]
+      ?^  q.a  ~|  %bad-hoon-type  !!
+      ::
+      [%ntdt [%atom %t ~] q.a]
     ::
     ::  Creates a schematic out of a lobe (content hash).
     ::
@@ -3664,6 +3673,7 @@
               ~
             :-  ~
             :-  [%ntdt !>(path=pax)]
+            :-  [%ntdt !>(mark=(path-to-mark:ze pax))]
             (merge-lobe-to-schematic:he [p q]:val pax lob)
         ==
       ::

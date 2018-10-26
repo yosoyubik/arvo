@@ -570,13 +570,10 @@
     ::
     =/  unchanged-scry-results=scry-results
       %-  ~(gas by *scry-results)
-      %+  murn  previous-scry-results
-      |=  [=scry-request scry-result=(unit (unit cage))]
-      ^-  (unit [^scry-request (unit (unit cage))])
-      ::
-      ?:  (~(has in changed-scry-requests) scry-request)
-        ~
-      `[scry-request scry-result]
+      %+  skim  previous-scry-results
+      |=  [=scry-request *]
+      ^-  ?
+      (~(has in changed-scry-requests) scry-request)
     ::  set the in-progress date for this rebuild and copy scry results
     ::
     =.  ducts.state
@@ -613,7 +610,8 @@
       ?:  ?=(%once -.live.duct-status)
         %_    duct-status
             scry-results.live
-          (~(put by scry-results.live.duct-status) scry-request `scry-result)
+          %-  ~(put by scry-results.live.duct-status)
+          [scry-request `scry-result]
         ==
       ::
       ?<  ?=(~ in-progress.live.duct-status)
@@ -774,7 +772,7 @@
   ++  run-root-build
     |=  [root-build=build =^duct live=?]
     ^+  event-core
-    ::  ~&  %run-root-build
+    ~&  [%ford-run-root-build duct live]
     ::
     =+  [product progress]=(run-build root-build live)
     ::
@@ -1125,14 +1123,28 @@
             #^  #.  rail
             #/  .
             #.  rail.schematic
+          ::  assert the rail points to a hoon file, not some other mark
+          ::
+          #>  !:
+              ::~&  "ford: /& loading rail: {<rail>}"
+              ?~  spur.rail
+                ~|  "ford: /& rail empty spur: {<rail>}"  !!
+              ?.  =(%hoon i.spur.rail)
+                ~|  "ford: /& rail wrong mark: {<rail>}"  !!
+              .
           ::  parse source file's contents to a +hoon
           ::
           #+  #=  parsed-hoon
             #$  #.  parse-at-rail
             :-  rail
             #$  #.  extract-source
-            :-  rail
-            #*  %cx  rail
+            #+  #=  res
+              :-  rail
+              #*  %cx  rail
+            ::
+            !:
+            ~?  =(/hoon/mime/mar spur.rail)  [%after-nttr res]
+            res
           ::  ride :parsed-hoon against the standard library to get a +schematic
           ::
           #+  #=  source-schematic
@@ -1192,15 +1204,12 @@
         =/  local-result=(unit (unit (unit cage)))
           %.  scry-request
           %~  get  by
-          %-  complete-scrys
           =<  scry-results
           %-  current-status
           (~(got by ducts.state) duct)
         ::
         ?~  local-result
-          =/  scry-result
-            (scry [%141 %noun] ~ term.schematic beam)
-          ::
+          =/  scry-result=(unit (unit))  ((sloy scry) term.schematic beam)
           ?~  scry-result
             ::
             =.  blocks.progress
@@ -1211,9 +1220,10 @@
             block
           ::
           (handle-scry-result u.scry-result)
-        ::  we already filtered out blocked local results
+        ::  we're already waiting for a response to this scry
         ::
-        ?~  u.local-result  !!
+        ?~  u.local-result
+          block
         ::
         (handle-scry-result u.u.local-result)
       ::
@@ -1298,9 +1308,7 @@
           ::  succeed
           ::
           [~ %& success-vase=^]
-        ::  assert we didn't block on anything
         ::
-        ?>  ?=(~ blocks.progress)
         [[~ %& success-vase.result] progress]
       ::
           ::  fail
@@ -1343,8 +1351,6 @@
     ::
     ++  block
       ^-  [product ^progress]
-      ::
-      ?<  ?=(~ blocks.progress)
       ::
       [~ progress]
     ::  +handle-scry-result: convert complete scry result to vase product
@@ -1683,7 +1689,7 @@
       ::
       =/  new-scry-results=scry-results
         %.  [scry-request ~]
-        %~  put  in
+        %~  put  by
         =<  scry-results
         (current-status duct-status)
       ::
