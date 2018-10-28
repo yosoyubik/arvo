@@ -574,7 +574,8 @@
     %-  emit
     :*  hen  %pass  [%blab p.mun (scot q.mun) syd r.mun]
         %f  %build  our  live=%.n
-        %ntvt  (case-to-date q.mun)
+        :+  %ntzp  ^~((ream '%clay-blab-fail'))
+        :+  %ntvt  (case-to-date q.mun)
         (lobe-to-schematic:ze [her syd] r.mun p.dat)
     ==
   ::
@@ -795,6 +796,7 @@
     ^-  move
     :*  hen  %pass  [%ergoing (scot %p her) syd ~]  %f
         %build  our  live=%.n
+        :+  %ntzp  ^~((ream '%clay-mont-fail'))
         %-  build-list:forder
         %+  turn  `(list path)`mus
         |=  pax=path
@@ -1180,7 +1182,8 @@
       :~  :*  hen  %pass
               [%inserting (scot %p her) syd (scot %da wen) ~]
               %f  %build  our  live=%.n
-              %ntvt  wen
+              :+  %ntvt  wen
+              :+  %ntzp  ^~((ream '%clay-inserting-fail'))
               %-  build-list:forder
               %+  turn  ins.nuz
               |=  [=path =miso]
@@ -1200,7 +1203,8 @@
           :*  hen  %pass
               [%diffing (scot %p her) syd (scot %da wen) ~]
               %f  %build  our  live=%.n
-              %ntvt  wen
+              :+  %ntvt  wen
+              :+  %ntzp  ^~((ream '%clay-diffing-fail'))
               %-  build-list:forder
               %+  turn  dif.nuz
               |=  [=path =miso]
@@ -1221,7 +1225,8 @@
           :*  hen  %pass
               [%castifying (scot %p her) syd (scot %da wen) ~]
               %f  %build  our  live=%.n
-              %ntvt  wen
+              :+  %ntvt  wen
+              :+  %ntzp  ^~((ream '%clay-castifying-fail'))
               %-  build-list:forder
               %+  turn  mut.nuz
               |=  [=path =miso]
@@ -1359,6 +1364,7 @@
       |=  [pax=path cay=cage]
       ^-  (pair path (pair lobe cage))
       ::
+      ~?  =(%hoon (path-to-mark:ze pax))  [%diffing ?@(q.q.cay %hoon-ok %hoon-cell)]
       [pax (page-to-lobe:ze [p q.q]:cay) (~(got by dig.u.dok) pax)]
     ::
     (apply-edit-if-done wen)
@@ -1386,6 +1392,7 @@
       %-  malt
       %+  turn  cat
       |=  [pax=path cay=cage]
+      ~?  =(%hoon (path-to-mark:ze pax))  [%castify ?@(q.q.cay %hoon-ok %hoon-cell)]
       [pax (page-to-lobe:ze [p q.q]:cay)]
     ::
     =/  disc=disc:ford  [her syd]
@@ -1394,12 +1401,14 @@
     :*  hen  %pass
         [%mutating (scot %p her) syd (scot %da wen) ~]
         %f  %build  our  live=%.n
-        %ntvt  wen
+        :+  %ntvt  wen
+        :+  %ntzp  ^~((ream '%clay-mutating-fail'))
         %-  build-list:forder
         %+  turn  cat
         |=  [pax=path cay=cage]
         ^-  schematic:ford
         ::
+        ~?  =(%hoon (path-to-mark:ze pax))  [%mutating ?@(q.q.cay %hoon-ok %hoon-cell)]
         :-  [%ntdt !>(path=pax)]
         ::  produce a schematic that runs (diff old-value new-value)
         ::
@@ -1513,6 +1522,7 @@
     %-  emit
     :*  hen  %pass  [%patching (scot %p her) syd ~]  %f
         %build  our  live=%.n
+        :+  %ntzp  ^~((ream '%clay-patching-fail'))
         %-  build-list:forder
         %+  turn  (sort ~(tap by hat) sort-by-head)
         |=  [pax=path lob=lobe]
@@ -1589,6 +1599,7 @@
       ::
       =/  lob=lobe  ((hard lobe) q.lobe-vase)
       =/  cay=cage  (vase-to-cage:forder data-vase)
+      ~?  =(%hoon (path-to-mark:ze pax))  ?@(q.q.cay %hoon-ok %hoon-cell)
       ::
       [pax lob cay]
     ::  ~&  %canned
@@ -1617,6 +1628,7 @@
     %-  emit(dok ~)
     :*  hen  %pass  [%ergoing (scot %p her) syd ~]  %f
         %build  our  live=%.n
+        :+  %ntzp  ^~((ream '%clay-ergoing-fail'))
         %-  build-list:forder
         %+  turn  ~(tap in sum)
         |=  pax=path
@@ -1815,7 +1827,8 @@
     :*  hen  %pass
         [%foreign-x (scot %p our) (scot %p her) syd car (scot cas) pax]
         %f  %build  our  live=%.n
-        %ntvt  (case-to-date cas)
+        :+  %ntvt  (case-to-date cas)
+        :+  %ntzp  ^~((ream '%clay-validate-x-fail'))
         (vale-page [her syd] peg)
     ==
   ::
@@ -1827,7 +1840,8 @@
   ++  vale-page
     |=  [disc=disc:ford a=page]
     ^-  schematic:ford
-    ~&  %clay-vale-page
+    ::
+    :+  %ntzp  ^~((ream '%clay-vale-page-fail'))
     ::  if we're not bootstrapping hoon, do a full mark validation
     ::
     ?.  ?=(%hoon p.a)
@@ -1942,7 +1956,8 @@
     :*  hen  %pass
         [%foreign-plops (scot %p our) (scot %p her) syd lum ~]
         %f  %build  our  live=%.n
-        %ntvt  (case-to-date cas)
+        :+  %ntvt  (case-to-date cas)
+        :+  %ntzp  ^~((ream '%clay-validate-plops-fail'))
         %-  build-list:forder
         %+  turn  ~(tap in pop)
         |=  a=plop
@@ -2786,7 +2801,10 @@
         :-  ~
         %+  bind
           fil.ank:(descend-path:(zu ank.dom) pax)
-        |=(a/{p/lobe q/cage} [%& q.a])
+        ::|=(a/{p/lobe q/cage} [%& q.a])
+        |=  a/{p/lobe q/cage}
+        ~?  =(%hoon p.q.a)  [%read-x ?@(q.q.q.a %hoon-ok %hoon-cell)]
+        [%& q.a]
       =+  yak=(tako-to-yaki u.tak)
       =+  lob=(~(get by q.yak) pax)
       ?~  lob
@@ -3302,7 +3320,8 @@
             =+  (cat 3 %diff- nam)
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali - ~]
             %f  %build  p.bob  live=%.n
-            %ntvt  (case-to-date r.oth)
+            :+  %ntvt  (case-to-date r.oth)
+            :+  %ntzp  ^~((ream '%clay-diff-bas-fail'))
             %-  build-list:forder
             %+  murn  ~(tap by q.bas.dat)
             |=  [pax=path lob=lobe]
@@ -3451,6 +3470,7 @@
           :*  hen  %pass
               [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %merge ~]
               %f  %build  p.bob  live=%.n
+              :+  %ntzp  ^~((ream '%clay-merge-fail'))
               %-  build-list:forder
               %+  turn  ~(tap by (~(int by can.dal.dat) can.dob.dat))
               |=  [pax=path *]
@@ -3505,6 +3525,7 @@
         :*  hen  %pass
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %build ~]
             %f  %build  p.bob  live=%.n
+            :+  %ntzp  ^~((ream '%clay-build-fail'))
             %-  build-list:forder
             %+  murn  ~(tap by bof.dat)
             |=  [pax=path cay=(unit cage)]
@@ -3663,7 +3684,8 @@
         :*  hen  %pass
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %checkout ~]
             %f  %build  p.bob  live=%.n
-            %ntvt  (case-to-date r.val)
+            :+  %ntzp  ^~((ream '%clay-checkout-fail'))
+            :+  %ntvt  (case-to-date r.val)
             %-  build-list:forder
             %+  murn  ~(tap by q.new.dat)
             |=  [pax=path lob=lobe]
@@ -3673,7 +3695,6 @@
               ~
             :-  ~
             :-  [%ntdt !>(path=pax)]
-            :-  [%ntdt !>(mark=(path-to-mark:ze pax))]
             (merge-lobe-to-schematic:he [p q]:val pax lob)
         ==
       ::
@@ -3730,7 +3751,8 @@
         :*  hen  %pass
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %ergo ~]
             %f  %build  p.bob  live=%.n
-            %ntvt  (case-to-date r.val)
+            :+  %ntzp  ^~((ream '%clay-ergo-fail'))
+            :+  %ntvt  (case-to-date r.val)
             %-  build-list:forder
             %+  turn  ~(tap in sum)
             |=  pax=path
@@ -3851,7 +3873,9 @@
           ?:  =([~ lob] lol)
             :-  %ntdt
             %-  cage-to-vase:forder
-            +:(need fil.ank:(descend-path:(zu ank:(need alh)) pax))
+            q:(need fil.ank:(descend-path:(zu ank:(need alh)) pax))
+          ::
+          :-  [%ntdt !>(mark-from-path)]
           ::
           ?~  deltas.rek
             (page-to-schematic disc direct.rek)
