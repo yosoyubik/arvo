@@ -500,6 +500,11 @@
     ^-  [(list move) ford-state]
     ::
     =<  finalize
+    ::  ignore requests on existing ducts
+    ::
+    ?:  (~(has by ducts.state) duct)
+      ~&  [%ford-duct-in-progress duct]
+      event-core
     ::  associate :duct with :build in :ducts.state
     ::
     =.  ducts.state
@@ -508,7 +513,7 @@
       ?:  live
         [%live in-progress=`[date.build scry-results=~] last-completed=~]
       [%once date.build scry-results=~]
-    ::  runevent-core on :build in a loop until it completes or blocks
+    ::  run event-core on :build in a loop until it completes or blocks
     ::
     (run-root-build build duct live)
   ::  +rebuild: rebuild a live build based on +resource updates
@@ -541,7 +546,7 @@
       [vane=%c care `beam`[[ship.disc desk.disc %da new-date] (flop path)]]
     ::  sanity check; only rebuild live builds, not once builds
     ::
-    =/  =duct-status  (~(got by ducts.state) duct)
+    =/  =duct-status  (got-duct-status duct)
     ?>  ?=(%live -.live.duct-status)
     ::  sanity check; only rebuild once we've completed the previous one
     ::
@@ -587,15 +592,16 @@
   ::    that must be fetched asynchronously. +unblock is called when
   ::    we receive a response to a resource request that blocked a build.
   ::
-  ::    We pick up the build from where we left off, starting with the
-  ::    %scry build that blocked on this resource last time we tried it.
-  ::
   ++  unblock
     ~/  %unblock
     |=  [=scry-request scry-result=(unit cage)]
     ^-  [(list move) ford-state]
     ::
     =<  finalize
+    ::  mark this +scry-request as complete now that we have a response
+    ::
+    =.  pending-scrys.state
+      +:(del-request pending-scrys.state scry-request duct)
     ::  place :scry-result in :scry-results.per-event
     ::
     ::    We don't want to call the actual +scry function again,
@@ -604,7 +610,11 @@
     ::    of the response to the asynchronous request we made to
     ::    retrieve that resource from another vane.
     ::
-    =/  =duct-status  (~(got by ducts.state) duct)
+    ?~  maybe-duct-status=(~(get by ducts.state) duct)
+      ~&  [%ford-redundant-unblock scry-request=scry-request duct=duct]
+      event-core
+    ::
+    =/  =duct-status  u.maybe-duct-status
     ::
     =.  duct-status
       ?:  ?=(%once -.live.duct-status)
@@ -623,10 +633,6 @@
       ==
     ::
     =.  ducts.state  (~(put by ducts.state) duct duct-status)
-    ::  mark this +scry-request as complete now that we have a response
-    ::
-    =.  pending-scrys.state
-      +:(del-request pending-scrys.state scry-request duct)
     ::
     =/  date=@da               date:(current-status duct-status)
     =/  unblocked-build=build  [date root-schematic.duct-status]
@@ -753,7 +759,7 @@
       %-  incomplete-scrys
       =<  scry-results
       %-  current-status
-      (~(got by ducts.state) duct)
+      (got-duct-status duct)
     ::
     |-  ^+  event-core
     ?~  blocked-scry-requests  event-core
@@ -772,7 +778,7 @@
   ++  run-root-build
     |=  [root-build=build =^duct live=?]
     ^+  event-core
-    ~&  [%ford-run-root-build duct live]
+    ~&  [%ford-run-root-build duct live=live]
     ::
     =+  [product progress]=(run-build root-build live)
     ::
@@ -1201,7 +1207,7 @@
           %~  get  by
           =<  scry-results
           %-  current-status
-          (~(got by ducts.state) duct)
+          (got-duct-status duct)
         ::
         ?~  local-result
           =/  scry-result=(unit (unit))  ((sloy scry) term.schematic beam)
@@ -1395,11 +1401,11 @@
   ++  on-build-blocked
     |=  [=build =^duct blocks=*]
     ^+  event-core
-    ::~&  %on-build-blocked
     ::
     =>  .(blocks ((hard (set scry-request)) blocks))
     ::
     =/  block-list=(list scry-request)  ~(tap in blocks)
+    ~&  [%ford-on-build-blocked duct=duct blocks=blocks]
     ::
     |-  ^+  event-core
     ?~  block-list  event-core
@@ -1412,7 +1418,7 @@
   ++  on-once-build-completed
     |=  [=build result=(each [p=* q=*] tang) =^duct]
     ^+  event-core
-    ::~&  %on-once-build-completed
+    ~&  [%ford-on-once-build-completed duct]
     ::
     =.  ducts.state  (~(del by ducts.state) duct)
     ::
@@ -1426,7 +1432,7 @@
             live-resources=*
         ==
     ^+  event-core
-    ::~&  %on-live-build-completed
+    ~&  [%ford-on-live-build-completed duct]
     ::  cast :live-resources to a usable type
     ::
     =>  .(live-resources ((hard (set ,[=term =rail])) live-resources))
@@ -1496,6 +1502,15 @@
   ::
   ::+|  utilities
   ::
+  ::  +got-duct-status: retrieve a +duct-status from the state
+  ::
+  ++  got-duct-status
+    |=  duct=^duct
+    ^-  duct-status
+    ::
+    ~|  [%missing-duct duct]
+    (~(got by ducts.state) duct)
+  ::
   ::  +run-gate: run a gate using raw nock, untyped and unvirtualized
   ::
   ++  run-gate
@@ -1562,7 +1577,7 @@
     ::  look up the scry result from our local state
     ::
     =/  =scry-request  [u.vane u.care beam]
-    =/  =duct-status   (~(got by ducts.state) duct)
+    =/  =duct-status   (got-duct-status duct)
     ::
     =/  local-result=(unit (unit (unit cage)))
       %.  scry-request
@@ -1570,7 +1585,7 @@
       %-  complete-scrys
       =<  scry-results
       %-  current-status
-      (~(got by ducts.state) duct)
+      (got-duct-status duct)
     ::
     ?~  local-result
       ~
@@ -1948,6 +1963,8 @@
         ~|  [%ford-take-missing-subscription subscription]
         (get-request-ducts pending-subscriptions.ship-state subscription)
       ::
+      ~&  [%ford-take-rebuild ducts]
+      ::
       =|  moves=(list move)
       |-  ^+  [moves ship-state]
       ?~  ducts  [moves ship-state]
@@ -1981,6 +1998,8 @@
       =/  ducts=(list ^duct)
         ~|  [%ford-take-missing-scry-request scry-request]
         (get-request-ducts pending-scrys.ship-state scry-request)
+      ::
+      ~&  [%ford-take-unblocks scry-request=scry-request ducts=ducts]
       ::
       =|  moves=(list move)
       |-  ^+  [moves ship-state]
