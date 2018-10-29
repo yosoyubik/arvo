@@ -1,12 +1,15 @@
 ::  LiSt directory subnodes
 ::
-::::  /hoon/ls/gen
-  ::
-/?    310
-/+    show-dir
+#+  #=  here-disc
+  ^-  disc:ford
+  !:
+  =/  her=path  /==
+  ~&  [%loading %]
+  ?>  ?=([* * *] her)
+  [(slav %p i.her) (slav %tas i.t.her)]
 ::
-::::
-  ::
+#+  #=  show-dir  #&  :-  here-disc  #.  /hoon/show-dir/lib
+::
 ~&  %
 :-  %say
 |=  {^ {arg/path ~} vane/?($g $c)}
