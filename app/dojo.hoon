@@ -528,7 +528,9 @@
             [our.hid p.p.p.mad]
             q.p.p.mad
             %poke
-            cay
+            ::  TODO this is gross
+            ::
+            (vase-to-cage:forder q.cay)
         ==
       ::
           $file
