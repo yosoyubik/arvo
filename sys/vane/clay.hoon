@@ -804,17 +804,25 @@
         ::
         :-  [%ntdt !>(path=pax)]
         ::
+        =/  mark-from-path=mark  (path-to-mark:ze pax)
+        ::
+        :-  [%ntdt !>(mark-from-path)]
+        ::
         :+  %ntbs
-          =/  mark-from-path=mark  (path-to-mark:ze pax)
           ::
           %-  build-mark-converter:marker
           [start=[mark-from-path disc] end=[%mime disc]]
         ::
-        =/  stored  (need (need (read-x:ze let.dom pax)))
+        :+  %ntbn
+          ::
+          =/  stored  (need (need (read-x:ze let.dom pax)))
+          ::
+          ?:  ?=(%& -.stored)
+            [%ntdt (cage-to-vase:forder p.stored)]
+          (lobe-to-schematic:ze disc pax p.stored)
+        ::  ignore the mark
         ::
-        ?:  ?=(%& -.stored)
-          [%ntdt (cage-to-vase:forder p.stored)]
-        (lobe-to-schematic:ze disc pax p.stored)
+        [%ntcb %$ 3]
     ==
   ::
   ::  Set permissions for a node.
@@ -1364,7 +1372,6 @@
       |=  [pax=path cay=cage]
       ^-  (pair path (pair lobe cage))
       ::
-      ~?  =(%hoon (path-to-mark:ze pax))  [%diffing ?@(q.q.cay %hoon-ok %hoon-cell)]
       [pax (page-to-lobe:ze [p q.q]:cay) (~(got by dig.u.dok) pax)]
     ::
     (apply-edit-if-done wen)
@@ -1392,7 +1399,6 @@
       %-  malt
       %+  turn  cat
       |=  [pax=path cay=cage]
-      ~?  =(%hoon (path-to-mark:ze pax))  [%castify ?@(q.q.cay %hoon-ok %hoon-cell)]
       [pax (page-to-lobe:ze [p q.q]:cay)]
     ::
     =/  disc=disc:ford  [her syd]
@@ -1408,7 +1414,6 @@
         |=  [pax=path cay=cage]
         ^-  schematic:ford
         ::
-        ~?  =(%hoon (path-to-mark:ze pax))  [%mutating ?@(q.q.cay %hoon-ok %hoon-cell)]
         :-  [%ntdt !>(path=pax)]
         ::  produce a schematic that runs (diff old-value new-value)
         ::
@@ -1599,7 +1604,6 @@
       ::
       =/  lob=lobe  ((hard lobe) q.lobe-vase)
       =/  cay=cage  (vase-to-cage:forder data-vase)
-      ~?  =(%hoon (path-to-mark:ze pax))  ?@(q.q.cay %hoon-ok %hoon-cell)
       ::
       [pax lob cay]
     ::  ~&  %canned
@@ -1695,6 +1699,7 @@
         `((hard mime) q.q.mim)
     ::
     =+  mus=(must-ergo (turn ~(tap by can) head))
+    ~&  [%ergo-sending (lent mus)]
     %-  emil
     %+  turn  ~(tap by mus)
     |=  {pot/term len/@ud pak/(set path)}
@@ -2801,10 +2806,7 @@
         :-  ~
         %+  bind
           fil.ank:(descend-path:(zu ank.dom) pax)
-        ::|=(a/{p/lobe q/cage} [%& q.a])
-        |=  a/{p/lobe q/cage}
-        ~?  =(%hoon p.q.a)  [%read-x ?@(q.q.q.a %hoon-ok %hoon-cell)]
-        [%& q.a]
+        |=(a/{p/lobe q/cage} [%& q.a])
       =+  yak=(tako-to-yaki u.tak)
       =+  lob=(~(get by q.yak) pax)
       ?~  lob
@@ -3959,10 +3961,8 @@
             ~&  [%bad-softing (@t -.p.req)]  !!
           u.-
         ?:  (~(nest ut -:!>(*task:able)) | p.hic)  req
-        ~&  [%clay-call-flub (@tas `*`-.req)]
         ((hard task:able) req)
       ==
-  ~&  [%clay-call hen]
   ^+  [p=*(list move) q=..^$]
   ?-    -.req
       $boat
@@ -4319,7 +4319,6 @@
 ++  take                                              ::  accept response
   |=  {tea/wire hen/duct hin/(hypo sign)}
   ^+  [p=*(list move) q=..^$]
-  ~&  [%clay-take wire=tea hen=hen]
   ?:  ?=({$merge @ @ @ @ @ ~} tea)
     ?>  ?=(?($writ $made) +<.q.hin)
     =+  our=(slav %p i.t.tea)
