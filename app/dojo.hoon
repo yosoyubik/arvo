@@ -1239,6 +1239,7 @@
     ++  dy-run-generator
       |=  {cay/cage cig/dojo-config}
       ^-  [wire schematic:ford]
+      ::
       ?.  (~(nest ut [%cell [%atom %$ ~] %noun]) | p.q.cay)
         ::
         ::  naked gate
@@ -1249,14 +1250,27 @@
         :+  %ntbs
           [%ntdt q.cay]
         [%ntdt (dy-vase p.i.p.cig)]
-      ::
-      ::  normal generator
+      ::  non-naked generator: produce a wire depending on the kind of generator
       ::
       :-  ?+  -.q.q.cay  ~|(%bad-gen ~_((sell (slot 2 q.cay)) !!))
-            $say  /gent
-            $ask  /dial
-            $get  /scar
+            %say  /gent
+            %ask  /dial
+            %get  /scar
+            %bud  /make
           ==
+      ::  tell ford to eval the schematic produced by a %bud generator
+      ::
+      =-  ?.  =(%bud -.q.q.cay)
+            run-generator
+          ::
+          :+  %ntnt
+            [%ntcb ^~((ream '.'))]
+          run-generator
+      ::  produce a schematic that runs the generator gate
+      ::
+      ^=  run-generator
+      ^-  schematic:ford
+      ::
       =+  gat=(slot 3 q.cay)
       ::
       :+  %ntbs
@@ -1386,6 +1400,11 @@
     ++  dy-made-noun                                    ::  generator product
       |=  vax=vase
       (dy-hand %noun vax)
+    ::
+    ++  dy-made-make
+      |=  vax=vase
+      (mean ((hard tang) q.vax))
+      ::(dy-hand %noun vax)
     ::
     ++  dy-make                                         ::  build step
       ^+  +>
@@ -1572,6 +1591,7 @@
           {$gent ~}  dy-made-gent:dye
           {$noun ~}  dy-made-noun:dye
           {$scar ~}  dy-made-scar:dye
+          {$make ~}  dy-made-make:dye
           {$edit ~}  dy-made-edit:dye
         ==
       ::

@@ -778,7 +778,7 @@
   ++  run-root-build
     |=  [root-build=build =^duct live=?]
     ^+  event-core
-    ~&  [%ford-run-root-build duct live=live]
+    ::~&  [%ford-run-root-build duct live=live]
     ::
     =+  [product progress]=(run-build root-build live)
     ::
@@ -1158,7 +1158,7 @@
         $(schematic new-schematic)
       ::
           %nttr
-        ::  TODO cleanup
+        ::  TODO cleanup, maybe into a |^
         ::
         =^  rail-result  progress
           $(schematic [%ntkt [%ntdt !>(rail)] rail.schematic])
@@ -1405,7 +1405,7 @@
     =>  .(blocks ((hard (set scry-request)) blocks))
     ::
     =/  block-list=(list scry-request)  ~(tap in blocks)
-    ~&  [%ford-on-build-blocked duct=duct blocks=blocks]
+    ::~&  [%ford-on-build-blocked duct=duct blocks=blocks]
     ::
     |-  ^+  event-core
     ?~  block-list  event-core
@@ -1418,7 +1418,7 @@
   ++  on-once-build-completed
     |=  [=build result=(each [p=* q=*] tang) =^duct]
     ^+  event-core
-    ~&  [%ford-on-once-build-completed duct]
+    ::~&  [%ford-on-once-build-completed duct]
     ::
     =.  ducts.state  (~(del by ducts.state) duct)
     ::
@@ -1432,7 +1432,7 @@
             live-resources=*
         ==
     ^+  event-core
-    ~&  [%ford-on-live-build-completed duct]
+    ::~&  [%ford-on-live-build-completed duct]
     ::  cast :live-resources to a usable type
     ::
     =>  .(live-resources ((hard (set ,[=term =rail])) live-resources))
@@ -1963,7 +1963,7 @@
         ~|  [%ford-take-missing-subscription subscription]
         (get-request-ducts pending-subscriptions.ship-state subscription)
       ::
-      ~&  [%ford-take-rebuild ducts]
+      ::~&  [%ford-take-rebuilds ducts]
       ::
       =|  moves=(list move)
       |-  ^+  [moves ship-state]
@@ -1999,7 +1999,7 @@
         ~|  [%ford-take-missing-scry-request scry-request]
         (get-request-ducts pending-scrys.ship-state scry-request)
       ::
-      ~&  [%ford-take-unblocks scry-request=scry-request ducts=ducts]
+      ::~&  [%ford-take-unblocks scry-request=scry-request ducts=ducts]
       ::
       =|  moves=(list move)
       |-  ^+  [moves ship-state]

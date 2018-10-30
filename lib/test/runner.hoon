@@ -1,3 +1,4 @@
+=>
 |%
 ::  $test: a test with a fully resolved path
 ::

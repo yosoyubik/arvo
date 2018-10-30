@@ -1,4 +1,14 @@
-/+  *test
+#+  #=  here-disc
+  ^-  disc:ford
+  !:
+  =/  her=path  /==
+  ~&  [%loading %]
+  ?>  ?=([* * *] her)
+  [(slav %p i.her) (slav %tas i.t.her)]
+::
+#+  #=  test  #&  :-  here-disc  #.  /hoon/test/lib
+::
+=,  test
 |%
 ::  example hull for ~zod
 ::

@@ -1,6 +1,21 @@
-/+  *test
-/=  hoon-gate  /:  /===/sys/hoon  /!noun/
-/=  hoon-text  /:  /===/sys/hoon  /hoon/
+#+  #=  here-disc
+  ^-  disc:ford
+  !:
+  =/  her=path  /==
+  ~&  [%loading %]
+  ?>  ?=([* * *] her)
+  [(slav %p i.her) (slav %tas i.t.her)]
+::
+#+  #=  test  #&  :-  here-disc  #.  /hoon/test/lib
+::
+#+  #=  hoon-rail  :-  here-disc  #.  /hoon/hoon/sys
+#+  #=  hoon-gate  #&  hoon-rail
+#+  #=  hoon-text
+  #^  @t
+  #>  #*  %cx  hoon-rail
+  +
+::
+=,  test
 ::
 ~&  %compiling-hoon
 ::
