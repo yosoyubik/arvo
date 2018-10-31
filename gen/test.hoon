@@ -16,6 +16,8 @@
   |=  [pax=path test=test-func:test-runner]
   ^-  tang
   =+  name=(spud pax)
+  !:
+  ~&  [%running-test name]
   =+  run=(mule test)
   ?-  -.run
     %|  ::  the stack is already flopped for output?
@@ -42,10 +44,15 @@
   |=  [~ =mark paths=(list path)]
   ^-  schematic:ford
   ::
+  !:
+  ~&  [%test-paths-unfiltered paths]
+  ::
   %-  build-list:forder
   %+  murn  paths
   |=  =path
   ^-  (unit schematic:ford)
+  ::
+  ~&  [%checking-test-path path]
   ::
   ?~  spur=(flop path)
     ~
@@ -54,7 +61,7 @@
   :-  ~
   :-  #.  path
   #$  #.  get-test-arms:test-runner
-  #>  #&  :-  here-disc  #.  path
+  #>  #&  :-  here-disc  #.  spur
   !>(.)
 --
 ::
@@ -72,13 +79,20 @@
 ::  use empty path prefix if unspecified
 ::
 #+  #=  prefix  #.  ?~(filter ~ pax.filter)
+#>  !:
+    ~&  [%test-prefix prefix]
+    .
 ::  load tests from source files, filtered by :prefix
 ::
 #+  #=  tests
-  #^  #.  (list ,[=path test-func=test-func:test-runner])
-  #/  .
-  #$  #.  load-test-files
-  #*  %ct  :-  here-disc  `path`[%tests prefix]
+  #$  #.  resolve-test-paths:test-runner
+  ::#^  #.  (list ,[=path =test-arm:test-runner])
+  #+  #/  .
+      #$  #.  load-test-files
+      #*  %ct  :-  here-disc  (flop `path`[%tests prefix])
+  !:
+  ~&  [%tests -]
+  -
 ::  run each test in a separate build for granular caching
 ::
 ::    TODO handle :defer
@@ -89,10 +103,10 @@
 ::
 %-  build-list:forder
 %+  turn  tests
-|=  [=path test-func=test-func:test-runner]
+|=  =test:test-runner
 ^-  schematic:ford
 ::
 #+  #.  path=path
 #!  [%ford-test-fail path]
 #$  #.  run-test
-#.  [path test-func]
+#.  test

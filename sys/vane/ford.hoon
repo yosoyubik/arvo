@@ -1,4 +1,3 @@
-!:
 ::  ford: build system vane
 ::
 ::    Ford is a functional reactive build system.
@@ -1034,7 +1033,7 @@
           (succeed literal.schematic)
         ::
             %ntkt
-          ::  macro-expand to a %ride to apply the cast
+          ::  macro-expand to a %ntcb to apply the cast
           ::
           ::  />  :-  /=  spec  spec
           ::          /=  rest  rest
@@ -1043,6 +1042,7 @@
           =/  new-schematic=^schematic
             :+  %ntbn
               [[%ntts %spec spec.schematic] [%ntts %rest rest.schematic]]
+            :+  %ntzp  ^~((ream '\'ford: /^ nest failure:\''))
             :-  %ntcb
             ^-  hoon
             [%kthp [%like ~[%spec] ~] [%limb %rest]]

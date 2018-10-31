@@ -10,7 +10,6 @@
 #+  #=  base64  #&  :-  here-disc  #.  /hoon/base64/lib
 =,  test
 !:
-~&  %running-base64-tests
 :: XX move to zuse
 ::
 =>
