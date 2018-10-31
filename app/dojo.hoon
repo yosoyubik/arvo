@@ -447,7 +447,10 @@
       |=  vax=vase
       ^+  +>+>
       ?>  ?=(^ cud)
-      (dy-step(cud ~, rez (~(put by rez) p.u.cud [%noun vax])) +(p.u.cud))
+      ::  TODO replace when we have real printing
+      ::
+      =/  =mark  ?~(((soft tang) q.vax) %noun %tang)
+      (dy-step(cud ~, rez (~(put by rez) p.u.cud [mark vax])) +(p.u.cud))
     ::
     ++  dy-meal                                         ::  vase to cage
       |=  vax/vase
@@ -1168,16 +1171,11 @@
     ::
     ++  dy-made-noun                                    ::  generator product
       |=  vax=vase
-      (dy-hand %noun vax)
+      (dy-hand vax)
     ::
     ++  dy-made-make
       |=  vax=vase
-      ::  TODO replace when we have real printing
-      ::
-      ?~  message=((soft tang) q.vax)
-        (dy-hand %noun vax)
-      %-  (slog u.message)
-      he-easter:+>+>.$
+      (dy-hand vax)
     ::
     ++  dy-make                                         ::  build step
       ^+  +>
@@ -1309,7 +1307,8 @@
   ::
   ++  he-pine                                           ::  restore prompt
     ^+  .
-    ?^  poy  .
+    ?^  poy  ~&  %he-pine-poy  .
+    ~&  %he-pine-no-poy
     he-prom:he-pone
   ::
   ++  he-errd                                           ::  reject update
