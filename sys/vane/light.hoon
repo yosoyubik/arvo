@@ -84,6 +84,20 @@
     $:  ::  next-id: monotonically increasing id number for the next connection
         ::
         next-id=@ud
+        ::  out-duct: duct of last born state
+        ::
+        ::    The original eyre keeps track of the duct on %born and then sends
+        ::    a %give on that duct. This seems like a weird inversion of
+        ::    responsibility, where we should instead be doing a pass to
+        ::    unix. the reason we need to manually build ids is because we
+        ::    aren't using the built in duct system.
+        ::
+        ::    TODO: This should work by treating unix as the %$ so we can do a
+        ::    %pass to it and then receive a %give, using the duct system
+        ::    instead of rerolling our own cause tracking, but for now,
+        ::    maintain the duct and the next-id mapping
+        ::
+        out-duct=duct
         ::  connection-by-id: open connections to the
         ::
         connection-by-id=(map @ud [=duct =in-progress-http-request])
@@ -163,6 +177,9 @@
       ::  internal authentication page
       ::
       [%login-handler ~]
+      ::  internal subscription handler
+      ::
+      [%subscriptions ~]
   ==
 ::  +authentication-state: state used in the login system
 ::
@@ -329,21 +346,16 @@
       %+  ~(put by connection-by-id.state)  id
       =,  outbound-config
       [duct [redirects retries ~ 0 ~]]
-    ::  start the download 
-    ::
-    ::  the original eyre keeps track of the duct on %born and then sends a
-    ::  %give on that duct. this seems like a weird inversion of
-    ::  responsibility, where we should instead be doing a pass to unix. the
-    ::  reason we need to manually build ids is because we aren't using the
-    ::  built in duct system.
-    ::
-    ::  email discussions make it sound like fixing that might be hard, so
-    ::  maybe i should just live with the way it is now?
+    ::  TODO: start the download on out-duct
     ::
     ::  :-  [duct %pass /fetch 
     [~ state]
   --
 ::  +per-server-event: per-event server core
+::
+::    TODO: The review made it seem like we want an interface was for apps to
+::    bind to gall subscriptions, which implies that the current EventSource
+::    stuff will 
 ::
 ++  per-server-event
   |=  [[our=@p eny=@ =duct now=@da scry=sley] state=server-state]
@@ -406,6 +418,10 @@
     ::
         %login-handler
       (handle-request:authentication secure address http-request)
+    ::
+        %subscriptions
+      ~&  %subscription-handler
+      [~ state]
     ==
   ::  +cancel-request: handles a request being externally aborted
   ::
@@ -446,6 +462,12 @@
     ::
         %login-handler
       [~ state]
+    ::
+        %subscriptions
+      ::  todo: this actually needs to deal with closed connections to start a
+      ::  reaping timer for the session.
+      ::
+      [~ state]
     ==
   ::  +return-static-data-on-duct: returns one piece of data all at once
   ::
@@ -465,6 +487,52 @@
         data=[~ data]
         complete=%.y
     ==
+  ::  +subscriptions: use html eventsource to do push notifications
+  ::
+  ::    TODO: This is a dump of what I wanted to do before I was moved to new
+  ::    Ames.
+  ::
+  ++  subscriptions
+    |%
+    ::  +handle-request: handles an inbound http request
+    ::
+    ++  handle-request
+      |=  [secure=? =address =http-request]
+      ^-  [(list move) server-state]
+      ::  TODO: if we have a timeout timer on this session, cancel it since
+      ::  we're now handling a request.
+      ::
+      ::  TODO: handles PUT, DELETE and GET requests.
+      ::
+      [~ state]
+    ::  +cancel-request: handle a closed connection
+    ::
+    ::    When a connection closes, we set a timer on the session UID, which
+    ::    will call the +on-timeout arm to cancel the Gall subscriptions.
+    ::
+    ++  cancel-request
+      [~ state]
+    ::  +on-app-subscription: one of our subscriptions has updated
+    ::
+    ::    Notifies all open EventSource streams of the subscription update.
+    ::
+    ++  on-app-subscription-event
+      ^-  [(list move) state]
+      [~ state]
+    ::  +on-app-subscription-quit: the app closed our connection
+    ::
+    ::    This sends a {'quit': sub} event to the client, which will trigger
+    ::    the subscription broken callback in JavaScript.
+    ::
+    ++  on-app-subscription-quit
+      ^-  [(list move) state]
+      [~ state]
+    ::  +on-timeout: reap the session and subscriptions due to timeout
+    ::
+    ++  on-timeout
+      ^-  [(list move) state]
+      [~ state]
+    --
   ::  +authentication: per-event authentication as this Urbit's owner
   ::
   ::    Right now this hard codes the authentication page using the old +code
@@ -852,7 +920,10 @@
     ~&  [%todo-handle-born p.task]
     ::  TODO: reset the next-id for client state here.
     ::
-
+    ::  set the new duct outbound requests will go on
+    ::
+    ~&  [%setting-born-duct duct]
+    =.  out-duct.client-state.ax  duct
     ::  close previously open connections
     ::
     ::    When we have a new unix process, every outstanding open connection is
@@ -904,7 +975,7 @@
       (request +.task)
     [moves light-gate]
   ::
-      ::
+      ::  %cancel-inbound-request
       ::
       %cancel-inbound-request
     =/  event-args  [[(need ship.ax) eny duct now scry-gate] server-state.ax]
