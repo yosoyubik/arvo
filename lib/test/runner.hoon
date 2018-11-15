@@ -1,3 +1,4 @@
+=>
 |%
 ::  $test: a test with a fully resolved path
 ::
@@ -13,14 +14,14 @@
 ::  +resolve-test-paths: add test names to file paths to form full identifiers
 ::
 ++  resolve-test-paths
-  |=  paths-to-tests=(map path (list test-arm))
+  |=  paths-to-tests=(list [path (list test-arm)])
   ^-  (list test)
   ::
   %-  sort  :_  |=([a=test b=test] !(aor path.a path.b))
   ::
   ^-  (list test)
   %-  zing
-  %+  turn  ~(tap by paths-to-tests)
+  %+  turn  paths-to-tests
   |=  [=path test-arms=(list test-arm)]
   ^-  (list test)
   ::  strip off leading 'tests' from :path

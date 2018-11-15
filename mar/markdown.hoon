@@ -1,8 +1,3 @@
-::
-::::  /hoon/markdown/mar
-  ::
-/?    310
-::
 =,  mimes:html
 =,  format
 |_  mud/@t

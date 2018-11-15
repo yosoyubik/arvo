@@ -1,12 +1,19 @@
-::                                                      ::  ::
-::::  /hoon/helm/hood/lib                               ::  ::
-  ::                                                    ::  ::
-/?    310                                               ::  version
-/-    sole, hall
-[. sole]
+#+  #=  here-disc
+  ^-  disc:ford
+  !:
+  =/  her=path  /==
+  ~&  [%loading %]
+  ?>  ?=([* * *] her)
+  [(slav %p i.her) (slav %tas i.t.her)]
+::
+#+  #=  sole  #&  :-  here-disc  #.  /hoon/sole/sur
+#+  #=  hall  #&  :-  here-disc  #.  /hoon/hall/sur
+::
+=>  [. sole]  ::  TODO ugly
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
+=>
 |%                                                      ::  ::
 ++  part  {$helm $0 pith}                               ::  helm state
 ++  pith                                                ::  helm content

@@ -1236,7 +1236,7 @@
     |%
     ::  +task:able:ford: requests to ford
     ::
-    +=  task
+    +$  task
       $%  ::  %build: perform a build, either live or once
           ::
           $:  %build
@@ -1255,11 +1255,11 @@
           ==
           ::  %keep: reset cache sizes
           ::
-          [%keep compiler-cache=@ud build-cache=@ud]
+          [%keep compiler-cache-size=@ud]
           ::  %kill: stop a build; send on same duct as original %build request
           ::
           $:  %kill
-              ::  our: who our ship is (remove after cc-release)s
+              ::  our: who our ship is (remove after cc-release)
               ::
               our=@p
           ==
@@ -1275,7 +1275,7 @@
       ==
     ::  +gift:able:ford: responses from ford
     ::
-    +=  gift
+    +$  gift
       $%  ::  %mass: memory usage; response to %wegh +task
           ::
           [%mass p=mass]
@@ -1292,26 +1292,26 @@
     --
   ::  +made-result: the main payload for a %made +gift
   ::
-  +=  made-result
+  +$  made-result
     $%  ::  %complete: contains the result of the completed build
         ::
-        [%complete =build-result]
+        [%complete result=(each vase tang)]
         ::  %incomplete: couldn't finish build; contains error message
         ::
         [%incomplete =tang]
     ==
   ::  +disc: a desk on a ship; can be used as a beak that varies with time
   ::
-  +=  disc  [=ship =desk]
+  +$  disc  [=ship =desk]
   ::  +rail: a time-varying full path
   ::
   ::    This can be thought of as a +beam without a +case, which is what
   ::    would specify the time. :spur is flopped just like the +spur in a +beam.
   ::
-  +=  rail  [=disc =spur]
+  +$  rail  [=disc =spur]
   ::  +resource: time-varying dependency on a value from the urbit namespace
   ::
-  +=  resource
+  +$  resource
     $:  ::  vane which we are querying
         ::
         vane=%c
@@ -1325,129 +1325,30 @@
         ::
         =rail
     ==
-  ::  +build-result: the referentially transparent result of a +build
+  ::  +schematic: ford build request, as a function of time
   ::
-  ::    A +build produces either an error or a result. A result is a tagged
-  ::    union of the various kinds of datatypes a build can produce. The tag
-  ::    represents the sub-type of +schematic that produced the result.
-  ::
-  +=  build-result
-    $%  ::  %error: the build produced an error whose description is :message
-        ::
-        [%error message=tang]
-        ::  %success: result of successful +build, tagged by +schematic sub-type
-        ::
-        $:  %success
-            $^  [head=build-result tail=build-result]
-            $%  [%$ =cage]
-                [%alts =build-result]
-                [%bake =cage]
-                [%bunt =cage]
-                [%call =vase]
-                [%cast =cage]
-                [%core =vase]
-                [%diff =cage]
-                [%hood =scaffold]
-                [%join =cage]
-                [%list results=(list build-result)]
-                [%mash =cage]
-                [%mute =cage]
-                [%pact =cage]
-                [%path =rail]
-                [%plan =vase]
-                [%reef =vase]
-                [%ride =vase]
-                [%scry =cage]
-                [%slim [=type =nock]]
-                [%slit =type]
-                [%vale =cage]
-                [%volt =cage]
-                [%walk results=(list mark-action)]
-    ==  ==  ==
-  ::  +mark-action: represents a single mark conversion step
-  ::
-  ::    In mark conversion, we want to convert from :source to :target. We also
-  ::    need to keep track of what type of conversion this is. If %grab, we
-  ::    want to use the definitions in the :target mark. If %grow, we want to
-  ::    use the :source mark.
-  ::
-  +=  mark-action  [type=?(%grow %grab) source=term target=term]
-  ::
-  ::  +schematic: plan for building
-  ::
-  ++  schematic
+  +$  schematic
+    $~  [%ntdt !>(~)]
     ::    If the head of the +schematic is a pair, it's an auto-cons
     ::    schematic. Its result will be the pair of results of its
     ::    sub-schematics.
     ::
     $^  [head=schematic tail=schematic]
+    ::  TODO: %ntzp for adding trace printing and %spot for debug wrapping
     ::
-    $%  ::  %$: literal value. Produces its input unchanged.
+    $%  ::  %ntbn: /> with :subject as subject, evaluate :rest
         ::
-        $:  %$
-            ::  literal: the value to be produced by the build
+        $:  %ntbn
+            ::  subject: schematic that becomes new subject
             ::
-            literal=cage
+            subject=schematic
+            ::  rest: schematic to evaluate against result of :subject
+            ::
+            rest=schematic
         ==
-        ::  %pin: pins a sub-schematic to a date
+        ::  %ntbs: /$ call a gate on a sample
         ::
-        ::    There is a difference between live builds and once builds. In
-        ::    live builds, we produce results over and over again and aren't
-        ::    pinned to a specifc time. In once builds, we want to specify a
-        ::    specific date, which we apply recursively to any sub-schematics
-        ::    contained within :schematic.
-        ::
-        ::    If a build has a %pin at the top level, we consider it to be a
-        ::    once build. Otherwise, we consider it to be a live build. We do
-        ::    this so schematics which depend on the result of a once build can
-        ::    be cached, giving the client explicit control over the caching
-        ::    behaviour.
-        ::
-        $:  %pin
-            ::  date: time at which to perform the build
-            ::
-            date=@da
-            ::  schematic: wrapped schematic of pinned time
-            ::
-            =schematic
-        ==
-        ::  %alts: alternative build choices
-        ::
-        ::    Try each choice in :choices, in order; accept the first one that
-        ::    succeeds. Note that the result inherits the dependencies of all
-        ::    failed schematics, as well as the successful one.
-        ::
-        $:  %alts
-            ::  choices: list of build options to try
-            ::
-            choices=(list schematic)
-        ==
-        ::  %bake: run a file through a renderer
-        ::
-        $:  %bake
-            ::  renderer: name of renderer; also its file path in ren/
-            ::
-            renderer=term
-            ::  query-string: the query string of the renderer's http path
-            ::
-            query-string=coin
-            ::  path-to-render: full path of file to render
-            ::
-            path-to-render=rail
-        ==
-        ::  %bunt: produce the default value for a mark
-        ::
-        $:  %bunt
-            ::  disc where in clay to load the mark from
-            ::
-            =disc
-            ::  mark: name of mark; also its file path in mar/
-            ::
-            mark=term
-        ==
-        ::  %call: call a gate on a sample
-        ::
-        $:  %call
+        $:  %ntbs
             ::  gate: schematic whose result is a gate
             ::
             gate=schematic
@@ -1455,485 +1356,139 @@
             ::
             sample=schematic
         ==
-        ::  %cast: cast the result of a schematic through a mark
+        ::  %ntdt: /. literal value. Produces its input unchanged.
         ::
-        $:  %cast
-            ::  disc where in clay to load the mark from
+        $:  %ntdt
+            ::  literal: the value to be produced by the build
             ::
-            =disc
-            ::  mark: name of mark; also its file path in ren/
-            ::
-            mark=term
-            ::  input: schematic whose result will be run through the mark
-            ::
-            input=schematic
+            literal=vase
         ==
-        ::  %core: build a hoon program from a source file
+        ::  %ntkt: /^ cast the result of a schematic using ^-
         ::
-        $:  %core
-            ::  source-path: clay path from which to load hoon source
+        $:  %ntkt
+            ::  spec: schematic that produces a +spec to cast to
             ::
-            source-path=rail
+            spec=schematic
+            ::  rest: schematic whose result will be cast to :spec
+            ::
+            rest=schematic
         ==
-        ::  %diff: produce marked diff from :first to :second
+        ::  %ntcb: /_ compile and evaluate a hoon against the current subject
         ::
-        $:  %diff
-            ::  disc where in clay to load the mark from
+        $:  %ntcb
+            ::  hoon: a hoon to be evaluated against the subject
             ::
-            =disc
-            ::  old: schematic producing data to be used as diff starting point
-            ::
-            start=schematic
-            ::  new: schematic producing data to be used as diff ending point
-            ::
-            end=schematic
+            =hoon
         ==
-        ::  %dude: wrap a failure's error message with an extra message
+        ::  %ntls: /+ prepend result of :head schematic to subject
         ::
-        $:  %dude
-            ::  error: a trap producing an error message to wrap the original
+        $:  %ntls
+            ::  head: schematic that produces new head of subject
             ::
-            error=(trap tank)
-            ::  attempt: the schematic to try, whose error we wrap, if any
+            head=schematic
+            ::  rest: schematic to evaluate against augmented subject
             ::
-            attempt=schematic
+            rest=schematic
         ==
-        ::  %hood: create a +hood from a hoon source file
+        ::  %ntnt: // eval new schematic against new subject, like Nock 2
         ::
-        $:  %hood
-            ::  source-path: clay path from which to load hoon source
-            ::
-            source-path=rail
-        ==
-        ::  %join: merge two diffs into one diff; produces `~` if conflicts
-        ::
-        $:  %join
-            ::  disc where in clay to load the mark from
-            ::
-            =disc
-            ::  mark: name of the mark to use for diffs; also file path in mar/
-            ::
-            mark=term
-            ::  first: schematic producing first diff
-            ::
-            first=schematic
-            ::  second: schematic producing second diff
-            ::
-            second=schematic
-        ==
-        ::  %list: performs a list of schematics, returns a list of +builds-results
-        ::
-        $:  %list
-            ::  schematics: list of builds to perform
-            ::
-            schematics=(list schematic)
-        ==
-        ::  %mash: force a merge, annotating any conflicts
-        ::
-        $:  %mash
-            ::  disc where in clay to load the mark from
-            ::
-            =disc
-            ::  mark: name of mark used in diffs; also file path in mar/
-            ::
-            mark=term
-            ::  first: marked schematic producing first diff
-            ::
-            first=[=disc mark=term =schematic]
-            ::  second: marked schematic producing second diff
-            ::
-            second=[=disc mark=term =schematic]
-        ==
-        ::  %mute: mutate a noun by replacing its wings with new values
-        ::
-        $:  %mute
-            ::  subject: schematic producing the noun to mutate
+        $:  %ntnt
+            ::  subject: schematic that produces new subject
             ::
             subject=schematic
-            ::  mutations: axes and schematics to produce their new contents
-            ::
-            mutations=(list (pair wing schematic))
-        ==
-        ::  %pact: patch a marked noun by applying a diff
-        ::
-        $:  %pact
-            ::  disc where in clay to load marks from
-            ::
-            =disc
-            ::  start: schematic producing a noun to be patched
-            ::
-            start=schematic
-            ::  diff: schematic producing the diff to apply to :start
-            ::
-            diff=schematic
-        ==
-        ::  %path: resolve a path with `-`s to a path with `/`s
-        ::
-        ::    Resolve +raw-path to a path containing a file, replacing
-        ::    any `-`s in the path with `/`s if no file exists at the
-        ::    original path. Produces an error if multiple files match,
-        ::    e.g. a/b/c and a/b-c, or a/b/c and a-b/c.
-        ::
-        $:  %path
-            ::  disc: the +disc forming the base of the path to be resolved
-            ::
-            =disc
-            ::  prefix: path prefix under which to resolve :raw-path, e.g. lib
-            ::
-            prefix=@tas
-            ::  raw-path: the file path to be resolved
-            ::
-            raw-path=@tas
-        ==
-        ::  %plan: build a hoon program from a preprocessed source file
-        ::
-        $:  %plan
-            ::  path-to-render: the clay path of a file being rendered
-            ::
-            ::    TODO: Once we've really implemented this, write the
-            ::    documentation. (This is the path that starts out as the path
-            ::    of the hoon source which generated the scaffold, but can be
-            ::    changed with `/:`.)
-            ::
-            path-to-render=rail
-            ::  query-string: the query string of the http request
-            ::
-            query-string=coin
-            ::  scaffold: preprocessed hoon source and imports
-            ::
-            =scaffold
-        ==
-        ::  %reef: produce a hoon+zuse kernel. used internally for caching
-        ::
-        $:  %reef
-            ::  disc: location of sys/hoon/hoon and sys/zuse/hoon
-            ::
-            =disc
-        ==
-        ::  %ride: eval hoon as formula with result of a schematic as subject
-        ::
-        $:  %ride
-            ::  formula: a hoon to be evaluated against a subject
-            ::
-            formula=hoon
-            ::  subject: a schematic whose result will be used as subject
-            ::
-            subject=schematic
-        ==
-        ::  %same: the identity function
-        ::
-        ::    Functionally used to "unpin" a build for caching reasons. If you
-        ::    run a %pin build, it is treated as a once build and is therefore
-        ::    not cached. Wrapping the %pin schematic in a %same schematic
-        ::    converts it to a live build, which will be cached due to live
-        ::    build subscription semantics.
-        ::
-        $:  %same
-            ::  schematic that we evaluate to
+            ::  schematic: schematic that produces new schematic
             ::
             =schematic
         ==
-        ::  %scry: lookup a value from the urbit namespace
+        ::  %ntpd: /& load and compile a hoon file against the standard library
         ::
-        $:  %scry
-            ::  resource: a namespace request, with unspecified time
+        ::    Schematics can only be resolved when specifying a time,
+        ::    which will turn the +rail into a +beam (full absolute path).
+        ::
+        $:  %ntpd
+            ::  rail: schematic that evaluates to a hoon filepath to load
+            ::
+            rail=schematic
+        ==
+        ::  %ntts: /= wrap a face around result
+        ::
+        $:  %ntts
+            ::  face: the name of the face to wrap around the result
+            ::
+            face=term
+            ::  rest: a sub-schematic whose result will get labeled
+            ::
+            rest=schematic
+        ==
+        ::  %nttr: /* lookup a value from the urbit namespace (do a scry)
+        ::
+        $:  %nttr
+            ::  term: request type, e.g. %cx or %cz
+            ::
+            =term
+            ::  rail: schematic that evaluates to a :rail to load
             ::
             ::    Schematics can only be resolved when specifying a time,
             ::    which will convert this +resource into a +scry-request.
             ::
-            =resource
+            rail=schematic
         ==
-        ::  %slim: compile a hoon against a subject type
+        ::  %ntvt: /@ pins a sub-schematic to a date
         ::
-        $:  %slim
-            ::  compile-time subject type for the :formula
+        ::    There is a difference between live builds and once builds. In
+        ::    live builds, we produce results over and over again and aren't
+        ::    pinned to a particular date. Ford makes subscriptions to %nttr
+        ::    resources in a live build so a change in a resource triggers a
+        ::    rebuild. In once builds, the date is fixed and resources are not
+        ::    tracked for changes.
+        ::
+        ::    The sub-build of a %ntvt will be run as a once build, pinned
+        ::    to the specified date. Live subscriptions will not be made on its
+        ::    resources. A live build may have multiple sub-builds pinned to
+        ::    potentially different dates. Only the unpinned portions of a live
+        ::    build will update reactively.
+        ::
+        $:  %ntvt
+            ::  date: time at which to perform the build
             ::
-            subject-type=type
-            ::  formula: a +hoon to be compiled to (pair type nock)
+            date=@da
+            ::  schematic: wrapped schematic of pinned time
             ::
-            formula=hoon
+            rest=schematic
         ==
-        ::  %slit: get type of gate product
+        ::  %ntwt: /? asynchronous conditional
         ::
-        $:  %slit
-            ::  gate: a vase containing a gate
+        $:  %ntwt
+            ::  if: schematic that evaluates to a conditional
             ::
-            gate=vase
-            ::  sample: a vase containing the :gate's sample
+            if=schematic
+            ::  then: schematic to evaluate if conditional was true
             ::
-            sample=vase
+            then=schematic
+            ::  else: schematic to evaluate if conditional was false
+            ::
+            else=schematic
         ==
-        ::  %vale: coerce a noun to a mark, validated
+        ::  %ntzp: /! adds information to a stack trace if sub-schematic fails
         ::
-        $:  %vale
-            ::  disc where in clay to load the mark from
+        $:  %ntzp
+            ::  hoon: to be run against the subject to produce trace message
             ::
-            =disc
-            ::  mark: name of mark to use; also file path in mar/
-            ::
-            mark=term
-            ::  input: the noun to be converted using the mark
-            ::
-            input=*
-        ==
-        ::  %volt: coerce a noun to a mark, unsafe
-        ::
-        $:  %volt
-            ::  disc where in clay to load the mark from
-            ::
-            =disc
-            ::  mark: name of mark to use; also file path in mar/
-            ::
-            mark=term
-            ::  input: the noun to be converted using the mark
-            ::
-            input=*
-        ==
-        ::  %walk: finds a mark conversion path between two marks
-        ::
-        $:  %walk
-            ::  disc in clay to load the marks from
-            ::
-            =disc
-            ::  source: the original mark type
-            ::
-            source=term
-            ::  target: the destination mark type
-            ::
-            target=term
-        ==
-    ==
-  ::
-  ::  +scaffold: program construction in progress
-  ::
-  ::    A source file with all its imports and requirements, which will be
-  ::    built and combined into one final product.
-  ::
-  +=  scaffold
-    $:  ::  source-rail: the file this scaffold was parsed from
-        ::
-        source-rail=rail
-        ::  zuse-version: the kelvin version of the standard library
-        ::
-        zuse-version=@ud
-        ::  structures: files from %/sur which are included
-        ::
-        structures=(list cable)
-        ::  libraries: files from %/lib which are included
-        ::
-        libraries=(list cable)
-        ::  cranes: a list of resources to transform and include
-        ::
-        cranes=(list crane)
-        ::  sources: hoon sources, either parsed or on the filesystem
-        ::
-        sources=(list hoon)
-    ==
-  ::  +cable: a reference to something on the filesystem
-  ::
-  +=  cable
-    $:  ::  face: the face to wrap around the imported file
-        ::
-        face=(unit term)
-        ::  file-path: location in clay
-        ::
-        file-path=term
-    ==
-  ::  +truss: late-bound path
-  ::
-  ::    TODO: the +tyke data structure should be rethought, possibly as part
-  ::    of this effort since it is actually a `(list (unit hoon))`, when it
-  ::    only represents @tas. It should be a structure which explicitly
-  ::    represents a path with holes that need to be filled in.
-  ::
-  +=  truss
-    $:  pre=(unit tyke)
-        pof=(unit [p=@ud q=tyke])
-    ==
-  ::  +crane: parsed rune used to include and transform resources
-  ::
-  ::    Cranes lifting cranes lifting cranes!
-  ::
-  ::    A recursive tree of Ford directives that specifies instructions for
-  ::    including and transforming resources from the Urbit namespace.
-  ::
-  +=  crane
-    $%  $:  ::  %fssg: `/~` hoon literal
-            ::
-            ::    `/~ <hoon>` produces a crane that evaluates arbitrary hoon.
-            ::
-            %fssg
             =hoon
+            ::  rest: wrapped schematic
+            ::
+            rest=schematic
         ==
-        $:  ::  %fsbc: `/$` process query string
+        ::  %spot: source location (file and line-column range) for stack traces
+        ::
+        $:  %spot
+            ::  spot: relative filepath (excluding +beak) and line+column range
             ::
-            ::    `/$` will call a gate with the query string supplied to this
-            ::    build. If no query string, this errors.
+            =spot
+            ::  rest: wrapped schematic
             ::
-            %fsbc
-            =hoon
-        ==
-        $:  ::  %fsbr: `/|` first of many options that succeeds
-            ::
-            ::    `/|` takes a series of cranes and produces the first one
-            ::    (left-to-right) that succeeds. If none succeed, it produces
-            ::    stack traces from all of its arguments.
-            ::
-            %fsbr
-            ::  choices: cranes to try
-            ::
-            choices=(list crane)
-        ==
-        $:  ::  %fsts: `/=` wrap a face around a crane
-            ::
-            ::    /= runs a crane (usually produced by another ford rune), takes
-            ::    the result of that crane, and wraps a face around it.
-            ::
-            %fsts
-            ::  face: face to apply
-            ::
-            face=term
-            ::  crane: internal build step
-            ::
-            =crane
-        ==
-        $:  ::  %fsdt: `/.` null-terminated list
-            ::
-            ::    Produce a null-terminated list from a sequence of cranes,
-            ::    terminated by a `==`.
-            ::
-            %fsdt
-            ::  items: cranes to evaluate
-            ::
-            items=(list crane)
-        ==
-        $:  ::  %fscm: `/,` switch by path
-            ::
-            ::    `/,` is a switch statement, which picks a branch to evaluate
-            ::    based on whether the current path matches the path in the
-            ::    switch statement. Takes a sequence of pairs of (path, crane)
-            ::    terminated by a `==`.
-            ::
-            %fscm
-            ::  cases: produces evaluated crane of first +spur match
-            ::
-            cases=(list (pair spur crane))
-        ==
-        $:  ::  %fspm: `/&` pass through a series of marks
-            ::
-            ::    `/&` passes a crane through multiple marks, right-to-left.
-            ::
-            %fspm
-            ::  marks: marks to apply to :crane, in reverse order
-            ::
-            marks=(list mark)
-            =crane
-        ==
-        $:  ::  %fscb: `/_` run a crane on each file in the current directory
-            ::
-            ::    `/_` takes a crane as an argument. It produces a new crane
-            ::    representing the result of mapping the supplied crane over the
-            ::    list of files in the current directory. The keys in the
-            ::    resulting map are the basenames of the files in the directory,
-            ::    and each value is the result of running that crane on the
-            ::    contents of the file.
-            ::
-            %fscb
-            =crane
-        ==
-        $:  ::  %fssm: `/;` operate on
-            ::
-            ::    `/;` takes a hoon and a crane. The hoon should evaluate to a
-            ::    gate, which is then called with the result of the crane as its
-            ::    sample.
-            ::
-            %fssm
-            =hoon
-            =crane
-        ==
-        $:  ::  %fscl: `/:` evaluate at path
-            ::
-            ::    `/:` takes a path and a +crane, and evaluates the crane with
-            ::    the current path set to the supplied path.
-            ::
-            %fscl
-            ::  path: late bound path to be resolved relative to current beak
-            ::
-            ::    This becomes current path of :crane
-            ::
-            path=truss
-            =crane
-        ==
-        $:  ::  %fskt: `/^` cast
-            ::
-            ::    `/^` takes a +mold and a +crane, and casts the result of the
-            ::    crane to the mold.
-            ::
-            %fskt
-            ::  mold: evaluates to a mold to be applied to :crane
-            ::
-            =spec
-            =crane
-        ==
-        $:  ::  %fstr: `/*` run :crane on all files with current path as prefix
-            ::
-            %fstr
-            =crane
-        ==
-        $:  ::  %fszp: `/!mark/` evaluate as hoon, then pass through mark
-            ::
-            %fszp
-            =mark
-        ==
-        $:  ::  %fszy: `/mark/` passes current path through :mark
-            ::
-            %fszy
-            =mark
+            rest=schematic
     ==  ==
-  ::  +result-to-cage: extract a +cage from a +build-result
-  ::
-  ++  result-to-cage
-    |=  result=build-result
-    ^-  cage
-    ?:  ?=(%error -.result)
-      [%tang !>(message.result)]
-    ?-    -.+.result
-        ^      [%noun (slop q:$(result head.result) q:$(result tail.result))]
-        %$     cage.result
-        %alts  $(result build-result.result)
-        %bake  cage.result
-        %bunt  cage.result
-        %call  [%noun vase.result]
-        %cast  cage.result
-        %core  [%noun vase.result]
-        %diff  cage.result
-        %hood  [%noun !>(scaffold.result)]
-        %join  cage.result
-        %list  [%noun -:!>(*(list cage)) (turn results.result result-to-cage)]
-        %mash  cage.result
-        %mute  cage.result
-        %pact  cage.result
-        %path  [%noun !>(rail.result)]
-        %plan  [%noun vase.result]
-        %reef  [%noun vase.result]
-        %ride  [%noun vase.result]
-        %scry  cage.result
-        %slim  [%noun !>([type nock]:result)]
-        %slit  [%noun !>(type.result)]
-        %vale  cage.result
-        %volt  cage.result
-        %walk  [%noun !>(results.result)]
-    ==
-  ::  +result-as-error: extracts a tang out of a made-result
-  ::
-  ++  made-result-as-error
-    |=  result=made-result
-    ^-  tang
-    ?:  ?=([%incomplete *] result)
-      tang.result
-    ?:  ?=([%complete %error *] result)
-      message.build-result.result
-    ~
   --
 ::                                                      ::::
 ::::                    ++gall                            ::  (1g) extensions
@@ -5811,6 +5366,539 @@
         ~
       (some (~(run by lum) need))
     --  ::dejs-soft
+  --
+::                                                      ::
+::::                      ++forder                      ::  (??) ford utilities
+  ::                                                    ::::
+++  forder  ^?
+  |%
+  ::  +build-list: coalesce a list of schematics into a single schematic
+  ::
+  ++  build-list
+    |=  schematics=(list schematic:ford)
+    ^-  schematic:ford
+    ::
+    ?~  schematics
+      [%ntdt !>(~)]
+    [i.schematics $(schematics t.schematics)]
+  ::  +cage-to-vase: convert a +cage to a vase of [mark data]
+  ::
+  ++  cage-to-vase
+    |=  =cage
+    ^-  vase
+    (slop [[%atom %tas ~] p.cage] q.cage)
+  ::  +vase-to-cage: convert a vase of [mark data] to a +cage, or crash
+  ::
+  ++  vase-to-cage
+    |=  =vase
+    ^-  cage
+    [p=((hard @tas) q:(slot 2 vase)) q=(slot 3 vase)]
+  --
+::                                                      ::
+::::                      ++marker                      ::  (??) mark engine
+  ::                                                    ::::
+++  marker  ^?
+  =>  |%  +$  mark-descriptor
+            $:  grows=(set mark)
+                grabs=(set mark)
+                grad=(each delegate=mark form=mark)
+            ==
+      --
+  =,  forder
+  |%
+  ::  +bunt: produce the default value for a :mark on a :disc
+  ::
+  ++  bunt
+    |=  [=mark disc=disc:ford]
+    ^-  schematic:ford
+    ::
+    :+  %ntbn
+      (build-mark-loader mark disc)
+    [%ntcb ^~((ream '*_+<'))]
+  ::  +cast: convert :data from mark :start to mark :end
+  ::
+  ++  cast
+    |=  [data=vase start=[=mark disc=disc:ford] end=[=mark disc=disc:ford]]
+    ^-  schematic:ford
+    ::
+    :+  %ntbs
+      (build-mark-converter start end)
+    [%ntdt data]
+  ::  +build-mark-converter: build a gate to transform :start data to :end
+  ::
+  ++  build-mark-converter
+    |=  [start=[=mark disc=disc:ford] end=[=mark disc=disc:ford]]
+    ^-  schematic:ford
+    ::
+    :+  %ntls  [%ntts %start (build-mark-analyzer start)]
+    :+  %ntls  [%ntts %end (build-mark-analyzer end)]
+    ::  make sure we produce a gate with the right type signature
+    ::
+    :+  %ntkt
+      :-  %ntcb
+      ^~((ream '$-(_+<.core.start _+<.core.end)'))
+    ::  can we grab from the end, or do we have to grow from the start?
+    ::
+    :^  %ntwt  :-  %ntcb
+               ^-  hoon
+               :+  %cncl
+                 ^~((ream '~(has in grabs.descriptor.end)'))
+               [%rock %tas mark.start]~
+      :+  %ntbn
+        :-  %ntcb
+        ^~((ream (crip "!:  ~&  [%grab {<mark.start>} {<mark.end>}]  .")))
+      ::  we can grab, so run +grab from :end
+      ::
+      [%ntcb ^~((ream (cat 3 mark.start ':grab:core.end')))]
+    ::  no grab available; fall back to running +grow on :start
+    ::
+    :-  %ntcb
+    ^-  hoon
+    ^~  %-  ream  %-  crip
+    %+  weld  "!:  ~&  [%grow {<mark.start>} {<mark.end>}]  "
+    "|=(data=_+<.core.start {(trip mark.end)}:~(grow core.start data))"
+  ::  +diff: produce a diff between two nouns of mark :mark
+  ::
+  ::    The result of the build will be (a vase of) a pair of
+  ::    the mark of the diff and the noun representing the diff.
+  ::
+  ++  diff
+    |=  [start=vase end=vase =mark disc=disc:ford]
+    ^-  schematic:ford
+    ::
+    :+  %ntbs
+      (build-mark-differ mark disc)
+    [[%ntdt start] [%ntdt end]]
+  ::  +build-mark-differ: build a gate to diff two nouns of mark :mark
+  ::
+  ::    If :start and :end are the same noun, this gate will produce
+  ::    `[%null ~]`. Otherwise, it will behave according to the mark
+  ::    definition.
+  ::
+  ++  build-mark-differ
+    |=  [=mark disc=disc:ford]
+    ^-  schematic:ford
+    ::
+    :+  %ntls  [%ntdt !>([mark=mark disc=disc])]
+    :+  %ntls  [%ntts %initial-mark (build-mark-analyzer mark disc)]
+    ::
+    :^    %ntwt
+        [%ntcb ^~((ream '?=(%| -.grad.descriptor.initial-mark)'))]
+      :+  %ntbn
+        [%ntcb ^~((ream '!:  ~&  [%differ-final initial-mark]  .'))]
+      ::  :mark defines its own diffing; build a gate from that
+      ::
+      :+  %ntls  :+  %ntts  %form-mark
+        ::  load the mark specified by +form:grad
+        ::
+        :+  %ntnt
+          [%ntcb ^~((ream '..zuse'))]
+        :+  %ntbs
+          [%ntdt !>(build-mark-loader)]
+        :_  [%ntcb %limb %disc]
+        [%ntcb ^~((ream 'form:grad:core.initial-mark'))]
+      ::  wrap :original-gate with an equality check so we get `[%null ~]`
+      ::
+      :+  %ntbs
+        :+  %ntbn  [%ntcb ^~((ream '..zuse'))]
+        :-  %ntcb
+        ^~  %-  ream
+        '''
+        |*  original-gate=$-(* *)
+        |*  [start=* end=*]
+        ::
+        ?:  =(start end)
+          [%null ~]
+        (original-gate start end)
+        '''
+      ::
+      :-  %ntcb
+      ^-  hoon
+      ^~  %-  ream
+      '''
+      |=  [start=_+<.core.initial-mark end=_+<.core.initial-mark]
+      ^-  [term _+<.form-mark]
+      ::
+      :-  form:grad:core.initial-mark
+      (diff:~(grad core.initial-mark start) end)
+      '''
+    ::  :mark delegates its diffing to the :delegate mark; recurse on that
+    ::
+    :+  %ntls  :+  %ntts  %delegate
+      :-  %ntcb
+      ^-  hoon
+      :+  %wtbn
+        ^~((ream '?=(%& -.grad.descriptor.initial-mark)'))
+      ^~((ream 'p.grad.descriptor.initial-mark'))
+    ::
+    :+  %ntbn
+      [%ntcb ^~((ream '!:  ~&  [%differ-delegate initial-mark delegate]  .'))]
+    ::  create a :converter gate that can convert data to the :delegate mark
+    ::
+    :+  %ntls  :+  %ntts  %converter
+      :+  %ntnt
+        [%ntcb ^~((ream '..zuse'))]
+      :+  %ntbs
+        [%ntdt !>(build-mark-converter)]
+      [%ntcb ^~((ream '[[mark disc] [delegate disc]]'))]
+    ::  produce the delegate differ gate by recursing
+    ::
+    :+  %ntls  :+  %ntts  %delegate-differ
+      :+  %ntnt
+        [%ntcb ^~((ream '..zuse'))]
+      :+  %ntbs
+        [%ntdt !>(build-mark-differ)]
+      [%ntcb ^~((ream '[delegate disc]'))]
+    ::  now produce the full differ gate
+    ::
+    :-  %ntcb
+    ^-  hoon
+    ^~  %-  ream
+    '''
+    |=  [start=_+<.core.initial-mark end=_+<.core.initial-mark]
+    (delegate-differ (converter start) (converter end))
+    '''
+  ::  +join: join two diffs into a single diff, or `[%null ~]` on conflict
+  ::
+  ++  join
+    |=  [first=vase second=vase =mark disc=disc:ford]
+    ^-  schematic:ford
+    ::
+    :+  %ntbs
+      (build-mark-joiner mark disc)
+    [[%ntdt first] [%ntdt second]]
+  ::  +build-mark-joiner: produce a gate that can combine two diffs
+  ::
+  ++  build-mark-joiner
+    |=  [=mark disc=disc:ford]
+    ^-  schematic:ford
+    ::
+    :+  %ntls  [%ntts %initial-mark (build-mark-analyzer mark disc)]
+    ::
+    :^     %ntwt
+        [%ntcb ^~((ream '?=(%| -.grad.descriptor.initial-mark)'))]
+      ::  :mark defines its own joining; build a gate from that
+      ::
+      :+  %ntls  :+  %ntts  %form-mark
+        ::  load the mark specified by +form:grad
+        ::
+        :+  %ntnt
+          [%ntcb ^~((ream '..zuse'))]
+        :+  %ntbs
+          [%ntdt !>(build-mark-loader)]
+        :_  [%ntdt !>(disc)]
+        [%ntcb ^~((ream 'form:grad:core.initial-mark'))]
+      ::  produce the gate
+      ::
+      ::    TODO: check equality first
+      ::
+      :-  %ntcb
+      ^~  %-  ream
+      '''
+      |=  [start=_+<.form-mark end=_+<.form-mark]
+      ^-  [term (unit _+<.form-mark)]
+      ::
+      =/  grad  grad:core.initial-mark
+      ::
+      =/  result=(unit _+<.form-mark)  (join:grad start end)
+      ?~  result
+        [%null ~]
+      [form:grad result]
+      '''
+    ::  :mark delegates its diffing machinery to :delegate; recurse
+    ::
+    :+  %ntls  :+  %ntts  %delegate
+      :-  %ntcb
+      ^-  hoon
+      :+  %wtbn
+        ^~((ream '?=(%& -.grad.descriptor.initial-mark)'))
+      ^~((ream 'p.grad.descriptor.initial-mark'))
+    ::  produce the delegate joiner gate by recursing
+    ::
+    :+  %ntnt
+      [%ntcb ^~((ream '..zuse'))]
+    :+  %ntbs
+      [%ntdt !>(build-mark-joiner)]
+    [%ntcb ^~((ream '[delegate disc]'))]
+  ::  +mash: merge, annotating conflicts
+  ::
+  ++  mash
+    |=  $:  =mark
+            disc=disc:ford
+            first=[=mark disc=disc:ford =vase]
+            second=[=mark disc=disc:ford =vase]
+        ==
+    ^-  schematic:ford
+    ::
+    :+  %ntbs
+      (build-mark-masher mark disc [mark disc]:first [mark disc]:second)
+    [[%ntdt vase.first] [%ntdt vase.second]]
+  ::  +build-mark-masher: produce a gate that can merge and annotate two diffs
+  ::
+  ++  build-mark-masher
+    |=  $:  =mark
+            disc=disc:ford
+            first=[=mark disc=disc:ford]
+            second=[=mark disc=disc:ford]
+        ==
+    ^-  schematic:ford
+    ::
+    :+  %ntls  [%ntdt !>([mark=mark disc=disc first=first second=second])]
+    :+  %ntls  [%ntts %initial-mark (build-mark-analyzer mark disc)]
+    ::
+    :^    %ntwt
+        [%ntcb ^~((ream '?=(%| -.grad.descriptor.initial-mark)'))]
+      ^-  schematic:ford
+      ::  :mark defines its own mashing; build a gate from that
+      ::
+      ::    TODO: check equality first
+      ::
+      :+  %ntls  [%ntts %form [%ntcb ^~((ream 'form:grad:core.initial-mark'))]]
+      ::
+      :+  %ntls  :+  %ntts  %form-mark
+        :+  %ntnt
+          [%ntcb ^~((ream '..zuse'))]
+        :+  %ntbs
+          [%ntdt !>(build-mark-loader)]
+        :_  [%ntcb %limb %disc]
+        [%ntcb ^~((ream 'form:grad:core.initial-mark'))]
+      ::  produce the gate
+      ::
+      :-  %ntcb
+      ^~  %-  ream
+      '''
+      |=  [a=_+<.form-mark b=_+<.form-mark]
+      ^+  +<.form-mark
+      ::
+      %+  mash:grad:core.initial-mark
+        [ship.disc.first desk.disc.first a]
+      [ship.disc.second desk.disc.second b]
+      '''
+    ^-  schematic:ford
+    ::  :mark delegates its diffing to machinery to :delegate; recurse
+    ::
+    :+  %ntls  :+  %ntts  %delegate
+      :-  %ntcb
+      ^-  hoon
+      :+  %wtbn
+        ^~((ream '?=(%& -.grad.descriptor.initial-mark)'))
+      ^~((ream 'p.grad.descriptor.initial-mark'))
+    ::
+    :+  %ntnt
+      [%ntcb ^~((ream '..zuse'))]
+    :+  %ntbs
+      [%ntdt !>(build-mark-masher)]
+    [%ntcb ^~((ream '[delegate disc first second]'))]
+  ::  +patch: apply a diff to a marked noun
+  ::
+  ++  patch
+    |=  [=mark disc=disc:ford start=vase diff=vase]
+    ^-  schematic:ford
+    ::
+    :+  %ntbs
+      (build-mark-patcher mark disc)
+    [[%ntdt start] [%ntdt diff]]
+  ::  +build-mark-patcher: produce a gate that applies a diff to a marked noun
+  ::
+  ++  build-mark-patcher
+    |=  [=mark disc=disc:ford]
+    ^-  schematic:ford
+    ::
+    :+  %ntls  [%ntdt !>(disc=disc)]
+    :+  %ntls  [%ntts %initial-mark (build-mark-analyzer mark disc)]
+    ::
+    :^    %ntwt
+        [%ntcb ^~((ream '?=(%| -.grad.descriptor.initial-mark)'))]
+      ::  :mark defines its own patching; build a gate from that
+      ::
+      :+  %ntls  :+  %ntts  %form-mark
+        :+  %ntnt
+          [%ntcb ^~((ream '..zuse'))]
+        :+  %ntbs
+          [%ntdt !>(build-mark-loader)]
+        :_  [%ntcb %limb %disc]
+        [%ntcb ^~((ream 'form:grad:core.initial-mark'))]
+      ::  produce the gate
+      ::
+      :-  %ntcb
+      ^~  %-  ream
+      '''
+      |=  [start=_+<.core.initial-mark diff=_+<.form-mark]
+      ^+  +<.core.initial-mark
+      ::
+      (pact:~(grad core.initial-mark start) diff)
+      '''
+    ::  :mark delegates its diffing machinery to :delegate; recurse
+    ::
+    :+  %ntls  :+  %ntts  %delegate
+      :-  %ntcb
+      ^-  hoon
+      :+  %wtbn
+        ^~((ream '?=(%& -.grad.descriptor.initial-mark)'))
+      ^~((ream 'p.grad.descriptor.initial-mark'))
+    ::  produce the delegate mark's patcher by recursing
+    ::
+    :+  %ntnt
+      [%ntcb ^~((ream '..zuse'))]
+    :+  %ntbs
+      [%ntdt !>(build-mark-patcher)]
+    [%ntcb ^~((ream '[delegate disc]'))]
+  ::  +validate: ensure a noun nests inside :mark's sample
+  ::
+  ++  validate
+    |=  [data=* =mark disc=disc:ford]
+    ^-  schematic:ford
+    ::
+    :+  %ntls  [%ntts %mark-core (build-mark-loader mark disc)]
+    ::
+    :+  %ntkt  [%ntcb ^~((ream '_+<.mark-core'))]
+    ::
+    :+  %ntbs
+      [%ntcb ^~((ream 'noun:grab:mark-core'))]
+    [%ntdt %noun data]
+  ::
+  ++  build-mark-loader
+    |=  [=mark disc=disc:ford]
+    ^-  schematic:ford
+    ::
+    =/  mark-paths=(list path)  (segments mark)
+    =/  rails=(list rail:ford)
+      (turn mark-paths |=(path [disc :(welp /hoon (flop +<) /mar)]))
+    ::
+    :+  %ntzp  [%rock %tas mark]
+    ::
+    :-  %ntpd
+    ::
+    :+  %ntbs
+      [%ntdt !>(filter-mark-loads)]
+    :+  [%ntdt !>(mark)]
+      [%ntdt !>(rails)]
+    (build-list (turn rails |=(rail:ford [%nttr %cx %ntdt !>(+<)])))
+  ::  +filter-mark-loads: try all rails for mark, producing the rail that worked
+  ::
+  ++  filter-mark-loads
+    |=  [=mark rails=(list rail:ford) results=(list (unit [=mark data=*]))]
+    ^-  rail:ford
+    ::
+    =/  successes=(list rail:ford)
+      |-  ^-  (list rail:ford)
+      ?~  rails  ~
+      ::
+      ?<  ?=(~ results)
+      ::
+      ?~  i.results
+        $(rails t.rails, results t.results)
+      [i.rails $(rails t.rails, results t.results)]
+    ::
+    ?~  successes
+      ~|  [%no-file-for-mark mark %tried rails]
+      !!
+    ?^  t.successes
+      ~|  [%two-files-for-mark mark i.successes i.t.successes]
+      !!
+    ::
+    i.successes
+  ::  +build-mark-analyzer: produce a ford build to analyze a mark on a disc
+  ::
+  ::    Analyzes a mark on a disc, producing a cell of:
+  ::      :core is the mark core, as loaded and compiled from source.
+  ::      :descriptor is a +mark-descriptor that is the result of the analysis.
+  ::
+  ++  build-mark-analyzer
+    |=  [=mark disc=disc:ford]
+    ^-  schematic:ford
+    ::
+    ::  /^  /.  mark-descriptor
+    ::  /+  /=  mark-core  (build-mark-loader mark disc)
+    ::  ::
+    ::  /$  /.  analyze-mark-core
+    ::  :-  /.  mark
+    ::  !>(mark-core)
+    ::
+    ::  load :mark-core from source
+    ::
+    :+  %ntls  [%ntts %mark-core (build-mark-loader mark disc)]
+    ::  produce cell of mark :core and :descriptor
+    ::
+    :-  [%ntts %core [%ntcb [%limb %mark-core]]]
+    ::  cast :descriptor product to +mark-descriptor
+    ::
+    :+  %ntts  %descriptor
+    :+  %ntkt  [%ntdt !>(mark-descriptor)]
+    ::  call +analyze-mark-core to get the rest of the +mark-descriptor
+    ::
+    :+  %ntbs  [%ntdt !>(analyze-mark-core)]
+    :-  [%ntdt !>(mark)]
+    [%ntcb ^~((ream '!>(mark-core)'))]
+  ::  +analyze-mark-core: produce [grows grabs grad] of a mark-descriptor
+  ::
+  ++  analyze-mark-core
+    |=  [=mark mark-core=vase]
+    ^-  mark-descriptor
+    ::
+    =/  grows  (~(gas in *(set term)) (sloe -:(slap mark-core [%limb %grow])))
+    =/  grabs  (~(gas in *(set term)) (sloe -:(slap mark-core [%limb %grab])))
+    ::
+    =/  grad-vase  (slap mark-core [%limb %grad])
+    ?@  q.grad-vase
+      ~|  [%bad-grad-arm mark=mark]
+      ?>  ((sane %tas) q.grad-vase)
+      ::
+      [grows grabs grad=[%& delegate=`@tas`q.grad-vase]]
+    ::
+    =/  form-vase  (slap grad-vase [%limb %form])
+    ~|  [%bad-grad-form mark=mark]
+    ?>  ?=(@ q.form-vase)
+    ?>  ((sane %tas) q.form-vase)
+    ::
+    [grows grabs grad=[%| form=`@tas`q.form-vase]]
+  ::  +tear: split a +term into segments delimited by `-`
+  ::
+  ::  Example:
+  ::  ```
+  ::  dojo> (tear 'foo-bar-baz')
+  ::  ['foo' 'bar' 'baz']
+  ::  ```
+  ::
+  ++  tear
+    |=  a=term
+    ^-  (list term)
+    ::  sym-no-heps: a parser for terms with no heps and a leading letter
+    ::
+    =/  sym-no-heps  (cook crip ;~(plug low (star ;~(pose low nud))))
+    ::
+    (fall (rush a (most hep sym-no-heps)) /[a])
+  ::  +segments: get all paths from :path-part, replacing some `/`s with `-`s
+  ::
+  ::    For example, when passed a :path-part of 'foo-bar-baz',
+  ::    the product will contain:
+  ::    ```
+  ::    dojo> (segments 'foo-bar-baz')
+  ::    [/foo/bar/baz /foo/bar-baz /foo-bar/baz /foo-bar-baz]
+  ::    ```
+  ::
+  ++  segments
+    |=  path-part=@tas
+    ^-  (list path)
+    ::
+    =/  join  |=([a=@tas b=@tas] (crip "{(trip a)}-{(trip b)}"))
+    ::
+    =/  torn=(list @tas)  (tear path-part)
+    ::
+    |-  ^-  (list (list @tas))
+    ::
+    ?<  ?=(~ torn)
+    ::
+    ?:  ?=([@ ~] torn)
+      ~[torn]
+    ::
+    %-  zing
+    %+  turn  $(torn t.torn)
+    |=  s=(list @tas)
+    ^-  (list (list @tas))
+    ::
+    ?>  ?=(^ s)
+    ~[[i.torn s] [(join i.torn i.s) t.s]]
   --
 ::                                                      ::
 ::::                      ++differ                      ::  (2d) hunt-mcilroy

@@ -1,13 +1,20 @@
-::                                                      ::  ::
-::::  /hoon/drum/hood/lib                               ::  ::
-  ::                                                    ::  ::
-/?    310                                               ::  version
-/-    sole, hall
-/+    sole
+#+  #=  here-disc
+  ^-  disc:ford
+  !:
+  =/  her=path  /==
+  ~&  [%loading %]
+  ?>  ?=([* * *] her)
+  [(slav %p i.her) (slav %tas i.t.her)]
+::
+#+  #=  sole  #&  :-  here-disc  #.  /hoon/sole/sur
+#+  #=  hall  #&  :-  here-disc  #.  /hoon/hall/sur
+#+  #=  sole  #&  :-  here-disc  #.  /hoon/sole/lib
+::
 =,    ^sole
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
+=>
 |%                                                      ::  ::
 ++  part      {$drum $2 pith-2}                         ::
 ++  part-old  {$drum $1 pith-1}                         ::
@@ -72,6 +79,7 @@
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
+=>
 |%
 ++  deft-apes                                           ::  default servers
   |=  our/ship
@@ -81,12 +89,12 @@
   ::
   ?:  ?=($pawn myr)
     [[%base %collections] [%base %hall] [%base %talk] [%base %dojo] ~]
-  :~  [%home %collections]
-      [%home %acme]
-      [%home %dns]
+  :~  ::[%home %collections]
+      ::[%home %acme]
+      ::[%home %dns]
       [%home %dojo]
-      [%home %hall]
-      [%home %talk]
+      ::[%home %hall]
+      ::[%home %talk]
   ==
 ::
 ++  deft-fish                                           ::  default connects

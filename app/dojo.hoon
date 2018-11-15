@@ -1,12 +1,22 @@
-::                                                      ::  ::  
-::::  /hoon/dojo/app                                    ::  ::::
-  ::                                                    ::    ::
-/?  309                                                 ::  arvo kelvin
-/-  sole, lens                                          ::  console structures
-/+  sole                                                ::  console library
+#+  #=  here-disc
+  ^-  disc:ford
+  !:
+  =/  her=path  /==
+  ~&  [%loading %]
+  ?>  ?=([* * *] her)
+  [(slav %p i.her) (slav %tas i.t.her)]
+::
+#+  #=  sole  #&  :-  here-disc  #.  /hoon/sole/sur
+#+  #=  lens  #&  :-  here-disc  #.  /hoon/lens/sur
+#+  #=  sole  #&  :-  here-disc  #.  /hoon/sole/lib
+::
+=/  pit=vase  !>(..zuse)
+~&  [%zuse-version (slap pit %limb %zuse)]
+::
 =,  sole
 =,  space:userlib
 =,  format
+!:
 ::                                                      ::  ::
 ::::                                                    ::  ::::
   ::                                                    ::    ::
@@ -16,17 +26,12 @@
           egg/@u                                        ::  command count
           hoc/(map bone session)                        ::  conversations
       ==                                                ::
+    ::  TODO: remove either session or monkey now that they're the same
+    ::
     ++  session                                         ::  per conversation
       $:  say/sole-share                                ::  command-line state
           dir/beam                                      ::  active path
           poy/(unit dojo-project)                       ::  working
-          $:  ::  sur: structure imports
-              ::
-              sur=(list cable:ford)
-              ::  lib: library imports
-              ::
-              lib=(list cable:ford)
-          ==
           var/(map term cage)                           ::  variable state
           old/(set term)                                ::  used TLVs
           buf/tape                                      ::  multiline buffer
@@ -66,6 +71,7 @@
       $~  [%ex *hoon]
       $%  {$ur p/(unit knot) q/purl:eyre}               ::  http GET request
           {$ge p/dojo-model}                            ::  generator
+          ::{$fo p/hoon}                                  ::  ford build
           {$dv p/path}                                  ::  core from source
           {$ex p/hoon}                                  ::  hoon expression
           {$sa p/mark}                                  ::  example mark value
@@ -134,7 +140,7 @@
               $=  result
               $%  ::  %complete: contains the result of the completed build
                   ::
-                  [%complete build-result=build-result:ford]
+                  [%complete result=(each vase tang)]
                   ::  %incomplete: couldn't finish build; contains error message
                   ::
                   [%incomplete =tang]
@@ -198,25 +204,6 @@
           ==
         ==
       ::
-        ;~  pfix  net 
-          ;~  pose
-            (dp-variable (cold %sur hep) ;~(pfix gap parse-cables))
-            (dp-variable (cold %lib lus) ;~(pfix gap parse-cables))
-          ==
-        ==
-      ::
-        ;~  pfix  hax
-          ;~  pose
-            ;~  pfix  ace
-              %+  cook
-                |=  a/(list term)
-                [[%help a] 0 %ex [%cnts p=~[[%.y p=1]] q=~]]
-              (most col sym)
-            ==
-            (easy [[%help ~] 0 %ex [%cnts p=~[[%.y p=1]] q=~]])
-          ==
-        ==
-      ::
         ;~((glue ace) dp-sink dp-source)
         (stag [%show %0] dp-source)
       ==
@@ -228,41 +215,6 @@
         ;~(plug (cold %http lus) (stag %post dp-iden-url))
         ;~(plug (cold %http hep) (stag %put dp-iden-url))
         (stag %show (cook $?($1 $2 $3) (cook lent (stun [1 3] wut))))
-      ==
-    ::
-    ++  parse-cables
-      %+  cook
-        |=  cables=(list cable:ford)
-        :+  0  %ex
-        ^-  hoon
-        ::
-        :-  %clsg
-        %+  turn  cables
-        |=  cable=cable:ford
-        ^-  hoon
-        ::
-        :+  %clhp
-          ?~  face.cable
-            [%rock %n ~]
-          [%clhp [%rock %n ~] [%sand %tas u.face.cable]]
-        [%sand %tas file-path.cable]
-      (most ;~(plug com gaw) parse-cable)
-    ::  +cable: parses a +^cable, a reference to something on the filesystem
-    ::
-    ::    This parses:
-    ::
-    ::      `library`       ->  wraps `library` around the library `library`
-    ::      `face=library`  ->  wraps `face` around the library `library`
-    ::      `*library`      ->  exposes `library` directly to the subject
-    ::
-    ::    NOTE: This is a verbatim duplicate of Ford's cable parsing
-    ::
-    ++  parse-cable
-      %+  cook  |=(a=cable:ford a)
-      ;~  pose
-        (stag ~ ;~(pfix tar sym))
-        (cook |=([face=term tis=@ file=term] [`face file]) ;~(plug sym tis sym))
-        (cook |=(a=term [`a a]) sym)
       ==
     ::
     ++  dp-hoon-punt                                   ::  hoon of unit
@@ -283,6 +235,7 @@
         ;~(plug (cold %ge lus) dp-model)
         ;~(plug (cold %as pad) sym ;~(pfix ace dp-source))
         ;~(plug (cold %do cab) dp-hoon ;~(pfix ace dp-source))
+        ::;~(plug (cold %fo ;~(plug lus hax gap)) dp-gear)
         dp-value
       ==
     :: 
@@ -313,6 +266,13 @@
         =+((de-beam a) ?^(- u [he-beak (flop a)]))
       =+  vez=(vang | dp-path)
       (sear plex:vez (stag %clsg poor:vez))
+    ::
+    ::++  dp-gear
+    ::  =/  hoon-parser       vast
+    ::  =.  wer.hoon-parser   dp-path
+    ::  =/  gear-parser       tall-top:(rage allow-bare-hoons=&):hoon-parser
+    ::  ::
+    ::  (full (ifix [gay gay] gear-parser))
     ::
     ++  dp-iden-url
       %+  cook
@@ -363,8 +323,6 @@
       |=  [way=wire schematic=schematic:ford]
       ^+  +>+>
       ?>  ?=($~ pux)
-      ::  pin all builds to :now.hid so they don't get cached forever
-      ::
       (he-card(poy `+>+<(pux `way)) %build way our.hid live=%.n schematic)
     ::
     ++  dy-eyre                                         ::  send work to eyre
@@ -383,7 +341,7 @@
     ++  dy-slam                                         ::  call by ford
       |=  {way/wire gat/vase sam/vase}
       ^+  +>+>
-      (dy-ford way `schematic:ford`[%call [%$ %noun gat] [%$ %noun sam]])
+      (dy-ford way `schematic:ford`[%ntbs [%ntdt gat] [%ntdt sam]])
     ::
     ++  dy-errd                                         ::  reject change, abet
       |=  {rev/(unit sole-edit) err/@u}
@@ -486,28 +444,31 @@
       =^(dam . (dy-init-command mad) +(mad dam))
     ::
     ++  dy-hand                                         ::  complete step
-      |=  cag/cage
+      |=  vax=vase
       ^+  +>+>
       ?>  ?=(^ cud)
-      (dy-step(cud ~, rez (~(put by rez) p.u.cud cag)) +(p.u.cud))
+      ::  TODO replace when we have real printing
+      ::
+      =/  =mark  ?~(((soft tang) q.vax) %noun %tang)
+      (dy-step(cud ~, rez (~(put by rez) p.u.cud [mark vax])) +(p.u.cud))
     ::
     ++  dy-meal                                         ::  vase to cage
       |=  vax/vase
       ?.  &(?=(@ -.q.vax) ((sane %tas) -.q.vax))
         ~&  %dy-meal-cage
         (dy-rash %bel ~)
-      (dy-hand -.q.vax (slot 3 vax))
+      (dy-hand vax)
     ::
     ++  dy-made-edit                                    ::  sole edit
-      |=  cag/cage
+      |=  vax=vase
       ^+  +>+>
       ?>  ?=(^ per)
-      ?:  ?|  ?=(^ q.q.cag) 
-              =((lent buf.say) q.q.cag)
+      ?:  ?|  ?=(^ q.vax)
+              =((lent buf.say) q.vax)
               !&(?=($del -.u.per) =(+(p.u.per) (lent buf.say)))
           ==
         dy-abet(per ~)
-      (dy-errd(per ~) per q.q.cag)
+      (dy-errd(per ~) per q.vax)
     ::
     ++  dy-done                                         ::  dialog submit
       |=  txt/tape
@@ -529,13 +490,12 @@
       ::
       :: ?:  ?=({$show $3} -.mad)
       ::  (dy-rash %tan (dy-show-source q.mad) ~)       ::  XX separate command
+      ~&  [%dy-over -.mad]
       ?:  ?=($brev -.mad)
         =.  var  (~(del by var) p.mad)
         =<  dy-amok
         ?+  p.mad  . 
           $?($eny $now $our)  !!
-          $lib  .(lib ~)
-          $sur  .(sur ~)
           $dir  .(dir [[our.hid %home ud+0] /])
         ==
       =+  cay=(~(got by rez) p.q.mad)
@@ -548,17 +508,6 @@
             $eny  ~|(%entropy-is-eternal !!)
             $now  ~|(%time-is-immutable !!)
             $our  ~|(%self-is-immutable !!)
-            $lib
-          %_    .
-              lib
-            ((dy-cast (list cable:ford) !>(*(list cable:ford))) q.cay)
-          ==
-        ::
-            $sur
-          %_    .
-              sur
-            ((dy-cast (list cable:ford) !>(*(list cable:ford))) q.cay)
-          ==
         ::
             $dir  =+  ^=  pax  ^-  path
                       =+  pax=((dy-cast path !>(*path)) q.cay)
@@ -581,7 +530,9 @@
             [our.hid p.p.p.mad]
             q.p.p.mad
             %poke
-            cay
+            ::  TODO this is gross
+            ::
+            (vase-to-cage:forder q.cay)
         ==
       ::
           $file
@@ -622,7 +573,7 @@
       |=  {cay/cage tan/tang}
       %+  dy-rash  %tan
       %-  welp  :_  tan
-      ?+  p.cay  [(sell q.cay)]~
+      ?+  p.cay  ~&(%dy-print [(sell q.cay)]~)
         $tang  ;;(tang q.q.cay)
         $httr
           =+  hit=;;(httr:eyre q.q.cay)
@@ -708,125 +659,12 @@
         |=  {topics/(list term) sut/type}
         ^-  (unit item)
         ~
-::      ?~  topics
-::        ::  we have no more search path. return the rest as an overview
-::        (build-inspectable-recursively sut)
-::      ?-  sut
-::          {$atom *}  ~
-::      ::
-::          {$cell *}
-::        =+  lhs=$(sut p.sut)
-::        ?~  lhs
-::          $(sut q.sut)
-::        lhs
-::      ::
-::          {$core *}
-::        =+  core-docs=r.q.sut
-::        ?~  p.core-docs
-::          ::  todo: this core has no toplevel documentation. it might have
-::          ::  an arm though. check that next.
-::          $(sut p.sut)
-::        ?:  !=(i.topics u.p.core-docs)
-::          ::  the current topic isn't the toplevel core topic.
-::          =+  arm=(find-arm-in-coil i.topics q.sut)
-::          ?~  arm
-::            ::  the current topic is neither the name of the core or an arm
-::            ::  on the core.
-::            $(sut p.sut)
-::          `[%arm (trip i.topics) p.u.arm q.u.arm p.sut]
-::        ?~  t.topics
-::          ::  we matched the core name and have no further search terms.
-::          =*  compiled-against  (build-inspectable-recursively p.sut)
-::          `[%core (trip i.topics) q.core-docs p.sut q.sut compiled-against]
-::        ::  search the core for chapters.
-::        =/  tombs/(list (pair @ tomb))  ~(tap by q.s.q.sut)
-::        |-
-::        ^-  (unit item)
-::        ?~  tombs
-::          ~
-::        ?~  p.p.q.i.tombs
-::          ::  this has no chapter name.
-::          $(tombs t.tombs)
-::        ?:  !=(i.t.topics u.p.p.q.i.tombs)
-::          ::  this isn't the topic.
-::          $(tombs t.tombs)
-::        `[%chapter (trip i.t.topics) q.p.q.i.tombs sut q.sut p.i.tombs]
-::      ::
-::          {$face *}
-::        ?.  ?=(term q.p.sut)
-::          ::  todo: is there something we could do if we have a tune?
-::          ~
-::        ?.  =(i.topics q.p.sut)
-::          ::  this face has a name, but it's not the name we're looking for.
-::          ~
-::        ?~  t.topics
-::          `[%face (trip q.p.sut) p.p.sut (build-inspectable-recursively q.sut)]
-::        (find-item-in-type t.topics q.sut)
-::      ::
-::          {$fork *}
-::        =/  types/(list type)  ~(tap in p.sut)
-::        |-
-::        ?~  types
-::          ~
-::        =+  res=(find-item-in-type topics i.types)
-::        ?~  res
-::          $(types t.types)
-::        res
-::      ::
-::        ::  {$help *}
-::        ::  while we found a raw help, it's associated on the wrong side of a
-::        ::  set of topics. Walk through it instead of showing it.
-::        ::  (find-item-in-type t.topics q.sut)
-::      ::
-::          {$hint *}
-::        $(sut q.sut)
-::      ::
-::          {$hold *}  $(sut (~(play ut p.sut) q.sut))
-::          $noun      ~
-::          $void      ~
-::      ==
       ::
       ::  changes a {type} into an {item}.
       ++  build-inspectable-recursively
         |=  sut/type
         ^-  (unit item)
         ~
-::      ?-  sut
-::      ::
-::          {$atom *}  ~
-::      ::
-::          {$cell *}
-::        %+  join-items
-::          (build-inspectable-recursively p.sut)
-::          (build-inspectable-recursively q.sut)
-::      ::
-::          {$core *}
-::        =*  name  (fall p.r.q.sut '')
-::        =*  compiled-against  (build-inspectable-recursively p.sut)
-::        `[%core (trip name) q.r.q.sut p.sut q.sut compiled-against]
-::      ::
-::          {$face *}
-::        ?.  ?=(term q.p.sut)
-::          ::  todo: can we do anything here if this face doesn't have a term?
-::          ~
-::        =*  compiled-against  (build-inspectable-recursively q.sut)
-::        `[%face (trip q.p.sut) p.p.sut compiled-against]
-::      ::
-::          {$fork *}
-::        =*  types  ~(tap in p.sut)
-::        =*  items  (turn types build-inspectable-recursively)
-::        (roll items join-items)
-::      ::
-::        ::  {$help *}
-::        ::  =*  rest-type  (build-inspectable-recursively q.sut)
-::        ::  ?>  ?=($docs -.p.sut)
-::        ::  `[%view [%header `+.p.sut (item-as-overview rest-type)]~]
-::      ::
-::          {$hint *}  $(sut q.sut)
-::          {$hold *}  $(sut (~(play ut p.sut) q.sut))
-::          $noun      ~
-::          $void      ~
-::      ==
       ::
       ::  combines two {(unit item)} together
       ++  join-items
@@ -879,14 +717,6 @@
         |=  {arm-name/term con/coil}
         ^-  (unit (pair what foot))
         ~
-::      =/  tombs  ~(tap by q.s.con)
-::      |-
-::      ?~  tombs
-::        ~
-::      =+  item=(~(get by q.q.i.tombs) arm-name)
-::      ?~  item
-::        $(tombs t.tombs)
-::      [~ u.item]
       ::
       ::    returns an overview for a core's arms and chapters.
       ::
@@ -896,24 +726,6 @@
         |=  {sut/type con/coil core-name/tape}
         ^-  {overview overview}
         [*overview *overview]
-::      =|  arm-docs/overview                           ::  documented arms
-::      =|  chapter-docs/overview                       ::  documented chapters
-::      =/  tombs  ~(tap by q.s.con)
-::      |-
-::      ?~  tombs
-::        [(sort-overview arm-docs) (sort-overview chapter-docs)]
-::      =*  current  q.i.tombs
-::      ?~  p.p.current
-::        ::  this chapter has no name. add all the foot documentation
-::        ::  to arm-docs.
-::        =.  arm-docs  (weld arm-docs (arms-as-overview q.current sut))
-::        $(tombs t.tombs)
-::      ::  this chapter has a name. add it to the list of chapters
-::      =.  chapter-docs
-::        %+  weld  chapter-docs
-::        ^-  overview
-::        [%item :(weld (trip u.p.p.current) ":" core-name) q.p.current]~
-::      $(tombs t.tombs)
 ::    ::
 ::    ::    returns an overview of the arms in a spedific chapter.
       ++  arms-in-chapter
@@ -968,26 +780,6 @@
         |:  $:{core-name/tape docs/what sut/type con/coil uit/(unit item)}
         ^-  tang
         *tang
-::      =+  [arms chapters]=(arm-and-chapter-overviews sut con core-name)
-::      ;:  weld
-::        (print-header (trip (fall p.r.con '')) q.r.con)
-::      ::
-::      ::  todo: figure out how to display the default arm, which should
-::      ::  be rendered separately.
-::      ::
-::        ?~  arms
-::          ~
-::        (print-overview [%header `['arms:' ~] arms]~)
-::      ::
-::        ?~  chapters
-::          ~
-::        (print-overview [%header `['chapters:' ~] chapters]~)
-::      ::
-::        =+  compiled=(item-as-overview uit)
-::        ?~  compiled
-::          ~
-::        (print-overview [%header `['compiled against:' ~] compiled]~)
-::      ==
       ::
       ::    figures out which {what}s to use.
       ::
@@ -999,22 +791,6 @@
         ::  the computed arm documentation and the product documentation.
         ^-  {what what}
         [*what *what]
-::      =+  foot-type=(~(play ut sut) p.f)
-::      =/  raw-product/what  (what-from-type foot-type)  
-::      =/  product-product/what
-::        ?.  ?=({$core *} foot-type)
-::          ~
-::        =*  inner-type  (~(play ut foot-type) [%limb %$])
-::        (what-from-type inner-type)
-::      :-
-::        ?~  arm-doc
-::          ?~  raw-product
-::            product-product
-::          raw-product
-::        arm-doc
-::      ?~  arm-doc
-::        product-product
-::      raw-product
       ::
       ::    renders the documentation for a single arm in a core.
       ++  print-arm
@@ -1210,61 +986,6 @@
     ++  dy-show-type-noun
       |=  a/type  ^-  tank
       *tank
-::    =-  >[-]<
-::    |-  ^-  $?  $%  {$atom @tas (unit @)}
-::                    {$cell _$ _$}
-::                    {$cube * _$}
-::                    {$face {what $@(term tune)} _$}
-::                    {$fork (set _$)}
-::                    {$hold _$ hoon}
-::                ==
-::                wain                :: "<|core|>"
-::                $?($noun $void)
-::            ==
-::    ?+  a  a
-::    ::  {?($cube $face) ^}  a(q $(a q.a))
-::      {$cell ^}  a(p $(a p.a), q $(a q.a))
-::      {$fork *}  a(p (silt (turn ~(tap in p.a) |=(b/type ^$(a b)))))
-::      {$hint *}  !!
-::      {$core ^}  `wain`/core
-::      {$hold *}  a(p $(a p.a))
-::    ==
-    ::
-    ::  XX needs filter
-    ::
-::  ++  dy-shown
-::    $?  hoon
-::        $^  {dy-shown dy-shown}
-::        $%  {$ur (unit knot) purl:eyre}
-::            {$sa mark}
-::            {$as mark dy-shown}
-::            {$do hoon dy-shown}
-::            {$ge path (list dy-shown) (map term (unit dy-shown))}
-::            {$dv path}
-::        ==
-::    ==
-::  ::
-::  ++  dy-show-source
-::    |=  a/dojo-source  ^-  tank
-::    =-  >[-]<
-::    =+  `{@ bil/dojo-build}`a
-::    |-  ^-  dy-shown
-::    ?-  -.bil
-::      $?($ur $dv $sa)  bil
-::      $ex  ?.  ?=({$cltr *} p.bil)  p.bil
-::               |-  ^-  hoon
-::               ?~  p.p.bil  !!
-::               ?~  t.p.p.bil  i.p.p.bil
-::               [i.p.p.bil $(p.p.bil t.p.p.bil)]
-::      $tu  ?~  p.bil  !!
-::           |-
-::           ?~  t.p.bil  ^$(bil q.i.p.bil)
-::           [^$(bil q.i.p.bil) $(p.bil t.p.bil)]
-::      $as  bil(q $(bil q.q.bil))
-::      $do  bil(q $(bil q.q.bil))
-::      $ge  :+  %ge  q.p.p.bil
-::           [(turn p.q.p.bil ..$) (~(run by q.q.p.bil) (lift ..$))]
-::    ==
     ::
     ++  dy-edit                                         ::  handle edit
       |=  cal/sole-change
@@ -1286,19 +1007,11 @@
     ::
     ++  dy-cage       |=(num/@ud (~(got by rez) num))   ::  known cage
     ++  dy-vase       |=(num/@ud q:(dy-cage num))       ::  known vase
-    ++  dy-silk-vase  |=(vax/vase [%$ %noun vax])       ::  vase to silk
-    ++  dy-silk-sources                                 ::  arglist to silk
-      |=  src/(list dojo-source)
-      ^-  schematic:ford
-      ::
-      :+  %$  %noun
-      |-
-      ?~  src  !>(~)
-      (slop (dy-vase p.i.src) $(src t.src))
     ::
-    ++  dy-silk-config                                  ::  configure
+    ++  dy-run-generator
       |=  {cay/cage cig/dojo-config}
       ^-  [wire schematic:ford]
+      ::
       ?.  (~(nest ut [%cell [%atom %$ ~] %noun]) | p.q.cay)
         ::
         ::  naked gate
@@ -1306,54 +1019,107 @@
         ?.  &(?=({* ~} p.cig) ?=(~ q.cig))
           ~|(%one-argument !!)
         :-  /noun
-        :+  %call  [%$ %noun q.cay]
-        [%$ %noun (dy-vase p.i.p.cig)]
-      ::
-      ::  normal generator
+        :+  %ntbs
+          [%ntdt q.cay]
+        [%ntdt (dy-vase p.i.p.cig)]
+      ::  non-naked generator: produce a wire depending on the kind of generator
       ::
       :-  ?+  -.q.q.cay  ~|(%bad-gen ~_((sell (slot 2 q.cay)) !!))
-            $say  /gent
-            $ask  /dial
-            $get  /scar
+            %say  /gent
+            %ask  /dial
+            %get  /scar
+            %bud  /make
           ==
+      ::  tell ford to eval the schematic produced by a %bud generator
+      ::
+      =-  ?.  =(%bud -.q.q.cay)
+            run-generator
+          ::
+          :+  %ntnt
+            [%ntcb ^~((ream '.'))]
+          run-generator
+      ::  produce a schematic that runs the generator gate
+      ::
+      ^=  run-generator
+      ^-  schematic:ford
+      ::
       =+  gat=(slot 3 q.cay)
-      :+  %call  [%$ %noun gat]
-      :+  [%$ %noun !>([now=now.hid eny=eny.hid bec=he-beak])]
-        (dy-silk-sources p.cig)
-      :+  %mute  [%$ %noun (fall (slew 27 gat) !>(~))]
-      ^-  (list [wing schematic:ford])
-      %+  turn  ~(tap by q.cig)
-      |=  {a/term b/(unit dojo-source)}
-      ^-  [wing schematic:ford]
-      :-  [a ~]
-      :+  %$  %noun
-      ?~(b !>([~ ~]) (dy-vase p.u.b))
+      ::
+      :+  %ntbs
+        [%ntdt gat]
+      :+  [%ntdt !>([now=now.hid eny=eny.hid bec=he-beak])]
+        ::  collect positional command-line arguments
+        ::
+        :-  %ntdt
+        =/  src  p.cig
+        ::
+        |-  ^-  vase
+        ?~  src  !>(~)
+        (slop (dy-vase p.i.src) $(src t.src))
+      ::  modify the default keyword arguments with supplied values
+      ::
+      :+  %ntbn  [%ntdt (fall (slew 27 gat) !>(~))]
+      ::
+      =/  args  ~(tap by q.cig)
+      ::  build up from the identity schematic
+      ::
+      =/  res=schematic:ford  [%ntcb %$ 1]
+      ::
+      |-  ^+  res
+      ?~  args  res
+      ::
+      =/  =term                   p.i.args
+      =/  sor=(unit dojo-source)  q.i.args
+      ::
+      =.  res
+        :+  %ntbn
+          :+  %ntls  :+  %ntts  %arg-value
+            :-  %ntdt
+            ?~  sor
+              !>([~ ~])
+            (dy-vase p.u.sor)
+          :-  %ntcb
+          ^~((ream (crip ".({(trip term)} arg-value)")))
+        res
+      ::
+      $(args t.args)
     ::
-    ++  dy-hoon-head                                    ::  dynamic state
-      ::  todo: how do i separate the toplevel 'dojo state' comment?
-      ::  dojo state
+    ++  dy-hoon-subject                                 ::  dynamic state
       ::
       ::  our: the name of this urbit
       ::  now: the current time
       ::  eny: a piece of random entropy
       ::
-      ^-  cage
-      :-  %noun
-      =+  sloop=|=({a/vase b/vase} ?:(=(*vase a) b ?:(=(*vase b) a (slop a b))))
-      %+  sloop
-        %-  ~(rep by var)
-        |=  {{a/term @ b/vase} c/vase}  ^-  vase
-        (sloop b(p face+[a p.b]) c)
-      !>([our=our now=now eny=eny]:hid)
+      ^-  vase
+      ::  prepend the event information so it shadows user-defined variables
+      ::
+      %+  slop
+        !>([our=our now=now eny=eny]:hid)
+      ::  start from the standard library
+      ::
+      =/  subject=vase  pit
+      ::  prepend user-defined variables to the standard library
+      ::
+      =/  vars  ~(tap by var)
+      ::
+      |-  ^+  subject
+      ?~  vars  subject
+      ::
+      =/  var-name=term  p.i.vars
+      =/  value=vase     q.q.i.vars
+      ::
+      =.  subject  (slop [[%face var-name p.value] q.value] subject)
+      ::
+      $(vars t.vars)
     ::
     ++  dy-made-dial                                    ::  dialog product
-      |=  cag/cage
+      |=  vaz=vase
       ^+  +>+>
-      ?.  ?=(^ q.q.cag)
-        (dy-errd ~ q.q.cag)
-      =+  tan=((list tank) +2.q.q.cag)
+      ?.  ?=(^ q.vaz)
+        (dy-errd ~ q.vaz)
+      =+  tan=(tang +2.q.vaz)
       =.  +>+>.$  (he-diff %tan tan)
-      =+  vax=(sped (slot 3 q.cag))
+      =+  vax=(sped (slot 3 vaz))
       ?+    -.q.vax  !!
           %&
         ?~  +.q.vax
@@ -1369,14 +1135,14 @@
       ==
     ::
     ++  dy-made-scar                                    ::  scraper product
-      |=  cag/cage
+      |=  vaz=vase
       ^+  +>+>
-      ?.  ?=(^ q.q.cag)
-        (dy-errd ~ q.q.cag)
-      =+  tan=((list tank) +2.q.q.cag)
+      ?.  ?=(^ q.vaz)
+        (dy-errd ~ q.vaz)
+      =+  tan=(tang +2.q.vaz)
       =.  +>+>.$  (he-diff %tan tan)
-      =+  vax=(sped (slot 3 q.cag))
-      ~_  (sell q.cag)
+      =+  vax=(sped (slot 3 vaz))
+      ~_  (sell vaz)
       ?+    -.q.vax  !!
           %&
         ?~  +.q.vax
@@ -1400,12 +1166,16 @@
       (dy-slam(pux ~) /scar u.pro q.dat) 
     ::
     ++  dy-made-gent                                    ::  generator product
-      |=  cag/cage
-      (dy-meal q.cag)
+      |=  vax=vase
+      (dy-meal vax)
     ::
     ++  dy-made-noun                                    ::  generator product
-      |=  cag/cage
-      (dy-hand %noun q.cag)
+      |=  vax=vase
+      (dy-hand vax)
+    ::
+    ++  dy-made-make
+      |=  vax=vase
+      (dy-hand vax)
     ::
     ++  dy-make                                         ::  build step
       ^+  +>
@@ -1415,15 +1185,21 @@
         (dy-eyre /hand p.bil [q.bil %get ~ ~])
       %-  dy-ford
       ^-  [path schematic:ford]
+      ~&  [%dy-make -.bil]
       ?-  -.bil
-        $ge  (dy-silk-config (dy-cage p.p.p.bil) q.p.bil)
-        $dv  [/hand [%core [he-disc (weld /hoon (flop p.bil))]]]
-        $ex  [/hand (dy-mare p.bil)]
-        $sa  [/hand [%bunt he-disc p.bil]]
-        $as  [/hand [%cast he-disc p.bil [%$ (dy-cage p.q.bil)]]]
-        $do  [/hand [%call (dy-mare p.bil) [%$ (dy-cage p.q.bil)]]]
+        $ge  (dy-run-generator (dy-cage p.p.p.bil) q.p.bil)
+        $dv  [/hand [%ntpd [%ntdt !>([he-disc (weld /hoon (flop p.bil))])]]]
+        $ex  [/hand (dy-run-hoon p.bil)]
+        $sa  [/hand (bunt:marker mark=p.bil disc=he-disc)]
+        $as  [/hand (dy-cast-to-mark p.bil q.bil)]
+        $do  [/hand [%ntbs (dy-run-hoon p.bil) [%ntdt (dy-vase p.q.bil)]]]
+        ::$fo  :-  /hand
+        ::     :+  %ntls  [%ntdt q:dy-hoon-head]
+        ::     :+  %ntnt  [%ntcb ^~((ream '..zuse'))]
+        ::     :+  %ntnt  [%ntcb ^~((ream '.'))]
+        ::     [%ntcb p.bil]
         $tu  :-  /hand
-             :+  %$  %noun
+             :-  %ntdt
              |-  ^-  vase
              ?~  p.bil  !!
              =+  hed=(dy-vase p.i.p.bil)
@@ -1431,37 +1207,33 @@
              (slop hed $(p.bil t.p.bil))
       ==
     ::
-    ++  dy-hoon-mark                                    ::  XX architect
-      =+  ^=  ope
-          |=  gen/hoon  ^-  hoon
-          ?:  ?=(?($sgld $sgbn) -.gen)
-            $(gen q.gen)
-          =+  ~(open ap gen)
-          ?.(=(gen -) $(gen -) gen)
-      |=  gen/hoon  ^-  (unit mark)
-      =.  gen  (ope gen)
-      ?:  ?=({$cnts {@ ~} ~} gen)
-        (bind (~(get by var) i.p.gen) head)
-      ~
+    ++  dy-cast-to-mark
+      |=  [end-mark=mark =dojo-source]
+      ^-  schematic:ford
+      ::
+      =/  =cage  (dy-cage p.dojo-source)
+      ::
+      (cast:marker data=q.cage start=[p.cage he-disc] end=[end-mark he-disc])
     ::
-    ++  dy-mare                                         ::  build expression
+    ++  dy-run-hoon
       |=  gen/hoon
       ^-  schematic:ford
-      =+  too=(dy-hoon-mark gen)
-      =-  ?~(too - [%cast he-disc u.too -])
-      :+  %ride  gen
-      :-  [%$ dy-hoon-head]
-      :^  %plan  he-rail  `coin`blob+**
-      `scaffold:ford`[he-rail zuse sur lib ~ ~]
+      ::
+      :+  %ntbn
+        [%ntdt dy-hoon-subject]
+      [%ntcb gen]
     ::
     ++  dy-step                                         ::  advance project
       |=  nex/@ud
       ^+  +>+>
       ?>  ?=(~ cud)
       ?:  ?=({$show $3} -.mad)
+        ~&  %dy-step-show-3
         he-easter:dy-over
       ?:  =(nex num)
+        ~&  %dy-step-over
         he-easter:dy-over
+      ~&  %dy-step-make
       dy-make(cud `[nex (~(got by job) nex)])
     --
   ::
@@ -1535,7 +1307,8 @@
   ::
   ++  he-pine                                           ::  restore prompt
     ^+  .
-    ?^  poy  .
+    ?^  poy  ~&  %he-pine-poy  .
+    ~&  %he-pine-no-poy
     he-prom:he-pone
   ::
   ++  he-errd                                           ::  reject update
@@ -1571,7 +1344,7 @@
     |=  $:  way=wire
             date=@da
             $=  result
-            $%  [%complete build-result=build-result:ford]
+            $%  [%complete result=(each vase tang)]
                 [%incomplete =tang]
         ==  ==
     ^+  +>
@@ -1582,11 +1355,11 @@
       (he-diff(poy ~) %tan tang.result)
     ::
         %complete
-      ?-    -.build-result.result
+      ?-    -.result.result
           ::
-          %success
+          %&
         ::
-        %.  (result-to-cage:ford build-result.result)
+        %.  p.result.result
         =+  dye=~(. dy u.poy(pux ~))
         ?+  way  !!
           {$hand ~}  dy-hand:dye
@@ -1594,11 +1367,12 @@
           {$gent ~}  dy-made-gent:dye
           {$noun ~}  dy-made-noun:dye
           {$scar ~}  dy-made-scar:dye
+          {$make ~}  dy-made-make:dye
           {$edit ~}  dy-made-edit:dye
         ==
       ::
-          %error
-        (he-diff(poy ~) %tan message.build-result.result)
+          %|
+        (he-diff(poy ~) %tan p.result.result)
     ==  ==
   ::
   ++  he-sigh                                           ::  result from eyre
@@ -1606,12 +1380,11 @@
     ^+  +>
     ?>  ?=(^ poy)
     =<  he-pine
-    %.  [%httr !>(hit)]
     =+  dye=~(. dy u.poy(pux ~))
     ?+  way  !!
-      {$hand ~}  dy-hand:dye
-      {$show ~}  dy-show:dye
-      {$scar ~}  dy-sigh-scar:dye
+      {$hand ~}  (dy-hand:dye !>(hit))
+      {$show ~}  (dy-show:dye [%httr !>(hit)])
+      {$scar ~}  (dy-sigh-scar:dye [%httr !>(hit)])
     ==
   ::
   ++  he-unto                                           ::  result from behn

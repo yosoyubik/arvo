@@ -1,10 +1,3 @@
-::
-::::  /hoon/atom/mar
-  ::
-/?    310
-::
-::::  A minimal atom mark
-  ::
 =,  mimes:html
 |_  ato/@
 ++  grab  |%

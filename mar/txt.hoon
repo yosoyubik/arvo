@@ -1,8 +1,3 @@
-::
-::::  /hoon/txt/mar
-  ::
-/?    310
-::
 =,  clay
 =,  differ
 =,  format

@@ -1,8 +1,5 @@
 ::  Display directory contents
 ::
-::::  /hoon/show-dir/lib
-  ::
-/?    310
 |=  {vane/?($g $c) pax/path des/(map @t ~)}
 ^-  tank
 :+  %rose  [" " `~]

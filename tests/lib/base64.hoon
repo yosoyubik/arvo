@@ -1,6 +1,18 @@
-/+  base64, *test
+#+  #=  here-disc
+  ^-  disc:ford
+  !:
+  =/  her=path  /==
+  ~&  [%loading %]
+  ?>  ?=([* * *] her)
+  [(slav %p i.her) (slav %tas i.t.her)]
+::
+#+  #=  test    #&  :-  here-disc  #.  /hoon/test/lib
+#+  #=  base64  #&  :-  here-disc  #.  /hoon/base64/lib
+=,  test
+!:
 :: XX move to zuse
 ::
+=>
 |%
 ++  octn
   |%

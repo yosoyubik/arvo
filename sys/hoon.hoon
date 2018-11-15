@@ -6298,6 +6298,25 @@
       $:  ?($tape $manx $marl $call) 
           p/hoon
       ==
+  ::
+  +$  gear
+    $~  [%ntdt [%bust %null]]
+    $^  [head=gear tail=gear]
+    $%  [%ntbn subject=gear rest=gear]
+        [%ntbs gate=gear sample=gear]
+        [%ntcb =hoon]
+        [%ntdt =hoon]  ::  this hoon produces a vase
+        [%ntkt spec=gear rest=gear]
+        [%ntls head=gear rest=gear]
+        [%ntnt subject=gear schematic=gear]
+        [%ntpd rail=gear]
+        [%nttr =term rail=gear]
+        [%ntts =term rest=gear]
+        [%ntvt date=hoon rest=gear]
+        [%ntwt if=gear then=gear else=gear]
+        [%ntzp =hoon rest=gear]
+        [%spot =spot rest=gear]
+    ==
   --                                                    ::
 +$  hoon                                                ::
   $~  [%zpzp ~]
@@ -6323,6 +6342,7 @@
     {$wing p/wing}                                      ::  take wing
     {$yell p/(list hoon)}                               ::  render as tank
     {$xray p/manx:hoot}                                 ::  ;foo; templating
+    {$gear p/gear:hoot}                                 ::  ford runes
   ::                                            ::::::  cores
     {$brcb p/spec q/alas r/(map term tome)}             ::  |_
     {$brcl p/hoon q/hoon}                               ::  |:
@@ -8966,6 +8986,47 @@
         |=  {n/mane:hoot v/(list beer:hoot)} 
         [(open-mane n) %knit v]
       --
+    ::
+        {$gear *}
+      |-  ^-  hoon
+      ?-    -.p.gen
+          ^      [$(p.gen -.p.gen) $(p.gen +.p.gen)]
+          %ntbn  [[%rock %tas %ntbn] $(p.gen subject.p.gen) $(p.gen rest.p.gen)]
+          %ntbs  [[%rock %tas %ntbs] $(p.gen gate.p.gen) $(p.gen sample.p.gen)]
+          %ntcb  [[%rock %tas %ntcb] %zpcm [%kttr %like ~[%hoon] ~] hoon.p.gen]
+          %ntdt  [[%rock %tas %ntdt] %zpbn hoon.p.gen]
+          %ntkt  [[%rock %tas %ntkt] $(p.gen spec.p.gen) $(p.gen rest.p.gen)]
+          %ntls  [[%rock %tas %ntls] $(p.gen head.p.gen) $(p.gen rest.p.gen)]
+          %ntnt
+        [[%rock %tas %ntnt] $(p.gen subject.p.gen) $(p.gen schematic.p.gen)]
+      ::
+          %ntpd  [[%rock %tas %ntpd] $(p.gen rail.p.gen)]
+          %nttr
+        [[%rock %tas %nttr] [%rock %tas term.p.gen] $(p.gen rail.p.gen)]
+      ::
+          %ntts
+        [[%rock %tas %ntts] [%rock %tas term.p.gen] $(p.gen rest.p.gen)]
+      ::
+          %ntvt  [[%rock %tas %ntvt] date.p.gen $(p.gen rest.p.gen)]
+          %ntwt
+        :-  [%rock %tas %ntwt]
+        [$(p.gen if.p.gen) $(p.gen then.p.gen) $(p.gen else.p.gen)]
+      ::
+          %ntzp
+        :-  [%rock %tas %ntzp]
+        [[%zpcm [%kttr %like ~[%hoon] ~] hoon.p.gen] $(p.gen rest.p.gen)]
+      ::
+          %spot
+        :+  [%rock %tas %spot]
+          :-  [%clsg (turn p.spot.p.gen |=(@ta `hoon`[%rock %ta +<]))]
+          ::
+          =/  rud       |=(@ud `hoon`[%rock %ud +<])
+          =/  rag=pint  q.spot.p.gen
+          ::
+          [[(rud p.p.rag) (rud q.p.rag)] [(rud p.q.rag) (rud q.q.rag)]]
+        ::
+        $(p.gen rest.p.gen)
+      ==
     ::
         {$wtvt *}   [%wtcl [%wtts [%base %atom %$] p.gen] q.gen r.gen]
         {$wtsg *}   [%wtcl [%wtts [%base %null] p.gen] q.gen r.gen]
@@ -11867,7 +11928,7 @@
   ++  posh
     |=  {pre/(unit tyke) pof/(unit {p/@ud q/tyke})}
     ^-  (unit (list hoon))
-    =-  ?^(- - ~&(%posh-fail -))
+    =-  ?^(- - ~&([%posh-fail pre=pre pof=pof wer=wer] -))
     =+  wom=(poof wer)
     %+  biff
       ?~  pre  `u=wom
@@ -11944,6 +12005,147 @@
         (cold | (just ']'))
       ==
     ==
+  ::  +rage: parse a +gear
+  ::
+  ++  rage
+    |=  allow-bare-hoon=?
+    |%
+    ::  +tall-top: try to parse a +gear to a +hoon
+    ::
+    ++  tall-top
+      %+  cook  |=(hoon +<)
+      %+  stag  %gear
+      ::
+      ?:  allow-bare-hoon
+        mail
+      main
+    ::  +mail: either a gear or a bare hoon
+    ::
+    ++  mail  ;~(pose main bare-hoon)
+    ::  +main: entry point, in tall form
+    ::
+    ++  main
+      %+  knee  *gear:hoot  |.  ~+
+      ::  if we know our filepath, wrap the output in a %spot +gear for traces
+      ::
+      =-  ?:  =(*path wer)
+            -
+          (wrap-in-spot -)
+      ::
+      ;~  pose
+        ::  parse an explicit +gear
+        ::
+        ;~  pfix  hax  ::  TODO: replace hax with net
+          %-  stew
+          ^.  stet  ^.  limo
+          :~  ['>' (goon ban %ntbn g2)]
+              ['$' (goon bus %ntbs g2)]
+              ['.' (goon dot %ntdt expa:norm-core)]
+              ['^' (goon ket %ntkt g2)]
+              ['+' (goon lus %ntls g2)]
+              ['/' (goon net %ntnt g2)]
+              ['&' (goon pad %ntpd g1)]
+              ['*' (goon tar %nttr nttr)]
+              ['=' (goon tis %ntts ntts)]
+              ['@' (goon vat %ntvt ntvt)]
+              ['?' (goon wut %ntwt g3)]
+              ['!' (goon zap %ntzp ntzp)]
+          ==
+        ==
+      ::  col runes in gear mode parse to autocons gears
+      ::
+        ;~  pfix  col
+          %-  stew
+          ^.  stet  ^.  limo
+          :~  ['-' ;~(pfix ;~(plug hep gap) $:g2)]
+              ['^' ;~(pfix ;~(plug ket gap) $:g4)]
+              ['+' ;~(pfix ;~(plug lus gap) $:g3)]
+              ['~' (ifix [;~(plug sig gap) ;~(plug gap duz)] clsg)]
+              ['*' (ifix [;~(plug tar gap) ;~(plug gap duz)] cltr)]
+          ==
+        ==
+      ==
+    ::  a bare hoon is parsed into a %ntcb
+    ::
+    ++  bare-hoon
+      (stag %ntcb loaf:norm-core)
+    ::  +wrap-in-spot: wrap the produced gear in a %spot for stack trace info
+    ::
+    ++  wrap-in-spot
+      |*  zor=rule
+      %+  here
+        |=  [location=pint gear=gear:hoot]
+        ^-  gear:hoot
+        ::
+        [%spot [wer location] gear]
+      zor
+    ::  +goon: create a parser for a particular gear tag; see +rune:norm:vast
+    ::
+    ++  goon
+      |*  [discriminator=rule tag=* parser=_g1]
+      ::
+      ;~(pfix discriminator (stag tag ;~(pfix gap $:parser)))
+    ::  +nttr: parse a symbol like %foo, followed by a gear
+    ::
+    ::    TODO: support arbitrary hoon, not just a %foo symbol?
+    ::
+    ++  nttr  |.(;~(mesh (cook term ;~(pfix cen sym)) mail))
+    ::  +ntts: parse a face as a bare symbol, followed by a gear
+    :: 
+    ++  ntts  |.(;~(mesh (cook term sym) mail))
+    ::  +ntvt: parse a hoon that should become a date, followed by a gear
+    ::
+    ++  ntvt  |.(;~(mesh loaf:norm-core mail))
+    ::  +ntzp: parse a hoon that will be used to augment a stack trace
+    ::
+    ++  ntzp  |.(;~(mesh loaf:norm-core mail))
+    ::  +clsg: parse a list of gears into a gear that produces a list
+    ::
+    ++  clsg
+      %+  cook
+        |=  gears=(list gear:hoot)
+        ^-  gear:hoot
+        ::  replace trailing ~ with a gear whose result will be ~
+        ::
+        ?~  gears
+          [%ntdt %bust %null]
+        [i.gears $(gears t.gears)]
+      ::
+      (most gap mail)
+    ::  +cltr: parse a tuple of gears into an autocons of gears
+    ::
+    ++  cltr
+      %+  cook
+        |=  gears=(list gear:hoot)
+        ^-  gear:hoot
+        ::  reverse first so we can prepend items onto our result as we go
+        ::
+        =.  gears  (flop gears)
+        ::  +most parses at least one gear
+        ::
+        ?~  gears  !!
+        =/  out=gear:hoot  i.gears
+        =>  .(gears `(list gear:hoot)`t.gears)
+        ::
+        |-  ^+  out
+        ?~  gears  out
+        ::
+        $(gears t.gears, out `gear:hoot`[i.gears out])
+      ::
+      (most gap mail)
+    ::  +g1, +g2, +g3, +g4: parse one, two, three, or four gears
+    ::
+    ++  g1  |.(mail)
+    ++  g2  |.(;~(mesh mail mail))
+    ++  g3  |.(;~(mesh mail mail mail))
+    ++  g4  |.(;~(mesh mail mail mail mail))
+    ::  +mesh: glue tall-form gears together with two or more spaces
+    ::
+    ++  mesh  ~+((glue gap))
+    ::  +norm-core: tall-form hoon parser
+    ::
+    ++  norm-core  ~+((norm &))
+    --
   ::
   ::
   ++  sail                                              ::  xml template
@@ -13813,7 +14015,15 @@
     ==
   ++  tall                                              ::  full tall form
     %+  knee  *hoon
-    |.(~+((wart ;~(pose expression:(norm &) long lute apex:(sail &)))))
+    |.  ~+
+    %-  wart
+    ;~  pose
+      expression:(norm &)
+      long
+      lute
+      apex:(sail &)
+      tall-top:(rage allow-bare-hoon=|)
+    ==
   ++  till                                              ::  mold tall form
     %+  knee  *spec
     |.(~+((wert ;~(pose structure:(norm &) scad))))

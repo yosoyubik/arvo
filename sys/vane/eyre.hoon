@@ -905,8 +905,9 @@
           (ames-gram q.p.kyz %hat p.u.mez our-host)
       ::
         $get-inner
-          %+  exec-turbo-live  ay+(dray p+uv+~ q.p.kyz p.u.mez)
-          [%bake q.u.mez r.u.mez [[p q] s]:s.u.mez]
+          ::%+  exec-turbo-live  ay+(dray p+uv+~ q.p.kyz p.u.mez)
+          ::[%bake q.u.mez r.u.mez [[p q] s]:s.u.mez]
+          !!
       ::
         $got-inner
           ?.  (~(has by pox) p.u.mez)
@@ -921,18 +922,19 @@
             (fail 500 dep p.q.u.mez)
           ::
               %&
-            =/  res/(cask)  p.q.u.mez
-            =/  dep  0v0  ::XX remote dependency?
-            =/  bek  -.top  ::XX where is wrapper-renderer beak stored exactly
-            :: XX store request mark
-            =/  ext  (end 3 (sub (met 3 p.res) (met 3 '-elem')) p.res) :: %x-urb-elem -> %x-urb
-            =+  norm=(norm-beak bek)
+            ::=/  res/(cask)  p.q.u.mez
+            ::=/  dep  0v0  ::XX remote dependency?
+            ::=/  bek  -.top  ::XX where is wrapper-renderer beak stored exactly
+            :::: XX store request mark
+            ::=/  ext  (end 3 (sub (met 3 p.res) (met 3 '-elem')) p.res) :: %x-urb-elem -> %x-urb
+            ::=+  norm=(norm-beak bek)
             ::
-            %+  exec-turbo-live  ha+(en-beam bek ~)
-            :^  %cast  [p q]:norm  ext
-            :+  %call
-              [%core [p q]:norm /hoon/wrap/[ext]/ren]
-            [%vale [p q]:norm res]
+            ::%+  exec-turbo-live  ha+(en-beam bek ~)
+            :::^  %cast  [p q]:norm  ext
+            :::+  %call
+            ::  [%core [p q]:norm /hoon/wrap/[ext]/ren]
+            ::[%vale [p q]:norm res]
+            !!
           ==
       ::
         $not  +>.$(mow :_(mow [ged [%give %that q.p.kyz p.u.mez]]))
@@ -955,7 +957,7 @@
     ^+  +>
     =.  our  ?~(hov our u.hov)  ::  XX
     ?:  &(?=({?($of $ow) ^} tee) !(~(has by wix) p.tee))
-      ~&(dead-ire+[`whir`tee] +>)
+      ~&(dead-ire+[`whir`tee ({term term ~} +.sih)] +>)
     ?-    &2.sih
         $crud  +>.$(mow [[hen %slip %d %flog +.sih] mow])
     ::  $dumb
@@ -1017,71 +1019,75 @@
       (give-json 200 ~ (frond:enjs %beat %b &))
     ::
         $made
-      =.  our  (need hov)                             ::  XX
-      =|  ses/(unit hole)
-      |-  ^+  ..axon
+      ::=.  our  (need hov)                             ::  XX
+      ::=|  ses/(unit hole)
+      ::|-  ^+  ..axon
       ?+    tee  ~&  [%tee tee]  !!
-          {$si $~}  (give-turbo-sigh result.sih)
-          {$se ^}   (get-made:(dom-vi q.tee) p.tee result:sih)
-      ::
+      ::    {$si $~}  (give-turbo-sigh result.sih)
+      ::    {$se ^}   (get-made:(dom-vi q.tee) p.tee result:sih)
+      ::::
           {$ay ^}
-        =/  res/(each (cask) tang)
-          ?:  ?=(%incomplete -.result.sih)
-            [%| tang.result.sih]
-          ?:  ?=([%complete %error *] result.sih)
-            [%| message.build-result.result.sih]
-          [%& [p q.q]:(result-to-cage:ford build-result.result.sih)]
-        (ames-gram (slav %p p.tee) %got-inner (slav %uv q.tee) res)
+      ::  =/  res/(each (cask) tang)
+      ::    ?:  ?=(%incomplete -.result.sih)
+      ::      [%| tang.result.sih]
+      ::    ?:  ?=([%complete %error *] result.sih)
+      ::      [%| message.build-result.result.sih]
+      ::    [%& [p q.q]:(result-to-cage:ford build-result.result.sih)]
+      ::  (ames-gram (slav %p p.tee) %got-inner (slav %uv q.tee) res)
+      !!
       ::
           {$ha *}
-        %-  emule  |.  ^+  ..apex
-        ?:  ?=([%incomplete *] result.sih)
-          (fail-turbo 404 tang.result.sih)
-        ?:  ?=([%complete %error *] result.sih)
-          (fail-turbo 404 message.build-result.result.sih)
-        =/  cay=cage  (result-to-cage:ford build-result.result.sih)
-        ?:  ?=($red-quri p.cay)
-          =+  url=(apex:en-purl ((hard quri) q.q.cay))
-          (give-thou 307 [location+(crip url)]~ ~)
-          :: (give-html:abet 200 ~ (redir:xml url))
-        ?.  ?=($mime p.cay)
-          =+  bek=(norm-beak -:(need (de-beam p.tee)))
-          =+  tee-ses=?~(ses tee [%ac u.ses tee])
-          ::  TODO: Why cast here? Shouldn't the cast wrap the previous result?
-          ::
-          (exec-turbo-live tee-ses [%cast [p q]:bek %mime [%$ cay]])
-        =+  cug=?~(ses ~ cug:(~(got by wup) u.ses))
-        =+  ((hard {mit/mite rez/octs}) q.q.cay)
-        ::  TODO: This used to use dep for etag control.
-        ::
-        ::  =+  dep=(crip "W/{(en-json %s (scot %uv p.sih))}")
-        =+  hit=[200 ~[content-type+(en-mite mit)] ~ rez]  :: etag+dep
-        (give-thou (add-cookies cug hit))
+        ::%-  emule  |.  ^+  ..apex
+        ::?:  ?=([%incomplete *] result.sih)
+        ::  (fail-turbo 404 tang.result.sih)
+        ::?:  ?=([%complete %error *] result.sih)
+        ::  (fail-turbo 404 message.build-result.result.sih)
+        ::=/  cay=cage  (result-to-cage:ford build-result.result.sih)
+        ::?:  ?=($red-quri p.cay)
+        ::  =+  url=(apex:en-purl ((hard quri) q.q.cay))
+        ::  (give-thou 307 [location+(crip url)]~ ~)
+        ::  :: (give-html:abet 200 ~ (redir:xml url))
+        ::?.  ?=($mime p.cay)
+        ::  =+  bek=(norm-beak -:(need (de-beam p.tee)))
+        ::  =+  tee-ses=?~(ses tee [%ac u.ses tee])
+        ::  ::  TODO: Why cast here? Shouldn't the cast wrap the previous result?
+        ::  ::
+        ::  (exec-turbo-live tee-ses [%cast [p q]:bek %mime [%$ cay]])
+        ::=+  cug=?~(ses ~ cug:(~(got by wup) u.ses))
+        ::=+  ((hard {mit/mite rez/octs}) q.q.cay)
+        ::::  TODO: This used to use dep for etag control.
+        ::::
+        ::::  =+  dep=(crip "W/{(en-json %s (scot %uv p.sih))}")
+        ::=+  hit=[200 ~[content-type+(en-mite mit)] ~ rez]  :: etag+dep
+        ::(give-thou (add-cookies cug hit))
+        !!
       ::
           {$hi ^}
-        ?.  ?=([%complete %success *] result.sih)
-          (give-turbo-sigh result.sih)
-        ::
-        =/  cay/cage  (result-to-cage:ford build-result.result.sih)
-        ?>  ?=($hiss p.cay)
-        ?:  =('~' p.tee)
-          (eyre-them tee q.cay)
-        =+  usr=(slav %ta p.tee)
-        =+  ((hard {pul/purl ^}) q.q.cay)
-        ?.  ?=(%& -.r.p.pul)
-          ~&  [%auth-lost usr (head:en-purl p.pul)]
-          (eyre-them tee q.cay)
-        (get-req:(dom-vi usr (scag 2 p.r.p.pul)) q.tee q.cay)
+        ::?.  ?=([%complete %success *] result.sih)
+        ::  (give-turbo-sigh result.sih)
+        ::::
+        ::=/  cay/cage  (result-to-cage:ford build-result.result.sih)
+        ::?>  ?=($hiss p.cay)
+        ::?:  =('~' p.tee)
+        ::  (eyre-them tee q.cay)
+        ::=+  usr=(slav %ta p.tee)
+        ::=+  ((hard {pul/purl ^}) q.q.cay)
+        ::?.  ?=(%& -.r.p.pul)
+        ::  ~&  [%auth-lost usr (head:en-purl p.pul)]
+        ::  (eyre-them tee q.cay)
+        ::(get-req:(dom-vi usr (scag 2 p.r.p.pul)) q.tee q.cay)
+        !!
       ::
           {$of @ ^}
-        ?:  ?=([%incomplete *] result.sih)
-          ((slog tang.result.sih) +>.^$)
-        ?:  ?=([%complete %error *] result.sih)
-          ((slog message.build-result.result.sih) +>.^$)
-        =/  cay=cage  (result-to-cage:ford build-result.result.sih)
-        %+  get-rush:(ire-ix p.tee)  q.tee
-        ?>  ?=($json p.cay)                    ::  XX others
-        ((hard json) q.q.cay)
+        ::?:  ?=([%incomplete *] result.sih)
+        ::  ((slog tang.result.sih) +>.^$)
+        ::?:  ?=([%complete %error *] result.sih)
+        ::  ((slog message.build-result.result.sih) +>.^$)
+        ::=/  cay=cage  (result-to-cage:ford build-result.result.sih)
+        ::%+  get-rush:(ire-ix p.tee)  q.tee
+        ::?>  ?=($json p.cay)                    ::  XX others
+        ::((hard json) q.q.cay)
+        !!
       ==
     ==
   ::
@@ -1127,18 +1133,19 @@
   ::
   ++  back-turbo
     |=  [tea=whir mar=mark cay=cage]
-    =/  disc  [p q]:(norm-beak -.top)
-    %^  execute-turbo  tea  live=%.n
-    ^-  schematic:ford
-    [%cast disc mar [%$ cay]]
+    ::=/  disc  [p q]:(norm-beak -.top)
+    ::%^  execute-turbo  tea  live=%.n
+    ::^-  schematic:ford
+    !!  ::[%cast disc mar [%$ cay]]
   ::
   ++  cast-thou  :: turbo
     |=  [mar=mark cay=cage]
-    ?:  ?=($httr mar)
-      (give-sigh %& cay)
-    %^  execute-turbo  si+~  live=%.n
-    =/  =beak  (norm-beak -.top)
-    [%alts [%cast [p q]:beak mar $+cay] [%cast [p q]:beak %recoverable-error $+cay] ~]
+    ::?:  ?=($httr mar)
+    ::  (give-sigh %& cay)
+    ::%^  execute-turbo  si+~  live=%.n
+    ::=/  =beak  (norm-beak -.top)
+    ::[%alts [%cast [p q]:beak mar $+cay] [%cast [p q]:beak %recoverable-error $+cay] ~]
+    !!
   ::
   ++  del-deps
     |=  {a/@uvH b/(each duct ixor)}  ^+  +>.$
@@ -1168,14 +1175,16 @@
   ++  exec-turbo-live
     |=  [tea=whir req=schematic:ford]
     =.  lyv  (~(put by lyv) hen [%exec tea])
-    (execute-turbo tea live=%.n req)
+    !!
+    ::(execute-turbo tea live=%.n req)
   ::
   ++  execute-turbo
     |=  [tea=whir live=? request=schematic:ford]
-    %+  pass-note  tea
-    :*  %f  %build  our  live
-        [%dude [|.(+)]:[%leaf "eyre: execute {<tea>}"] request]
-    ==
+    ::%+  pass-note  tea
+    :::*  %f  %build  our  live  
+    ::    [%dude [|.(+)]:[%leaf "eyre: execute {<tea>}"] request]
+    ::==
+    !!
   ::
   ++  fail
     |=  {sas/@ud dep/@uvH mez/tang}
@@ -1216,10 +1225,11 @@
   ::
   ++  give-turbo-sigh
     |=  result=made-result:ford
-    =-  +>.$(mow :_(mow [hen %give %sigh `cage`-]))
-    ?:  ?=(%incomplete -.result)
-      [%tang !>(tang.result)]
-    (result-to-cage:ford build-result.result)
+    ::=-  +>.$(mow :_(mow [hen %give %sigh `cage`-]))
+    ::?:  ?=(%incomplete -.result)
+    ::  [%tang !>(tang.result)]
+    ::(result-to-cage:ford build-result.result)
+    !!
   ::
   ++  mean-json  |=({sas/@uG err/ares} (give-json sas ~ (ares-to-json err)))
   ++  nice-json  |=(* (give-json 200 ~ (frond:enjs %ok %b &)))
@@ -1292,15 +1302,16 @@
           $html  (give-html 200 cug p.pez)
           $htme  (give-html 401 cug p.pez)
           $bake
-        %+  exec-turbo-live  p.pez
-        ^-  schematic:ford
-        :-  %alts  :~
-          ^-  schematic:ford
-          [%bake q.pez r.pez [[p q] s]:s.pez]
-        ::
-          ^-  schematic:ford
-          [%bake %red-quri r.pez [[p q] s]:s.pez]
-        ==
+        !!
+        ::%+  exec-turbo-live  p.pez
+        ::^-  schematic:ford
+        :::-  %alts  :~
+        ::  ^-  schematic:ford
+        ::  [%bake q.pez r.pez [[p q] s]:s.pez]
+        ::::
+        ::  ^-  schematic:ford
+        ::  [%bake %red-quri r.pez [[p q] s]:s.pez]
+        ::==
       ::
           $red
         =+  url=(en-purl hat pok(p [~ %html]) quy)
@@ -2020,7 +2031,8 @@
     ++  abet  +>(sec (~(put by sec) +<- +<+))
     ++  execute-turbo
       |=  [wir=whir-se live=? schematic=schematic:ford]
-      (execute-turbo:abet se+[wir usr dom] live schematic)
+      ::(execute-turbo:abet se+[wir usr dom] live schematic)
+      !!
     ++  dead-this  |=(a/tang (fail:abet 500 0v0 a))
     ++  dead-hiss  |=(a/tang pump(req ~(nap to req), ..vi (give-sigh %| a)))
     ++  eyre-them  |=({a/whir-se b/vase} (eyre-them:abet se+[a usr dom] b))
@@ -2038,41 +2050,44 @@
       %^  execute-turbo  %core  live=%.y
       :::+  %dude  [|.(+)]:>%mod-samp<
       ^-  schematic:ford
-      :+  %mute
-        ^-  schematic:ford
-        [%core [[our %home] [%hoon (flop %_(dom . sec+dom))]]]
-      ^-  (list (pair wing schematic:ford))
-      :*  [[%& 12]~ %$ bale+!>(*(bale @))]  :: XX specify on type?
-          ?~  cor  ~
-          ?~  u.cor  ~
-          ?:  (has-arm %discard-state)  ~
-          ?:  (has-arm %update)
-            [[%& 13]~ ride+[limb+%update prep-cor]]~
-          [[%& 13]~ %$ noun+(slot 13 u.cor)]~
-      ==
+      :::+  %mute
+      ::  ^-  schematic:ford
+      ::  [%core [[our %home] [%hoon (flop %_(dom . sec+dom))]]]
+      ::^-  (list (pair wing schematic:ford))
+      :::*  [[%& 12]~ %$ bale+!>(*(bale @))]  :: XX specify on type?
+      ::    ?~  cor  ~
+      ::    ?~  u.cor  ~
+      ::    ?:  (has-arm %discard-state)  ~
+      ::    ?:  (has-arm %update)
+      ::      [[%& 13]~ ride+[limb+%update prep-cor]]~
+      ::    [[%& 13]~ %$ noun+(slot 13 u.cor)]~
+      ::==
+      !!
     ::
     ++  call
       |=  {arm/vi-arm sam/cage}
-      %^  execute-turbo  arm  live=%.n
-      call+[ride+[limb+arm prep-cor] [%$ sam]]
+      ::%^  execute-turbo  arm  live=%.n
+      ::call+[ride+[limb+arm prep-cor] [%$ sam]]
+      !!
     ::
     ++  prep-cor  ^-  schematic:ford
-      ?~  cor  ~|(%no-core !!)
-      ?~  u.cor  ~|(%nil-driver !!)
-      :+  %$  %core
-      %_    u.cor
-          +12.q
-        =+  ^=  ato
-            %-  sky
-            [[151 %noun] %cx (en-beam root-beak [%atom (flop %_(dom . sec+dom))])]
-        =+  key=?~(ato '' ;;(@t u.ato))  ::  XX jael
-        =.  key
-          ?~  key  ''
-          %-  (bond |.(~&(bad-key+[dom key] '')))
-          =+  (slaw %uw key)
-          ?~(- ~ (de:crub:crypto load-secret u))  :: XX clay permissions
-        `(bale)`[[our now (shas %bale eny) root-beak] [usr dom] key]
-      ==
+      ::?~  cor  ~|(%no-core !!)
+      ::?~  u.cor  ~|(%nil-driver !!)
+      :::+  %$  %core
+      ::%_    u.cor
+      ::    +12.q
+      ::  =+  ^=  ato
+      ::      %-  sky
+      ::      [[151 %noun] %cx (en-beam root-beak [%atom [%hoon (flop %_(dom . sec+dom))]])]
+      ::  =+  key=?~(ato '' ;;(@t u.ato))  ::  XX jael
+      ::  =.  key
+      ::    ?~  key  ''
+      ::    %-  (bond |.(~&(bad-key+[dom key] '')))
+      ::    =+  (slaw %uw key)
+      ::    ?~(- ~ (de:crub:crypto load-secret u))  :: XX clay permissions
+      ::  `(bale)`[[our now (shas %bale eny) root-beak] [usr dom] key]
+      ::==
+      !!
     ::
     ++  pump
       ^+  abet
@@ -2111,32 +2126,34 @@
     ::
     ++  get-made
       |=  [wir/whir-se result=made-result:ford]  ^+  abet
-      ::  |=  {wir/whir-se dep/@uvH res/(each cage tang)}  ^+  abet
-      ?:  ?=($core wir)  (made-core result)
-      %.  result
-      ?-  wir
-        ?($filter-request $out)             made-filter-request
-        ?($filter-response $res)            made-filter-response
-        ?($receive-auth-response $bak)      made-receive-auth-response
-        ?($receive-auth-query-string $in)   made-receive-auth-query-string
-      ==
+      ::::  |=  {wir/whir-se dep/@uvH res/(each cage tang)}  ^+  abet
+      ::?:  ?=($core wir)  (made-core result)
+      ::%.  result
+      ::?-  wir
+      ::  ?($filter-request $out)             made-filter-request
+      ::  ?($filter-response $res)            made-filter-response
+      ::  ?($receive-auth-response $bak)      made-receive-auth-response
+      ::  ?($receive-auth-query-string $in)   made-receive-auth-query-string
+      ::==
+      !!
     ::
     ++  made-core
       |=  [result=made-result:ford]
-      ::  |=  {dep/@uvH gag/(each cage tang)}
-      :: ~&  got-update/dep
-      ::  =.  ..vi  (pass-note %core [%f [%wasp our dep &]])
-      ?:  ?=([%complete %success *] result)
-        =/  =cage  (result-to-cage:ford build-result.result)
-        pump(cor `q:cage)
-      ?:  &(=(~ cor) =(%$ usr))
-        =.  cor  `~
-        pump ::(cor `~)  :: userless %hiss defaults to "nop" driver
-      %-  warn
-      ?:  ?=(%incomplete -.result)
-        tang.result
-      ?>  ?=(%error -.build-result.result)
-      message.build-result.result
+      ::::  |=  {dep/@uvH gag/(each cage tang)}
+      :::: ~&  got-update/dep
+      ::::  =.  ..vi  (pass-note %core [%f [%wasp our dep &]])
+      ::?:  ?=([%complete %success *] result)
+      ::  =/  =cage  (result-to-cage:ford build-result.result)
+      ::  pump(cor `q:cage)
+      ::?:  &(=(~ cor) =(%$ usr))
+      ::  =.  cor  `~
+      ::  pump ::(cor `~)  :: userless %hiss defaults to "nop" driver
+      ::%-  warn
+      ::?:  ?=(%incomplete -.result)
+      ::  tang.result
+      ::?>  ?=(%error -.build-result.result)
+      ::message.build-result.result
+      !!
     ::
     ++  made-filter-request
       %+  on-ford-fail  dead-hiss
@@ -2200,23 +2217,25 @@
     ++  on-ford-fail
       |=  {err/$-(tang _abet) try/$-(made-result:ford _abet)}
       |=  a/made-result:ford  ^+  abet
-      ?:  ?=(%incomplete -.a)
-        (err tang.a)
-      ?:  ?=(%error -.build-result.a)
-        (err message.build-result.a)
-      (try a)
+      ::?:  ?=(%incomplete -.a)
+      ::  (err tang.a)
+      ::?:  ?=(%error -.build-result.a)
+      ::  (err message.build-result.a)
+      ::(try a)
+      !!
     ::
     ++  on-error
       |=  {err/$-(tang _abet) handle-move/_|.(|~(vase abet))}
       |=  a=made-result:ford  ^+  abet
-      =+  try=(possibly-stateful |=(b/_self (handle-move(+ b))))  :: XX types
-      ?:  ?=(%incomplete -.a)
-        (err tang.a)
-      ?:  ?=(%error -.build-result.a)
-        (err message.build-result.a)
-      =/  =cage  (result-to-cage:ford build-result.a)
-      =-  ?-(-.- %& p.-, %| (err p.-))
-      (mule |.(~|(driver+dom ~|(bad-res+p.q.cage (try q.cage)))))
+      ::=+  try=(possibly-stateful |=(b/_self (handle-move(+ b))))  :: XX types
+      ::?:  ?=(%incomplete -.a)
+      ::  (err tang.a)
+      ::?:  ?=(%error -.build-result.a)
+      ::  (err message.build-result.a)
+      ::=/  =cage  (result-to-cage:ford build-result.a)
+      ::=-  ?-(-.- %& p.-, %| (err p.-))
+      ::(mule |.(~|(driver+dom ~|(bad-res+p.q.cage (try q.cage)))))
+      !!
     ::
     ++  possibly-stateful
       |=  han/$-(_self $-(vase _abet))  :: XX |.(|+(vase abet))

@@ -1,4 +1,6 @@
-!:  ::  TODO remove once stable
+/+  marker
+=,  marker  ::  TODO remove once zuse has new ford
+!:
 ::  clay (4c), revision control
 ::
 ::  This is split in three top-level sections:  structure definitions, main
@@ -511,21 +513,29 @@
     ::
     =/  vases=(list vase)  (result-to-list result)
     ::
-    %+  turn  (result-to-list result)
-    |=  item=vase
-    ^-  [=path =vase]
+    |-  ^-  (list [=path =vase])
+    ?~  vases  ~
     ::
-    [path=((hard path) q:(slot 2 item)) data=(slot 3 item)]
+    =/  path-vase=vase  (slot 2 i.vases)
+    =/  data-vase=vase  (slot 3 i.vases)
+    ::
+    =/  =path  ((hard path) q.path-vase)
+    ::
+    [i=[path data-vase] t=$(vases t.vases)]
   ::  +result-to-cages: convert a ford build result to (list [=path =cage])
   ::
   ++  result-to-cages
     |=  result=made-result:ford
     ^-  (list [=path =cage])
     ::
-    %+  turn  (result-to-pairs result)
-    |=  [=path =vase]
+    =/  pairs=(list [=path =vase])  (result-to-pairs result)
     ::
-    [path (vase-to-cage:forder vase)]
+    |-  ^-  (list [=path =cage])
+    ?~  pairs  ~
+    ::
+    =/  =cage  (vase-to-cage:marker vase.i.pairs)
+    ::
+    [i=[path.i.pairs cage] t=$(pairs t.pairs)]
   ::
   ::  Queue a move.
   ::
@@ -574,8 +584,7 @@
     %-  emit
     :*  hen  %pass  [%blab p.mun (scot q.mun) syd r.mun]
         %f  %build  our  live=%.n
-        :+  %ntzp  ^~((ream '%clay-blab-fail'))
-        :+  %ntvt  (case-to-date q.mun)
+        %ntvt  (case-to-date q.mun)
         (lobe-to-schematic:ze [her syd] r.mun p.dat)
     ==
   ::
@@ -796,33 +805,24 @@
     ^-  move
     :*  hen  %pass  [%ergoing (scot %p her) syd ~]  %f
         %build  our  live=%.n
-        :+  %ntzp  ^~((ream '%clay-mont-fail'))
-        %-  build-list:forder
+        %-  build-list:marker
         %+  turn  `(list path)`mus
         |=  pax=path
         ^-  schematic:ford
         ::
         :-  [%ntdt !>(path=pax)]
         ::
-        =/  mark-from-path=mark  (path-to-mark:ze pax)
-        ::
-        :-  [%ntdt !>(mark-from-path)]
-        ::
         :+  %ntbs
+          =/  mark-from-path=mark  (path-to-mark:ze pax)
           ::
           %-  build-mark-converter:marker
           [start=[mark-from-path disc] end=[%mime disc]]
         ::
-        :+  %ntbn
-          ::
-          =/  stored  (need (need (read-x:ze let.dom pax)))
-          ::
-          ?:  ?=(%& -.stored)
-            [%ntdt (cage-to-vase:forder p.stored)]
-          (lobe-to-schematic:ze disc pax p.stored)
-        ::  ignore the mark
+        =/  stored  (need (need (read-x:ze let.dom pax)))
         ::
-        [%ntcb %$ 3]
+        ?:  ?=(%& -.stored)
+          [%ntdt (cage-to-vase:marker p.stored)]
+        (lobe-to-schematic:ze disc pax p.stored)
     ==
   ::
   ::  Set permissions for a node.
@@ -1190,9 +1190,8 @@
       :~  :*  hen  %pass
               [%inserting (scot %p her) syd (scot %da wen) ~]
               %f  %build  our  live=%.n
-              :+  %ntvt  wen
-              :+  %ntzp  ^~((ream '%clay-inserting-fail'))
-              %-  build-list:forder
+              %ntvt  wen
+              %-  build-list:marker
               %+  turn  ins.nuz
               |=  [=path =miso]
               ^-  schematic:ford
@@ -1211,9 +1210,8 @@
           :*  hen  %pass
               [%diffing (scot %p her) syd (scot %da wen) ~]
               %f  %build  our  live=%.n
-              :+  %ntvt  wen
-              :+  %ntzp  ^~((ream '%clay-diffing-fail'))
-              %-  build-list:forder
+              %ntvt  wen
+              %-  build-list:marker
               %+  turn  dif.nuz
               |=  [=path =miso]
               ^-  schematic:ford
@@ -1233,9 +1231,8 @@
           :*  hen  %pass
               [%castifying (scot %p her) syd (scot %da wen) ~]
               %f  %build  our  live=%.n
-              :+  %ntvt  wen
-              :+  %ntzp  ^~((ream '%clay-castifying-fail'))
-              %-  build-list:forder
+              %ntvt  wen
+              %-  build-list:marker
               %+  turn  mut.nuz
               |=  [=path =miso]
               ^-  schematic:ford
@@ -1407,9 +1404,8 @@
     :*  hen  %pass
         [%mutating (scot %p her) syd (scot %da wen) ~]
         %f  %build  our  live=%.n
-        :+  %ntvt  wen
-        :+  %ntzp  ^~((ream '%clay-mutating-fail'))
-        %-  build-list:forder
+        %ntvt  wen
+        %-  build-list:marker
         %+  turn  cat
         |=  [pax=path cay=cage]
         ^-  schematic:ford
@@ -1423,7 +1419,7 @@
         :-  %^  lobe-to-schematic:ze  disc  pax
             (~(got by q:(aeon-to-yaki:ze let.dom)) pax)
         ::
-        [%ntdt (cage-to-vase:forder cay)]
+        [%ntdt (cage-to-vase:marker cay)]
     ==
   ::
   ::  Handle result of diffing mutations.
@@ -1527,8 +1523,7 @@
     %-  emit
     :*  hen  %pass  [%patching (scot %p her) syd ~]  %f
         %build  our  live=%.n
-        :+  %ntzp  ^~((ream '%clay-patching-fail'))
-        %-  build-list:forder
+        %-  build-list:marker
         %+  turn  (sort ~(tap by hat) sort-by-head)
         |=  [pax=path lob=lobe]
         ^-  schematic:ford
@@ -1603,7 +1598,7 @@
       =/  data-vase=vase  (slot 3 vaz)
       ::
       =/  lob=lobe  ((hard lobe) q.lobe-vase)
-      =/  cay=cage  (vase-to-cage:forder data-vase)
+      =/  cay=cage  (vase-to-cage:marker data-vase)
       ::
       [pax lob cay]
     ::  ~&  %canned
@@ -1632,8 +1627,7 @@
     %-  emit(dok ~)
     :*  hen  %pass  [%ergoing (scot %p her) syd ~]  %f
         %build  our  live=%.n
-        :+  %ntzp  ^~((ream '%clay-ergoing-fail'))
-        %-  build-list:forder
+        %-  build-list:marker
         %+  turn  ~(tap in sum)
         |=  pax=path
         ^-  schematic:ford
@@ -1643,14 +1637,10 @@
         =+  change-on-path=(~(got by changes) pax)
         ::
         ?:  ?=(%del -.change-on-path)
-          :+  %ntbn
-            [%ntcb ^~((ream '~&  %clay-ergo-null  .'))]
-          [%ntdt (cage-to-vase:forder [%null !>(~)])]
+          [%ntdt (cage-to-vase:marker [%null !>(~)])]
         ::
         ?^  mime-cache=(~(get by mim.dom) pax)
-          :+  %ntbn
-            [%ntcb ^~((ream '~&  %clay-ergo-mime  .'))]
-          [%ntdt (cage-to-vase:forder [%mime !>(u.mime-cache)])]
+          [%ntdt (cage-to-vase:marker [%mime !>(u.mime-cache)])]
         ::
         :+  %ntbs
           =/  mark-from-path=mark  (path-to-mark:ze pax)
@@ -1661,12 +1651,7 @@
         =/  stored  (need (need (read-x:ze let.dom pax)))
         ::
         ?:  ?=(%& -.stored)
-          :+  %ntbn
-            [%ntcb ^~((ream '~&  %clay-ergo-cage-to-vase  .'))]
-          [%ntdt (cage-to-vase:forder p.stored)]
-        ::
-        :+  %ntbn
-          [%ntcb ^~((ream '~&  %clay-ergo-lobe-to-schematic  .'))]
+          [%ntdt (cage-to-vase:marker p.stored)]
         (lobe-to-schematic:ze disc pax p.stored)
     ==
   ::
@@ -1699,7 +1684,6 @@
         `((hard mime) q.q.mim)
     ::
     =+  mus=(must-ergo (turn ~(tap by can) head))
-    ~&  [%ergo-sending (lent mus)]
     %-  emil
     %+  turn  ~(tap by mus)
     |=  {pot/term len/@ud pak/(set path)}
@@ -1827,13 +1811,11 @@
   ++  validate-x
     |=  {car/care cas/case pax/path peg/page}
     ^+  +>
-    ~&  %clay-validate-x
     %-  emit
     :*  hen  %pass
         [%foreign-x (scot %p our) (scot %p her) syd car (scot cas) pax]
         %f  %build  our  live=%.n
-        :+  %ntvt  (case-to-date cas)
-        :+  %ntzp  ^~((ream '%clay-validate-x-fail'))
+        %ntvt  (case-to-date cas)
         (vale-page [her syd] peg)
     ==
   ::
@@ -1845,12 +1827,9 @@
   ++  vale-page
     |=  [disc=disc:ford a=page]
     ^-  schematic:ford
-    ::
-    :+  %ntzp  ^~((ream '%clay-vale-page-fail'))
     ::  if we're not bootstrapping hoon, do a full mark validation
     ::
     ?.  ?=(%hoon p.a)
-      :-  [%ntdt !>(mark=p.a)]
       (validate:marker data=q.a mark=p.a disc)
     ::  create a failing ford build if the mark is %hoon but the type is wrong
     ::
@@ -1858,7 +1837,7 @@
       [%ntcb ^~((ream '~|  %clay-bad-hoon-type  !!'))]
     ::  don't bother validating hoon, since we need it to bootstrap
     ::
-    [%ntdt (cage-to-vase:forder [mark=p.a vase=[[%atom %t ~] q.a]])]
+    [%ntdt (cage-to-vase:marker [mark=p.a vase=[[%atom %t ~] q.a]])]
   ::
   ::  Verify the foreign data is of the the mark it claims to be.
   ::
@@ -1878,7 +1857,7 @@
       ~|  "validate foreign x failed"
       (mean p.result.res)
     ::
-    =/  =cage  (vase-to-cage:forder p.result.res)
+    =/  =cage  (vase-to-cage:marker p.result.res)
     ::
     wake(haw.u.ref (~(put by haw.u.ref) [car cas pax] `cage))
   ::
@@ -1954,16 +1933,14 @@
   ++  validate-plops
     |=  {cas/case lem/(unit @da) pop/(set plop)}
     ^+  +>
-    ~&  %clay-validate-plops
     =+  lum=(scot %da (fall lem *@da))
     =/  blob-type=type  -:!>(*blob)
     %-  emit
     :*  hen  %pass
         [%foreign-plops (scot %p our) (scot %p her) syd lum ~]
         %f  %build  our  live=%.n
-        :+  %ntvt  (case-to-date cas)
-        :+  %ntzp  ^~((ream '%clay-validate-plops-fail'))
-        %-  build-list:forder
+        %ntvt  (case-to-date cas)
+        %-  build-list:marker
         %+  turn  ~(tap in pop)
         |=  a=plop
         ^-  schematic:ford
@@ -1985,7 +1962,6 @@
   ++  take-foreign-plops
     |=  {lem/(unit @da) res/made-result:ford}
     ^+  +>
-    ~&  %clay-take-foreign-plops
     ?>  ?=(^ ref)
     ?>  ?=(^ nak.u.ref)
     =+  ^-  lat/(list blob)
@@ -1997,7 +1973,7 @@
         =/  data-vase=vase  (slot 3 res-item)
         ::
         =/  bol=blob  ((hard blob) q.blob-vase)
-        =/  cay=cage  (vase-to-cage:forder data-vase)
+        =/  cay=cage  (vase-to-cage:marker data-vase)
         ::
         ?-  -.bol
           %delta   [-.bol p.bol q.bol p.cay q.q.cay]
@@ -2284,13 +2260,10 @@
       ^-  schematic:ford
       ::  TODO: avoid repeat validation
       ::
-      ?.  ?=(%hoon p.a)
-        (validate:marker data=q.a mark=p.a disc)
+      ?.  ?=(%hoon p.a)  (validate:marker data=q.a mark=p.a disc)
       ::  %hoon bootstrapping
       ::
-      ?^  q.a  ~|  %bad-hoon-type  !!
-      ::
-      [%ntdt [%atom %t ~] q.a]
+      [%ntdt [%cell [%atom %tas ~] [%atom %t ~]] a]
     ::
     ::  Creates a schematic out of a lobe (content hash).
     ::
@@ -2332,7 +2305,7 @@
         =/  stored            (need (need (read-x let.dom pax)))
         =/  stored-cage=cage  ?>(?=(%& -.stored) p.stored)
         ::
-        [%ntdt (cage-to-vase:forder stored-cage)]
+        [%ntdt (cage-to-vase:marker stored-cage)]
       ::
       ?~  deltas.rek
         :-  [%ntdt !>(mark-from-path)]
@@ -3322,9 +3295,8 @@
             =+  (cat 3 %diff- nam)
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali - ~]
             %f  %build  p.bob  live=%.n
-            :+  %ntvt  (case-to-date r.oth)
-            :+  %ntzp  ^~((ream '%clay-diff-bas-fail'))
-            %-  build-list:forder
+            %ntvt  (case-to-date r.oth)
+            %-  build-list:marker
             %+  murn  ~(tap by q.bas.dat)
             |=  [pax=path lob=lobe]
             ^-  (unit schematic:ford)
@@ -3472,8 +3444,7 @@
           :*  hen  %pass
               [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %merge ~]
               %f  %build  p.bob  live=%.n
-              :+  %ntzp  ^~((ream '%clay-merge-fail'))
-              %-  build-list:forder
+              %-  build-list:marker
               %+  turn  ~(tap by (~(int by can.dal.dat) can.dob.dat))
               |=  [pax=path *]
               ^-  schematic:ford
@@ -3487,8 +3458,8 @@
               =+  cal=(~(got by can.dal.dat) pax)
               =+  cob=(~(got by can.dob.dat) pax)
               ::
-              :-  [%ntdt (cage-to-vase:forder cal)]
-              [%ntdt (cage-to-vase:forder cob)]
+              :-  [%ntdt (cage-to-vase:marker cal)]
+              [%ntdt (cage-to-vase:marker cob)]
           ==
         ==
       ::
@@ -3527,8 +3498,7 @@
         :*  hen  %pass
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %build ~]
             %f  %build  p.bob  live=%.n
-            :+  %ntzp  ^~((ream '%clay-build-fail'))
-            %-  build-list:forder
+            %-  build-list:marker
             %+  murn  ~(tap by bof.dat)
             |=  [pax=path cay=(unit cage)]
             ^-  (unit schematic:ford)
@@ -3547,7 +3517,7 @@
               [mark=(path-to-mark:ze pax) disc]
             ::
             :-  (lobe-to-schematic disc pax u.zag)
-            [%ntdt (cage-to-vase:forder u.cay)]
+            [%ntdt (cage-to-vase:marker u.cay)]
         ==
       ::
       ::  Create new commit.
@@ -3686,9 +3656,8 @@
         :*  hen  %pass
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %checkout ~]
             %f  %build  p.bob  live=%.n
-            :+  %ntzp  ^~((ream '%clay-checkout-fail'))
-            :+  %ntvt  (case-to-date r.val)
-            %-  build-list:forder
+            %ntvt  (case-to-date r.val)
+            %-  build-list:marker
             %+  murn  ~(tap by q.new.dat)
             |=  [pax=path lob=lobe]
             ^-  (unit schematic:ford)
@@ -3753,9 +3722,8 @@
         :*  hen  %pass
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %ergo ~]
             %f  %build  p.bob  live=%.n
-            :+  %ntzp  ^~((ream '%clay-ergo-fail'))
-            :+  %ntvt  (case-to-date r.val)
-            %-  build-list:forder
+            %ntvt  (case-to-date r.val)
+            %-  build-list:marker
             %+  turn  ~(tap in sum)
             |=  pax=path
             ^-  schematic:ford
@@ -3763,7 +3731,7 @@
             :-  [%ntdt !>(path=pax)]
             ::
             ?.  zag=(~(got by erg.dat) pax)
-              [%ntdt (cage-to-vase:forder [%null !>(~)])]
+              [%ntdt (cage-to-vase:marker [%null !>(~)])]
             ::
             =/  disc  [p q]:val
             =/  mark-from-path=mark  (path-to-mark:ze pax)
@@ -3874,10 +3842,8 @@
           ::
           ?:  =([~ lob] lol)
             :-  %ntdt
-            %-  cage-to-vase:forder
-            q:(need fil.ank:(descend-path:(zu ank:(need alh)) pax))
-          ::
-          :-  [%ntdt !>(mark-from-path)]
+            %-  cage-to-vase:marker
+            +:(need fil.ank:(descend-path:(zu ank:(need alh)) pax))
           ::
           ?~  deltas.rek
             (page-to-schematic disc direct.rek)
@@ -3950,6 +3916,7 @@
   |=  $:  hen/duct
           hic/(hypo (hobo task:able))
       ==
+  ~&  %clay-call
   =*  req  q.hic
   =>  %=    .                                         ::  XX temporary
           req
@@ -3961,6 +3928,7 @@
             ~&  [%bad-softing (@t -.p.req)]  !!
           u.-
         ?:  (~(nest ut -:!>(*task:able)) | p.hic)  req
+        ~&  [%clay-call-flub (@tas `*`-.req)]
         ((hard task:able) req)
       ==
   ^+  [p=*(list move) q=..^$]
@@ -4041,15 +4009,13 @@
           ?<  (~(has by fat.ruf) our.req)
           (~(put by fat.ruf) our.req [-(hun hen)]:[*room .])
         ==
-    ^-  (list move)
-    ?:  ?=(%czar (clan:title our.req))
-      ~
-    =/  bos=ship
-      ;;  ship
-      %-  need  %-  need
-      %-  (sloy ski)
-      [[151 %noun] %j (en-beam:format [our.req %sein da+now] /(scot %p our.req))]
-    [hen %pass /init-merge %c %merg our.req %base bos %kids da+now %init]~
+    =+  [bos=(sein:title our.req) can=(clan:title our.req)]
+    %-  zing  ^-  (list (list move))
+    :~  ?:  =(bos our.req)  ~
+        [hen %pass /init-merge %c %merg our.req %base bos %kids da+now %init]~
+    ::
+        ~
+    ==
   ::
       $into
     =.  hez.ruf  `hen
@@ -4149,8 +4115,6 @@
       =+  den=((de now hen ruf) [. .]:our.req des.req)
       abet:(perm:den pax.req rit.req)
     [mos ..^$]
-  ::
-      $sunk  [~ ..^$]
   ::
       ?($warp $werp)
     =^  for  req
@@ -4323,6 +4287,7 @@
 ++  take                                              ::  accept response
   |=  {tea/wire hen/duct hin/(hypo sign)}
   ^+  [p=*(list move) q=..^$]
+  ~&  %clay-take
   ?:  ?=({$merge @ @ @ @ @ ~} tea)
     ?>  ?=(?($writ $made) +<.q.hin)
     =+  our=(slav %p i.t.tea)
@@ -4357,7 +4322,7 @@
         [i.t.tea ((hard case) +>:(slay i.t.t.tea)) i.t.t.t.tea]
     ::
         `path`t.t.t.t.tea
-        (vase-to-cage:forder p.result.result.q.hin)
+        (vase-to-cage:marker p.result.result.q.hin)
     ==
   ?-    -.+.q.hin
   ::

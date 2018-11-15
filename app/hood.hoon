@@ -1,20 +1,20 @@
-::                                                      ::  ::
-::::  /hoon/hood/app                                    ::  ::
-  ::                                                    ::  ::
-/?    310                                               ::  zuse version
-/+  sole,                                               ::  libraries
-    ::  XX these should really be separate apps, as
-    ::     none of them interact with each other in
-    ::     any fashion; however, to reduce boot-time
-    ::     complexity and work around the current
-    ::     non-functionality of end-to-end acknowledgments,
-    ::     they have been bundled into :hood
-    ::
-    ::  |command handlers
-    hood-helm, hood-kiln, hood-drum, hood-write
-::                                                      ::  ::
-::::                                                    ::  ::
-  ::                                                    ::  ::
+#+  #=  here-disc
+  ^-  disc:ford
+  !:
+  =/  her=path  /==
+  ~&  [%loading %]
+  ?>  ?=([* * *] her)
+  [(slav %p i.her) (slav %tas i.t.her)]
+::
+#+  #=  sole        #&  :-  here-disc  #.  /hoon/sole/lib
+#+  #=  hood-helm   #&  :-  here-disc  #.  /hoon/helm/hood/lib
+#+  #=  hood-kiln   #&  :-  here-disc  #.  /hoon/kiln/hood/lib
+#+  #=  hood-drum   #&  :-  here-disc  #.  /hoon/drum/hood/lib
+#+  #=  hood-womb   #&  :-  here-disc  #.  /hoon/womb/hood/lib
+#+  #=  hood-write  #&  :-  here-disc  #.  /hoon/write/hood/lib
+::
+!:
+=>
 |%
 ++  hood-module
   ::  each hood module follows this general shape
@@ -34,7 +34,6 @@
 ::                                                      ::  ::
 ::::                                                    ::  ::  state handling
   ::                                                    ::  ::
-!:
 =>  |%                                                  ::
     ++  hood-old                                        ::  unified old-state
       {?($0 $1) lac/(map @tas hood-part-old)}           ::
