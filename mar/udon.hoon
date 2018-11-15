@@ -1,7 +1,12 @@
+#+  #=  here-disc
+  ^-  disc:ford
+  !:
+  =/  her=path  /==
+  ~&  [%loading %]
+  ?>  ?=([* * *] her)
+  [(slav %p i.her) (slav %tas i.t.her)]
 ::
-::::  /hoon/udon/mar
-  ::
-/+    cram
+#+  #=  cram  #&  :-  here-disc  #.  /hoon/cram/lib
 ::
 |_  mud/@t
 ++  grow

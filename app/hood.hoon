@@ -10,7 +10,6 @@
 #+  #=  hood-helm   #&  :-  here-disc  #.  /hoon/helm/hood/lib
 #+  #=  hood-kiln   #&  :-  here-disc  #.  /hoon/kiln/hood/lib
 #+  #=  hood-drum   #&  :-  here-disc  #.  /hoon/drum/hood/lib
-#+  #=  hood-womb   #&  :-  here-disc  #.  /hoon/womb/hood/lib
 #+  #=  hood-write  #&  :-  here-disc  #.  /hoon/write/hood/lib
 ::
 !:
