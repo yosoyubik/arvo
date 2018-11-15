@@ -3259,6 +3259,14 @@
         ?:  ?=({$circle *} p)  ~
         `[s p]
     [~ +>]
+  ?:  =(a 'check all subs')
+    ~&  'here are all incoming subs'
+    ~&  ^-  (list (pair ship path))
+        %+  turn  ~(tap by sup.bol)
+        |=  {b/bone s/ship p/path}
+        ^-  (pair ship path)
+        [s p]
+    [~ +>]
   ?:  =(a 'rebuild')
     ~&  'rebuilding message references...'
     =-  [~ +>.$(stories -)]
