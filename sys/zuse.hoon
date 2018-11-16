@@ -5497,26 +5497,16 @@
           [%ntdt !>(build-mark-loader)]
         :_  [%ntcb %limb %disc]
         [%ntcb ^~((ream 'form:grad:core.initial-mark'))]
-      ::  wrap :original-gate with an equality check so we get `[%null ~]`
-      ::
-      :+  %ntbs
-        :+  %ntbn  [%ntcb ^~((ream '..zuse'))]
-        :-  %ntcb
-        ^~  %-  ream
-        '''
-        |*  original-gate=$-(* *)
-        |*  [start=* end=*]
-        ::
-        ?:  =(start end)
-          [%null ~]
-        (original-gate start end)
-        '''
       ::
       :-  %ntcb
       ^-  hoon
       ^~  %-  ream
       '''
       |=  [start=_+<.core.initial-mark end=_+<.core.initial-mark]
+      ::
+      ?:  =(start end)
+        [%null ~]
+      ::
       ^-  [term _+<.form-mark]
       ::
       :-  form:grad:core.initial-mark

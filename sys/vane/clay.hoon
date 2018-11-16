@@ -1419,11 +1419,16 @@
         ::
         :+  %ntbs
           (build-mark-differ:marker mark=p.cay disc)
+        ::  TODO hideous
         ::
-        :-  %^  lobe-to-schematic:ze  disc  pax
-            (~(got by q:(aeon-to-yaki:ze let.dom)) pax)
+        :-  :+  %ntbn
+              %^  lobe-to-schematic:ze  disc  pax
+              (~(got by q:(aeon-to-yaki:ze let.dom)) pax)
+            [%ntcb ^~((ream '+'))]
         ::
-        [%ntdt (cage-to-vase:forder cay)]
+        :+  %ntbn
+          [%ntdt (cage-to-vase:forder cay)]
+        [%ntcb ^~((ream '+'))]
     ==
   ::
   ::  Handle result of diffing mutations.
@@ -2341,8 +2346,16 @@
       ::
       :-  [%ntdt !>(mark-from-path)]
       :+  %ntbs  (get-patcher)
+      ::  TODO hideous
       ::
-      [$(deltas.rek t.deltas.rek) (page-to-schematic disc i.deltas.rek)]
+      :-  :+  %ntbn
+            $(deltas.rek t.deltas.rek)
+          [%ntcb ^~((ream '+'))]
+      ::  TODO hideous
+      ::
+      :+  %ntbn
+        (page-to-schematic disc i.deltas.rek)
+      [%ntcb ^~((ream '+'))]
     ::
     ::  Hashes a page to get a lobe.
     ::
