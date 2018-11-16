@@ -12,7 +12,7 @@
     ^-  ^json
     %+  frond  -.rum
     ?-  -.rum
-        %change
+        %circle-change
       %-  pairs
       :~  [%which [%s wit.rum]]
           [%circle (circ:enjs:hall-json cir.rum)]
