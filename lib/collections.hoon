@@ -68,7 +68,7 @@
   $%  ::  if config is given, either add new circle or update existing one
       ::  if config is nil then delete circle
       ::
-      [%change wit=?(%our %sub) cir=circle:hall con=(unit config:hall)]
+      [%circle-change wit=?(%our %sub) cir=circle:hall con=(unit config:hall)]
       ::  recieved a new inbox message or DM invite
       ::
       [%new-msg nom=?(%inbox %invites) env=envelope:hall]
