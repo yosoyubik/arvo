@@ -284,7 +284,7 @@
       [ost.bol %peer /our/[cir.rum] [our.bol %hall] /circle/[cir.rum]/config]~
     :_  this(our-circles.str.sta (~(del by our-circles.str.sta) circ))
     :-  [ost.bol %pull /our/[cir.rum] [our.bol %hall] ~]
-    (send-rumor %change %our circ ~)
+    (send-rumor %circle-change %our circ ~)
   ::
   ::  %inbox:
   ::
@@ -328,7 +328,7 @@
           ==
         ::  we've removed a source from our inbox  
         ::
-        :-  (send-rumor %change %sub cir.src.dif.rum.rum ~)
+        :-  (send-rumor %circle-change %sub cir.src.dif.rum.rum ~)
         %=  this
           sub-circles.str.sta 
             (~(del by sub-circles.str.sta) cir.src.dif.rum.rum)
@@ -338,7 +338,7 @@
       ::
           %full
         =*  conf  cof.dif.rum.rum
-        :-  (send-rumor %change %sub circ `conf)
+        :-  (send-rumor %circle-change %sub circ `conf)
         %=  this
           sub-circles.str.sta  (~(put by sub-circles.str.sta) circ `conf)
         ==
@@ -380,7 +380,7 @@
       ::
           %full
         =*  conf  cof.dif.rum.rum
-        :-  (send-rumor %change %our circ `conf)
+        :-  (send-rumor %circle-change %our circ `conf)
         %=  this
           our-circles.str.sta  (~(put by our-circles.str.sta) circ `conf)
         ==
