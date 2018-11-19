@@ -714,6 +714,11 @@
         ==
       ==
     ::
+        $cert
+      ::?:  =(crt p.kyz)  +>.$
+      ::=.  crt  p.kyz
+      +>.$(mow :_(mow [ged [%give %cert p.kyz]]))
+    ::
         $serv
       =<  ~&([%serving (en-beam top)] .)
       ?^(p.kyz +>.$(top p.kyz) +>.$(q.top p.kyz))

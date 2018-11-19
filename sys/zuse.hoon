@@ -725,6 +725,7 @@
     |%
     +=  gift                                            ::  out result <-$
       $%  [%form p=http-config]                         ::  configuration
+          [%cert p=cttp-config]                           ::  client certificate
           [%mass p=mass]                                ::  memory usage
           [%mack p=(unit tang)]                         ::  message ack
           [%sigh p=cage]                                ::  marked http response
@@ -740,6 +741,7 @@
           [%hiss p=(unit user) q=mark r=cage]           ::  outbound user req
           [%init p=@p]                                  ::  report install
           [%live p=@ud q=(unit @ud)]                    ::  http/s ports
+          [%cert p=cttp-config]                         ::  set http cli cert
           [%rule p=http-rule]                           ::  update config
           [%serv p=$@(desk beam)]                       ::  set serving root
           [%sunk p=ship q=life]                         ::  report death
@@ -800,6 +802,9 @@
   ++  host  (each turf @if)                             ::  http host
   ++  hoke  %+  each   {$localhost ~}                  ::  local host
             ?($.0.0.0.0 $.127.0.0.1)                    ::
+  :: +cttp-config: http-client configuration
+  ::
+  +=  cttp-config  (unit [key=wain cert=wain])
   :: +http-config: full http-server configuration
   ::
   +=  http-config

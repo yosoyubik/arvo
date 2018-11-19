@@ -1261,6 +1261,7 @@
                ~
         $build  `%f
         $cash  `%a
+        $cert  `%e
         $conf  `%g
         $cred  `%c
         $crew  `%c
