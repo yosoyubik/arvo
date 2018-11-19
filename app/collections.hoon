@@ -317,7 +317,8 @@
       ::  %source: the sources of our inbox have changed
       ::
           %source
-        ?>  =(circ [our.bol %inbox])
+        ?.  =(circ [our.bol %inbox])
+          [~ this]
         ::  we've added a source to our inbox  
         ::
         ?:  add.dif.rum.rum
