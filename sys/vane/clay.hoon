@@ -787,6 +787,7 @@
     =+  cas=(need (case-to-aeon:ze r.bem))
     =+  can=(turn ~(tap by q:(aeon-to-yaki:ze cas)) head)
     =+  mus=(skim can |=(paf/path =(pax (scag (lent pax) paf))))
+    ~&  [%mont mus=(lent mus) can=(lent can)]
     ?~  mus
       +>.$
     ::
@@ -804,14 +805,12 @@
         ::
         :-  [%ntdt !>(path=pax)]
         ::
-        =/  mark-from-path=mark  (path-to-mark:ze pax)
-        ::
-        :-  [%ntdt !>(mark-from-path)]
+        :-  [%ntdt !>(%mime)]
         ::
         :+  %ntbs
           ::
           %-  build-mark-converter:marker
-          [start=[mark-from-path disc] end=[%mime disc]]
+          [start=[(path-to-mark:ze pax) disc] end=[%mime disc]]
         ::
         :+  %ntbn
           ::
@@ -1700,11 +1699,12 @@
         :-  pax
         ::
         ?.  ?=(%mime p.mim)
+          ~&  [%take-ergo-mark p.mim pax]
           ~
         `((hard mime) q.q.mim)
     ::
     =+  mus=(must-ergo (turn ~(tap by can) head))
-    ~&  [%ergo-sending (lent mus)]
+    ~&  [%ergo-sending mus=(lent mus) can=~(wyt by can)]
     %-  emil
     %+  turn  ~(tap by mus)
     |=  {pot/term len/@ud pak/(set path)}
