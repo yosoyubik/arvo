@@ -1,9 +1,5 @@
 ::  Untyped best-guess printer
 ::
-::::  /hoon/pretty-file/lib
-  ::
-/?    310
-::
 =<  pretty-file
 |%
 ++  pretty-noun

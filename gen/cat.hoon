@@ -1,12 +1,14 @@
-::  ConCATenate file listings
+#+  #=  here-disc
+  ^-  disc:ford
+  !:
+  =/  her=path  /==
+  ~&  [%loading %]
+  ?>  ?=([* * *] her)
+  [(slav %p i.her) (slav %tas i.t.her)]
 ::
-::::  /hoon/cat/gen
-  ::
-/?    310
-/+    pretty-file, show-dir
+#+  #=  pretty-file  #&  :-  here-disc  #.  /hoon/pretty-file/lib
+#+  #=  show-dir     #&  :-  here-disc  #.  /hoon/show-dir/lib
 ::
-::::
-  ::
 :-  %say
 |=  {^ {arg/(list path)} vane/?($g $c)}
 =-  tang+(flop `tang`(zing -))
