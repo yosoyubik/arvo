@@ -402,7 +402,7 @@
 ++  send-rumor
   |=  rum=rumor
   ^-  (list move)
-  %+  turn  (prey:pubsub:userlib /data bol)
+  %+  turn  (prey:pubsub:userlib /primary bol)
   |=  [=bone *]
   [bone %diff %collections-rumor rum]
 ::
