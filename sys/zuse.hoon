@@ -5694,8 +5694,9 @@
     |=  [=mark disc=disc:ford]
     ^-  schematic:ford
     ::
-    :+  %ntls  [%ntdt !>(disc=disc)]
+    :+  %ntls  [%ntdt !>([mark=mark disc=disc])]
     :+  %ntls  [%ntts %initial-mark (build-mark-analyzer mark disc)]
+    :+  %ntzp  ^~((ream '[%patch-failed mark=initial-mark]'))
     ::
     :^    %ntwt
         [%ntcb ^~((ream '?=(%| -.grad.descriptor.initial-mark)'))]
@@ -5726,13 +5727,44 @@
       :+  %wtbn
         ^~((ream '?=(%& -.grad.descriptor.initial-mark)'))
       ^~((ream 'p.grad.descriptor.initial-mark'))
+    ::
+    :+  %ntzp  ^~((ream '[%patch-delegate-failed delegate]'))
     ::  produce the delegate mark's patcher by recursing
     ::
-    :+  %ntnt
-      [%ntcb ^~((ream '..zuse'))]
-    :+  %ntbs
-      [%ntdt !>(build-mark-patcher)]
-    [%ntcb ^~((ream '[delegate disc]'))]
+    :+  %ntls  :+  %ntts  %patcher
+      :+  %ntnt
+        [%ntcb ^~((ream '..zuse'))]
+      :+  %ntbs
+        [%ntdt !>(build-mark-patcher)]
+      [%ntcb ^~((ream '[delegate disc]'))]
+    ::  construct a converter from :initial-mark to the diff mark
+    ::
+    :+  %ntls  :+  %ntts  %start-to-end
+      :+  %ntnt
+        [%ntcb ^~((ream '..zuse'))]
+      :+  %ntbs
+        [%ntdt !>(build-mark-converter)]
+      [%ntcb ^~((ream '[[mark disc] [delegate disc]]'))]
+    ::  construct a converter from the diff mark back to :initial-mark
+    ::
+    :+  %ntls  :+  %ntts  %end-to-start
+      :+  %ntnt
+        [%ntcb ^~((ream '..zuse'))]
+      :+  %ntbs
+        [%ntdt !>(build-mark-converter)]
+      [%ntcb ^~((ream '[[delegate disc] [mark disc]]'))]
+    ::  TODO: separate conversion caching from patch caching
+    ::  TODO: better type checking? more dryness?
+    ::
+    :-  %ntcb
+    ^-  hoon
+    ^~  %-  ream
+    '''
+    |*  [start=* diff=*]
+    ^+  +<.core.initial-mark
+    ::
+    (end-to-start (patcher (start-to-end start) diff))
+    '''
   ::  +validate: ensure a noun nests inside :mark's sample
   ::
   ++  validate

@@ -804,6 +804,11 @@
         ^-  schematic:ford
         ::
         :-  [%ntdt !>(path=pax)]
+        ::  use the cached mime value if we have one
+        ::
+        ?^  mime-cache=(~(get by mim.dom) pax)
+          [%ntdt (cage-to-vase:forder [%mime !>(u.mime-cache)])]
+        ::  produce a schematic that converts the path's contents to mime
         ::
         :-  [%ntdt !>(%mime)]
         ::
@@ -1531,11 +1536,13 @@
     %-  emit
     :*  hen  %pass  [%patching (scot %p her) syd ~]  %f
         %build  our  live=%.n
-        :+  %ntzp  ^~((ream '%clay-patching-fail'))
         %-  build-list:forder
         %+  turn  (sort ~(tap by hat) sort-by-head)
         |=  [pax=path lob=lobe]
         ^-  schematic:ford
+        ::
+        :+  %ntls  [%ntdt !>(pax=pax)]
+        :+  %ntzp  ^~((ream '[%clay-patch-fail pax]'))
         ::
         :+  [%ntdt !>(pax)]
           [%ntdt !>(lob)]
@@ -2322,7 +2329,7 @@
           rek(direct q.bol)
         $(lob q.q.bol, deltas.rek [r.bol deltas.rek])
       ::
-      =/  mark-from-path=mark  =+(spur=(flop pax) ?~(spur !! `@tas`i.spur))
+      =/  mark-from-path=mark  (path-to-mark:ze pax)
       =/  lol=(unit lobe)      ?.(=(~ ref) `0vsen.tinel (~(get by hat) pax))
       ::  memoize +build-mark-patcher:marker (possibly premature)
       ::
@@ -2344,18 +2351,22 @@
         (page-to-schematic disc direct.rek)
       ::  call +build-mark-patcher:marker on [start diff], recursing on start
       ::
+      :+  %ntls  [%ntdt !>(pax=pax)]
+      :+  %ntzp  ^~((ream '[%lobe-to-schematic-fail pax]'))
+      ::
       :-  [%ntdt !>(mark-from-path)]
       :+  %ntbs  (get-patcher)
-      ::  TODO hideous
-      ::
-      :-  :+  %ntbn
-            $(deltas.rek t.deltas.rek)
-          [%ntcb ^~((ream '+'))]
-      ::  TODO hideous
-      ::
-      :+  %ntbn
+      :+  %ntls
+        ::  TODO hideous
+        ::
+        :-  :+  %ntts  %start
+            :+  %ntbn
+              $(deltas.rek t.deltas.rek)
+            [%ntcb ^~((ream '+'))]
+        ::
+        :+  %ntts  %diff
         (page-to-schematic disc i.deltas.rek)
-      [%ntcb ^~((ream '+'))]
+      :-  %ntcb  ^~((ream '~&  [%sample -]  -'))
     ::
     ::  Hashes a page to get a lobe.
     ::
