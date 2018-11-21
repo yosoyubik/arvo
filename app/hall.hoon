@@ -3323,6 +3323,9 @@
       [[b %quit ~] out]
     out
   ::
+  ?:  =(a 'print')
+    ~&  shape:(~(got by stories) %inbox)
+    [~ +>]
   ::
   [~ +>]
 --
