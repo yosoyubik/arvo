@@ -3,12 +3,7 @@
 ::
 ::    .urbit/pill +solid
 ::
-::::  /hoon/solid/gen
-  ::
-/?    310
-::
-::::
-  !:
+!:
 :-  %say
 |=  $:  {now/@da eny/@uvJ bec/beak}
         {arg/$@(~ {top/path ~}) dub/_|}
