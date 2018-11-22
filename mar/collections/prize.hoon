@@ -15,10 +15,10 @@
     :~  :-  %inbox
         %-  pairs
         :~  [%config ?~(con.inbox.piz ~ (conf:enjs:hall-json u.con.inbox.piz))]
-            [%envelopes %a (turn env.inbox.piz enve:enjs:hall-json)]
+            [%messages %a (turn env.inbox.piz enve:enjs:hall-json)]
         ==
       ::
-        :+  %our-circles  %a
+        :+  %circles-our  %a
         %+  turn  ~(tap by our-circles.piz)
         |=  [cir=circle:hall con=(unit config:hall)]
         %-  pairs
@@ -26,7 +26,7 @@
             [%config ?~(con ~ (conf:enjs:hall-json u.con))]
         ==
       ::
-        :+  %sub-circles  %a
+        :+  %circles-sub  %a
         %+  turn  ~(tap by our-circles.piz)
         |=  [cir=circle:hall con=(unit config:hall)]
         %-  pairs
