@@ -18,21 +18,18 @@
             [%messages %a (turn env.inbox.piz enve:enjs:hall-json)]
         ==
       ::
-        :+  %circles-our  %a
-        %+  turn  ~(tap by our-circles.piz)
+        :+  %circles  %a
+        %+  turn  ~(tap by circles.piz)
         |=  [cir=circle:hall con=(unit config:hall)]
         %-  pairs
         :~  [%circle (circ:enjs:hall-json cir)]
             [%config ?~(con ~ (conf:enjs:hall-json u.con))]
         ==
       ::
-        :+  %circles-sub  %a
-        %+  turn  ~(tap by our-circles.piz)
-        |=  [cir=circle:hall con=(unit config:hall)]
-        %-  pairs
-        :~  [%circle (circ:enjs:hall-json cir)]
-            [%config ?~(con ~ (conf:enjs:hall-json u.con))]
-        ==
+        :+  %circles-our  %a
+        %+  turn  ~(tap in our-circles.piz)
+        |=  nom=name:hall
+        [%s nom]
       ::
         [%invites %a (turn invites.piz enve:enjs:hall-json)]
     ==

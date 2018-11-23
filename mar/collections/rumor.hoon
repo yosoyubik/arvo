@@ -12,10 +12,9 @@
     ^-  ^json
     %+  frond  -.rum
     ?-  -.rum
-        %circle-change
+        %config-change
       %-  pairs
-      :~  [%which [%s wit.rum]]
-          [%circle (circ:enjs:hall-json cir.rum)]
+      :~  [%circle (circ:enjs:hall-json cir.rum)]
           [%config ?~(con.rum ~ (conf:enjs:hall-json u.con.rum))]
       ==
     ::
