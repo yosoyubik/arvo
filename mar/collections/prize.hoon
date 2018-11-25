@@ -11,6 +11,7 @@
   ++  json
     =,  enjs:format
     ^-  ^json
+    %+  frond  %landscape-prize
     %-  pairs
     :~  :-  %inbox
         %-  pairs
