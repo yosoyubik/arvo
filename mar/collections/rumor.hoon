@@ -10,6 +10,7 @@
   ++  json
     =,  enjs:format
     ^-  ^json
+    %+  frond  %landscape-rumor
     %+  frond  -.rum
     ?-  -.rum
         %config-change
