@@ -454,10 +454,21 @@
     ::
     ++  dy-meal                                         ::  vase to cage
       |=  vax/vase
+      ::
+      ?>  ?=(^ cud)
+      ::
       ?.  &(?=(@ -.q.vax) ((sane %tas) -.q.vax))
         ~&  %dy-meal-cage
         (dy-rash %bel ~)
-      (dy-hand vax)
+      ::  TODO: duplicate code with +dy-hand
+      ::
+      =/  cay=cage  (vase-to-cage:forder vax)
+      ::  TODO: clean up after we have real printing
+      ::
+      =/  maybe-tang  ((soft tang) q.q.cay)
+      =?  cay  ?=(^ maybe-tang)  [%tang -:!>(*tang) u.maybe-tang]
+      ::
+      (dy-step(cud ~, rez (~(put by rez) p.u.cud cay)) +(p.u.cud))
     ::
     ++  dy-made-edit                                    ::  sole edit
       |=  vax=vase
@@ -549,6 +560,7 @@
         (dy-rash %sav p.p.mad q.q.cay)
       ::
           $pill
+        ~&  [%dojo-pill ?^(q.q.cay -.q.q.cay %is-atom)]
         (dy-rash %sag p.p.mad q.q.cay)
       ::
           $http
@@ -1036,7 +1048,7 @@
             run-generator
           ::
           :+  %ntnt
-            [%ntcb ^~((ream '.'))]
+            [%ntcb ^~((ream '..zuse'))]
           run-generator
       ::  produce a schematic that runs the generator gate
       ::
@@ -1165,15 +1177,15 @@
         (dy-show dat)
       (dy-slam(pux ~) /scar u.pro q.dat) 
     ::
-    ++  dy-made-gent                                    ::  generator product
+    ++  dy-made-gent                                    ::  %say gen product
       |=  vax=vase
       (dy-meal vax)
     ::
-    ++  dy-made-noun                                    ::  generator product
+    ++  dy-made-noun                                    ::  naked gen product
       |=  vax=vase
       (dy-hand vax)
     ::
-    ++  dy-made-make
+    ++  dy-made-make                                    ::  %bud gen product
       |=  vax=vase
       (dy-hand vax)
     ::
