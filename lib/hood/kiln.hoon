@@ -78,7 +78,7 @@
           {$perm wire ship desk path rite}              ::
           {$poke wire dock pear}                        ::
           {$wipe wire @ud}                              ::
-          [%keep wire compiler-cache-size=@ud build-cache-size=@ud]
+          [%keep wire compiler-cache-size=@ud]
           {$wait wire @da}                              ::
           {$warp wire sock riff}                        ::
       ==                                                ::
@@ -287,8 +287,8 @@
   |=(percent=@ud abet:(emit %wipe /kiln percent))
 ::
 ++  poke-keep-ford
-  |=  [compiler-cache-size=@ud build-cache-size=@ud]
-  abet:(emit %keep /kiln compiler-cache-size build-cache-size)
+  |=  [compiler-cache-size=@ud]
+  abet:(emit %keep /kiln compiler-cache-size)
 ::
 ++  mack
   |=  {way/wire saw/(unit tang)}
