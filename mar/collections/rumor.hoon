@@ -22,7 +22,7 @@
         %new-msg
       %-  pairs
       :~  [%circle [%s nom.rum]]
-          [%envelope (enve:enjs:hall-json env.rum)]
+          [%message (enve:enjs:hall-json env.rum)]
       ==
     ==
 

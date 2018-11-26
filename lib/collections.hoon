@@ -21,6 +21,7 @@
 +$  diff
   $%  [%collections-prize prize]
       [%collections-rumor rumor]
+      [%hall-rumor rumor:hall]
   ==
 ::
 +$  poke
@@ -610,7 +611,7 @@
         %^  ta-hall-json  parent-path  'new collection' 
         (collection-notify pax meta.col.new)
       ::
-      =.  ta-this  (ta-hall-create-circle pax description.meta.col.new)
+      =.  ta-this  (ta-hall-create-circle pax name.meta.col.new)
       =/  items=(list [nom=@ta =item])  ~(tap by data.col.new)
       |-
       ?~  items  ta-this
@@ -618,7 +619,7 @@
       $(items t.items)
     ::
         %both
-      =.  ta-this  (ta-hall-create-circle pax description.meta.col.new)
+      =.  ta-this  (ta-hall-create-circle pax name.meta.col.new)
       =/  items=(list [nom=@ta =item])  ~(tap by data.col.new)
       =.  ta-this
       |-
@@ -939,7 +940,7 @@
   ::
   ++  ta-hall-create-circle
     ~/  %coll-ta-hall-create-circle
-    |=  [pax=path description=@t]
+    |=  [pax=path name=@t]
     ^+  ta-this
     =/  circ=circle:hall  (path-to-circle pax our.bol)
     =/  parent=circle:hall
@@ -947,7 +948,7 @@
         [our.bol %inbox]
       (path-to-circle (scag (dec (lent pax)) pax) our.bol)
     %-  ta-hall-actions
-    :~  [%create nom.circ description %journal]  
+    :~  [%create nom.circ name %journal]  
         [%source nom.parent & (sy `source:hall`[circ ~] ~)]
     ==
   ::
