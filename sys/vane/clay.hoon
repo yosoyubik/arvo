@@ -1,4 +1,3 @@
-!:  ::  TODO remove once stable
 ::  clay (4c), revision control
 ::
 ::  This is split in three top-level sections:  structure definitions, main
