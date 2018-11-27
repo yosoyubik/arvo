@@ -472,11 +472,12 @@
   ++  able  ^?
     |%
     ++  note                                            ::  out request $->
-      $%  $:  $d                                        ::  to %dill
-      $%  {$flog p/flog:dill}                           ::
+      $%  $:  $b                                        ::  to %behn
+      $%  {$rest p/@da}                                 ::  cancel timer
+          {$wait p/@da}                                 ::  set timer
       ==  ==                                            ::
-          $:  $a                                        ::  to %ames
-      $%  {$kick p/@da}                                 ::
+          $:  $d                                        ::  to %dill
+      $%  {$flog p/flog:dill}                           ::
       ==  ==                                            ::
           $:  %j                                        ::  to %jael
       $%  [%meet our=ship who=ship =life =pass]         ::  neighbor
@@ -499,7 +500,10 @@
           {$woot p/ship q/coop}                         ::  reaction message
       ==                                                ::
     ++  sign                                            ::  in result _<-
-      $%  $:  %j                                        ::  from %jael
+      $%  $:  $b                                        ::  to %behn
+      $%  {$wake ~}                                     ::  timer activate
+      ==  ==                                            ::
+          $:  %j                                        ::  from %jael
       $%  [%pubs public:able:jael]                      ::  public keys
           [%turf turf=(list turf)]                      ::  bind to domains
           [%vein =life vein=(map life ring)]            ::  private keys
@@ -571,6 +575,7 @@
         {$mead p/lane q/rock}                           ::  accept packet
         {$milk p/sock q/soap r/*}                       ::  e2e pass message
         {$ouzo p/lane q/rock}                           ::  transmit packet
+        {$pito p/@da}                                   ::  timeout
         {$raki p/sock q/life r/pass}                    ::  neighbor'd
         {$sake p/ship}                                  ::  our private keys
         {$wine p/sock q/tape}                           ::  notify user
@@ -605,6 +610,7 @@
   ++  fort                                              ::  formal state
     $:  $1                                              ::  version
         gad/duct                                        ::  client interface
+        tim/(unit @da)                                  ::  pending timer
         tuf/(list turf)                                 ::  domains
         hop/@da                                         ::  network boot date
         bad/(set @p)                                    ::  bad ships
@@ -695,11 +701,13 @@
   ++  able  ^?
     |%
     ++  gift                                            ::  out result <-$
-      $%  {$mass p/mass}                                ::  memory usage
+      $%  {$doze p/(unit @da)}                          ::  next alarm
+          {$mass p/mass}                                ::  memory usage
           {$wake ~}                                    ::  wakeup
       ==                                                ::
     ++  task                                            ::  in request ->$
-      $%  {$rest p/@da}                                 ::  cancel alarm
+      $%  {$born ~}                                     ::  new unix process
+          {$rest p/@da}                                 ::  cancel alarm
           {$wait p/@da}                                 ::  set alarm
           {$wake ~}                                    ::  timer activate
           {$wegh ~}                                    ::  report memory
@@ -5237,6 +5245,78 @@
       %+  can  0
       ~[64^(rev 3 8 wid) +(-)^(lsh 0 - 1) wid^dat]
     --
+  ::
+  ++  pbkdf
+    =>  |%
+        ++  meet  |=([p=@ s=@ c=@ d=@] [[(met 3 p) p] [(met 3 s) s] c d])
+        ++  flip  |=  [p=byts s=byts c=@ d=@]
+                  [wid.p^(rev 3 p) wid.s^(rev 3 s) c d]
+        --
+    |%
+    ::
+    ::  use with @
+    ::
+    ++  hmac-sha1     (cork meet hmac-sha1l)
+    ++  hmac-sha256   (cork meet hmac-sha256l)
+    ++  hmac-sha512   (cork meet hmac-sha512l)
+    ::
+    ::  use with @t
+    ::
+    ++  hmac-sha1t    (cork meet hmac-sha1d)
+    ++  hmac-sha256t  (cork meet hmac-sha256d)
+    ++  hmac-sha512t  (cork meet hmac-sha512d)
+    ::
+    ::  use with byts
+    ::
+    ++  hmac-sha1l    (cork flip hmac-sha1d)
+    ++  hmac-sha256l  (cork flip hmac-sha256d)
+    ++  hmac-sha512l  (cork flip hmac-sha512d)
+    ::
+    ::  main logic
+    ::
+    ++  hmac-sha1d    (cury pbkdf hmac-sha1l:hmac 20)
+    ++  hmac-sha256d  (cury pbkdf hmac-sha256l:hmac 32)
+    ++  hmac-sha512d  (cury pbkdf hmac-sha512l:hmac 64)
+    ::
+    ++  pbkdf
+      ::TODO  jet me! ++hmac:hmac is an example
+      |*  [[prf=$-([byts byts] @) out=@u] p=byts s=byts c=@ d=@]
+      =>  .(dat.p (end 3 p), dat.s (end 3 s))
+      ::
+      ::  max key length 1GB
+      ::  max iterations 2^28
+      ::
+      ~|  [%invalid-pbkdf-params c d]
+      ?>  ?&  (lte d (bex 30))
+              (lte c (bex 28))
+              !=(c 0)
+          ==
+      =/  l
+        ?~  (mod d out)
+          (div d out)
+        +((div d out))
+      =+  r=(sub d (mul out (dec l)))
+      =+  [t=0 j=1 k=1]
+      =.  t
+        |-  ^-  @
+        ?:  (gth j l)  t
+        =/  u
+          %+  add  dat.s
+          %^  lsh  3  wid.s
+          %+  rep  3
+          (flop (rpp:scr 3 4 j))
+        =+  f=0
+        =.  f
+          |-  ^-  @
+          ?:  (gth k c)  f
+          =/  q
+            %^  rev  3  out
+            =+  ?:(=(k 1) (add wid.s 4) out)
+            (prf [wid.p (rev 3 p)] [- (rev 3 - u)])
+          $(u q, f (mix f q), k +(k))
+        $(t (add t (lsh 3 (mul (dec j) out) f)), j +(j))
+      (rev 3 d (end 3 d t))
+    --
   --  ::crypto
 ::                                                      ::::
 ::::                      ++unity                       ::  (2c) unit promotion
@@ -7300,6 +7380,22 @@
   =,  mimes:html
   =,  ethe
   |%
+  ++  address-from-pub
+    =,  keccak:crypto
+    |=  pub=@
+    %^  end  3  20
+    %+  keccak-256  64
+    (rev 3 64 pub)
+  ::
+  ++  address-from-prv
+    (cork pub-from-prv address-from-pub)
+  ::
+  ++  pub-from-prv
+    =,  secp256k1:secp:crypto
+    |=  prv=@
+    %-  serialize-point
+    (priv-to-pub prv)
+  ::
   ++  sign-transaction
     =,  crypto
     |=  [tx=transaction pk=@]

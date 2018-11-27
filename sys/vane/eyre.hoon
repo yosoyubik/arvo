@@ -1,7 +1,6 @@
 ::  ::  %eyre, http servant
 !?  164
 ::::
-!:
 |=  pit/vase
 =,  eyre
 =,  wired
@@ -2278,11 +2277,6 @@
   =^  mos  bol
     abet:(apex:~(adit ye [hen [now eny our sky] ~] bol) q.hic)
   [mos ..^$]
-::
-++  doze                                                ::  require no timer
-  |=  {now/@da hen/duct}
-  ^-  (unit @da)
-  ~
 ::
 ++  load                                                ::  take previous state
   |=  old/bolo

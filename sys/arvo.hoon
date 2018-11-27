@@ -135,11 +135,6 @@
     =+  rig=(slym q.sew +<)                             ::  activate vane
     ~%  %wink  +>+>  ~
     |%
-    ++  doze
-      |=  {now/@da hen/duct}
-      ^-  (unit @da)
-      ((hard (unit @da)) q:(slym (slap rig [%limb %doze]) +<))
-    ::
     ++  slid
       |=  {hed/mill tal/mill}
       ^-  mill
@@ -158,7 +153,7 @@
     ++  slur                                            ::  call gate on
       |=  {gat/vase hil/mill}
       ^-  (unit (pair vase worm))
-      =+  sam=(slot 6 gat)
+      =^  sam  p.sew  (~(slot wa p.sew) 6 gat)
       =+  ^=  hig
         ?-  -.hil
           %&  (~(nest wa p.sew) p.sam p.p.hil)
@@ -383,11 +378,6 @@
       {@ $behn *}  %b
     ==
   ::
-  ++  doos                                              ::  sleep until
-    |=  hap/path  ^-  (unit @da)
-    =+  lal=(dint hap)
-    (doze:(wink:(vent lal vil bud p.niz (dink lal)) now 0 beck) now [hap ~])
-  ::
   ++  hurl                                              ::  start loop
     |=  {lac/? ovo/ovum}
     ~?  &(!lac !=(%belt -.q.ovo))  [%unix -.q.ovo p.ovo]
@@ -472,19 +462,18 @@
         niz/(pair worm (list {p/@tas q/vase}))          ::  modules
     ==                                                  ::
 =<  |%
-    ++  come  |=  {@ (list ovum) pone}                  ::  11
+    ++  come  |=  {@ (list ovum) pone}                  ::  22
               ^-  {(list ovum) _+>}
               ~&  %hoon-come
               =^  rey  +>+  (^come +<)
               [rey +>.$]
-    ++  keep  |=(* (^keep ((hard {@da path}) +<)))     ::  4
-    ++  load  |=  {@ (list ovum) pane}                  ::  86
+    ++  load  |=  {@ (list ovum) pane}                  ::  46
               ^-  {(list ovum) _+>}
               ~&  %hoon-load
               =^  rey  +>+  (^load +<)
               [rey +>.$]
-    ++  peek  |=(* (^peek ((hard {@da path}) +<)))     ::  87
-    ++  poke  |=  *                                     ::  42
+    ++  peek  |=(* (^peek ((hard {@da path}) +<)))      ::  47
+    ++  poke  |=  *                                     ::  10
               ^-  {(list ovum) *}
               =>  .(+< ((hard {now/@da ovo/ovum}) +<))
               ?:  =(%verb -.q.ovo)
@@ -519,18 +508,13 @@
                   ==
                 ==
               =+(avo=$(ova t.ova) [[i.ova -.avo] +.avo])
-    ++  wish  |=(* (^wish ((hard @ta) +<)))            ::  20
+    ++  wish  |=(* (^wish ((hard @ta) +<)))             ::  4
     --
 |%
 ++  come                                                ::  load incompatible
   |=  {yen/@ ova/(list ovum) nyf/pone}
   ^+  [ova +>]
   (load yen ova (turn nyf |=({a/@tas b/vise} [a (slim b)])))
-::
-++  keep                                                ::  wakeup delay
-  |=  {now/@da hap/path}
-  =>  .(+< ((hard {now/@da hap/path}) +<))
-  (~(doos (is vil eny bud niz) now) hap)
 ::
 ++  load                                                ::  load compatible
   |=  {yen/@ ova/(list ovum) nyf/pane}
@@ -592,11 +576,15 @@
   =+  ken=(veke now hap zup)
   ~&  [%vega-kernel `@ux`(mug ken)] 
   =+  ^=  nex
-      =+  gat=.*(ken .*(ken [0 87]))
+      ::  +peek at +47
+      ::
+      =+  gat=.*(ken .*(ken [0 47]))
       (need ((hard (unit @)) .*([-.gat [[now ~] +>.gat]] -.gat)))
   ~&  [%vega-compiled hoon-version nex]
   ?>  (lte nex hoon-version)
-  =+  gat=.*(ken .*(ken [0 ?:(=(nex hoon-version) 86 11)]))
+  ::  +load at +46 or +come at +22
+  ::
+  =+  gat=.*(ken .*(ken [0 ?:(=(nex hoon-version) 46 22)]))
   =+  sam=[eny ova q.niz]
   =+  raw=.*([-.gat [sam +>.gat]] -.gat)
   =+  yep=((list ovum) -.raw)
