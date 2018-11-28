@@ -283,8 +283,16 @@
       ::
         :-  %array
         :~  [%bytes 32^`@`0x0]
-            [%bytes 32^`@`0x2]  ::TODO  settle on value
-            [%bytes 32^`@`0x3]  ::TODO  settle on value
+          ::
+            :+  %bytes  32
+            ^-  @
+            0xecd4.0bbe.04fd.f2a6.307d.9ec7.0b65.195b.
+              cb4d.2f80.75b7.7e39.53d9.95c2.9fed.e2af
+          ::
+            :+  %bytes  32
+            ^-  @
+            0x1fac.fda9.4a86.63d5.6eb3.2a00.da16.5912.
+              6d76.dbb4.f88a.0f27.6476.bde0.c115.ec13
         ==
       ::
         :-  %array  ::TODO  verify
