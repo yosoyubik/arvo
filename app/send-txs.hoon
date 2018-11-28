@@ -41,12 +41,12 @@
 ++  this  .
 ++  pretty-see  (turn (sort (turn ~(tap in see) mug) lth) @p)
 ::
-++  prep
-  |=  old=(unit *)
-  ?:  ?=([~ * * ~ @da] old)
-    ~&  [%cancelling +>+>.old]
-    [[ost.bol %rest /see +>+>.old]~ ..prep]
-  [~ ..prep]
+::  ++  prep
+::    |=  old=(unit *)
+::    ?:  ?=([~ * * ~ @da] old)
+::      ~&  [%cancelling +>+>.old]
+::      [[ost.bol %rest /see +>+>.old]~ ..prep]
+::    [~ ..prep]
 ::
 ::  usage:
 ::
@@ -91,6 +91,8 @@
       %+  turn  tox
       (cork trip tape-to-ux:ceremony)
     ~&  [(lent txs) 'loaded txs']
+    ~&  [%clearing-see ~(wyt in see)]
+    =.  see  ~
     apex
   ==
 ::
@@ -143,10 +145,10 @@
   ^-  (list move)
   %^    fan-requests
       wir
-    :~  =>  (need (de-purl:html 'http://localhost:8545'))
+    :~  =>  (need (de-purl:html 'http://35.226.110.143:8545'))
         geth+.(p.p |)
       ::
-        =>  (need (de-purl:html 'http://localhost:8555'))
+        =>  (need (de-purl:html 'http://104.198.35.227:8545'))
         parity+.(p.p |)
     ==
   a+(turn req request-to-json:ethereum)
@@ -257,7 +259,7 @@
     ?<  ?=(%fail -.r)
     ~|  [id.r res]
     =+  txh=(tape-to-ux:ceremony (trip (rsh 3 4 id.r)))
-    ~&  see-tx=[(@p (mug txh)) `@ux`txh]
+    ::  ~&  see-tx=[(@p (mug txh)) `@ux`txh]
     =*  done  `txh
     =*  wait  ~
     ?:  ?=(%error -.r)
@@ -282,6 +284,6 @@
   ~&  [%sigh-tang wir]
   ~&  (slog err)
   ?:  =(~ wen)  [~ this]
-  =.  wen  `(add now.bol ~s10)
+  =.  wen  `(add now.bol ~s30)
   [[ost.bol %wait /see (need wen)]~ this]
 --
