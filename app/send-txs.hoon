@@ -192,7 +192,7 @@
               =('Known transaction' (end 3 17 message.r))
               =('Transaction with the same ' (end 3 26 message.r))
           ==
-        ~&  [%sent-a-known-transaction--skipping wir r]
+        ~&  [%sent-a-known-transaction--skipping wir]
         ~
       ?:  =('Nonce too low' message.r)
         ~&  %nonce-too-low--skipping
