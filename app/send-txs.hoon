@@ -214,6 +214,8 @@
   =.  wen  `(add now.bol ~s10)
   ::  ~&  apex=[wen pretty-see]
   =^  moves  this  send-next-batch
+  ::  timer got un-set, meaning we're done here
+  ?~  wen  [moves this]
   [[[ost.bol %wait /see (need wen)] moves] this]
 ::
 ++  wake-see
