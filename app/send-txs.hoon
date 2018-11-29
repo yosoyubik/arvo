@@ -85,6 +85,7 @@
   ::
       %send
     ~&  'loading txs...'
+    =.  see  ~
     =/  tox=(list cord)  .^((list cord) %cx pax)
     =.  tox  (slag skip tox)
     =.  txs
