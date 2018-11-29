@@ -1,4 +1,4 @@
-::
+!:
 =,  ethe
 =,  ethereum
 ::
@@ -247,18 +247,18 @@
   ::
   ~&  'Deploying ships...'
   =^  ships  this
-    (do-deploy 'ships' ~)
+    (do-deploy 'azimuth' ~)
   ~&  'Deploying polls...'
   =^  polls  this
     %+  do-deploy  'polls'
-    ~[uint+1.209.600 uint+604.800]  ::TODO  decide on values
+    ~[uint+2.592.000 uint+2.592.000]
   ~&  'Deploying claims...'
   =^  claims  this
     %+  do-deploy  'claims'
     ~[address+ships]
   ~&  'Deploying constitution-ceremony...'
   =^  constit  this
-    %+  do-deploy  'constitution-ceremony'
+    %+  do-deploy  'ecliptic-ceremony'
     :~  [%address 0x0]
         [%address ships]
         [%address polls]
@@ -317,7 +317,7 @@
     ~[address+ships]
   ~&  'Deploying constitution-resolver...'
   =^  constitution-resolver  this
-    %+  do-deploy  'constitution-resolver'
+    %+  do-deploy  'ecliptic-resolver'
     ~[address+ships]
   ::
   ::  tlon galaxy booting
@@ -409,7 +409,7 @@
   ::
   ~&  ['Deploying constitution-final...' +(nonce)]
   =^  constit-final  this
-    %+  do-deploy  'constitution-final'
+    %+  do-deploy  'ecliptic-final'
     :~  [%address constit]
         [%address ships]
         [%address polls]
@@ -488,7 +488,7 @@
   =?  this  ?=(^ transfer)
     (do-c (set-transfer-proxy:dat who u.transfer))
   =.  this
-    (do-c (transfer-ship:dat who own))
+    (do-c (transfer-point:dat who own))
   this
 ::
 ::  deposit a whole galaxy into a star release contract
@@ -523,7 +523,7 @@
   ::  send the galaxy to its owner, with spawn proxy at zero
   ::  because it can't spawn anymore
   =.  this
-    (send-ship galaxy [own manage voting `0x0 transfer]:gal-deed)
+    (send-ship galaxy [own manage voting ?~(spawn `0x0 spawn) transfer]:gal-deed)
   ^$(galaxies t.galaxies)
 ::
 ::  deposit a list of stars
@@ -564,7 +564,7 @@
   ++  spawn                   (enc spawn:cal)
   ++  configure-keys          (enc configure-keys:cal)
   ++  set-spawn-proxy         (enc set-spawn-proxy:cal)
-  ++  transfer-ship           (enc transfer-ship:cal)
+  ++  transfer-point          (enc transfer-point:cal)
   ++  set-management-proxy    (enc set-management-proxy:cal)
   ++  set-voting-proxy        (enc set-voting-proxy:cal)
   ++  set-transfer-proxy      (enc set-transfer-proxy:cal)
@@ -633,10 +633,10 @@
         [%address proxy]
     ==
   ::
-  ++  transfer-ship
+  ++  transfer-point
     |=  [who=ship to=address]
     ^-  call-data
-    :-  'transferShip(uint32,address,bool)'
+    :-  'transferPoint(uint32,address,bool)'
     :~  [%uint `@`who]
         [%address to]
         [%bool |]

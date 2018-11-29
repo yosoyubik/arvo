@@ -1812,7 +1812,7 @@
   ::
   ++  wait-poll
     ?>  ?=(%| -.source)
-    =+  wen=(add now ~m4)
+    =+  wen=(add now ~s30)
     %-  put-move(poll-timer.p.source wen)
     (wrap-note /poll %b %wait wen)
   ::

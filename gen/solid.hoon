@@ -45,6 +45,7 @@
 =+  all=.*(0 ken)
 =+  ^=  vay  ^-  (list {p/@tas q/path})
     :~  [%$ /zuse]
+        [%j /vane/jael]
         [%f /vane/ford]
         [%b /vane/behn]
         [%d /vane/dill]
@@ -52,7 +53,6 @@
         [%c /vane/clay]
         [%g /vane/gall]
         [%e /vane/eyre]
-        [%j /vane/jael]
     ==
 |-  ^+  all
 ?~  vay  all
