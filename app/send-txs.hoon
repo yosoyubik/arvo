@@ -58,6 +58,9 @@
 ::  store at path
 ::    :send-txs [%sign %/txs/txt %/txs/eth-txs %/pk/txt]
 ::
+::  read nonce range from signed transactions at path
+::    :send-txs [%read %txs/txt]
+::
 ::  send all but first 50 txs from path
 ::    :send-txs [%send %/txs/txt 50]
 ::
@@ -70,6 +73,7 @@
               addr=@t
           ==
           [%sign out=path in=path key=path]
+          [%read pax=path]
           [%send pax=path skip=@ud]
       ==
   ^-  [(list move) _this]
@@ -83,6 +87,14 @@
     =/  tox=(list cord)  (sign:ceremony now.bol in key)
     [[(write-file-wain out tox) ~] this]
   ::
+      %read
+    =+  tox=.^((list cord) %cx pax)
+    =+  [first last]=(read-nonces tox)
+    ~&  %+  weld
+         "Found nonces {(scow %ud first)} through {(scow %ud last)}"
+        " in {(scow %ud (lent tox))} transactions."
+    [~ this]
+  ::
       %send
     ~&  'loading txs...'
     =.  see  ~
@@ -94,6 +106,19 @@
     ~&  [(lent txs) 'loaded txs']
     apex
   ==
+::
+++  read-nonces
+  |=  tox=(list cord)
+  ^-  [@ud @ud]
+  ?:  =(~ tox)  ::  not ?~ because fucking tmi
+    [0 0]
+  :-  (read-nonce (snag 0 tox))
+  (read-nonce (snag (dec (lent tox)) tox))
+::
+++  read-nonce
+  |=  tex=cord
+  ^-  @ud
+  (rash (rsh 3 10 (end 3 14 tex)) hex)
 ::
 ++  write-file-wain
   |=  [pax=path tox=(list cord)]
