@@ -25,7 +25,9 @@
 ::
 ++  parity     'http://104.198.35.227:8545'
 ::
-++  ifttt-key  "your webhook key here"
+++  ifttt-kay  "your webhook key here"
+++  ifttt-bee  "this might come handy"
+++  ifttt-sea  ">git filter-branch -f"
 --
 ::
 |_  [bol=bowl:gall state]
@@ -77,15 +79,17 @@
   =+  new=(gth now.bol (add when ~m15))
   :_  ..check-flow(good new)
   ?:  =(good new)  ~
-  :_  ~
-  %^  ifttt  "flow"
-    ?:(good 'Good!' 'Bad!')
+  %+  turn  `(list tape)`~[ifttt-kay ifttt-bee ifttt-sea]
+  |=  who=tape
+  %-  ifttt
+  :+  "flow"  who
+  :-  ?:(good 'Good!' 'Bad!')
   ?:  good  'Transactions are steadily confirming again.'
   %-  crip
   "No new transactions seen since {(scow %ud latest)} at {(scow %da when)} UTC."
 ::
 ++  ifttt
-  |=  [wat=tape sub=cord bod=cord]
+  |=  [wat=tape who=tape sub=cord bod=cord]
   ^-  move
   :-  ost.bol
   :^  %hiss  /  ~
@@ -95,12 +99,9 @@
     %-  need
     %-  de-purl:html
     %-  crip
-    ;:  weld
-      "https://maker.ifttt.com/trigger/wethdog-"
-      wat
-      "/with/key/"
-      ifttt-key
-    ==
+    %+  weld
+      "https://maker.ifttt.com/trigger/"
+    :(weld "wethdog-" wat "/with/key/" who)
   :-  %o
   %-  ~(gas by *(map @t json))
   :~  'value1'^s+sub
