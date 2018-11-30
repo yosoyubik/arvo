@@ -328,12 +328,14 @@
   =/  lockups=(map ship lockup-info)
     get-lockups
   ~&  lockups-wyt=~(wyt by lockups)
-  ~&  lockups=lockups
-  ::  ~&  :-  %galaxies
-  ::  %+  skim
-  ::    ~(tap by addresses)
-  ::  |=  [who=ship address-info]
-  ::  (lth who ~marzod)
+  ~&  :-  %linear-galaxies
+  %+  skim
+    ~(tap by addresses)
+  |=  [who=ship address-info]
+  ?.  (lth who ~marzod)
+    |
+  =+  lockup=(~(got by lockups) who)
+  =(%linear type.lockup)
   ::Z =/  lin-gal=(list [ship rights[)
   ::Z   %+  murn
   ::Z     lin-rec
