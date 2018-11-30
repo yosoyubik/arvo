@@ -21,9 +21,11 @@
 --
 ::
 |%
-++  ceremony  0x740d.6d74.1711.163d.3fca.cecf.1f11.b867.9a7c.7964
+++  ceremony   0x740d.6d74.1711.163d.3fca.cecf.1f11.b867.9a7c.7964
 ::
-++  parity    'http://104.198.35.227:8545'
+++  parity     'http://104.198.35.227:8545'
+::
+++  ifttt-key  "your webhook key here"
 --
 ::
 |_  [bol=bowl:gall state]
@@ -54,8 +56,7 @@
   :+  `mark`%json-rpc-response  %hiss
   ^-  hiss:eyre
   %+  json-request
-    =+  (need (de-purl:html parity))
-    -(p.p |)
+    (need (de-purl:html parity))
   ~!  req
   (request-to-json `'no crash pls' req)
 ::
@@ -63,23 +64,52 @@
   |=  [wir=wire res=response:json-rpc]
   ^-  [(list move) _+>]
   ?>  ?=([%flow ~] wir)
-  :-  [(wait /flow (add now.bol ~m1)) ~]
-  ?:  ?=(%result -.res)
-    =+  new=(parse-hex-result res.res)
-    =?  when  (gth new latest)  now.bol
-    =?  latest  (gth new latest)  new
-    check-flow
-  ~&  res
-  +>
+  ~|  [%endpoint-error res]
+  ?>  ?=(%result -.res)
+  =+  new=(parse-hex-result res.res)
+  =?  when  (gth new latest)  now.bol
+  =?  latest  (gth new latest)  new
+  =^  moz  +>.$  check-flow
+  [[(wait /flow (add now.bol ~m1)) moz] +>.$]
 ::
 ++  check-flow
-  ^-  _..prep
+  ^-  [(list move) _..prep]
   =+  new=(gth now.bol (add when ~m15))
-  ~?  !=(good new)
-    :_  latest
-    ?:  good  'steadily confirming again...'
-    'no new transactions confirmed in a little while...'
-  ..check-flow(good new)
+  :_  ..check-flow(good new)
+  ?:  =(good new)  ~
+  :_  ~
+  %^  ifttt  "flow"
+    ?:(good 'Good!' 'Bad!')
+  ?:  good  'Transactions are steadily confirming again.'
+  %-  crip
+  "No new transactions seen since {(scow %ud latest)} at {(scow %da when)} UTC."
+::
+++  ifttt
+  |=  [wat=tape sub=cord bod=cord]
+  ^-  move
+  :-  ost.bol
+  :^  %hiss  /  ~
+  :+  %httr  %hiss
+  ^-  hiss:eyre
+  %+  json-request
+    %-  need
+    %-  de-purl:html
+    %-  crip
+    ;:  weld
+      "https://maker.ifttt.com/trigger/wethdog-"
+      wat
+      "/with/key/"
+      ifttt-key
+    ==
+  :-  %o
+  %-  ~(gas by *(map @t json))
+  :~  'value1'^s+sub
+      'value2'^s+bod
+  ==
+::
+++  sigh
+  |=  *
+  [~ +>]
 ::
 ++  wait
   |=  [wir=wire wen=@da]
