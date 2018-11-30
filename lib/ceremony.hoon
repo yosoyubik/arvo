@@ -136,6 +136,12 @@
     no-comma
     no-quotes
   ==
+++  get-done-addresses
+  %-  malt
+  %+  turn
+    ^-  (list ship)
+    (parse-lines 'done' ;~(pfix sig fed:ag))
+  |=(ship [+< *address-info])
 ::
 ++  get-direct-galaxies
   ^-  (list [who=ship rights])
@@ -264,11 +270,16 @@
   =+  claims=(hex-to-num '0xe7e7f69b34d7d9bd8d61fb22c33b22708947971a')
   =+  linear-star-release=(hex-to-num '0x86cd9cd0992f04231751e3761de45cecea5d1801')
   =.  constitution  (hex-to-num '0x12778371a6aa58b1dd623c126e09cd28fc5b9b5c')
-
   ::
   =/  all-addr=(map ship address-info)
     get-all-addresses
   ~&  all-addr-wyt=~(wyt by all-addr)
+  =/  done=(map ship address-info)
+    get-done-addresses
+  ~&  done-wyt=~(wyt by done)
+  =/  addresses=(map ship address-info)
+    (~(dif by all-addr) done)
+  ~&  remaining-wyt=~(wyt by addresses)
   ::Z =/  lin-gal=(list [ship rights[)
   ::Z   %+  murn
   ::Z     lin-rec
