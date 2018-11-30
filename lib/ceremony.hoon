@@ -36,6 +36,20 @@
       conf-date=tape
   ==
 ::
+++  lockup-info
+  $:  email=tape
+      owner=tape
+      group=tape
+      backup-email=tape
+      comment=tape
+      type=?(%linear %conditional %direct)
+      windup-years=(unit @ud)
+      term=(unit @ud)      :: years
+      rate=(unit @ud)      :: stars
+      rate-unit=(unit @ud) :: seconds
+      extra=tape
+  ==
+::
 ++  tape-to-ux
   |=  t=tape
   (scan t zero-ux)
@@ -104,7 +118,14 @@
 ++  hex-or-quotes
   (cook (unit @p) ;~(pose (cook |=(* ~) (jest '""')) (stag ~ hex)))
 ++  no-comma :: [^,]*
-  (cook tape (plus ;~(pose (shim ' ' '+') (shim '-' '~'))))
+  (cook tape (star ;~(pose (shim ' ' '+') (shim '-' '~'))))
+++  na-or-num
+  ;~  pose
+    (stag ~ dum:ag)
+    (cook |=(* ~) (jest 'N/A'))
+    (cook |=(* ~) (jest '#VALUE!'))
+    (easy ~)
+  ==
 ++  no-quotes :: 0 or "[^"]*"
   %+  cook  tape
   ;~  pose
@@ -136,12 +157,36 @@
     no-comma
     no-quotes
   ==
+::
 ++  get-done-addresses
   %-  malt
   %+  turn
     ^-  (list ship)
     (parse-lines 'done' ;~(pfix sig fed:ag))
   |=(ship [+< *address-info])
+::
+++  get-lockups
+  %-  malt
+  ^-  (list [who=ship lockup-info])
+  %+  parse-lines  'lockup'
+  ;~  (glue com)
+    ;~(pfix sig fed:ag)
+    no-comma
+    no-comma
+    no-comma
+    no-comma
+    no-comma
+    ;~  pose
+      (cook |=(* %linear) (jest 'Linear'))
+      (cook |=(* %conditional) (jest 'Conditional'))
+      (cook |=(* %direct) (jest 'Direct'))
+    ==
+    na-or-num
+    na-or-num
+    na-or-num
+    na-or-num
+    (star ;~(pose (jest '\0d') (shim ' ' '~')))
+  ==
 ::
 ++  get-direct-galaxies
   ^-  (list [who=ship rights])
@@ -280,6 +325,15 @@
   =/  addresses=(map ship address-info)
     (~(dif by all-addr) done)
   ~&  remaining-wyt=~(wyt by addresses)
+  =/  lockups=(map ship lockup-info)
+    get-lockups
+  ~&  lockups-wyt=~(wyt by lockups)
+  ~&  lockups=lockups
+  ::  ~&  :-  %galaxies
+  ::  %+  skim
+  ::    ~(tap by addresses)
+  ::  |=  [who=ship address-info]
+  ::  (lth who ~marzod)
   ::Z =/  lin-gal=(list [ship rights[)
   ::Z   %+  murn
   ::Z     lin-rec
