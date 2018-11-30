@@ -182,6 +182,7 @@
         [%eth-get-filter-changes fid=@ud]
         [%eth-get-transaction-receipt txh=@ux]
         [%eth-send-raw-transaction dat=@ux]
+        [%eth-get-transaction-count adr=address bum=block]
     ==
   ::
   ::TODO  clean up & actually use
@@ -7570,6 +7571,12 @@
     ::
         %eth-send-raw-transaction
       ['eth_sendRawTransaction' (tape (num-to-hex dat.req)) ~]
+    ::
+        %eth-get-transaction-count
+      :-  'eth_getTransactionCount'
+      :~  (tape (address-to-hex adr.req))
+          (block-to-json bum.req)
+      ==
     ==
   ::
   ++  eth-call-to-json
