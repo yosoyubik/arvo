@@ -23,6 +23,19 @@
       net=(unit [crypt=@ux auth=@ux])
   ==
 ::
++$  address-info
+  $:  id=@ux
+      owner=(unit address)
+      transfer=(unit address)
+      spawn=(unit address)
+      management=(unit address)
+      voting=(unit address)
+      auth=(unit @ux)
+      crypt=(unit @ux)
+      conf-code=tape
+      conf-date=tape
+  ==
+::
 ++  tape-to-ux
   |=  t=tape
   (scan t zero-ux)
@@ -64,10 +77,13 @@
 ::
 ++  parse-lines
   |*  [fil=knot par=rule]
-  %+  turn  (get-file /[fil]/txt)
+  %+  murn
+    [?~(- ~ t)]:(get-file /[fil]/txt)
   |=  c=cord
   ~|  c
-  (rash c par)
+  ?:  =('' c)
+    ~
+  `u=(rash c par)
 ::
 ++  order-shiplist
   |=  [[a=ship *] [b=ship *]]
@@ -81,6 +97,44 @@
     nonce       non
     gas-price   g
     addr        addr
+  ==
+::
+++  address-or-quotes
+  (cook (unit address) ;~(pose (cook |=(* ~) (jest '""')) (stag ~ zero-ux)))
+++  hex-or-quotes
+  (cook (unit @p) ;~(pose (cook |=(* ~) (jest '""')) (stag ~ hex)))
+++  no-comma :: [^,]*
+  (cook tape (plus ;~(pose (shim ' ' '+') (shim '-' '~'))))
+++  no-quotes :: 0 or "[^"]*"
+  %+  cook  tape
+  ;~  pose
+    ;~(plug (jest '0') (easy ~))
+    %+  ifix  yel^yel
+    (plus ;~(pose (shim ' ' '!') (shim '#' '~')))
+  ==
+++  get-all-addresses
+  %-  malt
+  ^-  (list [who=ship address-info])
+  %-  skip  :_
+    |=  [who=ship address-info]
+    ?|  =("0" conf-date)  ::  addresses have not been confirmed yet
+        (gth 5 (lent conf-date))
+    ==
+  ^-  (list [who=ship address-info])
+  %+  parse-lines  'all-addresses'
+  %+  cook  |=(* (,[who=ship address-info] +<))
+  ;~  (glue com)
+    (cook @p dum:ag)
+    ;~(pfix no-comma com hex)
+    address-or-quotes
+    address-or-quotes
+    address-or-quotes
+    address-or-quotes
+    address-or-quotes
+    hex-or-quotes
+    hex-or-quotes
+    no-comma
+    no-quotes
   ==
 ::
 ++  get-direct-galaxies
@@ -166,7 +220,7 @@
   ^-  [address _this]
   ~&  [`@ux`get-contract-address +(nonce)]
   :-  get-contract-address
-  %^  do  0x0  6.000.000
+  %^  do  0x0  600.000
   =+  cod=(get-file /contracts/[wat]/txt)
   ?>  ?=(^ cod)
   %-  tape-to-ux
@@ -205,13 +259,27 @@
   ::
   =+  lin-rec=get-linear-recipients
   =+  lin-gal=(get-locked-galaxies 'linear')
+  =+  linear-star-release=(hex-to-num '0x86cd9cd0992f04231751e3761de45cecea5d1801')
+  =.  constitution  (hex-to-num '0x12778371a6aa58b1dd623c126e09cd28fc5b9b5c')
+  ::
+  =/  all-addr=(map ship address-info)
+    get-all-addresses
+  ~&  all-addr-wyt=~(wyt by all-addr)
+  ::Z =/  lin-gal=(list [ship rights[)
+  ::Z   %+  murn
+  ::Z     lin-rec
+  ::Z   |=  [who=ship address-info]
+  ::Z   =+  addr=(~(get by all-addr) who)
+  ::Z   ?~  addr
+  ::Z     ~
+  ::Z   `[who `rights`[(need owner) management voting transfer spawn net]]
   ::X =+  lin-sar=(get-locked-stars 'linear')
   ::
   ::X =+  con-rec=get-conditional-recipients
   ::X =+  con-gal=(get-locked-galaxies 'conditional')
   ::X =+  con-sar=(get-locked-stars 'conditional')
   ::
-  ~&  'Deed data sanity check...'
+  ::X ~&  'Deed data sanity check...'
   ::X =/  tlon-map=(map ship rights)
   ::X   (~(gas by *(map ship rights)) tlon-gal)
   ::X =/  deed-map=(map ship rights)
@@ -245,37 +313,37 @@
   ::
   ::  contract deployment
   ::
-  ~&  'Deploying ships...'
-  =^  ships  this
-    (do-deploy 'azimuth' ~)
-  ~&  'Deploying polls...'
-  =^  polls  this
-    %+  do-deploy  'polls'
-    ~[uint+2.592.000 uint+2.592.000]
-  ~&  'Deploying claims...'
-  =^  claims  this
-    %+  do-deploy  'claims'
-    ~[address+ships]
-  ~&  'Deploying constitution-ceremony...'
-  =^  constit  this
-    %+  do-deploy  'ecliptic-ceremony'
-    :~  [%address 0x0]
-        [%address ships]
-        [%address polls]
-        [%address claims]
-    ==
-  =.  constitution  constit
-  ~&  'Transferring contract ownership...'
-  =.  this
-    %^  do  ships  50.000
-    (transfer-ownership:dat constit)
-  =.  this
-    %^  do  polls  50.000
-    (transfer-ownership:dat constit)
-  ~&  'Deploying linear-star-release...'
-  =^  linear-star-release  this
-    %+  do-deploy  'linear-star-release'
-    ~[address+ships]
+  ::X ~&  'Deploying ships...'
+  ::X =^  ships  this
+  ::X   (do-deploy 'azimuth' ~)
+  ::X ~&  'Deploying polls...'
+  ::X =^  polls  this
+  ::X   %+  do-deploy  'polls'
+  ::X   ~[uint+2.592.000 uint+2.592.000]
+  ::X ~&  'Deploying claims...'
+  ::X =^  claims  this
+  ::X   %+  do-deploy  'claims'
+  ::X   ~[address+ships]
+  ::X ~&  'Deploying constitution-ceremony...'
+  ::X =^  constit  this
+  ::X   %+  do-deploy  'ecliptic-ceremony'
+  ::X   :~  [%address 0x0]
+  ::X       [%address ships]
+  ::X       [%address polls]
+  ::X       [%address claims]
+  ::X   ==
+  ::X =.  constitution  constit
+  ::X ~&  'Transferring contract ownership...'
+  ::X =.  this
+  ::X   %^  do  ships  50.000
+  ::X   (transfer-ownership:dat constit)
+  ::X =.  this
+  ::X   %^  do  polls  50.000
+  ::X   (transfer-ownership:dat constit)
+  ::X ~&  'Deploying linear-star-release...'
+  ::X =^  linear-star-release  this
+  ::X   %+  do-deploy  'linear-star-release'
+  ::X   ~[address+ships]
   ::X ~&  'Deploying conditional-star-release...'
   ::X =^  conditional-star-release  this
   ::X   %+  do-deploy  'conditional-star-release'
@@ -299,18 +367,18 @@
   ::X           [%uint 1.610.668.800]  ::  2021-01-15 00:00:00 UTC
   ::X       ==
   ::X   ==
-  ~&  'Deploying censures...'
-  =^  censures  this
-    %+  do-deploy  'censures'
-    ~[address+ships]
-  ~&  'Deploying delegated-sending...'
-  =^  delegated-sending  this
-    %+  do-deploy  'delegated-sending'
-    ~[address+ships]
-  ~&  'Deploying constitution-resolver...'
-  =^  constitution-resolver  this
-    %+  do-deploy  'ecliptic-resolver'
-    ~[address+ships]
+  ::X ~&  'Deploying censures...'
+  ::X =^  censures  this
+  ::X   %+  do-deploy  'censures'
+  ::X   ~[address+ships]
+  ::X ~&  'Deploying delegated-sending...'
+  ::X =^  delegated-sending  this
+  ::X   %+  do-deploy  'delegated-sending'
+  ::X   ~[address+ships]
+  ::X ~&  'Deploying constitution-resolver...'
+  ::X =^  constitution-resolver  this
+  ::X   %+  do-deploy  'ecliptic-resolver'
+  ::X   ~[address+ships]
   ::
   ::  tlon galaxy booting
   ::
@@ -353,17 +421,17 @@
   ::
   ::  linear release registration and deeding
   ::
-  ~&  ['Registering linear release recipients...' +(nonce)]
-  |-
-  ?^  lin-rec
-    =.  this
-      %^  do  linear-star-release  350.000
-      (register-linear:dat i.lin-rec)
-    $(lin-rec t.lin-rec)
-  ::
-  ~&  ['Depositing linear release galaxies...' +(nonce)]
-  =.  this
-    (deposit-galaxies linear-star-release lin-gal)
+  ::A~&  ['Registering linear release recipients...' +(nonce)]
+  ::A|-
+  ::A?^  lin-rec
+  ::A  =.  this
+  ::A    %^  do  linear-star-release  350.000
+  ::A    (register-linear:dat i.lin-rec)
+  ::A  $(lin-rec t.lin-rec)
+  ::A::
+  ::A~&  ['Depositing linear release galaxies...' +(nonce)]
+  ::A=.  this
+  ::A  (deposit-galaxies linear-star-release lin-gal)
   ::
   ::X ~&  ['Depositing linear release stars...' +(nonce)]
   ::X =.  this
