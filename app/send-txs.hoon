@@ -72,9 +72,16 @@
               gas-price=@ud
               addr=@t
           ==
+        ::
           [%sign out=path in=path key=path]
+        ::
           [%read pax=path]
-          [%send pax=path skip=@ud]
+        ::
+          $:  %send
+              pax=path
+              how=?(%nonce %number)                ::  tx nonce / index in file
+              range=(unit $@(@ud (pair @ud @ud)))  ::  inclusive. end optional
+          ==
       ==
   ^-  [(list move) _this]
   ?-    +<-
@@ -91,7 +98,7 @@
     =+  tox=.^((list cord) %cx pax)
     =+  [first last]=(read-nonces tox)
     ~&  %+  weld
-         "Found nonces {(scow %ud first)} through {(scow %ud last)}"
+          "Found nonces {(scow %ud first)} through {(scow %ud last)}"
         " in {(scow %ud (lent tox))} transactions."
     [~ this]
   ::
@@ -99,7 +106,21 @@
     ~&  'loading txs...'
     =.  see  ~
     =/  tox=(list cord)  .^((list cord) %cx pax)
-    =.  tox  (slag skip tox)
+    =.  tox
+      ?~  range  tox
+      =*  r  u.range
+      ?:  ?=(%number how)
+        ?@  r
+          (slag r tox)
+        %+  slag  p.r
+        (scag q.r tox)
+      =+  [first last]=(read-nonces tox)
+      ?:  !=((lent tox) +((sub last first)))
+        ~|  'woah, probably non-contiguous set of transactions'
+        !!
+      ?@  r
+        (slag (sub r first) tox)
+      (slag (sub p.r first) (scag (sub +(q.r) first) tox))
     =.  txs
       %+  turn  tox
       (cork trip tape-to-ux:ceremony)
