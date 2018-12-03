@@ -10,6 +10,7 @@
   $:  latest=@ud
       when=@da
       good=?
+      errs=(set @t)
   ==
 ::
 ++  move  (pair bone card)
@@ -28,6 +29,7 @@
 ++  ifttt-kay  "your webhook key here"
 ++  ifttt-bee  "this might come handy"
 ++  ifttt-sea  ">git filter-branch -f"
+++  etherscan-key  "RM6CE2MZXGVVUQCVWNM1IWCU57U734MF4N"
 --
 ::
 |_  [bol=bowl:gall state]
@@ -108,6 +110,61 @@
       'value2'^s+bod
   ==
 ::
+++  etherscan-success
+  ^-  move
+  %+  etherscan  /es
+  :+  "account"  "txlist"
+  %-  ~(gas by *(map tape tape))
+  :~  "address"^['0' 'x' ((x-co:co 40) ceremony)]
+  ==
+::
+++  etherscan
+  |=  [wir=wire mod=tape act=tape arg=(map tape tape)]
+  ^-  move
+  :-  ost.bol
+  :^  %hiss  wir  ~
+  :+  %json  %hiss
+  ^-  hiss:eyre
+  :_  [%get ~ ~]
+  %-  need
+  %-  de-purl:html
+  %-  crip
+  %+  weld
+    "http://api.etherscan.io/api?module={mod}&action={act}"
+  =.  arg  (~(put by arg) "apikey" etherscan-key)
+  ^-  tape
+  %-  ~(rep in arg)
+  |=  [[nom=tape val=tape] out=tape]
+  ^-  tape
+  :(weld out '&'^nom '='^val)
+::
+++  sigh-json
+  |=  [wir=wire jon=json]
+  ^-  [(list move) _+>]
+  ?>  ?=([%es ~] wir)
+  ?>  ?=(%o -.jon)
+  =+  (~(got by p.jon) 'result')
+  ?>  ?=(%a -.-)
+  =;  los=(list cord)
+    =+  lon=(skip los ~(has in errs))
+    ?:  =(~ lon)  [~ +>.$]
+    :_  +>.$(errs (~(gas in errs) lon))
+    %+  ifttt  "flow"
+    :-  'Bad! Transaction errors!'
+    %-  crip
+    %+  weld  "In transaction(s) "
+    %+  roll  (turn lon trip)
+    |=  [i=tape o=tape]
+    :(weld o " ; " i)
+  %+  murn  p
+  |=  j=json
+  ^-  (unit cord)
+  ?>  ?=(%o -.j)
+  ?.  (~(has by p.j) 'isError')  ~
+  ?:  =(s+'0' (~(got by p.j) 'isError'))  ~
+  =+  (~(got by p.j) 'hash')
+  ?>(?=(%s -.-) `p)
+::
 ++  sigh
   |=  *
   [~ +>]
@@ -120,5 +177,5 @@
 ++  wake-flow
   |=  [wir=wire ~]
   ^-  [(list move) _+>]
-  [[ask-flow ~] +>]
+  [[ask-flow etherscan-success ~] +>]
 --
