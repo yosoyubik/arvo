@@ -26,17 +26,21 @@
 ::
 ++  parity     'http://104.198.35.227:8545'
 ::
-++  ifttt-kay  "your webhook key here"
-++  ifttt-bee  "this might come handy"
-++  ifttt-sea  ">git filter-branch -f"
 ++  etherscan-key  "RM6CE2MZXGVVUQCVWNM1IWCU57U734MF4N"
+::
+++  ifttt-all
+  ^-  (list tape)
+  :~  "your webhook key here"
+  ==
 --
 ::
 |_  [bol=bowl:gall state]
 ::
 ++  prep
-  |=  old=(unit *)
-  [~ ..prep]
+  |=  old=(unit state)
+  ^-  [(list move) _+>]
+  ?~  old  [~ ..prep]
+  [~ ..prep(+<+ u.old)]
 ::
 ++  poke-noun
   |=  wat=@t
@@ -57,7 +61,7 @@
   ^-  move
   :-  ost.bol
   :^  %hiss  wir  ~
-  :+  `mark`%json-rpc-response  %hiss
+  :+  %json-rpc-response  %hiss
   ^-  hiss:eyre
   %+  json-request
     (need (de-purl:html parity))
@@ -71,9 +75,11 @@
   ~|  [%endpoint-error res]
   ?>  ?=(%result -.res)
   =+  new=(parse-hex-result res.res)
+  =+  had=!=(0 latest)
   =?  when  (gth new latest)  now.bol
   =?  latest  (gth new latest)  new
-  =^  moz  +>.$  check-flow
+  =^  moz  +>.$
+    ?:(had check-flow [~ +>.$])
   [[(wait /flow (add now.bol ~m1)) moz] +>.$]
 ::
 ++  check-flow
@@ -81,17 +87,17 @@
   =+  new=(gth now.bol (add when ~m15))
   :_  ..check-flow(good new)
   ?:  =(good new)  ~
-  %+  turn  `(list tape)`~[ifttt-kay ifttt-bee ifttt-sea]
-  |=  who=tape
-  %-  ifttt
-  :+  "flow"  who
+  %+  ifttt  "flow"
   :-  ?:(good 'Good!' 'Bad!')
   ?:  good  'Transactions are steadily confirming again.'
   %-  crip
   "No new transactions seen since {(scow %ud latest)} at {(scow %da when)} UTC."
 ::
 ++  ifttt
-  |=  [wat=tape who=tape sub=cord bod=cord]
+  |=  [wat=tape sub=cord bod=cord]
+  ^-  (list move)
+  %+  turn  ifttt-all
+  |=  who=tape
   ^-  move
   :-  ost.bol
   :^  %hiss  /  ~
