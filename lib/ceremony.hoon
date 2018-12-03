@@ -50,6 +50,13 @@
       extra=tape
   ==
 ::
+++  linear-recipient
+  $:  windup=@ud
+      stars=@ud
+      rate=@ud
+      rate-unit=@ud
+  ==
+::
 ++  tape-to-ux
   |=  t=tape
   (scan t zero-ux)
@@ -114,7 +121,12 @@
   ==
 ::
 ++  address-or-quotes
-  (cook (unit address) ;~(pose (cook |=(* ~) (jest '""')) (stag ~ zero-ux)))
+  %+  cook  (unit address)
+  ;~  pose
+    (cook |=(* ~) (jest '""'))
+    (stag ~ zero-ux)
+    (stag ~ hex)
+  ==
 ++  hex-or-quotes
   (cook (unit @p) ;~(pose (cook |=(* ~) (jest '""')) (stag ~ hex)))
 ++  no-comma :: [^,]*
@@ -199,13 +211,7 @@
   (ship-and-rights |)
 ::
 ++  get-linear-recipients
-  ^-  %-  list
-      $:  recipient=address
-          windup=@ud
-          stars=@ud
-          rate=@ud
-          rate-unit=@ud
-      ==
+  ^-  (list [owner=address linear-recipient])
   %+  parse-lines  'linear-recipients'
   ;~  (glue com)
     zero-ux
@@ -308,8 +314,8 @@
   =+  tlon-gal=get-direct-galaxies
   =+  directs=get-direct-ships
   ::
-  =+  lin-rec=get-linear-recipients
-  =+  lin-gal=(get-locked-galaxies 'linear')
+  ::B =+  lin-rec=get-linear-recipients
+  ::B =+  lin-gal=(get-locked-galaxies 'linear')
   =+  ships=(hex-to-num '0x223c067f8cf28ae173ee5cafea60ca44c335fecb')
   =+  polls=(hex-to-num '0x7fecab617c868bb5996d99d95200d2fa708218e4')
   =+  claims=(hex-to-num '0xe7e7f69b34d7d9bd8d61fb22c33b22708947971a')
@@ -328,14 +334,72 @@
   =/  lockups=(map ship lockup-info)
     get-lockups
   ~&  lockups-wyt=~(wyt by lockups)
+  =/  potential
+    %+  skim
+      ~(tap by addresses)
+    |=  [who=ship address-info]
+    ?.  (lth who ~marzod)
+      |
+    =+  lockup=(~(got by lockups) who)
+    =(%linear type.lockup)
+  =/  lin-rec
+    %+  roll  potential
+    |=  [[who=ship address-info] m=(map address linear-recipient)]
+    =/  tentative=linear-recipient
+      =+  l=(~(got by lockups) who)
+      :*  :(mul (need windup-years.l) 60 60 24 365)
+          255
+          (need rate.l)
+          (need rate-unit.l)
+      ==
+    =/  own  (need owner)
+    =/  prev  (~(get by m) own)
+    ?~  prev
+      (~(put by m) own tentative)
+    ?>  =(windup.u.prev windup.tentative)
+    ?>  =(rate.u.prev rate.tentative)
+    ?>  =(rate-unit.u.prev rate-unit.tentative)
+    %+  ~(put by m)  own
+    :*  windup.u.prev
+        (add 255 stars.u.prev)
+        rate.u.prev
+        rate-unit.u.prev
+    ==
+  =/  lin-gal=(list [who=ship rights])
+    %+  turn  potential
+    |=  [who=ship address-info]
+    ~|  +<
+    ::  linear galaxies must spawn
+    ::
+    =+  auth=?~(auth 0x0 u.auth)
+    =+  crypt=?~(crypt 0x0 u.crypt)
+    ^-  [who=ship rights]
+    :*  who
+        (need owner)
+        management
+        voting
+        transfer
+        spawn
+        `[crypt auth]
+    ==
   ~&  :-  %linear-galaxies
-  %+  skim
-    ~(tap by addresses)
+  %+  turn  potential
   |=  [who=ship address-info]
-  ?.  (lth who ~marzod)
-    |
-  =+  lockup=(~(got by lockups) who)
-  =(%linear type.lockup)
+  :-  +<
+  (~(got by lockups) who)
+  ::C =/  potential-conditional
+  ::C   %+  skim
+  ::C     ~(tap by addresses)
+  ::C   |=  [who=ship address-info]
+  ::C   ?.  (lth who ~marzod)
+  ::C     |
+  ::C   =+  lockup=(~(got by lockups) who)
+  ::C   =(%conditional type.lockup)
+  ::C ~&  :-  %conditional-galaxies
+  ::C %+  turn  potential-conditional
+  ::C |=  [who=ship address-info]
+  ::C :-  +<
+  ::C (~(got by lockups) who)
   ::Z =/  lin-gal=(list [ship rights[)
   ::Z   %+  murn
   ::Z     lin-rec
@@ -416,36 +480,36 @@
   ::    %+  do-deploy  'linear-star-release'
   ::    ~[address+ships]
   ::  ~&  'Deploying conditional-star-release...'
-  =^  conditional-star-release  this
-    %+  do-deploy  'conditional-star-release'
-    :~  [%address ships]
-      ::
-        :-  %array
-        :~  [%bytes 32^`@`0x0]
-          ::
-            :+  %bytes  32
-            ^-  @
-            0xecd4.0bbe.04fd.f2a6.307d.9ec7.0b65.195b.
-              cb4d.2f80.75b7.7e39.53d9.95c2.9fed.e2af
-          ::
-            :+  %bytes  32
-            ^-  @
-            0x1fac.fda9.4a86.63d5.6eb3.2a00.da16.5912.
-              6d76.dbb4.f88a.0f27.6476.bde0.c115.ec13
-        ==
-      ::
-        :-  %array
-        :~  [%uint 1.516.089.540]  ::  2018-01-15 23:59:00 PST
-            [%uint 1.547.625.540]  ::  2019-01-15 23:59:00 PST
-            [%uint 1.579.161.540]  ::  2020-01-15 23:59:00 PST
-        ==
-      ::
-        :-  %array
-        :~  [%uint 1.547.625.540]  ::  2019-01-15 23:59:00 PST
-            [%uint 1.579.161.540]  ::  2020-01-15 23:59:00 PST
-            [%uint 1.610.783.940]  ::  2021-01-15 23:59:00 PST
-        ==
-    ==
+  ::B =^  conditional-star-release  this
+  ::B   %+  do-deploy  'conditional-star-release'
+  ::B   :~  [%address ships]
+  ::B     ::
+  ::B       :-  %array
+  ::B       :~  [%bytes 32^`@`0x0]
+  ::B         ::
+  ::B           :+  %bytes  32
+  ::B           ^-  @
+  ::B           0xecd4.0bbe.04fd.f2a6.307d.9ec7.0b65.195b.
+  ::B             cb4d.2f80.75b7.7e39.53d9.95c2.9fed.e2af
+  ::B         ::
+  ::B           :+  %bytes  32
+  ::B           ^-  @
+  ::B           0x1fac.fda9.4a86.63d5.6eb3.2a00.da16.5912.
+  ::B             6d76.dbb4.f88a.0f27.6476.bde0.c115.ec13
+  ::B       ==
+  ::B     ::
+  ::B       :-  %array
+  ::B       :~  [%uint 1.516.089.540]  ::  2018-01-15 23:59:00 PST
+  ::B           [%uint 1.547.625.540]  ::  2019-01-15 23:59:00 PST
+  ::B           [%uint 1.579.161.540]  ::  2020-01-15 23:59:00 PST
+  ::B       ==
+  ::B     ::
+  ::B       :-  %array
+  ::B       :~  [%uint 1.547.625.540]  ::  2019-01-15 23:59:00 PST
+  ::B           [%uint 1.579.161.540]  ::  2020-01-15 23:59:00 PST
+  ::B           [%uint 1.610.783.940]  ::  2021-01-15 23:59:00 PST
+  ::B       ==
+  ::B   ==
   ::  ~&  'Deploying censures...'
   ::  =^  censures  this
   ::    %+  do-deploy  'censures'
@@ -461,108 +525,109 @@
   ::
   ::  tlon galaxy booting
   ::
-  ~&  ['Booting Tlon galaxies...' +(nonce)]
-  =/  galaxies  (sort tlon-gal order-shiplist)
-  |-
-  ?^  galaxies
-    =.  this
-      (create-ship [who ~ net]:i.galaxies)
-    $(galaxies t.galaxies)
+  ::B ~&  ['Booting Tlon galaxies...' +(nonce)]
+  ::B =/  galaxies  (sort tlon-gal order-shiplist)
+  ::B |-
+  ::B ?^  galaxies
+  ::B   =.  this
+  ::B     (create-ship [who ~ net]:i.galaxies)
+  ::B   $(galaxies t.galaxies)
   ::
   ::  direct deeding
   ::
-  ~&  ['Directly deeding assets...' +(nonce)]
-  =/  stars  (sort ~(tap by star-map) order-shiplist)
-  |-
-  ?^  stars
-    =*  star  p.i.stars
-    ~&  [star=star nonce=nonce]
-    =+  star-deed=(~(got by deed-map) star)
-    =.  this
-      (create-ship star ~ net.star-deed)
-    ::
-    =+  planets=(sort ~(tap in q.i.stars) lth)
-    |-
-    ?^  planets
-      =*  planet  i.planets
-      ~&  [planet=planet nonce=nonce]
-      =+  plan-deed=(~(got by deed-map) planet)
-      =.  this
-        (create-ship planet ~ net.plan-deed)
-      ::
-      =.  this
-        (send-ship planet [own manage voting spawn transfer]:plan-deed)
-      $(planets t.planets)
-    ::
-    =.  this
-      (send-ship star [own manage voting spawn transfer]:star-deed)
-    ^$(stars t.stars)
+  ::B ~&  ['Directly deeding assets...' +(nonce)]
+  ::B =/  stars  (sort ~(tap by star-map) order-shiplist)
+  ::B |-
+  ::B ?^  stars
+  ::B   =*  star  p.i.stars
+  ::B   ~&  [star=star nonce=nonce]
+  ::B   =+  star-deed=(~(got by deed-map) star)
+  ::B   =.  this
+  ::B     (create-ship star ~ net.star-deed)
+  ::B   ::
+  ::B   =+  planets=(sort ~(tap in q.i.stars) lth)
+  ::B   |-
+  ::B   ?^  planets
+  ::B     =*  planet  i.planets
+  ::B     ~&  [planet=planet nonce=nonce]
+  ::B     =+  plan-deed=(~(got by deed-map) planet)
+  ::B     =.  this
+  ::B       (create-ship planet ~ net.plan-deed)
+  ::B     ::
+  ::B     =.  this
+  ::B       (send-ship planet [own manage voting spawn transfer]:plan-deed)
+  ::B     $(planets t.planets)
+  ::B   ::
+  ::B   =.  this
+  ::B     (send-ship star [own manage voting spawn transfer]:star-deed)
+  ::B   ^$(stars t.stars)
   ::
   ::  linear release registration and deeding
   ::
-  ::A~&  ['Registering linear release recipients...' +(nonce)]
-  ::A|-
-  ::A?^  lin-rec
-  ::A  =.  this
-  ::A    %^  do  linear-star-release  350.000
-  ::A    (register-linear:dat i.lin-rec)
-  ::A  $(lin-rec t.lin-rec)
-  ::A::
-  ::A~&  ['Depositing linear release galaxies...' +(nonce)]
-  ::A=.  this
-  ::A  (deposit-galaxies linear-star-release lin-gal)
-  ::
-  ~&  ['Depositing linear release stars...' +(nonce)]
-  =.  this
-    (deposit-stars linear-star-release lin-sar)
-  ::
-  ::  conditional release registration and deeding
-  ::
-  ~&  ['Registering conditional release recipients...' +(nonce)]
+  ~&  ['Registering linear release recipients...' +(nonce)]
+  =+  lin-rec-list=~(tap by lin-rec)
   |-
-  ?^  con-rec
+  ?^  lin-rec-list
     =.  this
-      %^  do  conditional-star-release  350.000
-      (register-conditional:dat i.con-rec)
-    $(con-rec t.con-rec)
+      %^  do  linear-star-release  350.000
+      (register-linear:dat i.lin-rec-list)
+    $(lin-rec-list t.lin-rec-list)
   ::
-  ~&  ['Depositing conditional release galaxies...' +(nonce)]
+  ~&  ['Depositing linear release galaxies...' +(nonce)]
   =.  this
-    (deposit-galaxies conditional-star-release con-gal)
+    (deposit-galaxies linear-star-release lin-gal)
   ::
-  ~&  ['Depositing conditional release stars...' +(nonce)]
-  =.  this
-    (deposit-stars conditional-star-release con-sar)
-  ::
-  ::  tlon galaxy sending
-  ::
-  ~&  ['Sending Tlon galaxies...' +(nonce)]
-  =/  galaxies  (sort tlon-gal order-shiplist)
-  |-
-  ?^  galaxies
-    =.  this
-      (send-ship [who own manage voting spawn transfer]:i.galaxies)
-    $(galaxies t.galaxies)
-  ::
-  ::  concluding ceremony
-  ::
-  ~&  ['Deploying constitution-final...' +(nonce)]
-  =^  constit-final  this
-    %+  do-deploy  'ecliptic-final'
-    :~  [%address constitution]
-        [%address ships]
-        [%address polls]
-        [%address claims]
-    ==
-  =.  this
-    ::NOTE  currently included bytecode has on-upgrade ens functionality
-    ::      stripped out to make this not fail despite 0x0 dns contract
-    %^  do  constitution  300.000
-    (upgrade-to:dat constit-final)
-  ::
-  =.  this
-    %^  do  constit-final  300.000
-    (set-dns-domains:dat "urbit.org" "urbit.org" "urbit.org")
+  ::B ~&  ['Depositing linear release stars...' +(nonce)]
+  ::B =.  this
+  ::B   (deposit-stars linear-star-release lin-sar)
+  ::B ::
+  ::B ::  conditional release registration and deeding
+  ::B ::
+  ::B ~&  ['Registering conditional release recipients...' +(nonce)]
+  ::B |-
+  ::B ?^  con-rec
+  ::B   =.  this
+  ::B     %^  do  conditional-star-release  350.000
+  ::B     (register-conditional:dat i.con-rec)
+  ::B   $(con-rec t.con-rec)
+  ::B ::
+  ::B ~&  ['Depositing conditional release galaxies...' +(nonce)]
+  ::B =.  this
+  ::B   (deposit-galaxies conditional-star-release con-gal)
+  ::B ::
+  ::B ~&  ['Depositing conditional release stars...' +(nonce)]
+  ::B =.  this
+  ::B   (deposit-stars conditional-star-release con-sar)
+  ::B ::
+  ::B ::  tlon galaxy sending
+  ::B ::
+  ::B ~&  ['Sending Tlon galaxies...' +(nonce)]
+  ::B =/  galaxies  (sort tlon-gal order-shiplist)
+  ::B |-
+  ::B ?^  galaxies
+  ::B   =.  this
+  ::B     (send-ship [who own manage voting spawn transfer]:i.galaxies)
+  ::B   $(galaxies t.galaxies)
+  ::B ::
+  ::B ::  concluding ceremony
+  ::B ::
+  ::B ~&  ['Deploying constitution-final...' +(nonce)]
+  ::B =^  constit-final  this
+  ::B   %+  do-deploy  'ecliptic-final'
+  ::B   :~  [%address constitution]
+  ::B       [%address ships]
+  ::B       [%address polls]
+  ::B       [%address claims]
+  ::B   ==
+  ::B =.  this
+  ::B   ::NOTE  currently included bytecode has on-upgrade ens functionality
+  ::B   ::      stripped out to make this not fail despite 0x0 dns contract
+  ::B   %^  do  constitution  300.000
+  ::B   (upgrade-to:dat constit-final)
+  ::B ::
+  ::B =.  this
+  ::B   %^  do  constit-final  300.000
+  ::B   (set-dns-domains:dat "urbit.org" "urbit.org" "urbit.org")
   ::
   complete
 ::
