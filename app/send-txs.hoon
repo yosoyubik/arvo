@@ -58,6 +58,9 @@
 ::  store at path
 ::    :send-txs [%sign %/txs/txt %/txs/eth-txs %/pk/txt]
 ::
+::  read nonce range from signed transactions at path
+::    :send-txs [%read %txs/txt]
+::
 ::  send all but first 50 txs from path
 ::    :send-txs [%send %/txs/txt 50]
 ::
@@ -69,8 +72,16 @@
               gas-price=@ud
               addr=@t
           ==
+        ::
           [%sign out=path in=path key=path]
-          [%send pax=path skip=@ud]
+        ::
+          [%read pax=path]
+        ::
+          $:  %send
+              pax=path
+              how=?(%nonce %number)                ::  tx nonce / index in file
+              range=(unit $@(@ud (pair @ud @ud)))  ::  inclusive. end optional
+          ==
       ==
   ^-  [(list move) _this]
   ?-    +<-
@@ -83,11 +94,33 @@
     =/  tox=(list cord)  (sign:ceremony now.bol in key)
     [[(write-file-wain out tox) ~] this]
   ::
+      %read
+    =+  tox=.^((list cord) %cx pax)
+    =+  [first last]=(read-nonces tox)
+    ~&  %+  weld
+          "Found nonces {(scow %ud first)} through {(scow %ud last)}"
+        " in {(scow %ud (lent tox))} transactions."
+    [~ this]
+  ::
       %send
     ~&  'loading txs...'
     =.  see  ~
     =/  tox=(list cord)  .^((list cord) %cx pax)
-    =.  tox  (slag skip tox)
+    =.  tox
+      ?~  range  tox
+      =*  r  u.range
+      ?:  ?=(%number how)
+        ?@  r
+          (slag r tox)
+        %+  slag  p.r
+        (scag q.r tox)
+      =+  [first last]=(read-nonces tox)
+      ?:  !=((lent tox) +((sub last first)))
+        ~|  'woah, probably non-contiguous set of transactions'
+        !!
+      ?@  r
+        (slag (sub r first) tox)
+      (slag (sub p.r first) (scag (sub +(q.r) first) tox))
     =.  txs
       %+  turn  tox
       (cork trip tape-to-ux:ceremony)
@@ -96,6 +129,19 @@
     =.  see  ~
     apex
   ==
+::
+++  read-nonces
+  |=  tox=(list cord)
+  ^-  [@ud @ud]
+  ?:  =(~ tox)  ::  not ?~ because fucking tmi
+    [0 0]
+  :-  (read-nonce (snag 0 tox))
+  (read-nonce (snag (dec (lent tox)) tox))
+::
+++  read-nonce
+  |=  tex=cord
+  ^-  @ud
+  (rash (rsh 3 10 (end 3 14 tex)) hex)
 ::
 ++  write-file-wain
   |=  [pax=path tox=(list cord)]
