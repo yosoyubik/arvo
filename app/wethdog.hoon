@@ -80,16 +80,16 @@
   =?  latest  (gth new latest)  new
   =^  moz  +>.$
     ?:(had check-flow [~ +>.$])
-  [[(wait /flow (add now.bol ~m1)) moz] +>.$]
+  [[(wait /flow (add now.bol ~m2)) moz] +>.$]
 ::
 ++  check-flow
   ^-  [(list move) _..prep]
-  =+  new=(gth now.bol (add when ~m15))
-  :_  ..check-flow(good new)
-  ?:  =(good new)  ~
+  =+  want=(gth now.bol (add when ~m15))
+  :_  ..check-flow(good !want)
+  ?:  =(good !want)  ~
   %+  ifttt  "flow"
-  :-  ?:(good 'Good!' 'Bad!')
-  ?:  good  'Transactions are steadily confirming again.'
+  :-  ?.(good 'Good!' 'Bad!')
+  ?.  good  'Transactions are steadily confirming again.'
   %-  crip
   "No new transactions seen since {(scow %ud latest)} at {(scow %da when)} UTC."
 ::
