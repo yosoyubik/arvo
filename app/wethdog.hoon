@@ -10,6 +10,7 @@
   $:  latest=@ud
       when=@da
       good=?
+      errs=(set @t)
   ==
 ::
 ++  move  (pair bone card)
@@ -25,14 +26,21 @@
 ::
 ++  parity     'http://104.198.35.227:8545'
 ::
-++  ifttt-key  "your webhook key here"
+++  etherscan-key  "RM6CE2MZXGVVUQCVWNM1IWCU57U734MF4N"
+::
+++  ifttt-all
+  ^-  (list tape)
+  :~  "your webhook key here"
+  ==
 --
 ::
 |_  [bol=bowl:gall state]
 ::
 ++  prep
-  |=  old=(unit *)
-  [~ ..prep]
+  |=  old=(unit state)
+  ^-  [(list move) _+>]
+  ?~  old  [~ ..prep]
+  [~ ..prep(+<+ u.old)]
 ::
 ++  poke-noun
   |=  wat=@t
@@ -53,7 +61,7 @@
   ^-  move
   :-  ost.bol
   :^  %hiss  wir  ~
-  :+  `mark`%json-rpc-response  %hiss
+  :+  %json-rpc-response  %hiss
   ^-  hiss:eyre
   %+  json-request
     (need (de-purl:html parity))
@@ -67,25 +75,29 @@
   ~|  [%endpoint-error res]
   ?>  ?=(%result -.res)
   =+  new=(parse-hex-result res.res)
+  =+  had=!=(0 latest)
   =?  when  (gth new latest)  now.bol
   =?  latest  (gth new latest)  new
-  =^  moz  +>.$  check-flow
-  [[(wait /flow (add now.bol ~m1)) moz] +>.$]
+  =^  moz  +>.$
+    ?:(had check-flow [~ +>.$])
+  [[(wait /flow (add now.bol ~m2)) moz] +>.$]
 ::
 ++  check-flow
   ^-  [(list move) _..prep]
-  =+  new=(gth now.bol (add when ~m15))
-  :_  ..check-flow(good new)
-  ?:  =(good new)  ~
-  :_  ~
-  %^  ifttt  "flow"
-    ?:(good 'Good!' 'Bad!')
-  ?:  good  'Transactions are steadily confirming again.'
+  =+  want=(gth now.bol (add when ~m15))
+  :_  ..check-flow(good !want)
+  ?:  =(good !want)  ~
+  %+  ifttt  "flow"
+  :-  ?.(good 'Good!' 'Bad!')
+  ?.  good  'Transactions are steadily confirming again.'
   %-  crip
   "No new transactions seen since {(scow %ud latest)} at {(scow %da when)} UTC."
 ::
 ++  ifttt
   |=  [wat=tape sub=cord bod=cord]
+  ^-  (list move)
+  %+  turn  ifttt-all
+  |=  who=tape
   ^-  move
   :-  ost.bol
   :^  %hiss  /  ~
@@ -95,17 +107,69 @@
     %-  need
     %-  de-purl:html
     %-  crip
-    ;:  weld
-      "https://maker.ifttt.com/trigger/wethdog-"
-      wat
-      "/with/key/"
-      ifttt-key
-    ==
+    %+  weld
+      "https://maker.ifttt.com/trigger/"
+    :(weld "wethdog-" wat "/with/key/" who)
   :-  %o
   %-  ~(gas by *(map @t json))
   :~  'value1'^s+sub
       'value2'^s+bod
   ==
+::
+++  etherscan-success
+  ^-  move
+  %+  etherscan  /es
+  :+  "account"  "txlist"
+  %-  ~(gas by *(map tape tape))
+  :~  "address"^['0' 'x' ((x-co:co 40) ceremony)]
+  ==
+::
+++  etherscan
+  |=  [wir=wire mod=tape act=tape arg=(map tape tape)]
+  ^-  move
+  :-  ost.bol
+  :^  %hiss  wir  ~
+  :+  %json  %hiss
+  ^-  hiss:eyre
+  :_  [%get ~ ~]
+  %-  need
+  %-  de-purl:html
+  %-  crip
+  %+  weld
+    "http://api.etherscan.io/api?module={mod}&action={act}"
+  =.  arg  (~(put by arg) "apikey" etherscan-key)
+  ^-  tape
+  %-  ~(rep in arg)
+  |=  [[nom=tape val=tape] out=tape]
+  ^-  tape
+  :(weld out '&'^nom '='^val)
+::
+++  sigh-json
+  |=  [wir=wire jon=json]
+  ^-  [(list move) _+>]
+  ?>  ?=([%es ~] wir)
+  ?>  ?=(%o -.jon)
+  =+  (~(got by p.jon) 'result')
+  ?>  ?=(%a -.-)
+  =;  los=(list cord)
+    =+  lon=(skip los ~(has in errs))
+    ?:  =(~ lon)  [~ +>.$]
+    :_  +>.$(errs (~(gas in errs) lon))
+    %+  ifttt  "flow"
+    :-  'Bad! Transaction errors!'
+    %-  crip
+    %+  weld  "In transaction(s) "
+    %+  roll  (turn lon trip)
+    |=  [i=tape o=tape]
+    :(weld o " ; " i)
+  %+  murn  p
+  |=  j=json
+  ^-  (unit cord)
+  ?>  ?=(%o -.j)
+  ?.  (~(has by p.j) 'isError')  ~
+  ?:  =(s+'0' (~(got by p.j) 'isError'))  ~
+  =+  (~(got by p.j) 'hash')
+  ?>(?=(%s -.-) `p)
 ::
 ++  sigh
   |=  *
@@ -119,5 +183,5 @@
 ++  wake-flow
   |=  [wir=wire ~]
   ^-  [(list move) _+>]
-  [[ask-flow ~] +>]
+  [[ask-flow etherscan-success ~] +>]
 --
