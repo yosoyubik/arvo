@@ -25,6 +25,7 @@
   $:  txs=(list @ux)
       see=(set @ux)
       wen=(unit @da)
+      outstanding-send=_|
   ==
 ::
 ++  move  (pair bone card)
@@ -127,6 +128,7 @@
     ~&  [(lent txs) 'loaded txs']
     ~&  [%clearing-see ~(wyt in see)]
     =.  see  ~
+    =.  outstanding-send  |
     apex
   ==
 ::
@@ -202,15 +204,18 @@
 ::
 ++  send-next-batch
   ^-  [(list move) _this]
+  ?:  outstanding-send
+    ~&  'waiting for previous send to complete'
+    `this
   ?:  =(0 (lent txs))
     ~&  'all sent!'
-    [~ this(txs ~, see ~, wen ~)]
+    [~ this(txs ~, see ~, wen ~, outstanding-send |)]
   ::  ~&  send-next-batch=pretty-see
   =/  new-count  (sub 500 ~(wyt in see))
   ?:  =(0 new-count)
     ~&  %no-new-txs-yet
     `this
-  :_  this(txs (slag new-count txs))
+  :_  this(txs (slag new-count txs), outstanding-send &)
   ~&  ['remaining txs: ' (lent txs)]
   ~&  ['sending txs...' new-count]
   %+  batch-requests  /send
@@ -251,6 +256,7 @@
     :-  ~
     %-  tape-to-ux:ceremony
     (sa:dejs:format res.r)
+  =.  outstanding-send  |
   ::  ~&  sigh-send-b=pretty-see
   `this
 ::
@@ -259,7 +265,7 @@
   ~&  :_  ~(wyt in see)
       'waiting for transaction confirms... '
   ?.  =(~ wen)  [~ this]
-  =.  wen  `(add now.bol ~s10)
+  =.  wen  `(add now.bol ~s30)
   ::  ~&  apex=[wen pretty-see]
   =^  moves  this  send-next-batch
   ::  timer got un-set, meaning we're done here

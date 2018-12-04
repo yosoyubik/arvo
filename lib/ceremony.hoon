@@ -57,6 +57,14 @@
       rate-unit=@ud
   ==
 ::
+++  conditional-recipient
+  $:  b1=@ud
+      b2=@ud
+      b3=@ud
+      rate=@ud
+      rate-unit=@ud
+  ==
+::
 ++  tape-to-ux
   |=  t=tape
   (scan t zero-ux)
@@ -222,14 +230,7 @@
   ==
 ::
 ++  get-conditional-recipients
-  ^-  %-  list
-      $:  recipient=address
-          b1=@ud
-          b2=@ud
-          b3=@ud
-          rate=@ud
-          rate-unit=@ud
-      ==
+  ^-  (list [owner=address conditional-recipient])
   %+  parse-lines  'conditional-recipients'
   ;~  (glue com)
     zero-ux
@@ -334,42 +335,96 @@
   =/  lockups=(map ship lockup-info)
     get-lockups
   ~&  lockups-wyt=~(wyt by lockups)
-  =/  potential
+  ::L =/  potential
+  ::L   %+  skim
+  ::L     ~(tap by addresses)
+  ::L   |=  [who=ship address-info]
+  ::L   ?.  (lth who ~marzod)
+  ::L     |
+  ::L   =+  lockup=(~(got by lockups) who)
+  ::L   =(%linear type.lockup)
+  ::L =/  lin-rec
+  ::L   %+  roll  potential
+  ::L   |=  [[who=ship address-info] m=(map address linear-recipient)]
+  ::L   =/  tentative=linear-recipient
+  ::L     =+  l=(~(got by lockups) who)
+  ::L     :*  :(mul (need windup-years.l) 60 60 24 365)
+  ::L         255
+  ::L         (need rate.l)
+  ::L         (need rate-unit.l)
+  ::L     ==
+  ::L   =/  own  (need owner)
+  ::L   =/  prev  (~(get by m) own)
+  ::L   ?~  prev
+  ::L     (~(put by m) own tentative)
+  ::L   ?>  =(windup.u.prev windup.tentative)
+  ::L   ?>  =(rate.u.prev rate.tentative)
+  ::L   ?>  =(rate-unit.u.prev rate-unit.tentative)
+  ::L   %+  ~(put by m)  own
+  ::L   :*  windup.u.prev
+  ::L       (add 255 stars.u.prev)
+  ::L       rate.u.prev
+  ::L       rate-unit.u.prev
+  ::L   ==
+  ::L =/  lin-gal=(list [who=ship rights])
+  ::L   %+  turn  potential
+  ::L   |=  [who=ship address-info]
+  ::L   ~|  +<
+  ::L   ::  linear galaxies must spawn
+  ::L   ::
+  ::L   =+  auth=?~(auth 0x0 u.auth)
+  ::L   =+  crypt=?~(crypt 0x0 u.crypt)
+  ::L   ^-  [who=ship rights]
+  ::L   :*  who
+  ::L       (need owner)
+  ::L       management
+  ::L       voting
+  ::L       transfer
+  ::L       spawn
+  ::L       `[crypt auth]
+  ::L   ==
+  ::L ~&  :-  %linear-galaxies
+  ::L %+  turn  potential
+  ::L |=  [who=ship address-info]
+  ::L :-  +<
+  ::L (~(got by lockups) who)
+  =/  potential-con
     %+  skim
       ~(tap by addresses)
     |=  [who=ship address-info]
     ?.  (lth who ~marzod)
       |
     =+  lockup=(~(got by lockups) who)
-    =(%linear type.lockup)
-  =/  lin-rec
-    %+  roll  potential
-    |=  [[who=ship address-info] m=(map address linear-recipient)]
-    =/  tentative=linear-recipient
+    =(%conditional type.lockup)
+  =/  con-rec
+    %+  roll  potential-con
+    |=  [[who=ship address-info] m=(map address conditional-recipient)]
+    =/  tentative=conditional-recipient
       =+  l=(~(got by lockups) who)
-      :*  :(mul (need windup-years.l) 60 60 24 365)
-          255
-          (need rate.l)
-          (need rate-unit.l)
+      :*  85 :: b1.l ::TODO !!
+          85 :: b2.l
+          85 :: b3.l
+          1   :: (need rate.l)
+          497.250   :: (need rate-unit.l)
       ==
     =/  own  (need owner)
     =/  prev  (~(get by m) own)
     ?~  prev
       (~(put by m) own tentative)
-    ?>  =(windup.u.prev windup.tentative)
     ?>  =(rate.u.prev rate.tentative)
     ?>  =(rate-unit.u.prev rate-unit.tentative)
     %+  ~(put by m)  own
-    :*  windup.u.prev
-        (add 255 stars.u.prev)
+    :*  (add b1.tentative b1.u.prev)
+        (add b2.tentative b2.u.prev)
+        (add b3.tentative b3.u.prev)
         rate.u.prev
         rate-unit.u.prev
-    ==
-  =/  lin-gal=(list [who=ship rights])
-    %+  turn  potential
+      ==
+  =/  con-gal=(list [who=ship rights])
+    %+  turn  potential-con
     |=  [who=ship address-info]
     ~|  +<
-    ::  linear galaxies must spawn
+    ::  conditional galaxies must spawn
     ::
     =+  auth=?~(auth 0x0 u.auth)
     =+  crypt=?~(crypt 0x0 u.crypt)
@@ -382,24 +437,11 @@
         spawn
         `[crypt auth]
     ==
-  ~&  :-  %linear-galaxies
-  %+  turn  potential
+  ~&  :-  %conditional-galaxies
+  %+  turn  potential-con
   |=  [who=ship address-info]
   :-  +<
   (~(got by lockups) who)
-  ::C =/  potential-conditional
-  ::C   %+  skim
-  ::C     ~(tap by addresses)
-  ::C   |=  [who=ship address-info]
-  ::C   ?.  (lth who ~marzod)
-  ::C     |
-  ::C   =+  lockup=(~(got by lockups) who)
-  ::C   =(%conditional type.lockup)
-  ::C ~&  :-  %conditional-galaxies
-  ::C %+  turn  potential-conditional
-  ::C |=  [who=ship address-info]
-  ::C :-  +<
-  ::C (~(got by lockups) who)
   ::Z =/  lin-gal=(list [ship rights[)
   ::Z   %+  murn
   ::Z     lin-rec
@@ -408,43 +450,43 @@
   ::Z   ?~  addr
   ::Z     ~
   ::Z   `[who `rights`[(need owner) management voting transfer spawn net]]
-  =+  lin-sar=(get-locked-stars 'linear')
-  ::
-  =+  con-rec=get-conditional-recipients
-  =+  con-gal=(get-locked-galaxies 'conditional')
-  =+  con-sar=(get-locked-stars 'conditional')
-  ::
-  ~&  'Deed data sanity check...'
-  =/  tlon-map=(map ship rights)
-    (~(gas by *(map ship rights)) tlon-gal)
-  =/  deed-map=(map ship rights)
-    (~(gas by *(map ship rights)) directs)
-  =/  star-map=(map ship (set ship))
-    %+  roll  directs
-    |=  [[who=ship *] smp=(map ship (set ship))]
-    ^+  smp
-    =+  par=(^sein:title who)
-    ~|  [%need-parent par %for who]
-    ?>  ?&  ?|  (~(has by tlon-map) par)
-                (~(has by deed-map) par)
-            ==
-          ::
-            ?=  ^
-            =<  net
-            %+  fall
-              (~(get by deed-map) par)
-            %+  fall
-              (~(get by tlon-map) par)
-            *rights
-        ==
-    %-  ~(put by smp)
-    ^-  [ship (set ship)]
-    ?+  (clan:title who)  !!
-      %king  [who (fall (~(get by smp) who) ~)]
-      %duke  :-  par
-             =+  sm=(fall (~(get by smp) par) ~)
-             (~(put in sm) who)
-    ==
+  ::  =+  lin-sar=(get-locked-stars 'linear')
+  ::  ::
+  ::  =+  con-rec=get-conditional-recipients
+  ::  =+  con-gal=(get-locked-galaxies 'conditional')
+  ::  =+  con-sar=(get-locked-stars 'conditional')
+  ::  ::
+  ::  ~&  'Deed data sanity check...'
+  ::  =/  tlon-map=(map ship rights)
+  ::    (~(gas by *(map ship rights)) tlon-gal)
+  ::  =/  deed-map=(map ship rights)
+  ::    (~(gas by *(map ship rights)) directs)
+  ::  =/  star-map=(map ship (set ship))
+  ::    %+  roll  directs
+  ::    |=  [[who=ship *] smp=(map ship (set ship))]
+  ::    ^+  smp
+  ::    =+  par=(^sein:title who)
+  ::    ~|  [%need-parent par %for who]
+  ::    ?>  ?&  ?|  (~(has by tlon-map) par)
+  ::                (~(has by deed-map) par)
+  ::            ==
+  ::          ::
+  ::            ?=  ^
+  ::            =<  net
+  ::            %+  fall
+  ::              (~(get by deed-map) par)
+  ::            %+  fall
+  ::              (~(get by tlon-map) par)
+  ::            *rights
+  ::        ==
+  ::    %-  ~(put by smp)
+  ::    ^-  [ship (set ship)]
+  ::    ?+  (clan:title who)  !!
+  ::      %king  [who (fall (~(get by smp) who) ~)]
+  ::      %duke  :-  par
+  ::             =+  sm=(fall (~(get by smp) par) ~)
+  ::             (~(put in sm) who)
+  ::    ==
   ::
   ::  contract deployment
   ::
@@ -564,18 +606,18 @@
   ::
   ::  linear release registration and deeding
   ::
-  ~&  ['Registering linear release recipients...' +(nonce)]
-  =+  lin-rec-list=~(tap by lin-rec)
-  |-
-  ?^  lin-rec-list
-    =.  this
-      %^  do  linear-star-release  350.000
-      (register-linear:dat i.lin-rec-list)
-    $(lin-rec-list t.lin-rec-list)
-  ::
-  ~&  ['Depositing linear release galaxies...' +(nonce)]
-  =.  this
-    (deposit-galaxies linear-star-release lin-gal)
+  ::L ~&  ['Registering linear release recipients...' +(nonce)]
+  ::L =+  lin-rec-list=~(tap by lin-rec)
+  ::L |-
+  ::L ?^  lin-rec-list
+  ::L   =.  this
+  ::L     %^  do  linear-star-release  350.000
+  ::L     (register-linear:dat i.lin-rec-list)
+  ::L   $(lin-rec-list t.lin-rec-list)
+  ::L ::
+  ::L ~&  ['Depositing linear release galaxies...' +(nonce)]
+  ::L =.  this
+  ::L   (deposit-galaxies linear-star-release lin-gal)
   ::
   ::B ~&  ['Depositing linear release stars...' +(nonce)]
   ::B =.  this
