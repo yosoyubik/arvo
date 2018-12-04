@@ -47,6 +47,7 @@
       term=(unit @ud)      :: years
       rate=(unit @ud)      :: stars
       rate-unit=(unit @ud) :: seconds
+      tranches=(unit @ud)
       extra=tape
   ==
 ::
@@ -205,6 +206,7 @@
     na-or-num
     na-or-num
     na-or-num
+    na-or-num
     (star ;~(pose (jest '\0d') (shim ' ' '~')))
   ==
 ::
@@ -321,6 +323,8 @@
   =+  polls=(hex-to-num '0x7fecab617c868bb5996d99d95200d2fa708218e4')
   =+  claims=(hex-to-num '0xe7e7f69b34d7d9bd8d61fb22c33b22708947971a')
   =+  linear-star-release=(hex-to-num '0x86cd9cd0992f04231751e3761de45cecea5d1801')
+  ::  XX only if csr is deployed at nonce 8681!
+  =+  conditional-star-release=(hex-to-num '8c241098c3d3498fe1261421633fd57986d74aea')
   =.  constitution  (hex-to-num '0x12778371a6aa58b1dd623c126e09cd28fc5b9b5c')
   ::
   =/  all-addr=(map ship address-info)
@@ -335,55 +339,63 @@
   =/  lockups=(map ship lockup-info)
     get-lockups
   ~&  lockups-wyt=~(wyt by lockups)
-  ::L =/  potential
-  ::L   %+  skim
-  ::L     ~(tap by addresses)
-  ::L   |=  [who=ship address-info]
-  ::L   ?.  (lth who ~marzod)
-  ::L     |
-  ::L   =+  lockup=(~(got by lockups) who)
-  ::L   =(%linear type.lockup)
-  ::L =/  lin-rec
-  ::L   %+  roll  potential
-  ::L   |=  [[who=ship address-info] m=(map address linear-recipient)]
-  ::L   =/  tentative=linear-recipient
-  ::L     =+  l=(~(got by lockups) who)
-  ::L     :*  :(mul (need windup-years.l) 60 60 24 365)
-  ::L         255
-  ::L         (need rate.l)
-  ::L         (need rate-unit.l)
-  ::L     ==
-  ::L   =/  own  (need owner)
-  ::L   =/  prev  (~(get by m) own)
-  ::L   ?~  prev
-  ::L     (~(put by m) own tentative)
-  ::L   ?>  =(windup.u.prev windup.tentative)
-  ::L   ?>  =(rate.u.prev rate.tentative)
-  ::L   ?>  =(rate-unit.u.prev rate-unit.tentative)
-  ::L   %+  ~(put by m)  own
-  ::L   :*  windup.u.prev
-  ::L       (add 255 stars.u.prev)
-  ::L       rate.u.prev
-  ::L       rate-unit.u.prev
-  ::L   ==
-  ::L =/  lin-gal=(list [who=ship rights])
-  ::L   %+  turn  potential
-  ::L   |=  [who=ship address-info]
-  ::L   ~|  +<
-  ::L   ::  linear galaxies must spawn
-  ::L   ::
-  ::L   =+  auth=?~(auth 0x0 u.auth)
-  ::L   =+  crypt=?~(crypt 0x0 u.crypt)
-  ::L   ^-  [who=ship rights]
-  ::L   :*  who
-  ::L       (need owner)
-  ::L       management
-  ::L       voting
-  ::L       transfer
-  ::L       spawn
-  ::L       `[crypt auth]
-  ::L   ==
-  ::L ~&  :-  %linear-galaxies
+  =/  potential
+    %+  skim
+      ~(tap by addresses)
+    |=  [who=ship address-info]
+    ?.  (lth who ~marzod)
+      |
+    =+  lockup=(~(got by lockups) who)
+    =(%linear type.lockup)
+  =/  lin-rec
+    %+  roll  potential
+    |=  [[who=ship address-info] m=(map address linear-recipient)]
+    ~|  +<
+    =/  tentative=linear-recipient
+      =+  l=(~(got by lockups) who)
+      =/  rate-unit  (div :(mul 60 60 24 365 (need term.l)) 255)
+      ::L ?>  =(rate-unit.l :(mul 60 60 24 365 (need term.l)))
+      :*  :(mul (need windup-years.l) 60 60 24 365)
+          255
+          (need rate.l)
+          rate-unit
+      ==
+    =/  own  (need owner)
+    =/  prev  (~(get by m) own)
+    ?~  prev
+      (~(put by m) own tentative)
+    ?:  &
+      ~&  'more than one galaxy per address, check rates-unit very carefully!'
+      !!
+    ?>  =(windup.u.prev windup.tentative)
+    ?>  =(rate.u.prev rate.tentative)
+    ?>  =(rate-unit.u.prev rate-unit.tentative)
+    %+  ~(put by m)  own
+    :*  windup.u.prev
+        (add 255 stars.u.prev)
+        rate.u.prev
+        (div rate-unit.u.prev 2)
+    ==
+  =/  lin-gal=(list [who=ship rights])
+    %+  turn  potential
+    |=  [who=ship address-info]
+    ~|  +<
+    ::  linear galaxies must spawn
+    ::
+    =+  auth=?~(auth 0x0 u.auth)
+    =+  crypt=?~(crypt 0x0 u.crypt)
+    ^-  [who=ship rights]
+    :*  who
+        (need owner)
+        management
+        voting
+        transfer
+        spawn
+        `[crypt auth]
+    ==
+  ~&  :-  %linear-galaxies
+  lin-gal
+  ~&  lin-rec
   ::L %+  turn  potential
   ::L |=  [who=ship address-info]
   ::L :-  +<
@@ -399,18 +411,26 @@
   =/  con-rec
     %+  roll  potential-con
     |=  [[who=ship address-info] m=(map address conditional-recipient)]
+    ~|  +<
     =/  tentative=conditional-recipient
       =+  l=(~(got by lockups) who)
-      :*  85 :: b1.l ::TODO !!
-          85 :: b2.l
-          85 :: b3.l
+      =+  t=(need tranches.l)
+      ?>  ?=(?(%1 %3) t)
+      =+  [b1 b2 b3]=?:(=(1 t) [255 0 0] [85 85 85])
+      =+  rate-unit=(div :(mul 60 60 24 365 1) ?:(=(1 t) 255 85))
+      :*  b1
+          b2
+          b3
           1   :: (need rate.l)
-          497.250   :: (need rate-unit.l)
+          rate-unit   :: (need rate-unit.l)
       ==
     =/  own  (need owner)
     =/  prev  (~(get by m) own)
     ?~  prev
       (~(put by m) own tentative)
+    ::  ?:  &
+    ::    ~&  'more than one galaxy per address, check rates-unit and tranches very carefully!'
+    ::    !!
     ?>  =(rate.u.prev rate.tentative)
     ?>  =(rate-unit.u.prev rate-unit.tentative)
     %+  ~(put by m)  own
@@ -438,10 +458,12 @@
         `[crypt auth]
     ==
   ~&  :-  %conditional-galaxies
-  %+  turn  potential-con
-  |=  [who=ship address-info]
-  :-  +<
-  (~(got by lockups) who)
+  con-gal
+  ~&  con-rec
+  ::C %+  turn  potential-con
+  ::C |=  [who=ship address-info]
+  ::C :-  +<
+  ::C (~(got by lockups) who)
   ::Z =/  lin-gal=(list [ship rights[)
   ::Z   %+  murn
   ::Z     lin-rec
@@ -625,18 +647,19 @@
   ::B ::
   ::B ::  conditional release registration and deeding
   ::B ::
-  ::B ~&  ['Registering conditional release recipients...' +(nonce)]
-  ::B |-
-  ::B ?^  con-rec
-  ::B   =.  this
-  ::B     %^  do  conditional-star-release  350.000
-  ::B     (register-conditional:dat i.con-rec)
-  ::B   $(con-rec t.con-rec)
-  ::B ::
-  ::B ~&  ['Depositing conditional release galaxies...' +(nonce)]
-  ::B =.  this
-  ::B   (deposit-galaxies conditional-star-release con-gal)
-  ::B ::
+  ~&  ['Registering conditional release recipients...' +(nonce)]
+  =+  con-rec-list=~(tap by con-rec)
+  |-
+  ?^  con-rec-list
+    =.  this
+      %^  do  conditional-star-release  350.000
+      (register-conditional:dat i.con-rec-list)
+    $(con-rec-list t.con-rec-list)
+  ::
+  ~&  ['Depositing conditional release galaxies...' +(nonce)]
+  =.  this
+    (deposit-galaxies conditional-star-release con-gal)
+  ::
   ::B ~&  ['Depositing conditional release stars...' +(nonce)]
   ::B =.  this
   ::B   (deposit-stars conditional-star-release con-sar)
