@@ -3552,7 +3552,7 @@
   =/  pit=vase  !>(~)
   =/  hoon-compiled=vase  (slap pit hoon-parsed)
   ~&  %hoon-compiled
-  =/  arvo-compiled=vase  (slap hoon-compiled arvo-parsed)
+  =/  arvo-compiled=vase  (slap (slot 7 hoon-compiled) arvo-parsed)
   ~&  %arvo-compiled
   =/  pit-compiled=vase   (slap arvo-compiled [%cnts ~[[%& 1] %is] ~])
   ~&  %pit-compiled
