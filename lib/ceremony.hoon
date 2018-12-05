@@ -314,8 +314,8 @@
   ::
   ::NOTE  we do these first so that we are sure we have sane files,
   ::      without waiting for that answer
-  =+  tlon-gal=get-direct-galaxies
-  =+  directs=get-direct-ships
+  ::  =+  tlon-gal=get-direct-galaxies
+  ::  =+  directs=get-direct-ships
   ::
   ::B =+  lin-rec=get-linear-recipients
   ::B =+  lin-gal=(get-locked-galaxies 'linear')
@@ -324,7 +324,7 @@
   =+  claims=(hex-to-num '0xe7e7f69b34d7d9bd8d61fb22c33b22708947971a')
   =+  linear-star-release=(hex-to-num '0x86cd9cd0992f04231751e3761de45cecea5d1801')
   ::  XX only if csr is deployed at nonce 8681!
-  =+  conditional-star-release=(hex-to-num '8c241098c3d3498fe1261421633fd57986d74aea')
+  =+  conditional-star-release=(hex-to-num '0x8c241098c3d3498fe1261421633fd57986d74aea')
   =.  constitution  (hex-to-num '0x12778371a6aa58b1dd623c126e09cd28fc5b9b5c')
   ::
   =/  all-addr=(map ship address-info)
@@ -347,6 +347,9 @@
       |
     =+  lockup=(~(got by lockups) who)
     =(%linear type.lockup)
+  ::
+  ::  Calculate linear lockups
+  ::
   =/  lin-rec
     %+  roll  potential
     |=  [[who=ship address-info] m=(map address linear-recipient)]
@@ -400,6 +403,9 @@
   ::L |=  [who=ship address-info]
   ::L :-  +<
   ::L (~(got by lockups) who)
+  ::
+  ::  Calculate conditional lockups
+  ::
   =/  potential-con
     %+  skim
       ~(tap by addresses)
@@ -472,6 +478,36 @@
   ::Z   ?~  addr
   ::Z     ~
   ::Z   `[who `rights`[(need owner) management voting transfer spawn net]]
+  ::
+  ::  Calculate direct ships
+  ::
+  =/  potential-direct
+    %+  skim
+      ~(tap by addresses)
+    |=  [who=ship address-info]
+    ?.  (lth who ~marzod)
+      |
+    =+  lockup=(~(got by lockups) who)
+    =(%direct type.lockup)
+  =/  direct-galaxies=(list [who=ship rights])
+    %+  turn  potential-direct
+    |=  [who=ship address-info]
+    ~|  +<
+    :*  who
+        (need owner)
+        management
+        voting
+        transfer
+        spawn
+        ?:  |(?=(~ crypt) ?=(~ auth))
+          ~
+        `[u.crypt u.auth]
+    ==
+  ~&  [%direct-galaxies direct-galaxies]
+  ~&  %+  turn  potential-direct
+      |=  [who=ship address-info]
+      [+< (~(got by lockups) who)]
+  ::
   ::  =+  lin-sar=(get-locked-stars 'linear')
   ::  ::
   ::  =+  con-rec=get-conditional-recipients
@@ -629,17 +665,17 @@
   ::  linear release registration and deeding
   ::
   ::L ~&  ['Registering linear release recipients...' +(nonce)]
-  ::L =+  lin-rec-list=~(tap by lin-rec)
-  ::L |-
-  ::L ?^  lin-rec-list
-  ::L   =.  this
-  ::L     %^  do  linear-star-release  350.000
-  ::L     (register-linear:dat i.lin-rec-list)
-  ::L   $(lin-rec-list t.lin-rec-list)
-  ::L ::
-  ::L ~&  ['Depositing linear release galaxies...' +(nonce)]
-  ::L =.  this
-  ::L   (deposit-galaxies linear-star-release lin-gal)
+  =+  lin-rec-list=~(tap by lin-rec)
+  |-
+  ?^  lin-rec-list
+    =.  this
+      %^  do  linear-star-release  350.000
+      (register-linear:dat i.lin-rec-list)
+    $(lin-rec-list t.lin-rec-list)
+  ::
+  ~&  ['Depositing linear release galaxies...' +(nonce)]
+  =.  this
+    (deposit-galaxies linear-star-release lin-gal)
   ::
   ::B ~&  ['Depositing linear release stars...' +(nonce)]
   ::B =.  this
@@ -660,6 +696,16 @@
   =.  this
     (deposit-galaxies conditional-star-release con-gal)
   ::
+  ::  Deploy directly-deeded galaxies
+  ~&  ['Booting directly-deeded galaxies...' +(nonce)]
+  =/  galaxies  (sort direct-galaxies order-shiplist)
+  |-
+  ?^  galaxies
+    =.  this
+      (create-ship [who ~ net]:i.galaxies)
+    =.  this
+      (send-ship who.i.galaxies [own manage voting spawn transfer]:i.galaxies)
+    $(galaxies t.galaxies)
   ::B ~&  ['Depositing conditional release stars...' +(nonce)]
   ::B =.  this
   ::B   (deposit-stars conditional-star-release con-sar)
