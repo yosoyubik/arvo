@@ -139,7 +139,10 @@
 ++  read-nonce
   |=  tex=cord
   ^-  @ud
-  (rash (rsh 3 10 (end 3 14 tex)) hex)
+  ::NOTE  this is profoundly stupid but should work well enough
+  =+  (find "82" (trip tex))
+  ?>  ?=(^ -)
+  (rash (rsh 3 (add u 2) (end 3 (add u 6) tex)) hex)
 ::
 ++  write-file-wain
   |=  [pax=path tox=(list cord)]
