@@ -5,10 +5,11 @@
 ::
 =,  ethereum
 =,  ethe
+=,  constitution
 ::
 |%
 ++  state
-  $:  deeds=(map ship deed:eth-noun:constitution)
+  $:  deeds=(map ship [[crypt=octs auth=octs] deed:eth-noun])
   ==
 ::
 ++  move  (pair bone card)
@@ -92,19 +93,23 @@
 ++  hear-hulls
   |=  hus=(list [ship json])
   ^-  [(list move) _+>]
-  =;  liv=(list ship)
-    :_  +>.$
+  =;  liv=(list [who=ship crypt=octs auth=octs])
+    :_  =-  +>.$(deeds (~(gas in deeds) -))
+        %+  turn  liv
+        |=  [who=ship keys=[octs octs]]
+        ^-  (pair ship [[octs octs] deed:eth-noun])
+        [who keys *deed:eth-noun]
     ~&  ['active ships:' liv]
-    ?~  liv  ~
-    :~  (call liv %deed)
-        (call liv %kids)
+    ?:  =(~ liv)  ~  ::  ?~ is tmi reeeee
+    :~  (call (turn liv head) %deed)
+        (call (turn liv head) %kids)
     ==
   %+  murn  hus
   |=  [who=ship hul=json]
-  ^-  (unit ship)
+  ^-  (unit [ship octs octs])
   ~|  hul
   ?>  ?=(%s -.hul)
-  =-  ?:(active `who ~)
+  =-  ?:(active `[who crypt auth] ~)
   ^-  $:  crypt=octs
           auth=octs
           has-sponsor=?
@@ -127,13 +132,13 @@
   %-  ~(gas in deeds)
   %+  turn  des
   |=  [who=ship ded=json]
-  ^-  (pair ship deed:eth-noun)
+  ^-  (pair ship [[octs octs] deed:eth-noun])
   ~|  ded
   ?>  ?=(%s -.ded)
   =+  `deed:eth-noun`(decode-results p.ded deed:eth-type)
   ~|  [%wtf-no-owner who]
   ?<  =(0x0 owner)
-  [who -]
+  [who [crypt auth]:(~(got by deeds) who) -]
 ::
 ++  hear-kids
   |=  kis=(list [ship json])
