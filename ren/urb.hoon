@@ -8,9 +8,11 @@
   /|  
     /,  /web/collections  /;  landscape  /collections-elem/
         /web/pages        /!hymn/
+        /web/static-site  /|  /!hymn/
+                              /hymn/
+                          ==
         /                 /;  landscape  /!hymn/ 
     ==
     ::
-    /:  /===/web/404  /;  landscape  /!hymn/
   ==
 full-page
