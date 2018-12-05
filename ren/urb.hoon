@@ -8,6 +8,7 @@
   /|  
     /,  /web/collections  /;  landscape  /collections-elem/
         /web/pages        /!hymn/
+        /web/static-site        /!hymn/
         /                 /;  landscape  /!hymn/ 
     ==
     ::
