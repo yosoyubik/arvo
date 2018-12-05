@@ -3,6 +3,8 @@
 *PURPOSE* This branch is to set up a dev environment for developing static site 
 content
 
+You only technically need the `/ren` directory from this repo.
+
 1. Make sure that your filesystem is mounted by running `|mount /===`
 2. Copy your working files into your pier at `/web/static-site`
 3. Can now visit `localhost:8080/~~/static-site/<your-path>` to see your rendered page
