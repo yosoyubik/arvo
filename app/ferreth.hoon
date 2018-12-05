@@ -140,13 +140,15 @@
   ^-  [(list move) _+>]
   =;  lis=(list ship)
     :_  +>.$
-    ~&  ['child ships:' lis]
-    ?~  lis  ~
-    ::TODO  if we care about pubkeys, do hull instead of these two,
-    ::      and of course store state in ++hear-hull
-    :~  (call lis %deed)
-        (call lis %kids)
-    ==
+    ~&  ['child ships:' (lent lis)]
+    ::  doing them all in one request is likely to lead to a meme eventually
+    ::  but doing individual request for each has too much overhead
+    ::  so we send them out in groups of 255 instead
+    =|  moz=(list move)
+    |-
+    ?:  =(~ lis)  moz
+    =.  moz  [(call (scag 0xff lis) %hull) moz]
+    $(lis (slag 0xff lis))
   %-  zing
   %+  turn  kis
   |=  [ship kid=json]
