@@ -479,9 +479,9 @@
   ::Z     ~
   ::Z   `[who `rights`[(need owner) management voting transfer spawn net]]
   ::
-  ::  Calculate direct ships
+  ::  Calculate direct galaxies
   ::
-  =/  potential-direct
+  =/  potential-direct-galaxies
     %+  skim
       ~(tap by addresses)
     |=  [who=ship address-info]
@@ -490,7 +490,7 @@
     =+  lockup=(~(got by lockups) who)
     =(%direct type.lockup)
   =/  direct-galaxies=(list [who=ship rights])
-    %+  turn  potential-direct
+    %+  turn  potential-direct-galaxies
     |=  [who=ship address-info]
     ~|  +<
     :*  who
@@ -504,10 +504,46 @@
         `[u.crypt u.auth]
     ==
   ~&  [%direct-galaxies direct-galaxies]
-  ~&  %+  turn  potential-direct
+  ~&  %+  turn  potential-direct-galaxies
       |=  [who=ship address-info]
       [+< (~(got by lockups) who)]
   ::
+  ::
+  ::  Calculate direct stars
+  ::
+  =/  potential-direct-stars
+    %+  skim
+      ~(tap by addresses)
+    |=  [who=ship address-info]
+    ?&  (gte who ~marzod)
+        (lth who 0x1.0000)
+        ?=  :: is a crowdsale galaxy
+          ::
+          ::  %~nus
+          ::
+          ::  $?  %~ten
+          ::      %~pub
+          ::      %~sud
+          ::      %~pem
+          ::      %~dev
+          ::      %~lur
+          ::      %~def
+          ::      %~bus
+          ::  ==
+          ::
+          ::  %~feb
+          ::
+          $?  %~rel
+              %~rud
+              %~nes
+              %~fet
+          ==
+        (^sein:title who)
+    ==
+  ~&  [%direct-stars (lent potential-direct-stars)]
+  ::  ~&  %+  turn  potential-direct-stars
+  ::      |=  [who=ship address-info]
+  ::      +<
   ::  =+  lin-sar=(get-locked-stars 'linear')
   ::  ::
   ::  =+  con-rec=get-conditional-recipients
@@ -664,7 +700,7 @@
   ::
   ::  linear release registration and deeding
   ::
-  ::L ~&  ['Registering linear release recipients...' +(nonce)]
+  ~&  ['Registering linear release recipients...' +(nonce)]
   =+  lin-rec-list=~(tap by lin-rec)
   |-
   ?^  lin-rec-list
