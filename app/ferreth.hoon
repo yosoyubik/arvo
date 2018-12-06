@@ -9,12 +9,16 @@
 ::
 |%
 ++  state
-  $:  deeds=(map ship [[crypt=octs auth=octs] deed:eth-noun])
+  $:  deeds=(map ship deek)
   ==
+::
++$  deek  [keys deed:eth-noun]
++$  keys  [crypt=octs auth=octs]
 ::
 ++  move  (pair bone card)
 ++  card
   $%  [%hiss wire ~ mark %hiss hiss:eyre]
+      [%info wire ship desk nori:clay]
   ==
 --
 ::
@@ -37,15 +41,61 @@
   |=  a=@t
   ^-  [(list move) _+>]
   ?:  =('call' a)  [[initial-call ~] +>]
-  ?:  =('file' a)  [~ write-file]
+  ?:  =('file' a)  [[write-file ~] +>]
   ?:  =('show' a)  ~&  deeds  [~ +>]
   !!
 ::
 ++  write-file
-  !!
+  :*  ost.bol
+      %info
+      /write
+      our.bol
+      %home
+    ::
+      =-  &+[/chain/txt -]~
+      =+  y=.^(arch %cy /(scot %p our.bol)/home/(scot %da now.bol)/chain/txt)
+      =-  ?~  fil.y
+            ins+txt+!>(-)
+          mut+txt+!>(-)
+      ^-  (list @t)
+      =/  hout
+        |=  num=@
+        ?:  =(0x0 num)  "\"\""
+        (num-to-hex num)
+      =/  kout
+        |=  key=octs
+        ?:  =('' q.key)  "\"\""
+        ((x-co:co 64) q.key)
+      %+  murn  ~(tap by deeds)
+      |=  [who=ship deek]
+      ^-  (unit @t)
+      ?.  =(%czar (clan:title who))  ~
+      :-  ~
+      %-  crip
+      ;:  weld
+        ((d-co:co 1) who)  ","        ::  shipnum,
+      ::
+        ?+  (clan:title who)  !!      ::  class (STAR, PLANET, GALAXY),
+          %czar  "galaxy"
+          %king  "star"
+          %duke  "planet"
+        ==
+      ::
+        ","  "id"                     ::  hidden id
+        ","  (hout owner)             ::  ownership,
+        ","  (hout transfer-proxy)    ::  transfer, always empty
+        ","  (hout spawn-proxy)       ::  spawn,
+        ","  (hout management-proxy)  ::  management,
+        ","  (hout voting-proxy)      ::  voting,
+        ","  (kout crypt)             ::  crypt,
+        ","  (kout auth)              ::  auth,
+        ","  "code"                   ::  invite-code,
+        ","  "timestamp"              ::  "timestamp"
+      ==
+  ==
 ::
 ++  initial-call
-  (call (gulf ~zod ~syt) %hull) ::~fes))
+  (call (gulf ~zod ~fes) %hull)
 ::
 ++  call
   |=  [who=(list ship) wat=?(%hull %kids %deed)]
@@ -99,7 +149,7 @@
         |=  [who=ship keys=[octs octs]]
         ^-  (pair ship [[octs octs] deed:eth-noun])
         [who keys *deed:eth-noun]
-    ~&  ['active ships:' liv]
+    ~&  ['active ships:' (lent liv)]
     ?:  =(~ liv)  ~  ::  ?~ is tmi reeeee
     :~  (call (turn liv head) %deed)
         (call (turn liv head) %kids)
