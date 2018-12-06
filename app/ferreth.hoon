@@ -33,9 +33,10 @@
 |_  [bol=bowl:gall state]
 ::
 ++  prep
-  |=  old=(unit *)
+  |=  old=(unit state)
   ^-  [(list move) _+>]
-  [~ +>]
+  ?~  old  [~ +>]
+  [~ +>.$(+<+ u.old)]
 ::
 ++  poke-noun
   |=  a=@t
@@ -130,7 +131,7 @@
 ++  sigh-json-rpc-response
   |=  [wir=wire res=response:json-rpc]
   ^-  [(list move) _+>]
-  ~|  res
+  ~|  ?:(?=(?(%error %fail) -.res) res -.res)
   ?>  ?=(%batch -.res)
   %.  %+  turn  bas.res
       |=  r=response:json-rpc
@@ -160,7 +161,7 @@
   %+  murn  hus
   |=  [who=ship hul=json]
   ^-  (unit [ship octs octs])
-  ~|  hul
+  :: ~|  hul
   ?>  ?=(%s -.hul)
   =-  ?:(active `[who crypt auth] ~)
   ^-  $:  crypt=octs
@@ -186,7 +187,7 @@
   %+  turn  des
   |=  [who=ship ded=json]
   ^-  (pair ship [[octs octs] deed:eth-noun])
-  ~|  ded
+  :: ~|  ded
   ?>  ?=(%s -.ded)
   =+  `deed:eth-noun`(decode-results p.ded deed:eth-type)
   ~|  [%wtf-no-owner who]
