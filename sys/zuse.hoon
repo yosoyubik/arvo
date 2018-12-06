@@ -302,8 +302,8 @@
       ++  deed
         :~  %address        ::  owner
             %address        ::  managementProxy
-            %address        ::  votingProxy
             %address        ::  spawnProxy
+            %address        ::  votingProxy
             %address        ::  transferProxy
         ==
       --
@@ -326,8 +326,8 @@
       ++  deed
         $:  owner=address
             management-proxy=address
-            voting-proxy=address
             spawn-proxy=address
+            voting-proxy=address
             transfer-proxy=address
         ==
       --

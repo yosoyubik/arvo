@@ -122,6 +122,9 @@
   :+  "account"  "txlist"
   %-  ~(gas by *(map tape tape))
   :~  "address"^['0' 'x' ((x-co:co 40) ceremony)]
+      "page"^"1"
+      "offset"^"200"
+      "sort"^"desc"
   ==
 ::
 ++  etherscan
