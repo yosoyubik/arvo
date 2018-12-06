@@ -162,6 +162,8 @@
     :-  /ren/tree/index     "temporarily disabled"
     :-  /ren/tree/elem      "temporarily disabled"
     :-  /ren/urb            "temporarily disabled"
+    :-  /ren/xml            "temporarily disabled"
+    :-  /ren/svg            "temporarily disabled"
     :-  /ren/x-urb          "temporarily disabled"
     :-  /ren/x-htm          "temporarily disabled"
     :-  /ren/x-collections-snip          "temporarily disabled"
