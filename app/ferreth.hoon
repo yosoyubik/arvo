@@ -54,10 +54,9 @@
       %home
     ::
       =-  &+[/chain/txt -]~
-      =+  y=.^(arch %cy /(scot %p our.bol)/home/(scot %da now.bol)/chain/txt)
-      =-  ?~  fil.y
-            ins+txt+!>(-)
-          mut+txt+!>(-)
+      =-  %+  feel:space:userlib
+            /(scot %p our.bol)/home/(scot %da now.bol)/chain/txt
+          txt+!>(-)
       ^-  (list @t)
       =/  hout
         |=  num=@
@@ -67,9 +66,10 @@
         |=  key=octs
         ?:  =('' q.key)  "\"\""
         ((x-co:co 64) q.key)
-      %+  murn  ~(tap by deeds)
-      |=  [who=ship deek]
+      %+  murn  (sort ~(tap in ~(key by deeds)) lth)
+      |=  who=ship
       ^-  (unit @t)
+      =+  (~(got by deeds) who)
       ?.  =(%czar (clan:title who))  ~
       :-  ~
       %-  crip
