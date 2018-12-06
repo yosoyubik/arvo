@@ -43,7 +43,10 @@
   ^-  [(list move) _+>]
   ?:  =('call' a)  [initial-call +>]
   ?:  =('file' a)  [[write-file ~] +>]
-  ?:  =('show' a)  ~&  deeds  [~ +>]
+  ?:  =('show' a)
+    ~&  ^-  (map ship [[[@ud @ux] [@ud @ux]] deed:eth-noun])
+        deeds
+    [~ +>]
   !!
 ::
 ++  write-file
