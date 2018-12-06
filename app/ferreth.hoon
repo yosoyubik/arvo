@@ -183,7 +183,7 @@
   ^-  [(list move) _+>]
   =,  constitution
   =-  [~ +>.$(deeds -)]
-  %-  ~(gas in deeds)
+  %-  ~(gas by deeds)
   %+  turn  des
   |=  [who=ship ded=json]
   ^-  (pair ship [[octs octs] deed:eth-noun])
