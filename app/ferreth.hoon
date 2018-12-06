@@ -40,7 +40,7 @@
 ++  poke-noun
   |=  a=@t
   ^-  [(list move) _+>]
-  ?:  =('call' a)  [[initial-call ~] +>]
+  ?:  =('call' a)  [initial-call +>]
   ?:  =('file' a)  [[write-file ~] +>]
   ?:  =('show' a)  ~&  deeds  [~ +>]
   !!
@@ -95,7 +95,10 @@
   ==
 ::
 ++  initial-call
-  (call (gulf ~zod ~fes) %hull)
+  ^-  (list move)
+  %+  turn  (gulf ~zod ~fes)
+  |=  who=ship
+  (call [who]~ %hull)
 ::
 ++  call
   |=  [who=(list ship) wat=?(%hull %kids %deed)]
