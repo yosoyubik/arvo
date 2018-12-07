@@ -64,7 +64,7 @@
       =/  hout
         |=  num=@
         ?:  =(0x0 num)  "\"\""
-        (num-to-hex num)
+        (address-to-hex num)
       =/  kout
         |=  key=octs
         ?:  =('' q.key)  "\"\""
@@ -77,24 +77,24 @@
       :-  ~
       %-  crip
       ;:  weld
-        ((d-co:co 1) who)  ","        ::  shipnum,
+        ((d-co:co 1) who)  ","        ::  ship,
       ::
-        ?+  (clan:title who)  !!      ::  class (STAR, PLANET, GALAXY),
+        ?+  (clan:title who)  !!      ::  shipGlass (STAR, PLANET, GALAXY),
           %czar  "galaxy"
           %king  "star"
           %duke  "planet"
         ==
       ::
-        ","  "id"                     ::  hidden id
+        ","  "id"                     ::  idCode
         ","  (hout owner)             ::  ownership,
-        ","  (hout transfer-proxy)    ::  transfer, always empty
+        ","  (hout transfer-proxy)    ::  transfer,
         ","  (hout spawn-proxy)       ::  spawn,
-        ","  (hout management-proxy)  ::  management,
+        ","  (hout management-proxy)  ::  mgmt,
         ","  (hout voting-proxy)      ::  voting,
-        ","  (kout crypt)             ::  crypt,
         ","  (kout auth)              ::  auth,
-        ","  "code"                   ::  invite-code,
-        ","  "timestamp"              ::  "timestamp"
+        ","  (kout crypt)             ::  crypt,
+        ","  "code"                   ::  confirmationCode,
+        ","  "timestamp"              ::  confirm
       ==
   ==
 ::
