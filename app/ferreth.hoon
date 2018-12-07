@@ -14,7 +14,7 @@
   ==
 ::
 +$  deek  [keys deed:eth-noun]
-+$  keys  [crypt=octs auth=octs]
++$  keys  [crypt=byts auth=byts]
 ::
 ++  move  (pair bone card)
 ++  card
