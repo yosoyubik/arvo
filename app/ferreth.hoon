@@ -10,6 +10,7 @@
 |%
 ++  state
   $:  deeds=(map ship deek)
+      queue=(list ship)
   ==
 ::
 +$  deek  [keys deed:eth-noun]
@@ -41,7 +42,7 @@
 ++  poke-noun
   |=  a=@t
   ^-  [(list move) _+>]
-  ?:  =('call' a)  [initial-call +>]
+  ?:  =('call' a)  [[initial-call ~] +>]
   ?:  =('file' a)  [[write-file ~] +>]
   ?:  =('show' a)
     ~&  ^-  (map ship [[[@ud @ux] [@ud @ux]] deed:eth-noun])
@@ -99,10 +100,7 @@
   ==
 ::
 ++  initial-call
-  ^-  (list move)
-  %+  turn  (gulf ~zod ~fes)
-  |=  who=ship
-  (call [who]~ %hull)
+  (call (gulf 0x0 0xff) %hull)
 ::
 ++  call
   |=  [who=(list ship) wat=?(%hull %kids %deed)]
@@ -201,16 +199,11 @@
   |=  kis=(list [ship json])
   ^-  [(list move) _+>]
   =;  lis=(list ship)
-    :_  +>.$
     ~&  ['child ships:' (lent lis)]
     ::  doing them all in one request is likely to lead to a meme eventually
     ::  but doing individual request for each has too much overhead
     ::  so we send them out in groups of 255 instead
-    =|  moz=(list move)
-    |-
-    ?:  =(~ lis)  moz
-    =.  moz  [(call (scag 0xff lis) %hull) moz]
-    $(lis (slag 0xff lis))
+    next-in-queue(queue (weld queue lis))
   %-  zing
   %+  turn  kis
   |=  [ship kid=json]
@@ -219,6 +212,13 @@
   %-  (list @)  ::NOTE  yes, i know this is bad, but output is (list)...
   %+  decode-results  `@t`p.kid
   [[%array %uint] ~]
+::
+++  next-in-queue
+  ^-  [(list move) _.]
+  ~&  ['popping queue, remaining: ' (lent queue)]
+  ?:  =(~ queue)  [~ .]
+  :-  [(call (scag 0xff queue) %hull) ~]
+  ..prep(queue (slag 0xff queue))
 ::
 ::TODO  flow
 ::    read galaxy table
