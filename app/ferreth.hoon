@@ -10,10 +10,11 @@
 |%
 ++  state
   $:  deeds=(map ship deek)
+      queue=(list ship)
   ==
 ::
 +$  deek  [keys deed:eth-noun]
-+$  keys  [crypt=octs auth=octs]
++$  keys  [crypt=byts auth=byts]
 ::
 ++  move  (pair bone card)
 ++  card
@@ -24,7 +25,9 @@
 ::
 ::
 |%
-++  azimuth  0x223c.067f.8cf2.8ae1.73ee.5caf.ea60.ca44.c335.fecb
+++  azimuth         0x223c.067f.8cf2.8ae1.73ee.5caf.ea60.ca44.c335.fecb
+++  conditional-sr  0x8c24.1098.c3d3.498f.e126.1421.633f.d579.86d7.4aea
+++  linear-sr       0x86cd.9cd0.992f.0423.1751.e376.1de4.5cec.ea5d.1801
 ::
 ++  parity   'http://104.198.35.227:8545'
 --
@@ -41,9 +44,12 @@
 ++  poke-noun
   |=  a=@t
   ^-  [(list move) _+>]
-  ?:  =('call' a)  [initial-call +>]
+  ?:  =('call' a)  [[initial-call ~] +>]
   ?:  =('file' a)  [[write-file ~] +>]
-  ?:  =('show' a)  ~&  deeds  [~ +>]
+  ?:  =('show' a)
+    ~&  ^-  (map ship [[[@ud @ux] [@ud @ux]] deed:eth-noun])
+        deeds
+    [~ +>]
   !!
 ::
 ++  write-file
@@ -54,52 +60,75 @@
       %home
     ::
       =-  &+[/chain/txt -]~
-      =+  y=.^(arch %cy /(scot %p our.bol)/home/(scot %da now.bol)/chain/txt)
-      =-  ?~  fil.y
-            ins+txt+!>(-)
-          mut+txt+!>(-)
+      =-  %+  feel:space:userlib
+            /(scot %p our.bol)/home/(scot %da now.bol)/chain/txt
+          txt+!>(-)
       ^-  (list @t)
+      %+  weld
+        :-  'locked up:'
+        %+  murn  (gulf 0x0 0xff)
+        |=  gal=ship
+        ^-  (unit @t)
+        ?.  (~(has by deeds) gal)  ~
+        =+  (~(got by deeds) gal)
+        =-  ::  [con=@ud lin=@ud]
+          =|  count=tape
+          =?  count  !=(0 con)  "{(scow %ud con)} in conditional lockup; "
+          =?  count  !=(0 lin)  "{(scow %ud lin)} in linear lockup"
+          ?~  count  ~
+          =-  `(crip (weld - count))
+          "{(scow %ud gal)} aka {(scow %p gal)}'s stars: "
+        %+  roll  (gulf 0x0 0xff)
+        |=  [suf=@ con=@ud lin=@ud]
+        =+  sar=(cat 3 gal suf)
+        ?.  (~(has by deeds) sar)  [con lin]
+        =+  (~(got by deeds) sar)
+        ?:  =(conditional-sr owner)  [+(con) lin]
+        ?:  =(linear-sr owner)  [con +(lin)]
+        [con lin]
+      :-  'deeded:'
       =/  hout
         |=  num=@
         ?:  =(0x0 num)  "\"\""
-        (num-to-hex num)
+        (address-to-hex num)
       =/  kout
         |=  key=octs
         ?:  =('' q.key)  "\"\""
         ((x-co:co 64) q.key)
-      %+  murn  ~(tap by deeds)
-      |=  [who=ship deek]
+      %+  murn  (sort ~(tap in ~(key by deeds)) lth)
+      |=  who=ship
       ^-  (unit @t)
-      ?.  =(%czar (clan:title who))  ~
+      =+  (~(got by deeds) who)
+      ?:  ?|  =(conditional-sr owner)
+              =(linear-sr owner)
+          ==
+        ~
       :-  ~
       %-  crip
       ;:  weld
-        ((d-co:co 1) who)  ","        ::  shipnum,
+        ((d-co:co 1) who)  ","        ::  ship,
       ::
-        ?+  (clan:title who)  !!      ::  class (STAR, PLANET, GALAXY),
+        ?+  (clan:title who)  !!      ::  shipGlass (STAR, PLANET, GALAXY),
           %czar  "galaxy"
           %king  "star"
           %duke  "planet"
         ==
       ::
-        ","  "id"                     ::  hidden id
+        ","  "id"                     ::  idCode
         ","  (hout owner)             ::  ownership,
-        ","  (hout transfer-proxy)    ::  transfer, always empty
+        ","  (hout transfer-proxy)    ::  transfer,
         ","  (hout spawn-proxy)       ::  spawn,
-        ","  (hout management-proxy)  ::  management,
+        ","  (hout management-proxy)  ::  mgmt,
         ","  (hout voting-proxy)      ::  voting,
-        ","  (kout crypt)             ::  crypt,
         ","  (kout auth)              ::  auth,
-        ","  "code"                   ::  invite-code,
-        ","  "timestamp"              ::  "timestamp"
+        ","  (kout crypt)             ::  crypt,
+        ","  "code"                   ::  confirmationCode,
+        ","  "timestamp"              ::  confirm
       ==
   ==
 ::
 ++  initial-call
-  ^-  (list move)
-  %+  turn  (gulf ~zod ~fes)
-  |=  who=ship
-  (call [who]~ %hull)
+  (call (gulf 0x0 0xff) %hull)
 ::
 ++  call
   |=  [who=(list ship) wat=?(%hull %kids %deed)]
@@ -156,7 +185,10 @@
     ~&  ['active ships:' (lent liv)]
     ?:  =(~ liv)  ~  ::  ?~ is tmi reeeee
     :~  (call (turn liv head) %deed)
-        (call (turn liv head) %kids)
+      ::
+        =-  (call - %kids)
+        %+  skip  (turn liv head)
+        |=(w=ship ?=(%duke (clan:title w)))
     ==
   %+  murn  hus
   |=  [who=ship hul=json]
@@ -183,7 +215,7 @@
   ^-  [(list move) _+>]
   =,  constitution
   =-  [~ +>.$(deeds -)]
-  %-  ~(gas in deeds)
+  %-  ~(gas by deeds)
   %+  turn  des
   |=  [who=ship ded=json]
   ^-  (pair ship [[octs octs] deed:eth-noun])
@@ -198,16 +230,11 @@
   |=  kis=(list [ship json])
   ^-  [(list move) _+>]
   =;  lis=(list ship)
-    :_  +>.$
     ~&  ['child ships:' (lent lis)]
     ::  doing them all in one request is likely to lead to a meme eventually
     ::  but doing individual request for each has too much overhead
     ::  so we send them out in groups of 255 instead
-    =|  moz=(list move)
-    |-
-    ?:  =(~ lis)  moz
-    =.  moz  [(call (scag 0xff lis) %hull) moz]
-    $(lis (slag 0xff lis))
+    next-in-queue(queue (weld queue lis))
   %-  zing
   %+  turn  kis
   |=  [ship kid=json]
@@ -216,6 +243,13 @@
   %-  (list @)  ::NOTE  yes, i know this is bad, but output is (list)...
   %+  decode-results  `@t`p.kid
   [[%array %uint] ~]
+::
+++  next-in-queue
+  ^-  [(list move) _.]
+  ~&  ['popping queue, remaining: ' (lent queue)]
+  ?:  =(~ queue)  [~ .]
+  :-  [(call (scag 0xff queue) %hull) ~]
+  ..prep(queue (slag 0xff queue))
 ::
 ::TODO  flow
 ::    read galaxy table
