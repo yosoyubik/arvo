@@ -157,7 +157,10 @@
     ~&  ['active ships:' (lent liv)]
     ?:  =(~ liv)  ~  ::  ?~ is tmi reeeee
     :~  (call (turn liv head) %deed)
-        (call (turn liv head) %kids)
+      ::
+        =-  (call - %kids)
+        %+  skip  (turn liv head)
+        |=(w=ship ?=(%duke (clan:title w)))
     ==
   %+  murn  hus
   |=  [who=ship hul=json]
