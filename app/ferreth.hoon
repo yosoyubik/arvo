@@ -25,7 +25,9 @@
 ::
 ::
 |%
-++  azimuth  0x223c.067f.8cf2.8ae1.73ee.5caf.ea60.ca44.c335.fecb
+++  azimuth         0x223c.067f.8cf2.8ae1.73ee.5caf.ea60.ca44.c335.fecb
+++  conditional-sr  0x8c24.1098.c3d3.498f.e126.1421.633f.d579.86d7.4aea
+++  linear-sr       0x86cd.9cd0.992f.0423.1751.e376.1de4.5cec.ea5d.1801
 ::
 ++  parity   'http://104.198.35.227:8545'
 --
@@ -62,6 +64,29 @@
             /(scot %p our.bol)/home/(scot %da now.bol)/chain/txt
           txt+!>(-)
       ^-  (list @t)
+      %+  weld
+        :-  'locked up:'
+        %+  murn  (gulf 0x0 0xff)
+        |=  gal=ship
+        ^-  (unit @t)
+        ?.  (~(has by deeds) gal)  ~
+        =+  (~(got by deeds) gal)
+        =-  ::  [con=@ud lin=@ud]
+          =|  count=tape
+          =?  count  !=(0 con)  "{(scow %ud con)} in conditional lockup; "
+          =?  count  !=(0 lin)  "{(scow %ud lin)} in linear lockup"
+          ?~  count  ~
+          =-  `(crip (weld - count))
+          "{(scow %ud gal)} aka {(scow %p gal)}'s stars: "
+        %+  roll  (gulf 0x0 0xff)
+        |=  [suf=@ con=@ud lin=@ud]
+        =+  sar=(cat 3 gal suf)
+        ?.  (~(has by deeds) sar)  [con lin]
+        =+  (~(got by deeds) sar)
+        ?:  =(conditional-sr owner)  [+(con) lin]
+        ?:  =(linear-sr owner)  [con +(lin)]
+        [con lin]
+      :-  'deeded:'
       =/  hout
         |=  num=@
         ?:  =(0x0 num)  "\"\""
@@ -74,7 +99,10 @@
       |=  who=ship
       ^-  (unit @t)
       =+  (~(got by deeds) who)
-      ?.  =(%czar (clan:title who))  ~
+      ?:  ?|  =(conditional-sr owner)
+              =(linear-sr owner)
+          ==
+        ~
       :-  ~
       %-  crip
       ;:  weld
