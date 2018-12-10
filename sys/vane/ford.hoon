@@ -4692,6 +4692,7 @@
             ::
             %ride  [%cnts ~[[%& 1] %is] ~]
             %ride  arvo-hoon
+            %ride  [%$ 7]
             %ride  hoon-hoon
             [%$ %noun !>(~)]
         ==
@@ -6069,9 +6070,10 @@
 ::  begin with a default +axle as a blank slate
 ::
 =|  ax=axle
-::  a vane is activated with current date, entropy, and a namespace function
+::  a vane is activated with identity, the current date, entropy,
+::  and a namespace function
 ::
-|=  [now=@da eny=@ scry-gate=sley]
+|=  [our=ship now=@da eny=@uvJ scry-gate=sley]
 ::  allow jets to be registered within this core
 ::
 ~%  %ford  ..is  ~
@@ -6094,7 +6096,7 @@
 ::
 ++  call
   |=  [=duct type=* wrapped-task=(hobo task:able)]
-  ^-  [p=(list move) q=_ford-gate]
+  ^-  [(list move) _ford-gate]
   ::  unwrap :task from :wrapped-task
   ::
   =/  task=task:able
@@ -6225,7 +6227,7 @@
 ::
 ++  take
   |=  [=wire =duct wrapped-sign=(hypo sign)]
-  ^-  [p=(list move) q=_ford-gate]
+  ^-  [(list move) _ford-gate]
   ::  unwrap :sign, ignoring unneeded +type in :p.wrapped-sign
   ::
   =/  =sign  q.wrapped-sign
@@ -6243,7 +6245,7 @@
     ~|  [%take-our our]
     (~(got by state-by-ship.ax) our)
   ::
-  |^  ^-  [p=(list move) q=_ford-gate]
+  |^  ^-  [(list move) _ford-gate]
       ::
       =^  moves  ship-state
         ?+  i.t.wire     ~|([%bad-take-wire wire] !!)

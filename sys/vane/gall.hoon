@@ -97,9 +97,10 @@
     ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 .  ==
 =|  all/axle                                            ::  all vane state
-|=  $:  now/@da                                         ::  urban time
-        eny/@uvJ                                        ::  entropy
-        ska/sley                                        ::  activate
+|=  $:  our=ship                                        ::  identity
+        now=@da                                         ::  urban time
+        eny=@uvJ                                        ::  entropy
+        ska=sley                                        ::  activate
     ==                                                  ::  opaque core
 ~%  %gall-top  ..is  ~
 |%  ::::::::::::::::::::::::::::::::::::::::::::::::::::::  state machine
@@ -1273,6 +1274,7 @@
         $crew  `%c
         $crow  `%c
         $deal  `%g
+        $dirk  `%c
         $drop  `%c
         $flog  `%d
         $info  `%c
@@ -1301,7 +1303,7 @@
 ++  call                                                ::  request
   ~%  %gall-call  +>   ~
   |=  {hen/duct hic/(hypo (hobo task:able))}
-  ^+  [p=*(list move) q=..^$]
+  ^+  [*(list move) ..^$]
   =>  .(q.hic ?.(?=($soft -.q.hic) q.hic ((hard task:able) p.q.hic)))
   ?-    -.q.hic
       $conf
@@ -1391,7 +1393,7 @@
 ++  take                                                ::  response
   ~/  %gall-take
   |=  {tea/wire hen/duct hin/(hypo sign-arvo)}
-  ^+  [p=*(list move) q=..^$]
+  ^+  [*(list move) ..^$]
   ~|  [%gall-take tea]
   ?>  ?=({@ ?($sys $use) *} tea) 
   =+  our=(need (slaw %p i.tea))

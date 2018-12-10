@@ -3698,28 +3698,21 @@
     $:  $1                                            ::  vane version
         ruf/raft                                      ::  revision tree
     ==                                                ::
-|=  {now/@da eny/@ ski/sley}                          ::  activate
+|=  [our=ship now=@da eny=@uvJ ski=sley]              ::  current invocation
 ^?                                                    ::  opaque core
 |%                                                    ::
 ++  call                                              ::  handle request
-  |=  $:  hen/duct
-          hic/(hypo (hobo task:able))
+  |=  $:  hen=duct
+          type=*
+          wrapped-task=(hobo task:able)
       ==
-  =*  req  q.hic
-  =>  %=    .                                         ::  XX temporary
-          req
-        ^-  task:able
-        ?:  ?=($soft -.req)
-          =+
-          ~|([%bad-soft (@t -.p.req)] ((soft task:able) p.req))
-          ?~  -
-            ~&  [%bad-softing (@t -.p.req)]  !!
-          u.-
-        ?:  (~(nest ut -:!>(*task:able)) | p.hic)  req
-        ~&  [%clay-call-flub (@tas `*`-.req)]
-        ((hard task:able) req)
-      ==
-  ^+  [p=*(list move) q=..^$]
+  ::
+  =/  req=task:able
+    ?.  ?=(%soft -.wrapped-task)
+      wrapped-task
+    ((hard task:able) p.wrapped-task)
+  ::
+  ^+  [*(list move) ..^$]
   ?-    -.req
       $boat
     :_  ..^$
@@ -3766,6 +3759,9 @@
       (~(has in who.r) |+nom.req)
     --
   ::
+      $crud
+    [[[hen %slip %d %flog req] ~] ..^$]
+  ::
       $drop
     =^  mos  ruf
       =+  den=((de now hen ruf) [. .]:our.req des.req)
@@ -3792,20 +3788,12 @@
     [mos ..^$]
   ::
       $init
-    :_  %_    ..^$
-            fat.ruf
-          ?<  (~(has by fat.ruf) our.req)
-          (~(put by fat.ruf) our.req [-(hun hen)]:[*room .])
-        ==
-    ^-  (list move)
-    ?:  ?=(%czar (clan:title our.req))
-      ~
-    =/  bos=ship
-      ;;  ship
-      %-  need  %-  need
-      %-  (sloy ski)
-      [[151 %noun] %j (en-beam:format [our.req %sein da+now] /(scot %p our.req))]
-    [hen %pass /init-merge %c %merg our.req %base bos %kids da+now %init]~
+    :-  ~
+    %_    ..^$
+        fat.ruf
+      ?<  (~(has by fat.ruf) our.req)
+      (~(put by fat.ruf) our.req [-(hun hen)]:[*room .])
+    ==
   ::
       $into
     =.  hez.ruf  `hen
@@ -4072,7 +4060,7 @@
 ++  stay  [%1 ruf]
 ++  take                                              ::  accept response
   |=  {tea/wire hen/duct hin/(hypo sign)}
-  ^+  [p=*(list move) q=..^$]
+  ^+  [*(list move) ..^$]
   ?:  ?=({$merge @ @ @ @ @ ~} tea)
     ?>  ?=(?($writ $made) +<.q.hin)
     =+  our=(slav %p i.t.tea)

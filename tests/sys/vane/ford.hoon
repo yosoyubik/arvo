@@ -14,6 +14,7 @@
 ::
 =/  test-pit=vase  !>(..zuse)
 =/  ford-gate  (ford-vane test-pit)
+~!  +6.ford-gate
 ::
 |%
 ++  test-tear  ^-  tang
@@ -3552,7 +3553,7 @@
   =/  pit=vase  !>(~)
   =/  hoon-compiled=vase  (slap pit hoon-parsed)
   ~&  %hoon-compiled
-  =/  arvo-compiled=vase  (slap hoon-compiled arvo-parsed)
+  =/  arvo-compiled=vase  (slap (slot 7 hoon-compiled) arvo-parsed)
   ~&  %arvo-compiled
   =/  pit-compiled=vase   (slap arvo-compiled [%cnts ~[[%& 1] %is] ~])
   ~&  %pit-compiled
@@ -7260,7 +7261,7 @@
       ==
   ^-  [tang _ford-gate]
   ::
-  =/  ford  (ford-gate now=now eny=0xdead.beef scry=scry)
+  =/  ford  (ford-gate our=~zod now=now eny=`@`0xdead.beef scry=scry)
   ::
   =^  moves  ford-gate
     %-  call:ford  call-args
@@ -7281,7 +7282,7 @@
       ==
   ^-  [tang _ford-gate]
   ::
-  =/  ford  (ford-gate now=now eny=0xdead.beef scry=scry)
+  =/  ford  (ford-gate our=~zod now=now eny=`@`0xdead.beef scry=scry)
   ::
   =^  moves  ford-gate
     %-  take:ford  take-args
@@ -7306,7 +7307,7 @@
       ==
   ^-  [tang _ford-gate]
   ::
-  =/  ford  (ford-gate now=now eny=0xdead.beef scry=scry)
+  =/  ford  (ford-gate our=~zod now=now eny=`@`0xdead.beef scry=scry)
   ::
   =^  moves  ford-gate
     %-  call:ford  call-args
@@ -7325,7 +7326,7 @@
       ==
   ^-  [tang _ford-gate]
   ::
-  =/  ford  (ford-gate now=now eny=0xdead.beef scry=scry)
+  =/  ford  (ford-gate our=~zod now=now eny=`@`0xdead.beef scry=scry)
   ::
   =^  moves  ford-gate
     %-  take:ford  take-args
