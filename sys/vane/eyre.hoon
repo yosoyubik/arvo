@@ -4,7 +4,7 @@
 |=  pit/vase
 =,  eyre
 =,  wired
-=,  unity 
+=,  unity
 =,  format
 =,  mimes:html
 =,  html
@@ -280,41 +280,6 @@
   |=  {sas/@uG mit/mite rez/@}  ^-  httr
   ::  (weld (turn cug |=(a=@t ['set-cookie' a]))
   [sas ~[content-type+(en-mite mit)] [~ (as-octs rez)]]
-::
-++  add-links                                           :: x-urbit:// urls
-  |=  a/wall  ^-  marl
-  ?.  [x-urbit-links=&]  [;/((of-wall a))]~             :: default disable
-  |-  ^-  marl
-  ?~  a  ~
-  =^  pax  i.a  ::  parse path if any
-    ^-  {(unit path) tape}
-    =/  vex  (fel:stab [1 1] i.a)
-    ?~  q.vex  [~ i.a]
-    [`p q.q]:u.q.vex
-  ?~  pax  [;/("{i.a}\0a") $(a t.a)]
-  :-  ;a/"x-urbit:{(spud u.pax)}":"{(spud u.pax)}"
-  [;/("{i.a}\0a") $(a t.a)]
-::
-++  render-tang                                         ::  tanks to manx
-  |=  {dep/@uvH tan/tang}
-  ;html
-    ;head
-      ;link(rel "stylesheet", href "/lib/base.css");
-      ;title: server error
-    ==
-    ;body:div#c.err:pre:code:"*{(add-links (wush 80 tan))}"
-    ;script@"/~/on/{<dep>}.js";
-  ==
-::
-++  render-turbo-tang
-  |=  tan/tang
-  ;html
-    ;head
-      ;link(rel "stylesheet", href "/lib/base.css");
-      ;title: server error
-    ==
-    ;body:div#c.err:pre:code:"*{(add-links (wush 80 tan))}"
-  ==
 ::
 ++  favi                                                ::  XX favicon
   0w3.~~~~~.~~~~~.~~~~~.~~~~~.~~~~~.~~~~~.~~~~~.~~~~~.~~~~~.~~~~~.~~~~~.~~~~~.
@@ -1170,10 +1135,51 @@
     (execute-turbo tea live=%.n req)
   ::
   ++  execute-turbo
+    ~/  %execute-turbo
     |=  [tea=whir live=? request=schematic:ford]
     %+  pass-note  tea
     :*  %f  %build  our  live
-        [%dude [|.(+)]:[%leaf "eyre: execute {<tea>}"] request]
+        [%dude |.([%leaf "eyre: execute {<tea>}"]) request]
+    ==
+  ::
+  ++  add-links                                           :: x-urbit:// urls
+    ~/  %add-links
+    |=  a/wall  ^-  marl
+    ?.  [x-urbit-links=&]  [;/((of-wall a))]~             :: default disable
+    |-  ^-  marl
+    ?~  a  ~
+    =^  pax  i.a  ::  parse path if any
+      ^-  {(unit path) tape}
+      =/  vex  (fel:stab [1 1] i.a)
+      ?~  q.vex  [~ i.a]
+      [`p q.q]:u.q.vex
+    ?~  pax  [;/("{i.a}\0a") $(a t.a)]
+    :-  ;a/"x-urbit:{(spud u.pax)}":"{(spud u.pax)}"
+    [;/("{i.a}\0a") $(a t.a)]
+  ::
+  ++  render-tang                                         ::  tanks to manx
+    ~/  %render-tang
+    |=  {dep/@uvH tan/tang}
+    ~&  [%render-tang dep]
+    %-  (slog tan)
+    ;html
+      ;head
+        ;link(rel "stylesheet", href "/lib/base.css");
+        ;title: server error
+      ==
+      ;body:div#c.err:pre:code:"*{(add-links (wush 80 tan))}"
+      ;script@"/~/on/{<dep>}.js";
+    ==
+  ::
+  ++  render-turbo-tang
+    ~/  %render-turbo-tang
+    |=  tan/tang
+    ;html
+      ;head
+        ;link(rel "stylesheet", href "/lib/base.css");
+        ;title: server error
+      ==
+      ;body:div#c.err:pre:code:"*{(add-links (wush 80 tan))}"
     ==
   ::
   ++  fail
@@ -2241,24 +2247,22 @@
 .   ==
 =|  bolo
 =*  bol  -
-|=  {now/@da eny/@ ski/sley}                            ::  activate
+|=  [our=ship now=@da eny=@uvJ ski=sley]                ::  current invocation
 ^?                                                      ::  opaque core
 |%                                                      ::
 ++  call                                                ::  handle request
-  |=  $:  hen/duct
-          hic/(hypo (hobo task:able))
+  |=  $:  hen=duct
+          type=*
+          wrapped-task=(hobo task:able)
       ==
-  =>  %=    .                                           ::  XX temporary
-          q.hic
-        ^-  task:able
-        ?:  ?=($soft -.q.hic)
-          ((hard task:able) p.q.hic)
-        ?:  (~(nest ut -:!>(*task:able)) | p.hic)  q.hic
-        ~&  [%eyre-call-flub (@tas `*`-.q.hic)]
-        ((hard task:able) q.hic)
-      ==
-  ^+  [p=*(list move) q=..^$]
-  ?:  ?=($wegh -.q.hic)
+  ::
+  =/  task=task:able
+    ?.  ?=(%soft -.wrapped-task)
+      wrapped-task
+    ((hard task:able) p.wrapped-task)
+  ::
+  ^+  [*(list move) ..^$]
+  ?:  ?=($wegh -.task)
     :_  ..^$  :_  ~
     :^  hen  %give  %mass
     :-  %eyre
@@ -2275,7 +2279,7 @@
   ^+  [p=*(list move) q=..^$]
   =.  gub  ?.(=(`@`0 gub) gub (cat 3 (rsh 3 1 (scot %p (end 6 1 eny))) '-'))
   =^  mos  bol
-    abet:(apex:~(adit ye [hen [now eny our sky] ~] bol) q.hic)
+    abet:(apex:~(adit ye [hen [now eny our sky] ~] bol) task)
   [mos ..^$]
 ::
 ++  load                                                ::  take previous state
@@ -2321,7 +2325,7 @@
 ++  stay  `bolo`+>-.$
 ++  take                                                ::  accept response
   |=  {tea/wire hen/duct hin/(hypo sign)}
-  ^+  [p=*(list move) q=..^$]
+  ^+  [*(list move) ..^$]
   =+  our=`@p`0x100  ::  XX  sentinel
   =+  ska=(sloy ski)
   =+  sky=|=({* *} `(unit)`=+(a=(ska +<) ?~(a ~ ?~(u.a ~ [~ u.u.a]))))

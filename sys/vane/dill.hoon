@@ -53,8 +53,7 @@
       {$init p/ship}                                    ::
       {$text p/tape}                                    ::
       {$veer p/@ta q/path r/@t}                         ::  install vane
-      {$vega p/path q/path}                             ::  reboot by path
-      {$velo p/@t q/@t}                                 ::  reboot by path
+      {$vega p/@t q/@t}                                 ::  reboot by path
       {$verb $~}                                        ::  verbose mode
   ==                                                    ::
 ++  note-eyre                                           ::
@@ -136,7 +135,7 @@
 ::::::::                                                ::  dill tiles
 --
 =|  all/axle
-|=  {now/@da eny/@ ski/sley}                            ::  current invocation
+|=  [our=ship now=@da eny=@uvJ ski=sley]                ::  current invocation
 =>  |%
     ++  as                                              ::  per cause
       =|  moz/(list move)
@@ -162,7 +161,6 @@
           $heft  heft
           $veer  (dump kyz)
           $vega  (dump kyz)
-          $velo  (dump kyz)
           $verb  (dump kyz)
         ==
       ::
@@ -305,13 +303,12 @@
         =.  tem  ~
         =.  moz  :_(moz [hen %pass / %c %merg our %home our %base da+now %init])
         =.  moz  :_(moz [hen %pass ~ %g %conf [[our ram] %load our %home]])
+        =.  +>  (sync %home our %base)
         =.  +>  ?:  ?=(?($czar $pawn) can)  +>
                 (sync %base (sein our) %kids)
-        =.  +>  ?:  ?=(?($czar $pawn) can)
-                  (sync %home our %base)
-                (init-sync %home our %base)
         =.  +>  ?.  ?=(?($duke $king $czar) can)  +>
                 ::  make kids desk publicly readable, so syncs work.
+                ::
                 (show %kids):(sync %kids our %base)
         =.  +>  autoload
         =.  +>  peer
@@ -365,16 +362,6 @@
           :_  moz
           :*  hen  %pass  /sync  %g  %deal  [our our]
               ram  %poke  %hood-sync  -:!>(syn)  syn
-          ==
-        ==
-      ::
-      ++  init-sync
-        |=  syn/{desk ship desk}
-        %_    +>.$
-            moz
-          :_  moz
-          :*  hen  %pass  /init-sync  %g  %deal  [our our]
-              ram  %poke  %hood-init-sync  -:!>(syn)  syn
           ==
         ==
       ::
@@ -492,59 +479,54 @@
     --
 |%                                                      ::  poke+peek pattern
 ++  call                                                ::  handle request
-  |=  $:  hen/duct
-          hic/(hypo (hobo task:able))
+  |=  $:  hen=duct
+          type=*
+          wrapped-task=(hobo task:able)
       ==
-  ^+  [p=*(list move) q=..^$]
-  =>  %=    .                                           ::  XX temporary
-          q.hic
-        ^-  task:able
-        ?:  ?=($soft -.q.hic)
-          ::  ~&  [%dill-call-soft (@tas `*`-.p.q.hic)]
-          ((hard task:able) p.q.hic)
-        ?:  (~(nest ut -:!>(*task:able)) | p.hic)  q.hic
-        ~&  [%dill-call-flub (@tas `*`-.q.hic)]
-        ((hard task:able) q.hic)
-      ==
+  ^+  [*(list move) ..^$]
+  =/  task=task:able
+    ?.  ?=(%soft -.wrapped-task)
+      wrapped-task
+    ((hard task:able) p.wrapped-task)
   ::  the boot event passes thru %dill for initial duct distribution
   ::
-  ?:  ?=(%boot -.q.hic)
-    ?>  ?=(?(%dawn %fake) -.p.q.hic)
+  ?:  ?=(%boot -.task)
+    ?>  ?=(?(%dawn %fake) -.p.task)
     ?>  =(~ hey.all)
     =.  hey.all  `hen
-    =/  boot  ((soft note-jael) p.q.hic)
+    =/  boot  ((soft note-jael) p.task)
     ?~  boot
       ~|  invalid-boot-event+hen  !!
     :_(..^$ [hen %pass / %j u.boot]~)
   ::  we are subsequently initialized. single-home
   ::
-  ?:  ?=(%init -.q.hic)
+  ?:  ?=(%init -.task)
     ?>  =(~ dug.all)
     ?>  =(~ ore.all)
-    =.  ore.all  `p.q.hic
+    =.  ore.all  `p.task
     ::  configure new terminal, setup :hood and %clay
     ::
-    =*  our  p.q.hic
+    =*  our  p.task
     =*  duc  (need hey.all)
     =/  app  %hood
-    =/  see  (tuba "<awaiting {(trip app)}, this may take a few minutes>")
+    =/  see  (tuba "<awaiting {(trip app)}, this may take a minute>")
     =/  zon=axon  [app input=[~ ~] width=80 cursor=0 see]
     ::
     =^  moz  all  abet:(~(into as [duc our] zon) ~)
     [moz ..^$]
   ::  %flog tasks are unwrapped and sent back to us on our default duct
   ::
-  ?:  ?=(%flog -.q.hic)
+  ?:  ?=(%flog -.task)
     ?~  hey.all
       [~ ..^$]
     ::  this lets lib/helm send %heft a la |mass
     ::
     =/  not=note-dill
-      ?:(?=([%crud %hax-heft ~] p.q.hic) [%heft ~] p.q.hic)
+      ?:(?=([%crud %hax-heft ~] p.task) [%heft ~] p.task)
     [[u.hey.all %slip %d not]~ ..^$]
   ::  a %sunk notification from %jail comes in on an unfamiliar duct
   ::
-  ?:  ?=(%sunk -.q.hic)
+  ?:  ?=(%sunk -.task)
     [~ ..^$]
   ::
   =/  nus  (ax hen)
@@ -552,11 +534,11 @@
     ::  we got this on an unknown duct or
     ::  before %boot or %init (or one of those crashed)
     ::
-    ~&  [%dill-call-no-flow hen -.q.hic]
-    =/  tan  ?:(?=(%crud -.q.hic) q.q.hic ~)
+    ~&  [%dill-call-no-flow hen -.task]
+    =/  tan  ?:(?=(%crud -.task) q.task ~)
     [((slog (flop tan)) ~) ..^$]
   ::
-  =^  moz  all  abet:(call:u.nus q.hic)
+  =^  moz  all  abet:(call:u.nus task)
   [moz ..^$]
 ::
 ++  load                                                ::  trivial
@@ -576,7 +558,7 @@
 ::
 ++  take                                                ::  process move
   |=  {tea/wire hen/duct hin/(hypo sign)}
-  ^+  [p=*(list move) q=..^$]
+  ^+  [*(list move) ..^$]
   =/  nus  (ax hen)
   ?~  nus
     ::  we got this on an unknown duct or
