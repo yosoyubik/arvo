@@ -367,9 +367,9 @@
     =/  prev  (~(get by m) own)
     ?~  prev
       (~(put by m) own tentative)
-    ?:  &
-      ~&  'more than one galaxy per address, check rates-unit very carefully!'
-      !!
+    ::  ?:  &
+    ::    ~&  'more than one galaxy per address, check rates-unit very carefully!'
+    ::    !!
     ?>  =(windup.u.prev windup.tentative)
     ?>  =(rate.u.prev rate.tentative)
     ?>  =(rate-unit.u.prev rate-unit.tentative)
@@ -399,10 +399,10 @@
   ~&  :-  %linear-galaxies
   lin-gal
   ~&  lin-rec
-  ::L %+  turn  potential
-  ::L |=  [who=ship address-info]
-  ::L :-  +<
-  ::L (~(got by lockups) who)
+  ~&  %+  turn  potential
+  |=  [who=ship address-info]
+  :-  +<
+  (~(got by lockups) who)
   ::
   ::  Calculate conditional lockups
   ::
@@ -545,6 +545,57 @@
   ::      |=  [who=ship address-info]
   ::      +<
   ::  =+  lin-sar=(get-locked-stars 'linear')
+  ::
+  ::
+  ::  Calculate ~{,mar,wan,bin,sam}zod
+  ::
+  =/  tmp-points=(list [who=ship spawn=(unit address) keys=(unit [@ux @ux])])
+    %+  turn
+      ^-  (list ship)
+      :~  ~zod
+          ~marzod
+          ~binzod
+          ~wanzod
+          ~samzod
+      ==
+    |=  who=ship
+    [who ~ `[0x0 0x0]]
+  ~&  [%tmp-points tmp-points]
+  ::
+  ::  Calculate direct planets
+  ::
+  =/  potential-direct-planets
+    %+  skim
+      ~(tap by addresses)
+    |=  [who=ship address-info]
+    ?&  (gte who 0x1.0000)
+        (lth who 0x1.0000.0000.0000)
+        ?=
+          $?  %~marzod
+              %~binzod
+              %~wanzod
+              %~samzod
+          ==
+        (^sein:title who)
+    ==
+  =/  direct-planets=(list [who=ship rights])
+    %+  turn  potential-direct-planets
+    |=  [who=ship address-info]
+    ~|  +<
+    :*  who
+        (need owner)
+        management
+        voting
+        transfer
+        spawn
+        ?:  |(?=(~ crypt) ?=(~ auth))
+          ~
+        `[u.crypt u.auth]
+    ==
+  ~&  [%direct-planets (lent direct-planets)]
+  ~&  %+  turn  direct-planets
+      |=  [=ship *]
+      ship
   ::  ::
   ::  =+  con-rec=get-conditional-recipients
   ::  =+  con-gal=(get-locked-galaxies 'conditional')
@@ -733,6 +784,7 @@
     (deposit-galaxies conditional-star-release con-gal)
   ::
   ::  Deploy directly-deeded galaxies
+  ::
   ~&  ['Booting directly-deeded galaxies...' +(nonce)]
   =/  galaxies  (sort direct-galaxies order-shiplist)
   |-
@@ -742,6 +794,28 @@
     =.  this
       (send-ship who.i.galaxies [own manage voting spawn transfer]:i.galaxies)
     $(galaxies t.galaxies)
+  ::
+  ::  Deploy ~{,mar,wan,bin,sam}zod
+  ::
+  ::T |-
+  ::T ?^  tmp-points
+  ::T   =.  this
+  ::T     (create-ship i.tmp-points)
+  ::T   $(tmp-points t.tmp-points)
+  ::
+  ::  Deploy direct planets
+  ::
+  =+  planets=(sort direct-planets |=([[@ *] [@ *]] (lth +<-< +<+<)))
+  |-
+  ?^  planets
+    =*  planet  i.planets
+    ~&  [planet=planet nonce=nonce]
+    =.  this
+      (create-ship [who ~ net]:planet)
+    ::
+    =.  this
+      (send-ship [who own manage voting spawn transfer]:planet)
+    $(planets t.planets)
   ::B ~&  ['Depositing conditional release stars...' +(nonce)]
   ::B =.  this
   ::B   (deposit-stars conditional-star-release con-sar)

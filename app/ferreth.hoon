@@ -36,7 +36,8 @@
   |=  old=(unit state)
   ^-  [(list move) _+>]
   ?~  old  [~ +>]
-  [~ +>.$(+<+ u.old)]
+  [~ +>.$]
+  ::[~ +>.$(+<+ u.old)]
 ::
 ++  poke-noun
   |=  a=@t
@@ -156,7 +157,7 @@
     ~&  ['active ships:' (lent liv)]
     ?:  =(~ liv)  ~  ::  ?~ is tmi reeeee
     :~  (call (turn liv head) %deed)
-        (call (turn liv head) %kids)
+        ::  (call (turn liv head) %kids)
     ==
   %+  murn  hus
   |=  [who=ship hul=json]
