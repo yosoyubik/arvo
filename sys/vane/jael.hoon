@@ -560,13 +560,18 @@
   ::
   ::  +order-events: sort changes by block and log numbers
   ::
+  ::    Only operates correctly if :loz contains no duplicate events;
+  ::    i.e. no competing blocks at the same block height.
+  ::
   ++  order-events
     |=  loz=(list (pair event-id diff-constitution))
     ^+  loz
     %+  sort  loz
-    ::  sort by block number, then by event log number,
-    ::TODO  then by diff priority.
-    |=  [[[b1=@ud l1=@ud] *] [[b2=@ud l2=@ud] *]]
+    ::  sort by block number, then by event log number
+    ::
+    ::    TODO: then sort by diff priority.
+    ::
+    |=  [[[b1=@ud * l1=@ud] *] [[b2=@ud * l2=@ud] *]]
     ?.  =(b1 b2)  (lth b1 b2)
     ?.  =(l1 l2)  (lth l1 l2)
     &
@@ -1379,6 +1384,8 @@
       (~(put by kyz) who -)
     ::
     ++  file-event
+      ::  TODO: make sure we file the block hash
+      ::
       |=  [wer=event-id dif=diff-constitution]
       ^+  [kyz ..file]
       ?:  (~(has in heard) wer)
@@ -1387,10 +1394,10 @@
       ::
       ::  sanity check, should never fail if we operate correctly
       ::
-      ?>  (gte block.wer latest-block)
+      ?>  (gte block-num.wer latest-block)
       =:  evs           (~(put by evs) wer dif)
           heard         (~(put in heard) wer)
-          latest-block  (max latest-block block.wer)
+          latest-block  (max latest-block block-num.wer)
       ==
       =^  kyz  ..file
         ?-  -.dif
@@ -1465,12 +1472,14 @@
       ..file(dns.eth dns)
     ::
     ++  file-snap                                       ::  save snapshot
+      ::  TODO: make sure we file the block hash
+      ::
       |=  wer=event-id
       ^+  ..file
       =?    sap
           %+  lth  2
           %+  sub.add
-            (div block.wer interval.sap)
+            (div block-num.wer interval.sap)
           (div last-block.sap interval.sap)
         ~&  :*  %snap
                 count=count.sap
@@ -1480,9 +1489,9 @@
                 lent=(lent ~(tap to snaps.sap))
             ==
         %=  sap
-          snaps       (~(put to snaps.sap) block.wer extract-snap)
+          snaps       (~(put to snaps.sap) block-num.wer extract-snap)
           count       +(count.sap)
-          last-block  block.wer
+          last-block  block-num.wer
         ==
       =?  sap  (gth count.sap max-count.sap)
         ~&  :*  %dump
@@ -2077,7 +2086,7 @@
           block-number.place
         (min block-number.place u.rewind-block)
       ==
-    =+  cuz=[block-number.place log-index.place]
+    =/  cuz=event-id  [block-number block-hash log-index]:place
     ::
     ?:  =(event.log changed-dns:ships-events)
       =+  ^-  [pri=tape sec=tape ter=tape]

@@ -209,11 +209,14 @@
         event=@ux
         topics=(list @t)
     ==
+  ::  +event-id: unique identifier for an ethereum transaction
   ::
-  ::  alternative event location.
-  +=  event-id  [block=@ud log=@ud]
+  ::    We include the block hash in case of chain reorganization,
+  ::    where there might be competing blocks at the same height.
   ::
+  +$  event-id  [block-num=@ud block-hash=@ux log=@ud]
   ::  data for eth_call.
+  ::
   ++  call
     $:  from=(unit address)
         to=address
