@@ -273,9 +273,9 @@
   ~&  rumor+[wir rum]
   ?~  wir
     (mean [leaf+"invalid wire for diff: {(spud wir)}"]~)
-  =;  upd=[mow=(list move) sta_this] 
+  =;  upd=[mow=(list move) sta=_this] 
     :_  sta.upd
-    %+  weld  mow.upd
+    %+  welp  mow.upd
     %+  turn  (prey:pubsub:userlib /primary bol)
     |=  [=bone *]
     [bone %diff %hall-rumor rum]
