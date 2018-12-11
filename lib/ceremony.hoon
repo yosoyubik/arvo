@@ -113,6 +113,8 @@
   ~|  c
   ?:  =('' c)
     ~
+  ?:  =('::  ' (end 3 4 c))
+    ~
   `u=(rash c par)
 ::
 ++  order-shiplist
@@ -354,8 +356,8 @@
     %+  roll  potential
     |=  [[who=ship address-info] m=(map address linear-recipient)]
     ~|  +<
+    =/  l  (~(got by lockups) who)
     =/  tentative=linear-recipient
-      =+  l=(~(got by lockups) who)
       =/  rate-unit  (div :(mul 60 60 24 365 (need term.l)) 255)
       ::L ?>  =(rate-unit.l :(mul 60 60 24 365 (need term.l)))
       :*  :(mul (need windup-years.l) 60 60 24 365)
@@ -372,12 +374,14 @@
     ::    !!
     ?>  =(windup.u.prev windup.tentative)
     ?>  =(rate.u.prev rate.tentative)
-    ?>  =(rate-unit.u.prev rate-unit.tentative)
+    ::XX  ?>  =(rate-unit.u.prev rate-unit.tentative)
+    =/  stars  (add 255 stars.u.prev)
+    =/  rate-unit  (div :(mul 60 60 24 365 (need term.l)) stars)
     %+  ~(put by m)  own
     :*  windup.u.prev
-        (add 255 stars.u.prev)
+        stars
         rate.u.prev
-        (div rate-unit.u.prev 2)
+        rate-unit
     ==
   =/  lin-gal=(list [who=ship rights])
     %+  turn  potential
@@ -418,9 +422,9 @@
     %+  roll  potential-con
     |=  [[who=ship address-info] m=(map address conditional-recipient)]
     ~|  +<
+    =/  l  (~(got by lockups) who)
+    =/  t  (need tranches.l)
     =/  tentative=conditional-recipient
-      =+  l=(~(got by lockups) who)
-      =+  t=(need tranches.l)
       ?>  ?=(?(%1 %3) t)
       =+  [b1 b2 b3]=?:(=(1 t) [255 0 0] [85 85 85])
       =+  rate-unit=(div :(mul 60 60 24 365 1) ?:(=(1 t) 255 85))
@@ -434,17 +438,19 @@
     =/  prev  (~(get by m) own)
     ?~  prev
       (~(put by m) own tentative)
-    ::  ?:  &
-    ::    ~&  'more than one galaxy per address, check rates-unit and tranches very carefully!'
-    ::    !!
+    ?:  &
+      ~&  'more than one galaxy per address, check rates-unit and tranches very carefully!'
+      !!
     ?>  =(rate.u.prev rate.tentative)
     ?>  =(rate-unit.u.prev rate-unit.tentative)
+    =/  stars  (add ?:(=(1 t) 255 85) :(add b1.u.prev b2.u.prev b3.u.prev))
+    =/  rate-unit  (div :(mul 60 60 24 365 1) stars)
     %+  ~(put by m)  own
     :*  (add b1.tentative b1.u.prev)
         (add b2.tentative b2.u.prev)
         (add b3.tentative b3.u.prev)
         rate.u.prev
-        rate-unit.u.prev
+        rate-unit
       ==
   =/  con-gal=(list [who=ship rights])
     %+  turn  potential-con
@@ -508,6 +514,91 @@
       |=  [who=ship address-info]
       [+< (~(got by lockups) who)]
   ::
+  ::  Calculate ~{,mar,wan,bin,sam}zod
+  ::
+  =/  tmp-points=(list [who=ship spawn=(unit address) keys=(unit [@ux @ux])])
+    %+  turn
+      ^-  (list ship)
+      ~
+      ::  :~  
+      ::      ::  ~zod
+      ::      ::  ~marzod
+      ::      ::  ~binzod
+      ::      ::  ~wanzod
+      ::      ::  ~samzod
+      ::      ::  ~rel
+      ::      ::  ~rud
+      ::      ::  ~nes
+      ::      ::  ~fet
+      ::  ==
+    |=  who=ship
+    [who ~ `[0x0 0x0]]
+  ~&  [%tmp-points tmp-points]
+  ::
+  ::  Calculate conditional stars
+  ::
+  ::CS=/  potential-conditional-stars
+  ::CS  %+  skim
+  ::CS    ~(tap by addresses)
+  ::CS  |=  [who=ship address-info]
+  ::CS  ?&  (gte who ~marzod)
+  ::CS      (lth who 0x1.0000)
+  ::CS      ?=  :: is a conditional partial galaxy
+  ::CS        $?  %~rel
+  ::CS            %~rud
+  ::CS            %~nes
+  ::CS            %~fet
+  ::CS        ==
+  ::CS      (^sein:title who)
+  ::CS  ==
+  ::CS=/  con-stars-rec
+  ::CS  %+  roll  potential-conditional-stars
+  ::CS  |=  $:  [who=ship address-info]
+  ::CS          m=(map address conditional-recipient)
+  ::CS          j=(map @ux address)
+  ::CS      ==
+  ::CS  ~|  +<
+  ::CS  =/  tentative=conditional-recipient
+  ::CS    =+  l=(~(got by lockups) who)
+  ::CS    =+  t=(need tranches.l)
+  ::CS    ?>  ?=(?(%1 %3) t)
+  ::CS    =+  [b1 b2 b3]=?:(=(1 t) [stars 0 0] =+((div stars 3) [- - -]))
+  ::CS    =+  rate-unit=(div :(mul 60 60 24 365 1) :(max b1 b2 b3))
+  ::CS    ?>  =(:(add b1 b2 b3) stars)
+  ::CS    !!  :: how much stars
+  ::CS    :*  b1
+  ::CS        b2
+  ::CS        b3
+  ::CS        1
+  ::CS        rate-unit
+  ::CS    ==
+  ::CS  =/  own   (need owner)
+  ::CS  =/  prev-address  (~(get by j) id)
+  ::CS  ?.  |(?=(~ prev-address) =(`own prev-address))
+  ::CS    ~&  "more than one address for partial conditional holder!"
+  ::CS    !!
+  ::CS  :_  (~(put by j) `own)
+  ::CS  =/  prev  (~(get by m) own)
+  ::CS  ?^  prev
+  ::CS    ~&  "hmm, more than one partial condtional holder per address"
+  ::CS    ~&  "I guess cut the rateunit or some such"
+  ::CS    !!
+  ::CS  (~(put by m) own tentative)
+  ::CS=/  con-stars=(list [who=ship rights])
+  ::CS  %+  turn  potential-conditional-stars
+  ::CS  |=  [who=ship address-info]
+  ::CS  ~|  +<
+  ::CS  :*  who
+  ::CS      (need owner)
+  ::CS      management
+  ::CS      voting
+  ::CS      transfer
+  ::CS      spawn
+  ::CS      ?:  |(?=(~ crypt) ?=(~ auth))
+  ::CS        ~
+  ::CS      `[u.crypt u.auth]
+  ::CS  ==
+  ::CS~&  [%conditional-stars (lent potential-direct-stars)]
   ::
   ::  Calculate direct stars
   ::
@@ -521,23 +612,23 @@
           ::
           ::  %~nus
           ::
-          ::  $?  %~ten
-          ::      %~pub
-          ::      %~sud
-          ::      %~pem
-          ::      %~dev
-          ::      %~lur
-          ::      %~def
-          ::      %~bus
-          ::  ==
+          $?  %~ten
+              %~pub
+              %~sud
+              %~pem
+              %~dev
+              %~lur
+              %~def
+              %~bus
+          ==
           ::
           ::  %~feb
           ::
-          $?  %~rel
-              %~rud
-              %~nes
-              %~fet
-          ==
+          ::  $?  %~rel
+          ::      %~rud
+          ::      %~nes
+          ::      %~fet
+          ::  ==
         (^sein:title who)
     ==
   ~&  [%direct-stars (lent potential-direct-stars)]
@@ -545,22 +636,6 @@
   ::      |=  [who=ship address-info]
   ::      +<
   ::  =+  lin-sar=(get-locked-stars 'linear')
-  ::
-  ::
-  ::  Calculate ~{,mar,wan,bin,sam}zod
-  ::
-  =/  tmp-points=(list [who=ship spawn=(unit address) keys=(unit [@ux @ux])])
-    %+  turn
-      ^-  (list ship)
-      :~  ~zod
-          ~marzod
-          ~binzod
-          ~wanzod
-          ~samzod
-      ==
-    |=  who=ship
-    [who ~ `[0x0 0x0]]
-  ~&  [%tmp-points tmp-points]
   ::
   ::  Calculate direct planets
   ::
