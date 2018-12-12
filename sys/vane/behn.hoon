@@ -78,9 +78,13 @@
     |=  t=timer
     ^+  timers
     ::
-    %+  sort  [t timers]
-    |=  [a=timer b=timer]
-    (lte date.a date.b)
+    ?~  timers
+      ~[t]
+    ::
+    ?:  (lte date.t date.i.timers)
+      [t timers]
+    ::
+    [i.timers $(timers t.timers)]
   ::  +unset-timer: cancel a timer; if it already expired, no-op
   ::
   ++  unset-timer
