@@ -1,42 +1,24 @@
-::  ::  %behn, just a timer
+::  %behn, just a timer
+::
 !?  164
-::::
+::
 =,  behn
-|=  pit/vase
-=>  =~
-|%
-+$  timer  [date=@da =duct]
-+$  coke  (list timer)
-++  get
-  |=  c=coke
-  ^-  (unit timer)
-  ?~  c  ~
-  `i.c
-++  put
-  |=  [t=timer c=coke]
-  %+  sort  [t c]
-  |=  [a=timer b=timer]
-  (lte date.a date.b)
-++  pop
-  |=  c=coke
-  ^-  [(unit timer) coke]
-  ?~  c  [~ ~]
-  [`i.c t.c]
-++  crank
-  |=  [state=coke now=@da]
-  =|  moves=(list move)
-  |-  ^+  [moves state]
-  ?~  state  [moves state]
-  ?.  (lte date.i.state now)
-    [moves state]
-  %_  $
-    state  t.state
-    moves  [[duct.i.state %give %doze date.i.state] moves]
-  ==
---
-.  ==
-=|  coke                                                ::  persistent state
-=*  state  -                                            ::
+|=  pit=vase
+=>  |%
+    +$  move  [p=duct q=(wind note:able gift:able)]
+    +$  sign  ~
+    ::
+    +$  behn-state
+      $:  timers=(list timer)
+          unix-duct=duct
+          next-wake=(unit @da)
+      ==
+    ::
+    +$  timer  [date=@da =duct]
+    --
+::
+=|  behn-state
+=*  state  -
 |=  [our=ship now=@da eny=@uvJ ski=sley]                ::  current invocation
 ^?
 |%                                                      ::  poke+peek pattern
@@ -45,82 +27,134 @@
           type=*
           wrapped-task=(hobo task:able)
       ==
+  ^-  [(list move) _..^$]
   ::
-  =/  req=task:able
+  =/  =task:able
     ?.  ?=(%soft -.wrapped-task)
       wrapped-task
     ((hard task:able) p.wrapped-task)
   ::
+  |^  =^  moves  state
+        ::
+        ?-    -.task
+            %crud
+          [[hen %slip %d %flog task]~ state]
+        ::
+            %born
+          =.  unix-duct  hen
+          ::  unset :next-wake to make sure we set it again ourselves
+          ::
+          =.  next-wake  ~
+          =^  moves  timers  notify-clients
+          (set-wake moves)
+        ::
+            %rest
+          =.  timers  (unset-timer [p.task hen])
+          (set-wake ~)
+        ::
+            %wait
+          =^  moves  timers  notify-clients
+          =.  timers  (set-timer [p.task hen])
+          (set-wake moves)
+        ::
+            %wake
+          =.  next-wake  ~
+          =^  moves  timers  notify-clients
+          (set-wake moves)
+        ::
+            %wegh
+          :_  state  :_  ~
+          :^  hen  %give  %mass
+          :-  %behn
+          :-  %|
+          :~  timers+[%& timers]
+          ==
+        ==
+      ::
+      [moves ..^^$]
+  ::  +set-timer: set a timer, maintaining the sort order of the :timers list
   ::
-  =|  moves=(list move)
-  ?-    -.req
-      %crud
-    [[[hen %slip %d %flog req] ~] ..^^$]
+  ++  set-timer
+    |=  t=timer
+    ^+  timers
+    ::
+    %+  sort  [t timers]
+    |=  [a=timer b=timer]
+    (lte date.a date.b)
+  ::  +unset-timer: cancel a timer; if it already expired, no-op
   ::
-      %born
-    =.  gad  hen
-    ?~  p.tym
-      [~ ..^^$]
-    =/  nex  ~(get up p.tym)
-    ?:  (lte now p.nex)
-      [[gad %give %doze `p.nex]~ ..^^$]
-    $(req [%wake ~])
+  ++  unset-timer
+    |=  [t=timer]
+    ^+  timers
+    ::
+    ?~  timers
+      ~
+    ?:  =(i.timers t)
+      t.timers
+    ::
+    [i.timers $(timers t.timers)]
+  ::  +notify-clients: wake up vanes whose timers have expired
   ::
-      $rest
-    =.  state 
-      |-  ^+  state
-      ?~  state  state
-      ?:  =(i.state [p.req hen])
-        t.state
-      [i.state $(state t.state)]
-    (crank state now)
-  ::
-      $wait
-    =^  moves  state  (crank state now)
-    =.  state  (put [p.req hen] state)
-    [moves state]
-  ::
-      $wake
+  ++  notify-clients
     =|  moves=(list move)
-    |-  ^+  [moves state]
-    ?~  state  [moves state]
-    ?.  (lte date.i.state now)
-      [moves state]
+    |-  ^+  [moves timers]
+    ::
+    ?~  timers
+      [moves timers]
+    ::
+    ?:  (gth date.i.timers now)
+      [moves timers]
+    ::
     %_  $
-      state  t.state
-      moves  [[duct.i.state %give %wake ~] moves]
+      timers  t.timers
+      moves  [[duct.i.timers %give %wake ~] moves]
     ==
+  ::  +set-wake: set or unset a unix timer to wake us when next timer expires
   ::
-      $wegh
-    :_  tym  :_  ~
-    :^  hen  %give  %mass
-    :-  %behn
-    :-  %|
-    :~  tym+[%& tym]
-    ==
-  ==
-  [mof ..^^$]
+  ++  set-wake
+    |=  moves=(list move)
+    ^+  [moves state]
+    ::  if no timers, don't wake us up ever; if a wake timer was set, unset it
+    ::
+    ?~  timers
+      ?~  next-wake
+        [~ state]
+      :_  state(next-wake ~)
+      [[unix-duct %give %doze ~] moves]
+    ::  set an earlier wake timer if :next-wake isn't soon enough
+    ::
+    ?^  next-wake
+      ?:  &((gte date.i.timers u.next-wake) (lte now u.next-wake))
+        [~ state]
+      :_  state(next-wake `date.i.timers)
+      [[unix-duct %give %doze `date.i.timers] moves]
+    ::  there was no wakeup timer; set one
+    ::
+    :_  state(next-wake `date.i.timers)
+    [[unix-duct %give %doze `date.i.timers] moves]
+  --
 ::
 ++  load
-  |=  old=coke
+  |=  old=*
   ^+  ..^$
-  ..^$(state old)
+  ?^  new=((soft behn-state) old)
+    ~&  %behn-load-new
+    ..^$(state u.new)
+  ~&  %behn-load-wipe
+  ..^$(state *behn-state)
 ::
 ++  scry
   |=  {fur/(unit (set monk)) ren/@tas why/shop syd/desk lot/coin tyl/path}
   ^-  (unit (unit cage))
-  ?.  ?=(%& -.why)  ~
-  =*  who  p.why
-  =+  ^=  liz
-      |-  ^-  (list {@da duct})
-      =.  tym  (raze tym)
-      ?~  p.tym  ~
-      [~(get up p.tym) $(p.tym ~(pop up p.tym))]
-  [~ ~ %tank !>(>liz<)]
+  ::
+  ?.  ?=(%& -.why)
+    ~
+  [~ ~ %tank !>(>timers<)]
 ::
 ++  stay  state
 ++  take                                                ::  process move
-  |=  {tea/wire hen/duct hin/(hypo sign)}
+  |=  [tea=wire hen=duct hin=(hypo sign)]
   ^+  [*(list move) ..^$]
+  ~|  %behn-take
   !!
 --
