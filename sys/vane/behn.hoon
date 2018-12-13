@@ -37,31 +37,47 @@
   |^  =^  moves  state
         ::
         ?-    -.task
+            ::  %crud: error report; hand off to %dill to be printed
+            ::
             %crud
           [[hen %slip %d %flog task]~ state]
         ::
+            ::  %born: handle urbit restart
+            ::
             %born
-          =.  unix-duct  hen
-          ::  unset :next-wake to make sure we set it again ourselves
+          ::  store this duct for setting unix wakeup timers
           ::
-          =.  next-wake  ~
+          =.  unix-duct  hen
+          ::  process any elapsed timers and clear and reset :next-wake
+          ::
           =^  moves  timers  notify-clients
-          (set-wake moves)
+          (set-wake(next-wake ~) moves)
         ::
+            ::  %rest: cancel a timer, resetting :next-wake if needed
+            ::
             %rest
           =.  timers  (unset-timer [p.task hen])
           (set-wake ~)
         ::
+            ::  %wait: set a new timer
+            ::
             %wait
+          ::  process elapsed timers first to maintain sort order
+          ::
           =^  moves  timers  notify-clients
+          ::  set the timer, then adjust :next-wake if needed
+          ::
           =.  timers  (set-timer [p.task hen])
           (set-wake moves)
         ::
+            ::  %wake: unix says wake up; notify clients and set next wakeup
+            ::
             %wake
-          =.  next-wake  ~
           =^  moves  timers  notify-clients
-          (set-wake moves)
+          (set-wake(next-wake ~) moves)
         ::
+            ::  %wegh: produce memory usage report for |mass
+            ::
             %wegh
           :_  state  :_  ~
           :^  hen  %give  %mass
@@ -80,6 +96,7 @@
     ::
     ?~  timers
       ~[t]
+    ::  timers at the same date form a lifo queue; for fifo, change +lte to +lth
     ::
     ?:  (lte date.t date.i.timers)
       [t timers]
@@ -90,6 +107,7 @@
   ++  unset-timer
     |=  [t=timer]
     ^+  timers
+    ::  if we don't have this timer, no-op; for debugging, add a printf here
     ::
     ?~  timers
       ~
@@ -118,21 +136,21 @@
   ++  set-wake
     |=  moves=(list move)
     ^+  [moves state]
-    ::  if no timers, don't wake us up ever; if a wake timer was set, unset it
+    ::  if no timers, cancel existing wakeup timer or no-op
     ::
     ?~  timers
       ?~  next-wake
         [~ state]
       :_  state(next-wake ~)
       [[unix-duct %give %doze ~] moves]
-    ::  set an earlier wake timer if :next-wake isn't soon enough
+    ::  if :next-wake is in the past or not soon enough, reset it
     ::
     ?^  next-wake
       ?:  &((gte date.i.timers u.next-wake) (lte now u.next-wake))
         [~ state]
       :_  state(next-wake `date.i.timers)
       [[unix-duct %give %doze `date.i.timers] moves]
-    ::  there was no wakeup timer; set one
+    ::  there was no unix wakeup timer; set one
     ::
     :_  state(next-wake `date.i.timers)
     [[unix-duct %give %doze `date.i.timers] moves]
@@ -146,9 +164,13 @@
     ..^$(state u.new)
   ~&  %behn-load-wipe
   ..^$(state *behn-state)
+::  +scry: view timer state
+::
+::    TODO: not referentially transparent w.r.t. elapsed timers,
+::    which might or might not show up in the product
 ::
 ++  scry
-  |=  {fur/(unit (set monk)) ren/@tas why/shop syd/desk lot/coin tyl/path}
+  |=  [fur=(unit (set monk)) ren=@tas why=shop syd=desk lot=coin tyl=path]
   ^-  (unit (unit cage))
   ::
   ?.  ?=(%& -.why)
@@ -159,6 +181,6 @@
 ++  take                                                ::  process move
   |=  [tea=wire hen=duct hin=(hypo sign)]
   ^+  [*(list move) ..^$]
-  ~|  %behn-take
+  ~|  %behn-take-not-implemented
   !!
 --
