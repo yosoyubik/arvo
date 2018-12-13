@@ -75,4 +75,11 @@
   ?~  path-prefix  ""
   (slag 1 (spud (scag 1 (flop path-prefix))))
 =/  fil=tape  (convert-file root (trip +.pre))
-[(weld path-prefix /[-.pre]) (crip fil)]
+=/  fil-name  (spud (scag 1 (flop path-prefix)))
+::  if the file has a .html extension, then make a dir
+::  with a index.html
+?:  =(-.pre %html)
+  :-  :(welp path-prefix /index /[-.pre])
+    (crip fil)
+:-  (weld path-prefix /[-.pre]) 
+  (crip fil)
