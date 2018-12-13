@@ -53,8 +53,7 @@
       {$init p/ship}                                    ::
       {$text p/tape}                                    ::
       {$veer p/@ta q/path r/@t}                         ::  install vane
-      {$vega p/path q/path}                             ::  reboot by path
-      {$velo p/@t q/@t}                                 ::  reboot by path
+      {$vega p/@t q/@t}                                 ::  reboot by path
       {$verb $~}                                        ::  verbose mode
   ==                                                    ::
 ++  note-eyre                                           ::
@@ -136,7 +135,7 @@
 ::::::::                                                ::  dill tiles
 --
 =|  all/axle
-|=  {now/@da eny/@ ski/sley}                            ::  current invocation
+|=  [our=ship now=@da eny=@uvJ ski=sley]                ::  current invocation
 =>  |%
     ++  as                                              ::  per cause
       =|  moz/(list move)
@@ -162,7 +161,6 @@
           $heft  heft
           $veer  (dump kyz)
           $vega  (dump kyz)
-          $velo  (dump kyz)
           $verb  (dump kyz)
         ==
       ::
@@ -294,8 +292,8 @@
         |=  who=ship
         ;;  ship
         %-  need  %-  need
-        %-  (sloy ski)
-        [[151 %noun] %j (en-beam:format [our %sein da+now] /(scot %p who))]
+        %-  (sloy-light ski)
+        [[151 %noun] %j our %sein da+now /(scot %p who)]
       ::
       ++  init                                          ::  initialize
         ~&  [%dill-init our ram]
@@ -305,13 +303,12 @@
         =.  tem  ~
         =.  moz  :_(moz [hen %pass / %c %merg our %home our %base da+now %init])
         =.  moz  :_(moz [hen %pass ~ %g %conf [[our ram] %load our %home]])
+        =.  +>  (sync %home our %base)
         =.  +>  ?:  ?=(?($czar $pawn) can)  +>
                 (sync %base (sein our) %kids)
-        =.  +>  ?:  ?=(?($czar $pawn) can)
-                  (sync %home our %base)
-                (init-sync %home our %base)
         =.  +>  ?.  ?=(?($duke $king $czar) can)  +>
                 ::  make kids desk publicly readable, so syncs work.
+                ::
                 (show %kids):(sync %kids our %base)
         =.  +>  autoload
         =.  +>  peer
@@ -365,16 +362,6 @@
           :_  moz
           :*  hen  %pass  /sync  %g  %deal  [our our]
               ram  %poke  %hood-sync  -:!>(syn)  syn
-          ==
-        ==
-      ::
-      ++  init-sync
-        |=  syn/{desk ship desk}
-        %_    +>.$
-            moz
-          :_  moz
-          :*  hen  %pass  /init-sync  %g  %deal  [our our]
-              ram  %poke  %hood-init-sync  -:!>(syn)  syn
           ==
         ==
       ::
@@ -522,7 +509,7 @@
     =*  our  p.task
     =*  duc  (need hey.all)
     =/  app  %hood
-    =/  see  (tuba "<awaiting {(trip app)}, this may take a few minutes>")
+    =/  see  (tuba "<awaiting {(trip app)}, this may take a minute>")
     =/  zon=axon  [app input=[~ ~] width=80 cursor=0 see]
     ::
     =^  moz  all  abet:(~(into as [duc our] zon) ~)

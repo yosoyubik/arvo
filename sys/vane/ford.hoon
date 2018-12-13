@@ -788,9 +788,15 @@
     %+  ~(put by builds)  schematic.build
     ::
     =/  dates  (fall (~(get by builds) schematic.build) ~)
-    ?^  (find [date.build]~ dates)
+    |-
+    ^+  dates
+    ?~  dates
+      [date.build ~]
+    ?:  =(i.dates date.build)
       dates
-    (sort [date.build dates] gte)
+    ?:  (gth date.build i.dates)
+      [date.build dates]
+    [i.dates $(dates t.dates)]
   ::  +del: remove a +build from :builds
   ::
   ::    Removes :build from :builds by replacing the value at
@@ -6070,9 +6076,10 @@
 ::  begin with a default +axle as a blank slate
 ::
 =|  ax=axle
-::  a vane is activated with current date, entropy, and a namespace function
+::  a vane is activated with identity, the current date, entropy,
+::  and a namespace function
 ::
-|=  [now=@da eny=@ scry-gate=sley]
+|=  [our=ship now=@da eny=@uvJ scry-gate=sley]
 ::  allow jets to be registered within this core
 ::
 ~%  %ford  ..is  ~

@@ -1,14 +1,21 @@
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    Postface                              ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
-~>  %slog.[0 leaf+"arvo-boot"]
-=<  |=  {now/@da ovo/*}
-    ^-  *
-    ~>  %slog.[0 leaf+"arvo-event"]
-    .(+> +:(poke now ovo))
 ~>  %slog.[0 leaf+"%arvo-assembly"]
 =-  ~>  %slog.[0 leaf+"%arvo-assembled"]
     -
+=<  ::
+    ::  Arvo formal interface
+    ::
+    ::    this lifecycle wrapper makes the arvo door (multi-armed core)
+    ::    look like a gate (function or single-armed core), to fit
+    ::    urbit's formal lifecycle function. a practical interpreter
+    ::    can ignore it.
+    ::
+    |=  [now=@da ovo=*]
+    ^-  *
+    ~>  %slog.[0 leaf+"arvo-event"]
+    .(+> +:(poke now ovo))
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    volume 3, Arvo models and skeleton    ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -96,25 +103,54 @@
 ::                section 3bE, Arvo core                ::
 ::
 ++  sloy
+  ::  +sloy: adapter from old style scrys to new style scrys
+  ::
+  ::    This does path parsing which shows up hot, but removing the last +slay
+  ::    here requires deeper interface changes.
+  ::
   !:
+  ~/  %sloy
   |=  sod/slyd
   ^-  slyt
   |=  {ref/* raw/*}
   =+  pux=((soft path) raw)
   ?~  pux  ~
   ?.  ?=({@ @ @ @ *} u.pux)  ~
-  =+  :*  hyr=(slay i.u.pux)
-          fal=(slay i.t.u.pux)
-          dyc=(slay i.t.t.u.pux)
+  =+  :*  hyr=(slaw %tas i.u.pux)
+          fal=(slaw %p i.t.u.pux)
+          dyc=(slaw %tas i.t.t.u.pux)
           ved=(slay i.t.t.t.u.pux)
           tyl=t.t.t.t.u.pux
       ==
-  ?.  ?=({$~ $$ $tas @} hyr)  ~
-  ?.  ?=({$~ $$ $p @} fal)  ~
-  ?.  ?=({$~ $$ $tas @} dyc)  ~
+  ?~  hyr  ~
+  ?~  fal  ~
+  ?~  dyc  ~
   ?.  ?=(^ ved)  ~
-  =+  ron=q.p.u.hyr
-  =+  bed=[[q.p.u.fal q.p.u.dyc (case p.u.ved)] (flop tyl)]
+  =/  ron=@tas  u.hyr
+  =+  bed=[[u.fal u.dyc (case p.u.ved)] (flop tyl)]
+  =+  bop=(sod ref ~ ron bed)
+  ?~  bop  ~
+  ?~  u.bop  [~ ~]
+  [~ ~ +.q.u.u.bop]
+::  +sloy-light: minimal parsing version of sloy
+::
+::    There are several places inside vanes where we manually call the scry
+::    function raw, instead of passing it into +mink. In those cases, we're
+::    paying the price to render the arguments as text, and then are
+::    immediately parsing the passed in data. We can avoid that.
+::
+::    TODO: The entire scrying system needs to be cleaned up in a more
+::    permanent way. This hack fixes up some print/parse costs, but doesn't
+::    recover the print/parse costs of the scry itself, which we could prevent
+::    if we didn't send (list @ta), but instead sent (list dime).
+::
+++  sloy-light
+  ~/  %sloy-light
+  |=  sod/slyd
+  |=  [ref=* ron=@tas fal=@p dyc=@tas ved=case tyl=path]
+  ::  we do not flop tyl because tyl wouldn't have been flopped by +en-beam
+  ::
+  =+  bed=[[fal dyc ved] tyl]
   =+  bop=(sod ref ~ ron bed)
   ?~  bop  ~
   ?~  u.bop  [~ ~]
@@ -125,7 +161,7 @@
   ?.(&(?=(@ a) ((sane %tas) a)) %$ a)
 ::
 ++  vent                                                ::  vane core
-  |=  [lal=@tas vil=vile bud=vase =vane]
+  |=  [who=ship lal=@tas vil=vile bud=vase =vane]
   ~%  %vent  +>+  ~
   |%
   ++  ruck                                              ::  update vase
@@ -164,7 +200,7 @@
       ::  reset cache and add in vane activation entry
       ::
       =^  rig  worm.vane
-        (~(slym wa *worm) vase.vane *[@da @ slyd])
+        (~(slym wa *worm) vase.vane *[@p @da @ slyd])
       ::  cache the access of the %scry arm
       ::
       =^  fun  worm.vane  (~(slap wa worm.vane) rig [%limb %scry])
@@ -175,7 +211,9 @@
   ::
   ++  wink                                              ::  deploy
     |=  {now/@da eny/@ ski/slyd}
-    =^  rig  worm.vane  (~(slym wa worm.vane) vase.vane +<)  ::  activate vane
+    =^  rig  worm.vane
+      ~|  [%failed-vane-activation-for lal]
+      (~(slym wa worm.vane) vase.vane [who +<])  ::  activate vane
     ~%  %wink  +>+>  ~
     |%
     ++  slid
@@ -196,14 +234,18 @@
     ++  slur                                            ::  call gate on
       |=  {gat/vase hil/mill}
       ^-  (unit (pair vase worm))
-      =^  sam  worm.vane  (~(slot wa worm.vane) 6 gat)
+      =^  sam  worm.vane
+        ~|  [%failed-slot-in lal]
+        (~(slot wa worm.vane) 6 gat)
       =^  hig  worm.vane
+        ~|  [%failed-nest-in lal]
         ?-  -.hil
           %&  (~(nest wa worm.vane) p.sam p.p.hil)
           %|  (~(nets wa worm.vane) p.sam p.p.hil)
         ==
       ?.  hig
         ~
+      ~|  [%failed-slym-in lal]
       `(~(slym wa worm.vane) gat +>.hil)
     ::
     ++  slur-a  ~/(%slur-a |=({gat/vase hil/mill} =+(%a (slur gat hil))))
@@ -337,7 +379,7 @@
       ^-  vase
       ?:  &(=(-.q.vase.vane -.q.sev) =(+>.q.vase.vane +>.q.sev))
         vase.vane                                           ::  unchanged, use old
-      sev(+<.q [*@da *@ =>(~ |~(* ~))])                 ::  clear to stop leak
+      sev(+<.q [*@p *@da *@ =>(~ |~(* ~))])                 ::  clear to stop leak
     ::
     ++  swim
       ~/  %swim
@@ -347,6 +389,7 @@
               hil/mill
           ==
       ^-  [(list move) _vane]
+      ~|  [%failed-swim lal org pux]
       ::  ~&  [%swim-wyt `@ud`~(wyt in worm.vane)]
       =+  ^=  pru
           ?~  pux
@@ -374,12 +417,19 @@
   --
 ::
 ++  vint                                                ::  create vane
-  |=  {lal/@tas vil/vile bud/vase pax/path txt/@ta}     ::
+  |=  $:  who=ship
+          lal=@tas
+          vil=vile
+          bud=vase
+          pax=path
+          txt=@ta
+      ==
   =-  ?:(?=(%| -.res) ((slog p.res) ~) (some p.res))
   ^=  res  %-  mule  |.
+  ~|  [%failed-vint lal]
   =+  gen=(rain pax txt)
   ~&  [%vane-parsed `@p`(mug gen)]
-  =+  pro=(vent lal vil bud [(slym (slap bud gen) bud) *worm])
+  =+  pro=(vent who lal vil bud [(slym (slap bud gen) bud) *worm])
   ~&  [%vane-compiled `@p`(mug pro)]
   prime:pro
 ::
@@ -394,7 +444,7 @@
   ==
 ::
 ++  is                                                  ::  operate in time
-  |=  {vil/vile eny/@ bud/vase vanes=(list [label=@tas =vane])}
+  |=  [who=ship vil=vile eny=@ bud=vase vanes=(list [label=@tas =vane])]
   |_  now/@da
   ++  beck
     ^-  slyd
@@ -406,7 +456,8 @@
     |-  ^-  (unit (unit (cask)))
     ?~  vanes  ~
     ?.  =(lal label.i.vanes)  $(vanes t.vanes)
-    %-  scry:(wink:(vent lal vil bud vane.i.vanes) now (shax now) ..^$)
+    ~|  [%failed-scry ron bed]
+    %-  scry:(wink:(vent who lal vil bud vane.i.vanes) now eny ..^$)
     [fur ren bed]
   ::
   ++  dink                                              ::  vase by char
@@ -445,8 +496,9 @@
   ++  race                                              ::  take
     |=  {org/@tas lal/@tas pux/(unit wire) hen/duct hil/mill =vane}
     ^-  [p=(list move) q=_vane]
-    =+  ven=(vent lal vil bud vane)
-    =+  win=(wink:ven now (shax now) beck)
+    =+  ven=(vent who lal vil bud vane)
+    ~|  [%failed-take lal]
+    =+  win=(wink:ven now eny beck)
     (swim:win org pux hen hil)
   ::
   ++  fire                                              ::  execute
@@ -467,6 +519,7 @@
   ++  jack                                              ::  dispatch card
     |=  {lac/? gum/muse}
     ^-  {{p/(list ovum) q/(list muse)} _vanes}
+    ~|  %failed-jack
     ::  =.  lac  |(lac ?=(?(%g %f) p.gum))
     ::  =.  lac  &(lac !?=($b p.gum))
     %+  fire
@@ -502,157 +555,321 @@
     $(ova (weld p.nyx ova), mor (weld q.nyx t.mor))
   --
 --
-=+  pit=`vase`!>(.)                                     ::
-=+  bud=pit                                             ::  becomes tang
-::  =+  vil=(viol p.bud)                                ::  cached reflexives
-=+  vil=(viol p.bud)                                    ::  cached reflexives
-=|  $:  lac/?                                           ::  laconic bit
-        eny/@                                           ::  entropy
+=<  ::  Arvo larval stage
+    ::
+    ::    The true Arvo kernel knows who it is. It should not *maybe*
+    ::    have an identity, nor should it contain multitudes. This outer
+    ::    kernel exists to accumulate identity, entropy, and the
+    ::    standard library. Upon having done so, it upgrades itself into
+    ::    the true Arvo kernel. Subsequent upgrades will fall through
+    ::    the larval stage directly into the actual kernel.
+    ::
+    ::    For convenience, this larval stage also supports hoon compilation
+    ::    with +wish and vane installation with the %veer event.
+    ::
+    =/  pit=vase  !>(..is)
+    =|  $:  ::  who: our identity once we know it
+            ::  eny: entropy once we learn it
+            ::  bod: %zuse once we receive it
+            ::
+            who=(unit ship)
+            eny=(unit @)
+            bod=(unit vase)
+        ==
+    ::  larval Arvo structural interface
+    ::
+    |%
+    ++  come  ^come                                     ::  22
+    ++  load  ^load                                     ::  46
+    ++  peek  |=(* ~)                                   ::  47
+    ::
+    ++  poke  |=  *                                     ::  10
+              ^-  [(list ovum) *]
+              =>  .(+< ((hard ,[now=@da ovo=ovum]) +<))
+              ^-  [(list ovum) *]
+              =.  +>.$
+                ?+  -.q.ovo
+                  ::  ignore unrecognized
+                  ::
+                  ~&  [%larval-ignore p.ovo -.q.ovo]
+                  +>.$
+                ::  install %zuse or vane
+                ::
+                    %veer
+                  ^+  +>.$
+                  ::  use the maximum comet if we don't know who we are yet
+                  ::
+                  =/  our
+                    ?^  who
+                      u.who
+                    =/  fip=ship  (dec (bex 128))
+                    ~>(%slog.[0 leaf+"arvo: larval identity {(scow %p fip)}"] fip)
+                  =.  ..veer  (veer our now q.ovo)
+                  +>.$(bod ?^(bod bod `bud.^poke))
+                ::  add entropy
+                ::
+                    %wack
+                  ^+  +>.$
+                  ?>  ?=(@ q.q.ovo)
+                  +>.$(eny `q.q.ovo)
+                ::  become who you were born to be
+                ::
+                    %whom
+                  ^+  +>.$
+                  ?>  ?=(@ q.q.ovo)
+                  +>.$(who `q.q.ovo)
+                ==
+              ::  upgrade once we've accumulated identity, entropy, and %zuse
+              ::
+              ?.  &(?=(^ who) ?=(^ eny) ?=(^ bod))
+                [~ +>.$]
+              ~>  %slog.[0 leaf+"arvo: metamorphosis"]
+              =/  nyf
+                (turn vanes.^poke |=([label=@tas =vane] [label vase.vane]))
+              (load u.who now u.eny ova=~ u.bod nyf)
+    ::
+    ++  wish  |=  txt=*                                 ::  4
+              ?>  ?=(@ txt)
+              q:(slap ?~(bod pit u.bod) (ream txt))
+    --
+::
+::  persistent arvo state
+::
+=/  pit=vase  !>(..is)                                  ::
+=/  vil=vile  (viol p.pit)                              ::  cached reflexives
+=|  $:  lac=?                                           ::  laconic bit
+        eny=@                                           ::  entropy
+        our=ship                                        ::  identity
+        bud=vase                                        ::  %zuse
         vanes=(list [label=@tas =vane])                 ::  modules
     ==                                                  ::
-=<  |%
-    ++  come  |=  {@ (list ovum) pone}                  ::  22
+=<  ::  Arvo structural interface
+    ::
+    |%
+    ++  come  |=  {@ @ @ (list ovum) vise pone}         ::  22
               ^-  {(list ovum) _+>}
               ~&  %hoon-come
               =^  rey  +>+  (^come +<)
               [rey +>.$]
-    ++  load  |=  {@ (list ovum) pane}                  ::  46
+    ::
+    ++  load  |=  {@ @ @ (list ovum) vase pane}         ::  46
               ^-  {(list ovum) _+>}
               ~&  %hoon-load
               =^  rey  +>+  (^load +<)
               [rey +>.$]
+    ::
     ++  peek  |=(* (^peek ((hard {@da path}) +<)))      ::  47
+    ::
     ++  poke  |=  *                                     ::  10
-              ^-  {(list ovum) *}
-              =>  .(+< ((hard {now/@da ovo/ovum}) +<))
-              ?:  =(%verb -.q.ovo)
-                [~ +>.$(lac !lac)]
-              ?:  ?=($veer -.q.ovo)
-                [~ +>.$(+ (veer now q.ovo))]
-              =^  ova  +>+  (^poke now ovo)
-              |-  ^-  {(list ovum) *}
+              ^-  [(list ovum) *]
+              =>  .(+< ((hard ,[now=@da ovo=ovum]) +<))
+              =^  ova  +>+.$  (^poke now ovo)
+              |-  ^-  [(list ovum) *]
               ?~  ova
                 [~ +>.^$]
-              ?:  ?=($verb -.q.i.ova)
-                $(ova t.ova, lac !lac)
-              ?:  ?=($veer -.q.i.ova)
-                $(ova t.ova, +>+.^$ (veer now q.i.ova))
-              ?:  ?=($vega -.q.i.ova)
+              ::  upgrade the kernel
+              ::
+              ?:  ?=(%vega -.q.i.ova)
                 %+  fall
-                  (vega now t.ova (path +<.q.i.ova) (path +>.q.i.ova))
+                  (vega now t.ova ({@ @} +.q.i.ova))
                 [~ +>.^$]
-              ?:  ?=($mass -.q.i.ova)
-                =+  avo=$(ova t.ova)
-                :_  +.avo
-                :_  -.avo
-                %=    i.ova
-                    q.q
-                  :-  %userspace
-                  :-  %|
-                  :~  hoon+`pit
-                      zuse+`bud
-                      ::  hoon-cache+`p.niz
-                      q.q.i.ova
-                      dot+`.
-                  ==
-                ==
-              =+(avo=$(ova t.ova) [[i.ova -.avo] +.avo])
+              ::  iterate over effects, handling those on arvo proper
+              ::  and passing the rest through as output
+              ::
+              =^  vov  +>+.^$  (feck now i.ova)
+              ?~  vov
+                $(ova t.ova)
+              =/  avo  $(ova t.ova)
+              [[+.vov -.avo] +.avo]
+    ::
     ++  wish  |=(* (^wish ((hard @ta) +<)))             ::  4
     --
+::  Arvo implementation core
+::
 |%
 ++  come                                                ::  load incompatible
-  |=  {yen/@ ova/(list ovum) nyf/pone}
+  |=  [who=ship now=@da yen=@ ova=(list ovum) dub=vise nyf=pone]
   ^+  [ova +>]
-  (load yen ova (turn nyf |=({a/@tas b/vise} [a (slim b)])))
+  =/  fyn  (turn nyf |=([a=@tas b=vise] [a (slim b)]))
+  (load who now yen ova (slim dub) fyn)
 ::
 ++  load                                                ::  load compatible
-  |=  {yen/@ ova/(list ovum) nyf/pane}
+  |=  [who=ship now=@da yen=@ ova=(list ovum) dub=vase nyf=pane]
   ^+  [ova +>]
-  =:  eny  yen
+  =:  our  who
+      eny  yen
+      bud  dub
       vanes  (turn nyf |=({a/@tas b/vise} [a [b *worm]]))
     ==
-  |-  ^+  [ova +>.^$]
+  |-  ^-  [(list ovum) _+>.^$]
   ?~  ova
     [~ +>.^$]
-  ?:  ?=($verb -.q.i.ova)
-    $(ova t.ova, lac !lac)
-  ?:  ?=($veer -.q.i.ova)
-    $(ova t.ova, +>.^$ (veer *@da q.i.ova))
-  =+(avo=$(ova t.ova) [[i.ova -.avo] +.avo])
+  ::  iterate over effects, handling those on arvo proper
+  ::  and passing the rest through as output
+  ::
+  ::    In practice, the pending effects after an upgrade
+  ::    are the %veer moves to install %zuse and the vanes.
+  ::
+  =^  vov  +>.^$  (feck now i.ova)
+  ?~  vov
+    $(ova t.ova)
+  =/  avo  $(ova t.ova)
+  [[+.vov -.avo] +.avo]
 ::
 ++  peek                                                ::  external inspect
   |=  {now/@da hap/path}
   ^-  (unit)
   ?~  hap  [~ hoon-version]
-  =+  rob=((sloy ~(beck (is vil eny bud vanes) now)) [151 %noun] hap)
+  =+  rob=((sloy ~(beck (is our vil eny bud vanes) now)) [151 %noun] hap)
   ?~  rob  ~
   ?~  u.rob  ~
   [~ u.u.rob]
 ::
 ++  poke                                                ::  external apply
-  |=  {now/@da ovo/ovum}
-  =.  eny  (mix eny (shaz now))
-  ::  ~&  [%poke -.q.ovo]
-  ^-  {(list ovum) _+>}
+  |=  [now=@da ovo=ovum]
+  =.  eny  (shaz (cat 3 eny now))
+  ^-  [(list ovum) _+>.$]
+  ::
+  ::  These external events are actually effects on arvo proper.
+  ::  They can also be produced as the effects of other events.
+  ::  In either case, they fall through here to be handled
+  ::  after the fact in +feck.
+  ::
+  ?:  ?=(?(%veer %verb %wack) -.q.ovo)
+    [[ovo ~] +>.$]
+  ::
   =^  zef  vanes
-    (~(hurl (is vil eny bud vanes) now) lac ovo)
+    (~(hurl (is our vil eny bud vanes) now) lac ovo)
   [zef +>.$]
-::                                                
-++  veke                                                ::  build new kernel
-  |=  {now/@da hap/path zup/path}
-  ^-  *
-  =-  ?:(?=(%& -.res) p.res ((slog p.res) ~))
-  ^=  res  %-  mule  |.
-  =/  pax  (weld hap /hoon)
-  =/  wax  (weld zup /hoon)
-  ~&  [%vega-start-hoon hap]
-  =/  src  ((hard @t) (need (peek now cx+pax)))
-  =/  arv  ((hard @t) (need (peek now cx+wax)))
-  ::  construct  =>(hoon =>(+7 arvo))
-  ::
-  =/  gen=hoon
-    :+  %tsbn  (rain hap src)
-    :+  %tsld  (rain zup arv)
-    [%$ 7]
-  ~&  %vega-parsed
-  =/  fol  q:(~(mint ut %noun) %noun gen)
-  ~&  %vega-compiled
-  ::  evaluate :fol to produce the Arvo gate,
-  ::  then produce the Arvo core at +7
-  ::
-  .*(0 [%7 fol %0 7])
+::  +feck: handle an arvo effect
 ::
+++  feck
+  |=  [now=@da ovo=ovum]
+  ^-  [(unit ovum) _+>.$]
+  ?+  -.q.ovo
+      ::  pass through unrecognized effect
+      ::
+      [[~ ovo] +>.$]
+  ::  toggle event verbose event printfs
+  ::
+      %verb
+    [~ +>.$(lac !lac)]
+  ::  install %zuse or vane
+  ::
+      %veer
+    [~ (veer our now q.ovo)]
+  ::  add data to memory profile
+  ::
+      %mass
+    =.  q.q.ovo
+      :-  %userspace
+      :-  %|
+      :~  hoon+`pit
+          zuse+`bud
+          ::  hoon-cache+`p.niz
+          q.q.ovo
+          dot+`.
+      ==
+    [[~ ovo] +>.$]
+  ::  add entropy
+  ::
+      %wack
+    ?>  ?=(@ q.q.ovo)
+    =.  eny  (shaz (cat 3 eny q.q.ovo))
+    [~ +>.$]
+  ==
+::                                                
 ++  vega                                                ::  reboot kernel
-  |=  {now/@da ova/(list ovum) hap/path zup/path}
-  ^-  (unit {p/(list ovum) q/*})
+  |=  $:  ::  now: current date
+          ::  ova: actions to process after reboot
+          ::  hun: hoon.hoon source
+          ::  arv: arvo.hoon source
+          ::
+          now=@da
+          ova=(list ovum)
+          hun=@t
+          van=@t
+      ==
+  ^-  (unit (pair (list ovum) *))
+  ::  virtualize; dump error if we fail
+  ::
   =-  ?:(?=(%| -.res) ((slog p.res) ~) `p.res)
   ^=  res  %-  mule  |.
-  =/  ken  (veke now hap zup)
-  ~&  [%vega-kernel `@ux`(mug ken)] 
+  ::  produce a new kernel and an effect list
+  ::
+  ^-  (pair (list ovum) *)
+  ::  compile the hoon.hoon source with the current compiler
+  ::
+  =/  raw
+    ~&  [%hoon-compile `@p`(mug hun)]
+    (ride %noun hun)
+  ::  activate the new compiler gate, producing +ride
+  ::
+  =/  cop  .*(0 +.raw)
+  ::  find the hoon version number of the new kernel
+  ::
   =/  nex
-    ::  call +peek at +47
+    (@ .*(cop q:(~(mint ut p.raw) %noun [%limb %hoon-version])))
+  ?>  |(=(nex hoon-version) =(+(nex) hoon-version))
+  ::  if we're upgrading language versions, recompile the compiler
+  ::
+  ::    hot: raw compiler formula
+  ::
+  =>  ?:  =(nex hoon-version)
+        [hot=`*`raw .]
+      ~&  [%hoon-compile-upgrade nex]
+      =/  hot  (slum cop [%noun hun])
+      .(cop .*(0 +.hot))
+  ::  extract the hoon core from the outer gate (+ride)
+  ::
+  =/  hoc  .*(cop [%0 7])
+  ::  compute the type of the hoon.hoon core
+  ::
+  =/  hyp  -:(slum cop [-.hot '+>'])
+  ::  compile arvo
+  ::
+  =/  rav
+    ~&  [%arvo-compile `@p`(mug hyp) `@p`(mug van)]
+    (slum cop [hyp van])
+  ::  activate arvo, and extract the arvo core from the outer gate
+  ::
+  =/  voc  .*(hoc [%7 +.rav %0 7])
+  ::  entry gate: ++load for the normal case, ++come for upgrade
+  ::
+  =/  gat
+    =/  arm  ?:(=(nex hoon-version) 'load' 'come')
+    ::  compute the type of the arvo.hoon core
     ::
-    %-  need
-    %-  (hard (unit @))
-    .*(ken [%9 2 %10 [6 %1 now ~] [%9 47 %0 1]])
-  ~&  [%vega-compiled hoon-version nex]
-  ?>  (lte nex hoon-version)
-  ::  entropy, pending effects, vanes
+    =/  vip  -:(slum cop [-.rav '+>'])
+    ::  compute the formula for the upgrade gate
+    ::
+    =/  fol  +:(slum cop [vip arm])
+    ::  produce the upgrade gate
+    ::
+    .*(voc fol)
+  ::  upgrade gate sample
   ::
   =/  sam
-    :+  eny  ova
-    (turn vanes |=([label=@tas =vane] [label vase.vane]))
-  ::  +load at +46 or +come at +22
+    :*  our
+        now
+        eny
+        ova
+        bud
+        (turn vanes |=([label=@tas =vane] [label vase.vane]))
+    ==
+  ::  call into the new kernel
   ::
-  =/  axe  ?:(=(nex hoon-version) 46 22)
-  =/  out
-    .*(ken [%9 2 %10 [6 %1 sam] [%9 axe %0 1]])
-  ::  add a reset notification to the pending effects
+  =/  out  (slum gat sam)
+  ::  tack a reset notification onto the product
   ::
-  [[[~ %vega hap] ((list ovum) -.out)] +.out]
+  [[[/ %vega ~] ((list ovum) -.out)] +.out]
+::  +veer: install %zuse or a vane
 ::
-++  veer                                                ::  install vane/tang
-  |=  {now/@da fav/curd}
+::    Identity is in the sample so the larval stage
+::    can use this as well.
+::
+++  veer
+  |=  [who=ship now=@da fav=curd]
   =>  .(fav ((hard {$veer lal/@ta pax/path txt/@t}) fav))
   =-  ?:(?=(%| -.res) ((slog p.res) +>.$) p.res)
   ^=  res  %-  mule  |.
@@ -666,20 +883,21 @@
     |-  ^+  vanes
     ?~  vanes
       ~&  [%vane `@tas`lal.fav pax.fav `@p`(mug txt.fav)]
-      =+  vin=(vint lal.fav vil bud pax.fav txt.fav)
+      =+  vin=(vint who lal.fav vil bud pax.fav txt.fav)
       ?~  vin
         vanes
       [[lal.fav vane:u.vin] vanes]
     ?.  =(lal.fav label.i.vanes)
       [i.vanes $(vanes t.vanes)]
-      ~&  [%vane `@tas`lal.fav pax.fav `@p`(mug txt.fav)]
+    ~&  [%vane `@tas`lal.fav pax.fav `@p`(mug txt.fav)]
     :_  t.vanes
     :-  label.i.vanes
-    vane:(ruck:(vent lal.fav vil bud [vase.vane.i.vanes *worm]) pax.fav txt.fav)
+    ~|  [%failed-vane-activation now lal.fav]
+    vane:(ruck:(vent who lal.fav vil bud [vase.vane.i.vanes *worm]) pax.fav txt.fav)
   ==
 ::
 ++  wish                                                ::  external compute
- |=  txt/@
+  |=  txt/@
   q:(slap bud (ream txt))
 --
 
