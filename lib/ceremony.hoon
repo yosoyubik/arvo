@@ -51,6 +51,13 @@
       extra=tape
   ==
 ::
+++  parlock-info
+  $:  b1=@ud
+      b2=@ud
+      b3=@ud
+      extra=tape
+  ==
+::
 ++  linear-recipient
   $:  windup=@ud
       stars=@ud
@@ -209,6 +216,17 @@
     na-or-num
     na-or-num
     na-or-num
+    (star ;~(pose (jest '\0d') (shim ' ' '~')))
+  ==
+::
+++  get-parlocks
+  ^-  (list [owner=address parlock-info])
+  %+  parse-lines  'partial'
+  ;~  (glue com)
+    zero-ux
+    dum:ag
+    dum:ag
+    dum:ag
     (star ;~(pose (jest '\0d') (shim ' ' '~')))
   ==
 ::
@@ -548,68 +566,45 @@
   ::
   ::  Calculate conditional stars
   ::
-  ::CS=/  potential-conditional-stars
-  ::CS  %+  skim
-  ::CS    ~(tap by addresses)
-  ::CS  |=  [who=ship address-info]
-  ::CS  ?&  (gte who ~marzod)
-  ::CS      (lth who 0x1.0000)
-  ::CS      ?=  :: is a conditional partial galaxy
-  ::CS        $?  %~rel
-  ::CS            %~rud
-  ::CS            %~nes
-  ::CS            %~fet
-  ::CS        ==
-  ::CS      (^sein:title who)
-  ::CS  ==
-  ::CS=/  con-stars-rec
-  ::CS  %+  roll  potential-conditional-stars
-  ::CS  |=  $:  [who=ship address-info]
-  ::CS          m=(map address conditional-recipient)
-  ::CS          j=(map @ux address)
-  ::CS      ==
-  ::CS  ~|  +<
-  ::CS  =/  tentative=conditional-recipient
-  ::CS    =+  l=(~(got by lockups) who)
-  ::CS    =+  t=(need tranches.l)
-  ::CS    ?>  ?=(?(%1 %3) t)
-  ::CS    =+  [b1 b2 b3]=?:(=(1 t) [stars 0 0] =+((div stars 3) [- - -]))
-  ::CS    =+  rate-unit=(div :(mul 60 60 24 365 1) :(max b1 b2 b3))
-  ::CS    ?>  =(:(add b1 b2 b3) stars)
-  ::CS    !!  :: how much stars
-  ::CS    :*  b1
-  ::CS        b2
-  ::CS        b3
-  ::CS        1
-  ::CS        rate-unit
-  ::CS    ==
-  ::CS  =/  own   (need owner)
-  ::CS  =/  prev-address  (~(get by j) id)
-  ::CS  ?.  |(?=(~ prev-address) =(`own prev-address))
-  ::CS    ~&  "more than one address for partial conditional holder!"
-  ::CS    !!
-  ::CS  :_  (~(put by j) `own)
-  ::CS  =/  prev  (~(get by m) own)
-  ::CS  ?^  prev
-  ::CS    ~&  "hmm, more than one partial condtional holder per address"
-  ::CS    ~&  "I guess cut the rateunit or some such"
-  ::CS    !!
-  ::CS  (~(put by m) own tentative)
-  ::CS=/  con-stars=(list [who=ship rights])
-  ::CS  %+  turn  potential-conditional-stars
-  ::CS  |=  [who=ship address-info]
-  ::CS  ~|  +<
-  ::CS  :*  who
-  ::CS      (need owner)
-  ::CS      management
-  ::CS      voting
-  ::CS      transfer
-  ::CS      spawn
-  ::CS      ?:  |(?=(~ crypt) ?=(~ auth))
-  ::CS        ~
-  ::CS      `[u.crypt u.auth]
-  ::CS  ==
-  ::CS~&  [%conditional-stars (lent potential-direct-stars)]
+  =/  potential-conditional-stars
+    %+  skim
+      ~(tap by addresses)
+    |=  [who=ship address-info]
+    ?&  (gte who ~marzod)
+        (lth who 0x1.0000)
+        ?=  :: is a conditional partial galaxy
+          $?  %~rel
+              %~rud
+              %~nes
+              %~fet
+          ==
+        (^sein:title who)
+    ==
+  =/  parlocks  get-parlocks
+  =/  con-stars-rec=(list [own=address conditional-recipient])
+    %+  turn  parlocks
+    |=  [own=address parlock-info]
+    ~|  +<
+    =+  rate-unit=(div :(mul 60 60 24 365 1) :(max b1 b2 b3))
+    :*  own
+        b1
+        b2
+        b3
+        1
+        rate-unit
+    ==
+  =/  con-stars=(list [who=ship recipient=address])
+    =+  parlock-map=(malt parlocks)
+    %+  turn  potential-conditional-stars
+    |=  [who=ship address-info]
+    ~|  +<
+    ?>  (~(has by parlock-map) (need owner))
+    :*  who
+        (need owner)
+    ==
+  ~&  [%conditional-stars (lent potential-conditional-stars)]
+  ~&  potential-conditional-stars
+  ~&  con-stars
   ::
   ::  Calculate direct stars
   ::
@@ -914,8 +909,25 @@
       (create-ship i.tmp-points)
     $(tmp-points t.tmp-points)
   ::
+  ::  Register conditional stars
+  ::
+  ~&  ['Registering conditional release stars...' +(nonce)]
+  |-
+  ?^  con-stars-rec
+    =.  this
+      %^  do  conditional-star-release  350.000
+      (register-conditional:dat i.con-stars-rec)
+    $(con-stars-rec t.con-stars-rec)
+  ::
+  ::  Deploy conditional stars
+  ::
+  ~&  ['Deploying conditional stars...' +(nonce)]
+  =.  this
+    (deposit-stars conditional-star-release con-stars)
+  ::
   ::  Deploy direct stars
   ::
+  ~&  ['Deploying direct stars...' +(nonce)]
   =+  stars=(sort direct-stars |=([[@ *] [@ *]] (lth +<-< +<+<)))
   |-
   ?^  stars
@@ -930,6 +942,7 @@
   ::
   ::  Deploy direct planets
   ::
+  ~&  ['Deploying direct planets...' +(nonce)]
   =+  planets=(sort direct-planets |=([[@ *] [@ *]] (lth +<-< +<+<)))
   |-
   ?^  planets
