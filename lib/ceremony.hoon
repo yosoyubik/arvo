@@ -520,6 +520,17 @@
     %+  turn
       ^-  (list ship)
       ~
+      ::  :~  ~nus
+      ::    ::
+      ::      ~ten
+      ::      ~pub
+      ::      ~sud
+      ::      ~pem
+      ::      ~dev
+      ::      ~lur
+      ::      ~def
+      ::      ~bus
+      ::  ==
       ::  :~  
       ::      ::  ~zod
       ::      ::  ~marzod
@@ -606,13 +617,21 @@
     %+  skim
       ~(tap by addresses)
     |=  [who=ship address-info]
+    ?:  =(id (hex-to-num '0xafd568600afb25596b90ff155d15c5b6799c0b680c4cc0fab2032893ca68044a'))
+      ~&  "say it ain't so, joe!"
+      !!
+    ?:  =(id (hex-to-num '0xdffe59eb14574213d33ddab0f9db5eef9766395f51af53a4cbf38fa849f9100e'))
+      ~&  "i'm afraid it is"
+      !!
     ?&  (gte who ~marzod)
         (lth who 0x1.0000)
         ?=  :: is a crowdsale galaxy
           ::
           ::  %~nus
           ::
-          $?  %~ten
+          $?  %~nus
+            ::
+              %~ten
               %~pub
               %~sud
               %~pem
@@ -631,7 +650,24 @@
           ::  ==
         (^sein:title who)
     ==
+  =/  direct-stars=(list [who=ship rights])
+    %+  turn  potential-direct-stars
+    |=  [who=ship address-info]
+    ~|  +<
+    :*  who
+        (need owner)
+        management
+        voting
+        transfer
+        spawn
+        ?:  |(?=(~ crypt) ?=(~ auth))
+          ~
+        `[u.crypt u.auth]
+    ==
   ~&  [%direct-stars (lent potential-direct-stars)]
+  ~&  %+  turn  direct-stars
+      |=  [=ship *]
+      ship
   ::  ~&  %+  turn  potential-direct-stars
   ::      |=  [who=ship address-info]
   ::      +<
@@ -872,11 +908,25 @@
   ::
   ::  Deploy ~{,mar,wan,bin,sam}zod
   ::
-  ::T |-
-  ::T ?^  tmp-points
-  ::T   =.  this
-  ::T     (create-ship i.tmp-points)
-  ::T   $(tmp-points t.tmp-points)
+  |-
+  ?^  tmp-points
+    =.  this
+      (create-ship i.tmp-points)
+    $(tmp-points t.tmp-points)
+  ::
+  ::  Deploy direct stars
+  ::
+  =+  stars=(sort direct-stars |=([[@ *] [@ *]] (lth +<-< +<+<)))
+  |-
+  ?^  stars
+    =*  star  i.stars
+    ~&  [star=star nonce=nonce]
+    =.  this
+      (create-ship [who ~ net]:star)
+    ::
+    =.  this
+      (send-ship [who own manage voting spawn transfer]:star)
+    $(stars t.stars)
   ::
   ::  Deploy direct planets
   ::
