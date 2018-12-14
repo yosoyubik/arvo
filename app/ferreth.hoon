@@ -78,7 +78,7 @@
           ?~  count  ~
           =-  `(crip (weld - count))
           "{(scow %ud gal)} aka {(scow %p gal)}'s stars: "
-        %+  roll  (gulf 0x0 0xff)
+        %+  roll  (gulf 0x1 0xff)
         |=  [suf=@ con=@ud lin=@ud]
         =+  sar=(cat 3 gal suf)
         ?.  (~(has by deeds) sar)  [con lin]
