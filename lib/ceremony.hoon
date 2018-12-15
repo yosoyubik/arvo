@@ -537,7 +537,11 @@
   =/  tmp-points=(list [who=ship spawn=(unit address) keys=(unit [@ux @ux])])
     %+  turn
       ^-  (list ship)
-      ~
+      :~  ~rel
+          ~rud
+          ~nes
+          ~fet
+      ==
       ::  :~  ~nus
       ::    ::
       ::      ~ten
@@ -555,10 +559,6 @@
       ::      ::  ~binzod
       ::      ::  ~wanzod
       ::      ::  ~samzod
-      ::      ::  ~rel
-      ::      ::  ~rud
-      ::      ::  ~nes
-      ::      ::  ~fet
       ::  ==
     |=  who=ship
     [who ~ `[0x0 0x0]]
