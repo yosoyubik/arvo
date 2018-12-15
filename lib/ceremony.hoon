@@ -922,6 +922,19 @@
   ::  Deploy conditional stars
   ::
   ~&  ['Deploying conditional stars...' +(nonce)]
+  =/  conditional-star-gals=(list @p)
+    :~  ~rel
+        ~rud
+        ~nes
+        ~fet
+    ==
+  |-
+  ?^  conditional-star-gals
+    =.  this
+      %^  do  constitution  300.000
+      %+  set-spawn-proxy:dat  i.conditional-star-gals
+      conditional-star-release
+    $(conditional-star-gals t.conditional-star-gals)
   =.  this
     (deposit-stars conditional-star-release con-stars)
   ::
@@ -1099,16 +1112,6 @@
   ?~  stars  this
   =*  star  who.i.stars
   =*  to  recipient.i.stars
-  ::
-  ::  if the parent galaxy hasn't made the target contracts
-  ::  a spawn proxy yet, do so now
-  =+  par=(^sein:title star)
-  =?  this  !(~(has in gals) par)
-    =.  gals  (~(put in gals) par)
-    %^  do  constitution  300.000
-    %+  set-spawn-proxy:dat  par
-    into
-  ::
   =.  this
     %^  do  into  550.000
     (deposit:dat to star)
