@@ -1,5 +1,6 @@
 =,  ethe
 |%
+++  ceremony        0x740d.6d74.1711.163d.3fca.cecf.1f11.b867.9a7c.7964
 ++  conditional-sr  0x8c24.1098.c3d3.498f.e126.1421.633f.d579.86d7.4aea
 ++  linear-sr       0x86cd.9cd0.992f.0423.1751.e376.1de4.5cec.ea5d.1801
 ::
@@ -71,6 +72,7 @@
   =+  who=(snag 0 arg)
   =+  wer=(snag 1 arg)
   ~|  [`@p`who `@`who]
+  ?:  =(wer ceremony)  ~
   =+  (~(got by reg) who)
   ~?  !=(wer owner)
     [%owner-mismatch `@p`who %registry owner %tx `@ux`wer]
@@ -81,6 +83,7 @@
   =+  who=(snag 0 arg)
   =+  wer=(snag 1 arg)
   ~|  [`@p`who `@`who]
+  ?:  =(wer ceremony)  ~
   =+  (~(got by reg) who)
   ~?  !=(wer transfer-proxy)
     [%transfer-proxy-mismatch `@p`who %registry transfer-proxy %tx `@ux`wer]
@@ -91,12 +94,13 @@
   =+  who=(snag 0 arg)
   =+  wer=(snag 1 arg)
   ~|  [`@p`who `@`who]
-  =+  (~(got by reg) who)
   ~?  ?&  !=(wer conditional-sr)
           !=(wer linear-sr)
+        ::
+          =+  (~(got by reg) who)
           !=(wer spawn-proxy)
       ==
-    [%spawn-proxy-mismatch `@p`who %registry spawn-proxy %tx `@ux`wer]
+    [%spawn-proxy-mismatch `@p`who %registry 'todo' %tx `@ux`wer]
   ~
 ::
 ++  check-manage-proxy
@@ -126,6 +130,9 @@
   =+  cry=(snag 1 arg)
   =+  aut=(snag 2 arg)
   ~|  [`@p`who `@`who]
+  ?.  (~(has by reg) who)
+    ~&  [%skipping-key-check-for `@p`who]
+    ~
   =+  (~(got by reg) who)
   ~?  ?&  &(=(0 cry) =(0 aut))
           |(!=(cry crypt) !=(aut auth))
