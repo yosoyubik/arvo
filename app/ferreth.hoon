@@ -90,6 +90,8 @@
       =/  hout
         |=  num=@
         ?:  =(0x0 num)  "\"\""
+        ?:  =(0x740d.6d74.1711.163d.3fca.cecf.1f11.b867.9a7c.7964 num)
+          "tmp held by ceremony"
         (address-to-hex num)
       =/  kout
         |=  key=octs
