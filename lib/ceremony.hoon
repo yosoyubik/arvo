@@ -1005,7 +1005,7 @@
 ::
 ::  sign pre-generated transactions
 ++  sign
-  |=  [won=@da in=path key=path]
+  |=  [won=@da in=path key=path gas=(unit @ud)]
   ^-  (list cord)
   =.  now  won
   ?>  ?=([@ @ @ *] key)
@@ -1022,6 +1022,7 @@
   %+  turn  enumerated
   |=  [n=@ud tx=transaction]
   ~?  =(0 (mod n 100))  [%signing n]
+  =?  gas-price.tx  ?=(^ gas)  u.gas
   (crip '0' 'x' ((x-co:co 0) (sign-transaction tx pk)))
 ::
 ::  create or spawn a ship, configure its spawn proxy and pubkeys
