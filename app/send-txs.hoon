@@ -55,9 +55,9 @@
 ::  from address; store at path
 ::    :send-txs [%gen %/txs/eth-txs %fake 0 11 '0x0000000']
 ::
-::  generate txs starting from nonce 0 on fake chain at 11 gwei;
+::  sign txs for gasses of 2 and 11 gwei; (~ for default gwei set)
 ::  store at path
-::    :send-txs [%sign %/txs/txt %/txs/eth-txs %/pk/txt]
+::    :send-txs [%sign %/txs %/txs/eth-txs %/pk/txt ~[2 0]]
 ::
 ::  read nonce range from signed transactions at path
 ::    :send-txs [%read %txs/txt]
@@ -74,7 +74,7 @@
               addr=@t
           ==
         ::
-          [%sign out=path in=path key=path]
+          [%sign bout=path in=path key=path gasses=(list @ud)]
         ::
           [%read pax=path]
         ::
@@ -92,8 +92,24 @@
     [[(write-file-transactions pax tox) ~] this]
   ::
       %sign
-    =/  tox=(list cord)  (sign:ceremony now.bol in key)
-    [[(write-file-wain out tox) ~] this]
+    :_  this
+    %+  turn
+      ?.  =(~ gasses)  gasses
+      ::  default gwei set
+      ~[3 4 6 9 11 21 31]
+    |=  gas=@ud
+    %+  write-file-wain
+      ::  add gas amount to path
+      =+  end=(dec (lent bout))
+      =-  (weld (scag end bout) -)
+      ?:  =(0 gas)  [(snag end bout) /txt]
+      :_  /txt
+      (cat 3 (snag end bout) (crip '-' ((d-co:co 1) gas)))
+    %-  sign:ceremony
+    :^  now.bol  in  key
+    ::  modify tx gas if non-zero gwei specified
+    ?:  =(0 gas)  ~
+    `(mul gas 1.000.000.000)
   ::
       %read
     =+  tox=.^((list cord) %cx pax)
