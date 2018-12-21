@@ -537,11 +537,12 @@
   =/  tmp-points=(list [who=ship spawn=(unit address) keys=(unit [@ux @ux])])
     %+  turn
       ^-  (list ship)
-      :~  ~rel
-          ~rud
-          ~nes
-          ~fet
-      ==
+      ~
+      ::  :~  ~rel
+      ::      ~rud
+      ::      ~nes
+      ::      ~fet
+      ::  ==
       ::  :~  ~nus
       ::    ::
       ::      ~ten
@@ -923,11 +924,12 @@
   ::
   ~&  ['Deploying conditional stars...' +(nonce)]
   =/  conditional-star-gals=(list @p)
-    :~  ~rel
-        ~rud
-        ~nes
-        ~fet
-    ==
+    ~
+    ::  :~  ~rel
+    ::      ~rud
+    ::      ~nes
+    ::      ~fet
+    ::  ==
   |-
   ?^  conditional-star-gals
     =.  this
