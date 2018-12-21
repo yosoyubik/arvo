@@ -1,4 +1,4 @@
-::  ::  %eyre, http servant
+!:  ::  %eyre, http servant
 !?  164
 ::::
 |=  pit/vase
@@ -784,9 +784,9 @@
             `i.drivers
           $(drivers t.drivers)
         ::
-        ?~  driver
-          +>.$
-        ~(cancel-request vi u.driver)
+        ?^  driver
+          ~(cancel-request vi u.driver)
+        (give-sigh(hen (tail hen)) %| [leaf+"canceled on %born"]~)
       ::  ~&  eyre-them+(en-purl p.u.p.kyz)
       %=  +>.$
         mow    :_(mow [ged [%give %thus p.ask p.kyz]])
@@ -820,6 +820,7 @@
         ~&  dead-request+hen
         +>.$(ded (~(put in ded) hen))                   ::  uncaught requests
       =+  lid=(~(got by lyv) hen)
+      =.  lyv  (~(del by lyv) hen)
       :: ~&  did-thud+[-.lid hen]
       ?-  -.lid
           $exec
@@ -2120,7 +2121,7 @@
     ::
     ++  fin-httr
       |=  vax/vase
-      =^  ole  req  ~(get to req)
+      =^  ole  req  ~|  %eyre-no-queue  ~(get to req)
       =>  .(ole `{p/duct q/mark *}`ole)             :: XX types
       =.  ..vi  (cast-thou(hen p.ole) q.ole httr+vax)    :: error?
       pump
