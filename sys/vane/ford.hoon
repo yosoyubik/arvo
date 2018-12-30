@@ -5703,6 +5703,13 @@
     ::  make sure we have something to send
     ::
     ?>  ?=([%complete %value *] state.build-status)
+    ~?  .=  duct
+        :~  /g/use/dojo/~zod/inn/hand
+            /g/use/hood/~zod/out/dojo/drum/phat/~zod/dojo
+            /d
+            //term/1
+        ==
+      %ford-finished^duct
     ::  send a %made move unless it's an unchanged live build
     ::
     =?    moves

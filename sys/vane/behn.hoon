@@ -5,16 +5,13 @@
 =,  behn
 |=  pit=vase
 =>  |%
-    +$  move  [p=duct q=(wind note:able gift:able)]
-    +$  sign  ~
-    ::
-    +$  behn-state
-      $:  timers=(list timer)
-          unix-duct=duct
-          next-wake=(unit @da)
-      ==
-    ::
-    +$  timer  [date=@da =duct]
+    +$  move        [p=duct q=(wind note:able gift:able)]
+    +$  sign        ~
+    +$  behn-state  $:  timers=(list timer)
+                        unix-duct=duct
+                        next-wake=(unit @da)
+                    ==
+    +$  timer       [date=@da =duct]
     --
 ::
 =|  behn-state

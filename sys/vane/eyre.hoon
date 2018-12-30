@@ -1,4 +1,4 @@
-::  ::  %eyre, http servant
+!:  ::  %eyre, http servant
 !?  164
 ::::
 |=  pit/vase
@@ -638,6 +638,7 @@
     |=  kyz/task:able
     ^+  +>
     =.  p.top  our              ::  XX necessary?
+    ~&  %eyre-apex^-.kyz^hen
     ?-    -.kyz
         ::  new unix process - learn of first boot or a restart.
         ::
@@ -758,6 +759,7 @@
       ?~  p.kyz
         =+  sud=(need (~(get by kes) hen))
         =.  +>.$
+          ~&  %give-thus
           %_  +>.$
             mow    :_(mow [ged [%give %thus sud ~]])
             q.ask  (~(del by q.ask) sud)
@@ -782,7 +784,8 @@
         ?^  driver
           ~(cancel-request vi u.driver)
         (give-sigh(hen (tail hen)) %| [leaf+"canceled on %born"]~)
-      ::  ~&  eyre-them+(en-purl p.u.p.kyz)
+      ::
+      ~&  %give-thus
       %=  +>.$
         mow    :_(mow [ged [%give %thus p.ask p.kyz]])
         p.ask  +(p.ask)
@@ -932,6 +935,7 @@
     ^+  +>
     ?:  &(?=({?($of $ow) ^} tee) !(~(has by wix) p.tee))
       ~&(dead-ire+[`whir`tee] +>)
+    ~&  %eyre-axon^&2.sih^hen
     ?-    &2.sih
         $crud  +>.$(mow [[hen %slip %d %flog +.sih] mow])
     ::  $dumb
@@ -941,6 +945,7 @@
         $woot  +>.$
     ::
         $thou
+      ~&  %eyre-axon-thou^-.tee
       ?+    -.tee  !!
         $ay  (ames-gram (slav %p p.tee) %got (slav %uv q.tee) |2.sih)
         $hi  (cast-thou q.tee httr+!>(p.sih))
@@ -1088,6 +1093,7 @@
   ::
   ++  eyre-them
     |=  {tea/whir vax/vase}
+    ~&  %eyre-them
     (pass-note tea [%e %meta :(slop !>(%them) !>(~) vax)])
   ::
   ++  ames-gram
@@ -2033,7 +2039,12 @@
             {liv/? req/(qeu {p/duct q/mark r/vase:hiss})}
         ==
     ++  self  .
-    ++  abet  +>(sec (~(put by sec) +<- +<+))
+    ++  abet
+      ~&  :*  %eyre-vi-abet
+              usr=usr  dom=dom  liv=liv  cor=?~(cor ~ ?@(u.cor [~ ~] %ok))
+              req=~(dep to req)
+          ==
+      +>(sec (~(put by sec) +<- +<+))
     ++  execute-turbo
       |=  [wir=whir-se live=? schematic=schematic:ford]
       (execute-turbo:abet se+[wir usr dom] live schematic)
@@ -2092,6 +2103,7 @@
     ::
     ++  pump
       ^+  abet
+      ~&  %eyre-vi-pump
       ?~  cor
         build
       ?.  liv
@@ -2114,9 +2126,13 @@
     ::  Interfaces
     ::
     ++  get-quay  |=(quy/quay (call %receive-auth-query-string quay+!>(quy)))
-    ++  get-req   |=(a/{mark vase:hiss} pump(req (~(put to req) hen a)))
+    ++  get-req
+      |=  a/{mark vase:hiss}
+      ~&  %eyre-get-req^req=~(dep to req)^new-req=+(~(dep to req))
+      pump(req (~(put to req) hen a))
     ++  get-thou
       |=  {wir/whir-se hit/httr}
+      ~&  %eyre-get-thou^liv=liv
       =.  liv  &
       ?+  wir  !!
         ?($receive-auth-query-string $in)  (call %receive-auth-response httr+!>(hit))
