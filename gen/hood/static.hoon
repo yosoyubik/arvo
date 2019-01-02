@@ -2,11 +2,8 @@
 ::
 /=  pre-process
   /^  (map path [@tas @t])
-  /:  /===/web/static-site  /*
-  /|  /;  |=(@t [%html +<])  /&html&/!hymn/
-      /;  |=(@t [%html +<])  /&html&/&elem&/udon/
-  ::    XX /lib/down-jet/parse is broken
-  ::    /;  |=(@t [%html +<])  /&html&/&hymn&/&down&/md/    
+  /:  /===/web  /*
+  /|  /;  |=(@t [%html +<])  /&html&/urb/
       /;  |=(@t [%raw +<])   /atom/
   ==
 ::
@@ -21,6 +18,8 @@
 ++  convert-link
   |=  [pre=tape link=tape]
   =/  parsed=(unit (list coin))
+  ~&  [%pre pre]
+  ~&  [%link link]
   %+  rust  link
   ;~  pose
     ;~(pfix net (more net nuck:so))
@@ -51,7 +50,10 @@
   =/  b  (slag :(add 9 i f) h)
   =/  c  (need (find "\">" b))
   =/  old-link=tape  (scag c b)
-  =/  new-link=tape  (convert-link pre old-link)
+  ~&  [%old-link old-link]
+  ::=/  new-link=tape  (convert-link pre old-link)
+  =/  new-link=tape  old-link
+  ~&  [%new-link new-link]
   =/  new-file=tape  :(welp a new-link (slag c b))
   =/  new-f  (sub (lent new-link) (lent old-link))
   [0 (add f new-f) new-file]
@@ -59,11 +61,12 @@
 ::
 :-  %dill-blit
 =/  trio  /(scot %p p.bec)/[q.bec]/(scot r.bec)
-=/  dirs  .^((list path) %ct (weld trio /web/static-site))
+=/  dirs  .^((list path) %ct (weld trio /web))
 ::
 :-  %mor
 %+  roll  dirs
 |=  [pax=path out=(list [%sav path @t])]
+~&  [%path pax]
 =/  path-prefix=path  (scag (dec (lent pax)) pax)
 =/  pre=[@tas @t]  (~(got by pre-process) path-prefix)
 :_  out
