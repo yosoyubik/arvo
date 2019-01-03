@@ -50,13 +50,8 @@
   =/  b  (slag :(add 9 i f) h)
   =/  c  (need (find "\">" b))
   =/  old-link=tape  (scag c b)
-  ~&  [%old-link old-link]
-  ::=/  new-link=tape  (convert-link pre old-link)
-  =/  new-link=tape  old-link
-  ~&  [%new-link new-link]
-  =/  new-file=tape  :(welp a new-link (slag c b))
-  =/  new-f  (sub (lent new-link) (lent old-link))
-  [0 (add f new-f) new-file]
+  =/  new-file=tape  :(welp a old-link (slag c b))
+  [0 f new-file]
 --
 ::
 :-  %dill-blit
