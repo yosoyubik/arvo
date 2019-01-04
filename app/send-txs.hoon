@@ -42,12 +42,12 @@
 ++  this  .
 ++  pretty-see  (turn (sort (turn ~(tap in see) mug) lth) @p)
 ::
-::  ++  prep
-::    |=  old=(unit *)
-::    ?:  ?=([~ * * ~ @da] old)
-::      ~&  [%cancelling +>+>.old]
-::      [[ost.bol %rest /see +>+>.old]~ ..prep]
-::    [~ ..prep]
+++  prep
+  |=  old=(unit *)
+  ?:  ?=([~ * * ~ @da] old)
+    ~&  [%cancelling +>+>.old]
+    [[ost.bol %rest /see +>+>.old]~ ..prep]
+  [~ ..prep]
 ::
 ::  usage:
 ::
