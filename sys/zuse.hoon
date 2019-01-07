@@ -148,7 +148,7 @@
         $:  =life
             =pass
             continuity-number=@ud
-            sponsor=(unit @p)  ::TODO  doesn't 100% reflect chain state
+            sponsor=[has=? who=@p]
             escape=(unit @p)
         ==
       ::
@@ -175,7 +175,7 @@
         [%spawned who=@p]                           ::  Spawned
         [%keys =life =pass]                         ::  ChangedKeys
         [%continuity new=@ud]                       ::  BrokeContinuity
-        [%sponsor new=(unit @p)]                    ::  EscapeAcc/LostSpons
+        [%sponsor new=[has=? who=@p]]               ::  EscapeAcc/LostSpons
         [%escape new=(unit @p)]                     ::  EscapeReq/Can
         [%management-proxy new=address]             ::  ChangedManagementPro
         [%voting-proxy new=address]                 ::  ChangedVotingProxy
@@ -246,7 +246,6 @@
           {$halo p/lane q/@ r/ares}                     ::  hole with trace
           {$hole p/lane q/@}                            ::  packet failed
           [%init p=ship]                                ::  report install
-          {$junk p/@}                                   ::  entropy
           {$kick p/@da}                                 ::  wake up
           {$nuke p/@p}                                  ::  toggle auto-block
           {$sunk p=ship q=life}                         ::  report death
@@ -485,8 +484,7 @@
           {$sunk p=ship q=life}                         ::  report death
           {$warp wer/ship rif/riff}                     ::  internal file req
           {$werp who/ship wer/ship rif/riff}            ::  external file req
-          {$wegh ~}                                    ::  report memory
-          {$went wer/ship pax/path num/@ud ack/coop}    ::  response confirm
+          {$wegh ~}                                     ::  report memory
           {$west wer/ship pax/path res/*}               ::  network request
       ==                                                ::
     --  ::able
@@ -752,7 +750,6 @@
           [%thud ~]                                     ::  inbound cancel
           [%wegh ~]                                     ::  report memory
           [%well p=path q=(unit mime)]                  ::  put/del .well-known
-          [%went p=ship q=path r=@ud s=coop]            ::  response confirm
           [%west p=ship q=[path *]]                     ::  network request
           [%wise p=ship q=prox]                         ::  proxy notification
       ==                                                ::
@@ -1678,9 +1675,8 @@
           {$init p/ship}                                ::  set owner
           {$deal p/sock q/cush}                         ::  full transmission
           {$sunk p=ship q/life}                         ::  report death
-          {$went p/ship q/path r/@ud s/coop}            ::  response confirm
           {$west p/ship q/path r/*}                     ::  network request
-          {$wegh ~}                                    ::  report memory
+          {$wegh ~}                                     ::  report memory
       ==                                                ::
     --  ::able
   ++  bitt  (map bone (pair ship path))                 ::  incoming subs
@@ -1852,7 +1848,7 @@
           [%hail p=ship q=remote]                       ::  remote update
           $:  %dawn                                     ::  boot from keys
               =seed:able:jael                           ::    identity params
-              spon=(unit ship)                          ::    sponsor
+              spon=ship                                 ::    sponsor
               czar=(map ship [=life =pass])             ::    galaxy table
               turf=(list turf)                          ::    domains
               bloq=@ud                                  ::    block number
@@ -7294,8 +7290,7 @@
         ::
           continuity-number
         ::
-          ?.  has-sponsor  ~
-          ``@p`sponsor
+          [has-sponsor `@p`sponsor]
         ::
           ?.  escape-requested  ~
           ``@p`escape-to
@@ -7327,8 +7322,8 @@
       `[who %activated who]
     ::
     ?:  =(event.log spawned)
-      =/  pre=@  (decode-topics topics.log ~[%uint])
-      =/  who=@  (decode-results data.log ~[%uint])
+      =+  ^-  [pre=@ who=@]
+          (decode-topics topics.log ~[%uint %uint])
       `[pre %spawned who]
     ::
     ?:  =(event.log escape-requested)
@@ -7343,11 +7338,12 @@
     ?:  =(event.log escape-accepted)
       =+  ^-  [who=@ wer=@]
           (decode-topics topics.log ~[%uint %uint])
-      `[who %sponsor `wer]
+      `[who %sponsor & wer]
     ::
     ?:  =(event.log lost-sponsor)
-      =/  who=@  (decode-topics topics.log ~[%uint])
-      `[who %sponsor ~]
+      =+  ^-  [who=@ pos=@]
+          (decode-topics topics.log ~[%uint %uint])
+      `[who %sponsor | pos]
     ::
     ?:  =(event.log changed-keys)
       =/  who=@  (decode-topics topics.log ~[%uint])
@@ -7398,7 +7394,7 @@
     ::
         %activated
       %_  pot
-        net  `[0 0 0 `(^sein:title who.dif) ~]
+        net  `[0 0 0 &^(^sein:title who.dif) ~]
         kid  ?.  ?=(?(%czar %king) (clan:title who.dif))  ~
              `[0x0 ~]
       ==
@@ -7419,8 +7415,10 @@
         pot(life.u.net life.dif, pass.u.net pass.dif)
       ::
           %sponsor
-        ?~  new.dif  pot(sponsor.u.net ~)
-        pot(sponsor.u.net new.dif, escape.u.net ~)
+        %=  pot
+          sponsor.u.net  new.dif
+          escape.u.net   ?:(has.new.dif ~ escape.u.net.pot)
+        ==
       ::
         %continuity  pot(continuity-number.u.net new.dif)
         %escape      pot(escape.u.net new.dif)
@@ -8432,7 +8430,7 @@
   ::
   ++  veri
     |=  [=seed:able:jael =point:azimuth =live]
-    ^-  (each sponsor=(unit ship) error=term)
+    ^-  (each sponsor=ship error=term)
     =/  rac  (clan:title who.seed)
     =/  cub  (nol:nu:crub:crypto key.seed)
     ?-  rac
@@ -8449,7 +8447,7 @@
       ::
       ?.  ?=(%1 lyf.seed)
         [%| %invalid-life]
-      [%& ~]
+      [%& (^sein:title who.seed)]
     ::
         %earl
       ::  a moon must be signed by the parent
@@ -8474,32 +8472,35 @@
       ::
       ?^  live
         [%| %already-booted]
-      [%& ~]
+      [%& (^sein:title who.seed)]
     ::
         *
       ::  on-chain ships must be launched
       ::
       ?~  net.point
         [%| %not-keyed]
+      =*  net  u.net.point
       ::  boot keys must match the contract
       ::
-      ?.  =(pub:ex:cub pass.u.net.point)
+      ?.  =(pub:ex:cub pass.net)
         [%| %key-mismatch]
       ::  life must match the contract
       ::
-      ?.  =(lyf.seed life.u.net.point)
+      ?.  =(lyf.seed life.net)
         [%| %life-mismatch]
       ::  the boot life must be greater than and discontinuous with
       ::  the last seen life (per the sponsor)
       ::
       ?:  ?&  ?=(^ live)
               ?|  ?=(%| breach.u.live)
-                  (lte life.u.net.point life.u.live)
+                  (lte life.net life.u.live)
           ==  ==
         [%| %already-booted]
       ::  produce the sponsor for vere
       ::
-      [%& sponsor.u.net.point]
+      ~?  !has.sponsor.net
+        [%no-sponsorship-guarantees-from who.sponsor.net]
+      [%& who.sponsor.net]
     ==
   --
 --  ::

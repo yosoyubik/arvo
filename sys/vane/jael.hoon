@@ -637,11 +637,8 @@
     =/  pot  (~(get by pos.eth.sub) who)
     ?:  ?&  ?=(^ pot)
             ?=(^ net.u.pot)
-            ?=(^ sponsor.u.net.u.pot)
         ==
-      u.sponsor.u.net.u.pot
-    ::  XX fall back to most recent sponsor instead?
-    ::
+      who.sponsor.u.net.u.pot
     (^sein:title who)
   ::                                                    ::  ++saxo:of
   ++  saxo                                              ::  sponsorship chain
@@ -670,7 +667,7 @@
     ::  boot from keys
     ::    $:  $dawn
     ::        =seed
-    ::        spon=(unit ship)
+    ::        spon=ship
     ::        czar=(map ship [=life =pass])
     ::        turf=(list turf)}
     ::        bloq=@ud
@@ -2298,12 +2295,15 @@
       [u.lyf pub:ex:cub sig.own.sub.lex]
     ::
     =/  pub  (~(get by kyz.puk.sub.lex) u.who)
-    ?~  pub  ~
-    :: XX check lyf
-    ::
+    ?~  pub
+      ~
+    ?:  (gth u.lyf life.u.pub)
+      ~
+    =/  pas  (~(get by pubs.u.pub) u.lyf)
+    ?~  pas
+      ~
     :^  ~  ~  %noun
-    !>  ^-  deed:ames
-    [life.u.pub (~(got by pubs.u.pub) life.u.pub) ~]
+    !>  `deed:ames`[u.lyf u.pas ~]
   ::
       %earl
     ?.  ?=([@ @ @ ~] tyl)  [~ ~]
