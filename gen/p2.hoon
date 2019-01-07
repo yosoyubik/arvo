@@ -67,16 +67,24 @@
   :*
     :-  %type   type-example
     :-  %cores  core-example
+<<<<<<< HEAD
     :-  %add    add-example
     :-  %zuse   zuse-example
+=======
+    :-  %add    ..add
+    :-  zuse-example
+>>>>>>> 4389110fb11be96875c0c603094a4ce986a049e2
     :-  %demo   demo-example
     :-  %forks  forks-example
     %eof
   ==
 ::
+<<<<<<< HEAD
 ++  add-example
   ..add
 ::
+=======
+>>>>>>> 4389110fb11be96875c0c603094a4ce986a049e2
 ++  type-example
   ^-  type
   -:!>(`(map ? (unit (list cord)))`~)
@@ -89,7 +97,11 @@
   |%  ++  x  ~  --
 ::
 ++  zuse-example
+<<<<<<< HEAD
   ..zuse
+=======
+  [%zuse ..zuse]
+>>>>>>> 4389110fb11be96875c0c603094a4ce986a049e2
 ::
 ++  cores-example
   |^  :*
