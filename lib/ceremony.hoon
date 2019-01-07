@@ -58,17 +58,25 @@
       extra=tape
   ==
 ::
-++  linear-recipient
-  $:  windup=@ud
-      stars=@ud
-      rate=@ud
-      rate-unit=@ud
-  ==
-::
 ++  conditional-recipient
   $:  b1=@ud
       b2=@ud
       b3=@ud
+      rate=@ud
+      rate-unit=@ud
+  ==
+::
+++  linlock-info
+  $:  star-count=@ud
+      windup=@ud
+      term=@ud
+      stars=(list ,@p)
+      extra=tape
+  ==
+::
+++  linear-recipient
+  $:  windup=@ud
+      stars=@ud
       rate=@ud
       rate-unit=@ud
   ==
@@ -220,13 +228,26 @@
   ==
 ::
 ++  get-parlocks
-  ^-  (list [owner=address parlock-info])
+  ^-  (list [id=@ux owner=address parlock-info])
   %+  parse-lines  'partial'
+  ;~  (glue com)
+    hex
+    zero-ux
+    dum:ag
+    dum:ag
+    dum:ag
+    (star ;~(pose (jest '\0d') (shim ' ' '~')))
+  ==
+::
+++  get-linlocks
+  ^-  (list [owner=address linlock-info])
+  %+  parse-lines  'linlock'
   ;~  (glue com)
     zero-ux
     dum:ag
     dum:ag
     dum:ag
+    (most ace ;~(pfix sig fed:ag))
     (star ;~(pose (jest '\0d') (shim ' ' '~')))
   ==
 ::
@@ -345,7 +366,11 @@
   =+  linear-star-release=(hex-to-num '0x86cd9cd0992f04231751e3761de45cecea5d1801')
   ::  XX only if csr is deployed at nonce 8681!
   =+  conditional-star-release=(hex-to-num '0x8c241098c3d3498fe1261421633fd57986d74aea')
-  =.  constitution  (hex-to-num '0x12778371a6aa58b1dd623c126e09cd28fc5b9b5c')
+  =.  constitution  (hex-to-num '0xa23b5d8e86091ab6c14981f404c2864701aa2903')
+  ::  pre-rescue: '0x12778371a6aa58b1dd623c126e09cd28fc5b9b5c'
+  ::
+  =/  linear-lockup-addresses  *(list address)
+  =/  conditional-lockup-addresses  *(list address)
   ::
   =/  all-addr=(map ship address-info)
     get-all-addresses
@@ -356,6 +381,8 @@
   =/  addresses=(map ship address-info)
     (~(dif by all-addr) done)
   ~&  remaining-wyt=~(wyt by addresses)
+  ~&  addresses
+  ~&  dif=(~(dif by done) all-addr)
   =/  lockups=(map ship lockup-info)
     get-lockups
   ~&  lockups-wyt=~(wyt by lockups)
@@ -367,6 +394,32 @@
       |
     =+  lockup=(~(got by lockups) who)
     =(%linear type.lockup)
+  =.  linear-lockup-addresses
+    %+  weld  linear-lockup-addresses
+    ^-  (list address)
+    %+  murn  ~(tap by all-addr)
+    |=  [who=ship address-info]
+    ^-  (unit address)
+    ~?  ?=(?(%~net %~wes %~sev) who)  hrm=+<
+    =+  l=(~(get by lockups) who)
+    ?~  l                     ~
+    ?~  owner                 ~
+    ?.  ?=(%linear type.u.l)  ~
+    `u.owner
+  ~&  lin=(lent linear-lockup-addresses)
+  =.  conditional-lockup-addresses
+    %+  weld  conditional-lockup-addresses
+    ^-  (list address)
+    %+  murn  ~(tap by all-addr)
+    |=  [who=ship address-info]
+    ^-  (unit address)
+    =+  l=(~(get by lockups) who)
+    ?~  l                                   ~
+    ?~  owner                               ~
+    ?:  ?=(?(%~fet %~nes %~rel %~rud) who)  ~
+    ?.  ?=(%conditional type.u.l)           ~
+    `u.owner
+  ~&  con=(lent conditional-lockup-addresses)
   ::
   ::  Calculate linear lockups
   ::
@@ -440,6 +493,9 @@
     %+  roll  potential-con
     |=  [[who=ship address-info] m=(map address conditional-recipient)]
     ~|  +<
+    ?:  =(who ~ryx)
+      ~&  "not adding ~ryx to con-rec because they also have stars"
+      m
     =/  l  (~(got by lockups) who)
     =/  t  (need tranches.l)
     =/  tentative=conditional-recipient
@@ -537,11 +593,20 @@
   =/  tmp-points=(list [who=ship spawn=(unit address) keys=(unit [@ux @ux])])
     %+  turn
       ^-  (list ship)
-      :~  ~rel
-          ~rud
-          ~nes
-          ~fet
-      ==
+      ~
+      ::  :~  ::  ~dopzod
+      ::      ~net
+      ::      ~wel
+      ::      ~wes
+      ::      ~sev
+      ::  ==
+      ::  :~  ~feb
+      ::  ==
+      ::  :~  ~rel
+      ::      ~rud
+      ::      ~nes
+      ::      ~fet
+      ::  ==
       ::  :~  ~nus
       ::    ::
       ::      ~ten
@@ -560,6 +625,7 @@
       ::      ::  ~wanzod
       ::      ::  ~samzod
       ::  ==
+      ::  XX what of dopzod?
     |=  who=ship
     [who ~ `[0x0 0x0]]
   ~&  [%tmp-points tmp-points]
@@ -583,7 +649,7 @@
   =/  parlocks  get-parlocks
   =/  con-stars-rec=(list [own=address conditional-recipient])
     %+  turn  parlocks
-    |=  [own=address parlock-info]
+    |=  [id=@ux own=address parlock-info]
     ~|  +<
     =+  rate-unit=(div :(mul 60 60 24 365 1) :(max b1 b2 b3))
     :*  own
@@ -598,23 +664,78 @@
     %+  turn  potential-conditional-stars
     |=  [who=ship address-info]
     ~|  +<
-    ?>  (~(has by parlock-map) (need owner))
+    ?>  (~(has by parlock-map) id)
     :*  who
-        (need owner)
+        owner:(~(got by parlock-map) id)
     ==
   ~&  [%conditional-stars (lent potential-conditional-stars)]
   ~&  potential-conditional-stars
   ~&  con-stars
+  ~&  con-stars-rec
+  =.  conditional-lockup-addresses
+    %+  weld  conditional-lockup-addresses
+    ^-  (list address)
+    %+  turn  con-stars-rec
+    |=  [a=address *]
+    a
   ::
+  ::  Calculate linear stars
+  ::
+  ::P =/  potential-linear-stars
+  ::P   %+  skim
+  ::P     ~(tap by addresses)
+  ::P   |=  [who=ship address-info]
+  ::P   ?&  (gte who ~marzod)
+  ::P       (lth who 0x1.0000)
+  ::P       ?=  :: is a conditional partial galaxy
+  ::P         $?  %~feb
+  ::P         ==
+  ::P       (^sein:title who)
+  ::P   ==
+  ::P ~&  [%potential-linear-stars potential-linear-stars]
+  =/  linlocks  get-linlocks :: XXX
+  =/  lin-stars-rec=(list [own=address linear-recipient])
+    ::  ~
+    %+  turn  linlocks
+    |=  [own=address linlock-info]
+    ~|  +<
+    ?>  =(star-count (lent stars))
+    =+  rate-unit=(div :(mul 60 60 24 365 term) star-count)
+    :*  own
+        windup
+        star-count
+        1
+        rate-unit
+    ==
+  =/  lin-stars=(list [who=ship recipient=address])
+    %-  zing
+    ^-  (list (list [who=ship recipient=address]))
+    %+  turn  linlocks
+    |=  [own=address linlock-info]
+    ^-  (list [who=ship recipient=address])
+    ~|  +<
+    %+  turn  stars
+    |=  who=@p
+    [who own]
+  ~&  [%linear-stars (lent lin-stars)]
+  ~&  lin-stars
+  ~&  lin-stars-rec
+  =.  linear-lockup-addresses
+    %+  weld  linear-lockup-addresses
+    =-  ~&  a=-  -
+    ^-  (list address)
+    %+  turn  lin-stars-rec
+    |=  [a=address *]
+    a
   ::  Calculate direct stars
   ::
   =/  potential-direct-stars
     %+  skim
       ~(tap by addresses)
     |=  [who=ship address-info]
-    ?:  =(id (hex-to-num '0xafd568600afb25596b90ff155d15c5b6799c0b680c4cc0fab2032893ca68044a'))
-      ~&  "say it ain't so, joe!"
-      !!
+    ::  ?:  =(id (hex-to-num '0xafd568600afb25596b90ff155d15c5b6799c0b680c4cc0fab2032893ca68044a'))
+    ::    ~&  "say it ain't so, joe!"
+    ::    !!
     ?:  =(id (hex-to-num '0xdffe59eb14574213d33ddab0f9db5eef9766395f51af53a4cbf38fa849f9100e'))
       ~&  "i'm afraid it is"
       !!
@@ -624,7 +745,11 @@
           ::
           ::  %~nus
           ::
-          $?  %~nus
+          $?  %~zod
+            ::
+              %~feb
+            ::
+              %~nus
             ::
               %~ten
               %~pub
@@ -885,9 +1010,19 @@
       (register-conditional:dat i.con-rec-list)
     $(con-rec-list t.con-rec-list)
   ::
-  ~&  ['Depositing conditional release galaxies...' +(nonce)]
-  =.  this
-    (deposit-galaxies conditional-star-release con-gal)
+  ::  Register conditional stars
+  ::
+  ::CS  ~&  ['Registering conditional release stars...' +(nonce)]
+  ::CS  |-
+  ::CS  ?^  con-stars-rec
+  ::CS    =.  this
+  ::CS      %^  do  conditional-star-release  350.000
+  ::CS      (register-conditional:dat i.con-stars-rec)
+  ::CS    $(con-stars-rec t.con-stars-rec)
+  ::CS  ::
+  ::CS  ~&  ['Depositing conditional release galaxies...' +(nonce)]
+  ::CS  =.  this
+  ::CS    (deposit-galaxies conditional-star-release con-gal)
   ::
   ::  Deploy directly-deeded galaxies
   ::
@@ -909,34 +1044,60 @@
       (create-ship i.tmp-points)
     $(tmp-points t.tmp-points)
   ::
-  ::  Register conditional stars
-  ::
-  ~&  ['Registering conditional release stars...' +(nonce)]
-  |-
-  ?^  con-stars-rec
-    =.  this
-      %^  do  conditional-star-release  350.000
-      (register-conditional:dat i.con-stars-rec)
-    $(con-stars-rec t.con-stars-rec)
-  ::
   ::  Deploy conditional stars
   ::
-  ~&  ['Deploying conditional stars...' +(nonce)]
-  =/  conditional-star-gals=(list @p)
-    :~  ~rel
-        ~rud
-        ~nes
-        ~fet
-    ==
-  |-
-  ?^  conditional-star-gals
-    =.  this
-      %^  do  constitution  300.000
-      %+  set-spawn-proxy:dat  i.conditional-star-gals
-      conditional-star-release
-    $(conditional-star-gals t.conditional-star-gals)
-  =.  this
-    (deposit-stars conditional-star-release con-stars)
+  ::CS  ~&  ['Deploying conditional stars...' +(nonce)]
+  ::CS  =/  conditional-star-gals=(list @p)
+  ::CS    ~
+  ::CS    ::  :~  ~rel
+  ::CS    ::      ~rud
+  ::CS    ::      ~nes
+  ::CS    ::      ~fet
+  ::CS    ::  ==
+  ::CS  |-
+  ::CS  ?^  conditional-star-gals
+  ::CS    =.  this
+  ::CS      %^  do  constitution  300.000
+  ::CS      %+  set-spawn-proxy:dat  i.conditional-star-gals
+  ::CS      conditional-star-release
+  ::CS    $(conditional-star-gals t.conditional-star-gals)
+  ::CS  =.  this
+  ::CS    (deposit-stars conditional-star-release con-stars)
+  ::
+  ::  Register linear stars
+  ::
+  ::LS  ~&  ['Registering linear release stars...' +(nonce)]
+  ::LS  |-
+  ::LS  ?^  lin-stars-rec
+  ::LS    =.  this
+  ::LS      %^  do  linear-star-release  350.000
+  ::LS      (register-linear:dat i.lin-stars-rec)
+  ::LS    $(lin-stars-rec t.lin-stars-rec)
+  ::LS  ::
+  ::LS  ::  Deploy linear stars
+  ::LS  ::
+  ::LS  ~&  ['Deploying linear stars...' +(nonce)]
+  ::LS  =/  linear-star-gals=(list @p)
+  ::LS    :~  ~ten
+  ::LS        ~pub
+  ::LS        ~sud
+  ::LS        ~pem
+  ::LS        ~dev
+  ::LS        ~lur
+  ::LS        ~def
+  ::LS        ~bus
+  ::LS    ==
+  ::LS    ::  ~
+  ::LS    ::  ~[~feb]
+  ::LS  |-
+  ::LS  ?^  linear-star-gals
+  ::LS    =.  this
+  ::LS      %^  do  constitution  300.000
+  ::LS      %+  set-spawn-proxy:dat  i.linear-star-gals
+  ::LS      linear-star-release
+  ::LS    $(linear-star-gals t.linear-star-gals)
+  ::LS  =.  this
+  ::LS    (deposit-stars linear-star-release lin-stars)
   ::
   ::  Deploy direct stars
   ::
@@ -1001,6 +1162,8 @@
   ::B   %^  do  constit-final  300.000
   ::B   (set-dns-domains:dat "urbit.org" "urbit.org" "urbit.org")
   ::
+  ~&  linear-lockup-addresses=linear-lockup-addresses
+  ~&  conditional-lockup-addresses=conditional-lockup-addresses
   complete
 ::
 ::  sign pre-generated transactions
@@ -1035,6 +1198,8 @@
   =+  wat=(clan:title who)
   =*  do-c  (cury (cury do constitution) 300.000)
   =.  this
+    ?:  |(=(~teb who) =(~sibfus-dosryp who))  ::  rescued
+      this
     ?:  ?=(%czar wat)
       (do-c (create-galaxy:dat who))
     (do-c (spawn:dat who))
@@ -1091,6 +1256,10 @@
   =+  stars=(gulf 1 255)
   |-
   ?^  stars
+    =?  this  =(~teb galaxy)  ::  rescued
+      %^  do  constitution  300.000
+      %-  set-transfer-proxy:dat
+      [(cat 3 galaxy i.stars) into]
     =.  this
       %^  do  into  350.000
       %-  deposit:dat
