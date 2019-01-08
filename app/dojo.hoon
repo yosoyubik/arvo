@@ -611,17 +611,11 @@
           $1
             ~&  [%cay cay]
             ~&  [%mar (mar)]
-            [[%rose [~ "  " ~] (type-to-tank p.q.cay) ~] (mar)]
+            [[%rose [~ "  " ~] (skol p.q.cay) ~] (mar)]
           $2  [[%rose [~ "  " ~] (dy-show-type-noun p.q.cay) ~] (mar)]
           $3  ~
         ==
       ==
-    ::
-    ++  type-to-tank
-      |=  typ/type
-      ^-  tank
-      ~&  %such-skool
-      [%plum (type-to-plum:libpprint typ)]
     ::
     ++  dy-show  |=(cay/cage (dy-print cay ~))
     ::
@@ -631,7 +625,7 @@
       |=  {cay/cage tan/tang}
       %+  dy-rash  %tan
       %-  welp  :_  tan
-      ?+  p.cay  [(sell q.cay)]~
+      ?+  p.cay  [(vase-to-tank:libpprint q.cay)]~
         $tang  ;;(tang q.q.cay)
         $httr
           =+  hit=;;(httr:eyre q.q.cay)
