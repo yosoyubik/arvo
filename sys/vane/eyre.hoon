@@ -2050,7 +2050,14 @@
       (execute-turbo:abet se+[wir usr dom] live schematic)
     ++  dead-this  |=(a/tang (fail:abet 500 0v0 a))
     ++  dead-hiss  |=(a/tang pump(req ~(nap to req), ..vi (give-sigh %| a)))
-    ++  eyre-them  |=({a/whir-se b/vase} (eyre-them:abet se+[a usr dom] b))
+    ::
+    ++  eyre-them
+      |=  [a=whir-se b=vase]
+      ::  block requests until we get a response to this request
+      ::
+      =.  liv  |
+      (eyre-them:abet se+[a usr dom] b)
+    ::
     ++  pass-note  |=({a/whir-se b/note} (pass-note:abet se+[a usr dom] b))
     ::  XX block reqs until correct core checked in?
     ++  warn  |=(a/tang ((slog (flop a)) abet))
@@ -2213,7 +2220,6 @@
     ++  do-send
       |=  wir/whir-se  ^-  $-(vase _abet)
       |=  res/vase
-      =.  liv  |  :: block requests until a reponse is given
       (eyre-them wir (slam !>(|=({$send a/hiss} a)) res))
     ::
     ++  cancel-request  ~&  %cancel-request
