@@ -42,16 +42,25 @@
   [~ +>.$(+<+ u.old)]
 ::
 ++  poke-noun
-  |=  a=@t
+  |=  a=$@(@t [wat=@t dat=*])
   ^-  [(list move) _+>]
-  ?:  =('call' a)  [[initial-call ~] +>]
-  ?:  =('file' a)  [[write-file ~] +>]
-  ?:  =('show' a)
-    ~&  ^-  (map ship [[[@ud @ux] [@ud @ux]] deed:eth-noun])
-        deeds
-    [~ +>]
-  ?:  =('verify linear' a)  [[(verify 'linear') ~] +>]
-  ?:  =('verify conditional' a)  [[(verify 'conditional') ~] +>]
+  ?@  a
+    ?:  =('call' a)  [[initial-call ~] +>]
+    ?:  =('cont' a)  next-in-queue
+    ?:  =('file' a)  [[write-file ~] +>]
+    ?:  =('show' a)
+      ~&  ^-  (map ship [[[@ud @ux] [@ud @ux]] deed:eth-noun])
+          deeds
+      [~ +>]
+    ?:  =('verify linear' a)  [[(verify 'linear') ~] +>]
+    ?:  =('verify conditional' a)  [[(verify 'conditional') ~] +>]
+    !!
+  ?:  =('list' wat.a)
+    =/  lis=(list @p)  ((list @p) dat.a)
+    [[(call lis %hull) ~] +>.$]
+    ::TODO  this might end up giving you a ton of calls still, if a galaxy
+    ::      is involved. fix that (special "no-recurse" flag) if it becomes
+    ::      a problem.
   !!
 ::
 ++  write-file
