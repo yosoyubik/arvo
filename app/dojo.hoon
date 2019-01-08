@@ -618,18 +618,52 @@
       |=  typ/type
       ^-  tank
       ~&  %such-skool
-      %-  plum-to-tank
+      %-  plum-to-taank
       ^-  plum
       (type-to-plum:pprint typ)
       ::  =/  pec  ~(structure cosmetic typ)
       ::  ~&  [%spec pec]
       ::  =/  lum  (spec-to-plum pec)
       ::  ~&  [%plum lum]
-      ::  =/  tax  (plum-to-tank lum)
+      ::  =/  tax  (plum-to-taank lum)
       ::  ~&  [%tank tax]
       ::  tax
-      ::  (plum-to-tank `plum`(spec-to-plum `spec`~(structure cosmetic typ)))
+      ::  (plum-to-taank `plum`(spec-to-plum `spec`~(structure cosmetic typ)))
       ::  ~(duck ut typ)
+    ++  plum-to-taank
+      |=  =plum
+      ^-  tank
+      ?@  plum  [%leaf (trip plum)]
+      [%leaf "TANK"]
+      ?-  -.plum
+      ::    %|  :+  %rose
+      ::          ["" " " ""]
+      ::        (turn list.plum |=(@ta [%leaf (trip +<)]))
+      ::    %&  =/  list  (turn list.plum ..$)
+      ::        ?~  tall.plum
+      ::          ?>  ?=(^ wide.plum)
+      ::          =?  enclose.u.wide.plum  ?=(~ enclose.u.wide.plum)  `['{' '}']
+      ::          :+  %rose
+      ::            :*  (trip delimit.u.wide.plum)
+      ::                (trip +<:enclose.u.wide.plum)
+      ::                (trip +>:enclose.u.wide.plum)
+      ::            ==
+      ::          list
+      ::        ?:  ?=(^ indef.u.tall.plum)
+      ::          :+  %rose
+      ::            :*  (trip sigil.u.indef.u.tall.plum)
+      ::                (weld (trip intro.u.tall.plum) "[")
+      ::                (weld "]" (trip final.u.indef.u.tall.plum))
+      ::            ==
+      ::          list
+      ::        :+  %palm
+      ::          :*  (weld (trip intro.u.tall.plum) "(")
+      ::              ""
+      ::              ""
+      ::              ")"
+      ::          ==
+      ::        list
+      ::  ==
     ++  dy-show  |=(cay/cage (dy-print cay ~))
     ++  dy-print
       |=  {cay/cage tan/tang}
