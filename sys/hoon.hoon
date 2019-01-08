@@ -13554,6 +13554,7 @@
               render-type=$-(type wain)
               type-to-plum=$-(type plum)
               type-to-tank=$-(type tank)
+              vase-to-tank=$-(vase tank)
               render-type-simple=$-(type wain)
               render-vase-with-type=$-(vase wain)
           ==
@@ -13562,6 +13563,7 @@
           render-type
           type-to-plum
           type-to-tank
+          vase-to-tank
           render-type-simple
           render-vase-with-type
       ==
@@ -13650,7 +13652,14 @@
   ++  type-to-tank
     |=  t=type
     ^-  tank
-    (plum-to-tank (type-to-plum t))
+    [%plum (type-to-plum t)]
+  ::
+  ::  Pretty-print a vase to a tank.
+  ::
+  ++  vase-to-tank
+    |=  v=vase
+    ^-  tank
+    [%plum (vase-to-plum v)]
   ::
   ::  Render an `axis`.
   ::
@@ -14704,19 +14713,8 @@
   --
 ::
 ++  skol                                                ::  $-(type tank) for ~!
-  |=  typ/type
-  ^-  tank
-  ~&  %such-skol-skol
-  [%leaf "TYPE"]
-  ::  =/  pec  ~(structure cosmetic typ)
-  ::  ~&  [%spec pec]
-  ::  =/  lum  (spec-to-plum pec)
-  ::  ~&  [%plum lum]
-  ::  =/  tax  (plum-to-tank lum)
-  ::  ~&  [%tank tax]
-  ::  tax
-  ::  (plum-to-tank `plum`(spec-to-plum `spec`~(structure cosmetic typ)))
-  ::  ~(duck ut typ)
+  ^-  $-(type tank)
+  type-to-tank:libpprint
 ::
 ++  slam                                                ::  slam a gate
   |=  {gat/vase sam/vase}  ^-  vase
