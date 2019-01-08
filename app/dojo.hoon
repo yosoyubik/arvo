@@ -2,7 +2,7 @@
 ::::  /hoon/dojo/app                                    ::  ::::
   ::                                                    ::    ::
 /?  309                                                 ::  arvo kelvin
-/-  sole, lens, xray                                    ::  console structures
+/-  sole, lens                                          ::  console structures
 /+  sole, xray, pprint                                  ::  console library
 =,  sole
 ::                                                      ::  ::

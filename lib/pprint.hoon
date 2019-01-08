@@ -14,7 +14,6 @@
 ::
 /?  310
 ::
-/-  *xray
 /+  *xray
 ::
 |^  ^-  $:  render-vase=$-(vase wain)
@@ -218,7 +217,7 @@
   --
 ::
 ::  This is just a trivial helper function. It's only here because this
-::  pattern is used repeatedly in `hoon-to-plum`.
+::  xpat is used repeatedly in `hoon-to-plum`.
 ::
 ++  hoons-to-plum-list
   |=  =hoon=(list hoon)
@@ -681,11 +680,11 @@
   |^  (main root.xt top-noun)
   ::
   ++  main
-    |=  [i=key n=*]
+    |=  [i=xkey n=*]
     ^-  plum
     =/  x=xray  (focus-on img i)
-    ?~  pats.x  (render-with-data i (need data.x) n)
-    (render-with-pattern u.pats.x n)
+    ?~  pats.x  (render-with-xdat i (need xdat.x) n)
+    (render-with-xpat u.pats.x n)
   ::
   ++  tree-noun-to-list
     |=  n=*
@@ -704,7 +703,7 @@
     [-.n $(n +.n)]
   ::
   ++  render-tree
-    |=  [elt=key noun=*]
+    |=  [elt=xkey noun=*]
     ^-  plum
     ?~  noun  '~'
     =/  ns=(list *)     (tree-noun-to-list noun)
@@ -713,7 +712,7 @@
     (rune '%-' ~ `['(' ' ' ')'] ~['tree' elems])
   ::
   ++  render-list
-    |=  [elt=key noun=*]
+    |=  [elt=xkey noun=*]
     ^-  plum
     ?~  noun  '~'
     =/  ns=(list *)     (noun-to-list noun)
@@ -721,7 +720,7 @@
     (rune ':~' `'==' `['~[' ' ' ']'] ps)
   ::
   ++  render-unit
-    |=  [i=key n=*]
+    |=  [i=xkey n=*]
     ^-  plum
     ?~  n  '~'
     (tuple-plum ~['~' (main i +:n)])
@@ -750,7 +749,7 @@
     (tuple-plum ~[(untyped-noun -:n) (untyped-noun +:n)])
   ::
   ++  render-tuple
-    |=  [i=key n=*]
+    |=  [i=xkey n=*]
     ^-  plum
     =/  acc=(list plum)  ~
     %-  tuple-plum
@@ -759,7 +758,7 @@
     ^-  (list plum)
     ::
     =/  x=xray  (focus-on img i)
-    =/  d=data  (need data.x)
+    =/  d=xdat  (need xdat.x)
     ::
     ?^  pats.x           [(main i n) acc]
     ?.  ?=([%cell *] d)  [(main i n) acc]
@@ -769,8 +768,8 @@
       i    tail.d
     ==
   ::
-  ++  render-with-data
-    |=  [i=key d=data n=*]
+  ++  render-with-xdat
+    |=  [i=xkey d=xdat n=*]
     ^-  plum
     ?-  d
       %void      '!!'
@@ -786,12 +785,12 @@
     ==
   ::
   ++  render-fork
-    |=  [i=key n=*]
+    |=  [i=xkey n=*]
     ^-  plum
     ::
     =/  x=xray  (focus-on img i)
-    ?~  role.x  ~&  x  '%evil-fork'
-    =/  r=role  u.role.x
+    ?~  xrole.x  ~&  x  '%evil-fork'
+    =/  r=xrole  u.xrole.x
     ::
     ?-  r
       %void          !!
@@ -807,14 +806,14 @@
         =/  hd=*  -:n
         ?>  ?=(@ hd)
         ::
-        =/  pairs=(list (pair atom key))  ~(tap by map.r)
+        =/  pairs=(list (pair atom xkey))  ~(tap by map.r)
         |-
         ?~  pairs  '%bad-union-fork'
         ?.  =(p.i.pairs hd)  $(pairs t.pairs)
         (main q.i.pairs n)
       [%option *]
         ~&  %render-option
-        =/  pairs=(list (pair atom key))  ~(tap by map.r)
+        =/  pairs=(list (pair atom xkey))  ~(tap by map.r)
         |-
         ?~  pairs  '%bad-option-fork'
         ?.  =(p.i.pairs n)  $(pairs t.pairs)
@@ -833,24 +832,24 @@
     ==
   ::
   ++  render-gate
-    |=  [=sample=key =product=key]
+    |=  [=sample=xkey =product=xkey]
     ^-  plum
     %-  spec-to-plum  :*
       %bshp
-      (ximage-to-spec sample-key img)
-      (ximage-to-spec product-key img)
+      (ximage-to-spec sample-xkey img)
+      (ximage-to-spec product-xkey img)
     ==
   ::
   ++  render-core
-    |=  [=garb xray=key =xbattery]
+    |=  [=garb xray=xkey =xbat]
     ^-  plum
     ::
     =/  cvt-arms
-      |=  m=(map term key)
+      |=  m=(map term xkey)
       ^-  (map term hoon)
       %-  ~(gas by *(map term hoon))
       %+  turn  ~(tap by m)
-      |=  [t=term i=key]
+      |=  [t=term i=xkey]
       =.  t  ?:(=('' t) '$' t)
       ^-  [term hoon]
       :-  t
@@ -858,8 +857,8 @@
     ::
     =/  batt=(map term tome)
       %-  ~(gas by *(map term tome))
-      %+  turn  ~(tap by xbattery)
-      |=  [nm=term w=what arms=(map term key)]
+      %+  turn  ~(tap by xbat)
+      |=  [nm=term w=what arms=(map term xkey)]
       [nm w (cvt-arms arms)]
     ::
     (hoon-to-plum 999 [%brcn p.garb batt])
@@ -881,8 +880,8 @@
     ^-  plum
     '%tour'                                             ::  XX TODO
   ::
-  ++  render-with-pattern
-    |=  [p=pattern n=*]
+  ++  render-with-xpat
+    |=  [p=xpat n=*]
     ^-  plum
     ?-  p
       %hoon      (hoon-to-plum 999 ((hard hoon) n))

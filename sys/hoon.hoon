@@ -1,13 +1,12 @@
 ::
 ::::    /sys/hoon                                       ::
-  ::                                                    ::  
-!:
+  ::                                                    ::
 =<  ride
 =>  %141  =>
 ::                                                      ::
 ::::    0: version stub                                 ::
   ::                                                    ::
-~%  %k.141  ~  ~                                        ::  
+~%  %k.141  ~  ~                                        ::
 |%
 ++  hoon-version  141
 --  =>
@@ -11475,9 +11474,9 @@
   ::
   ::  An `xray` is a node in the `ximage` graph. It contains everything
   ::  we know about a certain `type`. `key` is it's identifier in the graph,
-  ::  `type` is the type that it's an xray of, and `data` is the basic
+  ::  `type` is the type that it's an xray of, and `xdat` is the basic
   ::  information we derived about the type.  The basic references to other
-  ::  nodes are inside the `data` structure, though some of the other
+  ::  nodes are inside the `xdat` structure, though some of the other
   ::  fields may contain references as well.
   ::
   ::  - `xshape` is some more information about the xshape of data within
@@ -11497,8 +11496,8 @@
   +$  xray
     $:  =xkey
         =type
-        data=(unit xdat)
-        role=(unit xrole)
+        xdat=(unit xdat)
+        xrole=(unit xrole)
         pats=(unit xpat)
         studs=(set stud)
         recipes=(set recipe)
