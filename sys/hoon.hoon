@@ -11439,7 +11439,6 @@
   ~|  %sell
   (~(deal us p.vax) q.vax)
 ::
-++  xray-stuff
   ::
   ::  These are the public types for the `xray` library.  Analysing a type
   ::  yields an `ximage`, and everything else here is just some structure
@@ -11448,31 +11447,31 @@
   ::  `ximage`s can be printed as specs (hoon syntax for types), and can
   ::  be used to pretty-print typed data.
   ::
-  |%
+  ::  |%
   ::
   ::  An `xtable` is a graph of types referenced by the top-level type,
   ::  and the `root` `key` points to the node which corresponds to the
   ::  type under analysis.
   ::
-  +$  ximage  [root=key =xtable]
+  +$  ximage  [root=xkey =xtable]
   ::
-  ::  A `key` is just an identifier for a node in the xray graph.
+  ::  A `xkey` is just an identifier for a node in the xray graph.
   ::
-  +$  key  @
+  +$  xkey  @
   ::
   ::  An `xtable` is the xray graph itself. It contains one node for for
   ::  the type that was analyzed and one node for every type referenced
   ::  within that type.
   ::
-  ::  The `next` field is the the next available key (used when inserting
+  ::  The `next` field is the the next available xkey (used when inserting
   ::  new xrays), `xrays` maps keys to graph nodes and `type-map` gives
-  ::  the key corresponding to a type.
+  ::  the xkey corresponding to a type.
   ::
   ::  The `type-map` is basically just the reverse of the `xrays` map. It
   ::  doesn't contain any new information, but is needed for performance
   ::  reasons.
   ::
-  +$  xtable  [next=key xrays=(map key xray) =type=(map type key)]
+  +$  xtable  [next=xkey xrays=(map xkey xray) =type=(map type xkey)]
   ::
   ::  An `xray` is a node in the `ximage` graph. It contains everything
   ::  we know about a certain `type`. `key` is it's identifier in the graph,
@@ -11481,10 +11480,10 @@
   ::  nodes are inside the `data` structure, though some of the other
   ::  fields may contain references as well.
   ::
-  ::  - `shape` is some more information about the shape of data within
+  ::  - `xshape` is some more information about the xshape of data within
   ::     a cell.
-  ::  - `role` expands on `shape`, adding further information about the
-  ::     role that a node has within a fork.
+  ::  - `xrole` expands on `xshape`, adding further information about the
+  ::     xrole that a node has within a fork.
   ::  - `pats` is used for printing data: we want to know if this type
   ::    can be printed as a list, as json, as a tape literal, etc.
   ::  - `recipes` contains information about how a type was
@@ -11496,15 +11495,15 @@
   ::    `ximage`.
   ::
   +$  xray
-    $:  =key
+    $:  =xkey
         =type
-        data=(unit data)
-        role=(unit role)
-        pats=(unit pattern)
+        data=(unit xdat)
+        role=(unit xrole)
+        pats=(unit xpat)
         studs=(set stud)
         recipes=(set recipe)
         helps=(set help)
-        shape=(unit shape)
+        xshape=(unit xshape)
         loop=(unit ?)
     ==
   ::
@@ -11519,17 +11518,17 @@
   ::  - `%pntr` -- This is an internal hack, it should never survive
   ::     analysis; ignore.
   ::
-  +$  data
+  +$  xdat
     $@  ?(%noun %void)
     $%  [%atom =aura constant=(unit @)]
-        [%cell head=key tail=key]
-        [%core =garb xray=key batt=xbattery]
-        [%face face=$@(term tune) xray=key]
-        [%fork =(set key)]
-        [%pntr xray=key]
+        [%cell head=xkey tail=xkey]
+        [%core =garb xray=xkey batt=xbat]
+        [%face face=$@(term tune) xray=xkey]
+        [%fork =(set xkey)]
+        [%pntr xray=xkey]
     ==
   ::
-  ::  The basic shape of a type:
+  ::  The basic xshape of a type:
   ::
   ::  - `%void` -- impossible to create.
   ::  - `%noun` -- could be any noun.
@@ -11537,12 +11536,12 @@
   ::  - `%cell` -- always some type of cell; never an atom.
   ::  - `%junc` -- is a fork of a cell type and an atom type.
   ::
-  +$  shape  ?(%void %noun %atom %cell %junc)
+  +$  xshape  ?(%void %noun %atom %cell %junc)
   ::
-  ::  A `role` is the of a type, including a more refined understanding
-  ::  of what role it plays within a fork.
+  ::  A `xrole` is the of a type, including a more refined understanding
+  ::  of what xrole it plays within a fork.
   ::
-  ::  Nodes referenced within a `role` often do not actually exist in the
+  ::  Nodes referenced within a `xrole` often do not actually exist in the
   ::  original type, since we need to reorganize forks in order to make
   ::  them more coherent.
   ::
@@ -11563,15 +11562,15 @@
   ::    to tell which branch to take when analyzing a fork which is a
   ::    %misjunction, and the type is probably improperly constructed.
   ::
-  +$  role
+  +$  xrole
     $@  $?  %void  %noun  %atom  %tall  %wide  ==
     $%  [%constant =atom]
         [%instance =atom]
-        [%option =(map atom key)]
-        [%union =(map atom key)]
-        [%junction flat=key deep=key]
-        [%conjunction wide=key tall=key]
-        [%misjunction one=key two=key]
+        [%option =(map atom xkey)]
+        [%union =(map atom xkey)]
+        [%junction flat=xkey deep=xkey]
+        [%conjunction wide=xkey tall=xkey]
+        [%misjunction one=xkey two=xkey]
     ==
   ::
   ::  This is just a utility type, it encodes the "battery" structure
@@ -11580,7 +11579,7 @@
   ::  It's a map from chapter names to the documentation and arms within
   ::  that chapter.
   ::
-  +$  xbattery  (map term (pair what (map term key)))
+  +$  xbat  (map term (pair what (map term xkey)))
   ::
   ::  A recipe tells us how a type was constructed.Direct
   ::
@@ -11589,33 +11588,33 @@
   ::
   +$  recipe
     $%  [%direct =term]
-        [%synthetic =term =(list key)]
+        [%synthetic =term =(list xkey)]
     ==
   ::
-  ::  A `pattern` is high-level information about the shape of a type. This
+  ::  A `xpat` is high-level information about the shape of a type. This
   ::  is used for printing data.
   ::
   ::  This is fairly heuristic. [%a %b %c ~] is recognized as a `path`,
   ::  `[3 ~[4 5 6]]` is recognized as a list, etc.
   ::
-  ::  Most of the patterns have names that make their purpose obvious:
-  ::  for example, the %tape pattern means that data of type type can be
+  ::  Most of the xpats have names that make their purpose obvious:
+  ::  for example, the %tape xpat means that data of type type can be
   ::  printed as if it had the `tape` type. However, `%gear` and `%gate`
   ::  might not be entirely obvious.
   ::
-  ::  - The %gear pattern is any core with a cell subject.
-  ::  - The %gate pattern is a core that looks like a gate.
+  ::  - The %gear xpat is any core with a cell subject.
+  ::  - The %gate xpat is a core that looks like a gate.
   ::
-  +$  pattern
+  +$  xpat
     $@  ?(%hoon %manx %json %nock %path %plum %skin %spec %tape %tour %type %vase)
-    $%  [%gate sample=key product=key]
-        [%gear sample=key context=key batt=xbattery]
-        [%list item=key]
-        [%tree item=key]
-        [%unit item=key]
+    $%  [%gate sample=xkey product=xkey]
+        [%gear sample=xkey context=xkey batt=xbat]
+        [%list item=xkey]
+        [%tree item=xkey]
+        [%unit item=xkey]
     ==
   ::
-  --
+  ::  --
 ::
 ++  skol                                                ::  $-(type tank) for ~!
   |=  typ/type
