@@ -2,8 +2,8 @@
 ::::  /hoon/dojo/app                                    ::  ::::
   ::                                                    ::    ::
 /?  309                                                 ::  arvo kelvin
-/-  sole, lens                                          ::  console structures
-/+  sole                                                ::  console library
+/-  sole, lens, xray                                    ::  console structures
+/+  sole, xray, pprint                                  ::  console library
 =,  sole
 ::                                                      ::  ::
 ::::                                                    ::  ::::
@@ -608,12 +608,28 @@
         =+  mar=|.(?:(=(%noun p.cay) ~ [%rose [~ "    " ~] >p.cay< ~]~))
         ?-  p.p.mad
           $0  ~
-          $1  [[%rose [~ "  " ~] (skol p.q.cay) ~] (mar)]
+          $1  [[%rose [~ "  " ~] (skool p.q.cay) ~] (mar)]
           $2  [[%rose [~ "  " ~] (dy-show-type-noun p.q.cay) ~] (mar)]
           $3  ~
         ==
       ==
     ::
+    ++  skool
+      |=  typ/type
+      ^-  tank
+      ~&  %such-skool
+      %-  plum-to-tank
+      ^-  plum
+      (type-to-plum:pprint typ)
+      ::  =/  pec  ~(structure cosmetic typ)
+      ::  ~&  [%spec pec]
+      ::  =/  lum  (spec-to-plum pec)
+      ::  ~&  [%plum lum]
+      ::  =/  tax  (plum-to-tank lum)
+      ::  ~&  [%tank tax]
+      ::  tax
+      ::  (plum-to-tank `plum`(spec-to-plum `spec`~(structure cosmetic typ)))
+      ::  ~(duck ut typ)
     ++  dy-show  |=(cay/cage (dy-print cay ~))
     ++  dy-print
       |=  {cay/cage tan/tang}

@@ -14,18 +14,22 @@
 ::
 /?  310
 ::
-/-  *xray, *plum
-/+  *xray, *plum
+/-  *xray
+/+  *xray
 ::
 |^  ^-  $:  render-vase=$-(vase wain)
             render-hoon=$-(hoon wain)
             render-type=$-(type wain)
+            type-to-plum=$-(type plum)
+            type-to-tank=$-(type tank)
             render-type-simple=$-(type wain)
             render-vase-with-type=$-(vase wain)
         ==
     :*  render-vase
         render-hoon
         render-type
+        type-to-plum
+        type-to-tank
         render-type-simple
         render-vase-with-type
     ==
@@ -108,6 +112,13 @@
   |=  t=type
   ^-  plum
   (spec-to-plum (ximage-to-spec (xray-type 99 t)))
+::
+::  Pretty-print a type to a tank.
+::
+++  type-to-tank
+  |=  t=type
+  ^-  tank
+  (plum-to-tank (type-to-plum t))
 ::
 ::  Render an `axis`.
 ::
