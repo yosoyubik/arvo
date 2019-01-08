@@ -3,7 +3,7 @@
   ::                                                    ::    ::
 /?  309                                                 ::  arvo kelvin
 /-  sole, lens                                          ::  console structures
-/+  sole, xray, pprint                                  ::  console library
+/+  sole                                                ::  console library
 =,  sole
 ::                                                      ::  ::
 ::::                                                    ::  ::::
@@ -621,7 +621,7 @@
       |=  typ/type
       ^-  tank
       ~&  %such-skool
-      [%plum (type-to-plum:pprint typ)]
+      [%plum (type-to-plum:libpprint typ)]
     ::
     ++  dy-show  |=(cay/cage (dy-print cay ~))
     ::
