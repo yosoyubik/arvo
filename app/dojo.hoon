@@ -590,7 +590,7 @@
         ==
       ::
           $flat
-        ?^  q.q.cay 
+        ?^  q.q.cay
           (dy-rash %tan [%leaf "not an atom"]~)
         (dy-rash %sav p.p.mad q.q.cay)
       ::
@@ -608,63 +608,25 @@
         =+  mar=|.(?:(=(%noun p.cay) ~ [%rose [~ "    " ~] >p.cay< ~]~))
         ?-  p.p.mad
           $0  ~
-          $1  [[%rose [~ "  " ~] (skool p.q.cay) ~] (mar)]
+          $1
+            ~&  [%cay cay]
+            ~&  [%mar (mar)]
+            [[%rose [~ "  " ~] (type-to-tank p.q.cay) ~] (mar)]
           $2  [[%rose [~ "  " ~] (dy-show-type-noun p.q.cay) ~] (mar)]
           $3  ~
         ==
       ==
     ::
-    ++  skool
+    ++  type-to-tank
       |=  typ/type
       ^-  tank
       ~&  %such-skool
-      %-  plum-to-taank
-      ^-  plum
-      (type-to-plum:pprint typ)
-      ::  =/  pec  ~(structure cosmetic typ)
-      ::  ~&  [%spec pec]
-      ::  =/  lum  (spec-to-plum pec)
-      ::  ~&  [%plum lum]
-      ::  =/  tax  (plum-to-taank lum)
-      ::  ~&  [%tank tax]
-      ::  tax
-      ::  (plum-to-taank `plum`(spec-to-plum `spec`~(structure cosmetic typ)))
-      ::  ~(duck ut typ)
-    ++  plum-to-taank
-      |=  =plum
-      ^-  tank
-      ?@  plum  [%leaf (trip plum)]
-      [%leaf "TANK"]
-      ?-  -.plum
-      ::    %|  :+  %rose
-      ::          ["" " " ""]
-      ::        (turn list.plum |=(@ta [%leaf (trip +<)]))
-      ::    %&  =/  list  (turn list.plum ..$)
-      ::        ?~  tall.plum
-      ::          ?>  ?=(^ wide.plum)
-      ::          =?  enclose.u.wide.plum  ?=(~ enclose.u.wide.plum)  `['{' '}']
-      ::          :+  %rose
-      ::            :*  (trip delimit.u.wide.plum)
-      ::                (trip +<:enclose.u.wide.plum)
-      ::                (trip +>:enclose.u.wide.plum)
-      ::            ==
-      ::          list
-      ::        ?:  ?=(^ indef.u.tall.plum)
-      ::          :+  %rose
-      ::            :*  (trip sigil.u.indef.u.tall.plum)
-      ::                (weld (trip intro.u.tall.plum) "[")
-      ::                (weld "]" (trip final.u.indef.u.tall.plum))
-      ::            ==
-      ::          list
-      ::        :+  %palm
-      ::          :*  (weld (trip intro.u.tall.plum) "(")
-      ::              ""
-      ::              ""
-      ::              ")"
-      ::          ==
-      ::        list
-      ::  ==
+      [%plum (type-to-plum:pprint typ)]
+    ::
     ++  dy-show  |=(cay/cage (dy-print cay ~))
+    ::
+    ::  Print a value (given as a cage) and a note (given as a tang).
+    ::
     ++  dy-print
       |=  {cay/cage tan/tang}
       %+  dy-rash  %tan
