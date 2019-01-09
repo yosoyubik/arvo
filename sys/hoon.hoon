@@ -13552,7 +13552,7 @@
     |=  =vase
     ^-  wain
     ::
-    =/  =ximage  (xray-type:libxray 99 p.vase)
+    =/  =ximage  (xray-type:libxray 0 p.vase)
     ::
     ::  ~&  %noun-to-plum
     =/  val=plum  (noun-to-plum ximage q.vase)
@@ -13612,14 +13612,14 @@
   ++  vase-to-plum
     |=  v=vase
     ^-  plum
-    (noun-to-plum (xray-type:libxray 99 p.v) q.v)
+    (noun-to-plum (xray-type:libxray 0 p.v) q.v)
   ::
   ::  Pretty-print a type.
   ::
   ++  type-to-plum
     |=  t=type
     ^-  plum
-    (spec-to-plum (ximage-to-spec:libxray (xray-type:libxray 99 t)))
+    (spec-to-plum (ximage-to-spec:libxray (xray-type:libxray 0 t)))
   ::
   ::  Pretty-print a type to a tank.
   ::
