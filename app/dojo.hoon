@@ -608,10 +608,7 @@
         =+  mar=|.(?:(=(%noun p.cay) ~ [%rose [~ "    " ~] >p.cay< ~]~))
         ?-  p.p.mad
           $0  ~
-          $1
-            ~&  [%cay cay]
-            ~&  [%mar (mar)]
-            [[%rose [~ "  " ~] (skol p.q.cay) ~] (mar)]
+          $1  [[%rose [~ "  " ~] (xskol p.q.cay) ~] (mar)]
           $2  [[%rose [~ "  " ~] (dy-show-type-noun p.q.cay) ~] (mar)]
           $3  ~
         ==
@@ -625,7 +622,7 @@
       |=  {cay/cage tan/tang}
       %+  dy-rash  %tan
       %-  welp  :_  tan
-      ?+  p.cay  [(vase-to-tank:libpprint q.cay)]~
+      ?+  p.cay  [(xsell q.cay)]~
         $tang  ;;(tang q.q.cay)
         $httr
           =+  hit=;;(httr:eyre q.q.cay)
