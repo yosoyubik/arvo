@@ -1910,7 +1910,7 @@
   ++  my                                                  ::  construct map
     |*  a/(list (pair))
     =>  .(a ^+((le a) a))
-    (~(gas by `(map _p.i.-.a _q.i.-.a)`~) a)                                                 
+    (~(gas by `(map _p.i.-.a _q.i.-.a)`~) a)
   ::                                                      ::
   ++  si                                                  ::  construct set
     |*  a/(list)
@@ -8466,7 +8466,7 @@
       :-  %brhp                                         ::  |-
       :+  %ktls                                         ::  ^+
         :-  %brhp                                       ::  |-
-        :^    %wtcl                                       ::  ?:
+        :^    %wtcl                                     ::  ?:
             [%bust %flag]                               ::  ?
           [%bust %null]                                 ::  ~
         :-  [%ktts %i [%sand 'tD' *@]]                  ::  :-  i=~~
@@ -8478,22 +8478,22 @@
       ^-  hoon                                          ::
       ?@  i.p.gen                                       ::
         [[%sand 'tD' i.p.gen] res]                      ::  [~~{i.p.gen} {res}]
-      :+  %tsls                                          ::
+      :+  %tsls                                         ::
         :-  :+  %ktts                                   ::  ^=
               %a                                        ::  a
             :+  %ktls                                   ::  ^+
               [%limb %$]                                ::  $
-            [%tsbn [%limb %v] p.i.p.gen]                 ::  =>(v {p.i.p.gen})
+            [%tsbn [%limb %v] p.i.p.gen]                ::  =>(v {p.i.p.gen})
         [%ktts %b res]                                  ::  b={res}
       ^-  hoon                                          ::
       :-  %brhp                                         ::  |-
       :^    %wtvt                                       ::  ?@
           [%a ~]                                        ::  a
         [%limb %b]                                      ::  b
-      :-  [%tsld [%$ 2] [%limb %a]]                      ::  :-  -.a
+      :-  [%tsld [%$ 2] [%limb %a]]                     ::  :-  -.a
       :+  %cnts                                         ::  %=
         [%$ ~]                                          ::  $
-      [[[%a ~] [%tsld [%$ 3] [%limb %a]]] ~]             ::  a  +.a
+      [[[%a ~] [%tsld [%$ 3] [%limb %a]]] ~]            ::  a  +.a
     ::
         {$leaf *}  ~(factory ax fab `spec`gen)
         {$limb *}  [%cnts [p.gen ~] ~]
@@ -8728,7 +8728,7 @@
         {$tskt *}                                        ::                  =^
       =+  wuy=(weld q.gen `wing`[%v ~])                  ::
       :+  %tsbn  [%ktts %v %$ 1]                         ::  =>  v=.
-      :+  %tsls  [%ktts %a %tsbn [%limb %v] r.gen]        ::  =+  a==>(v \r.gen)
+      :+  %tsls  [%ktts %a %tsbn [%limb %v] r.gen]       ::  =+  a==>(v \r.gen)
       :^  %tsdt  wuy  [%tsld [%$ 3] [%limb %a]]
       :+  %tsbn  :-  :+  %ktts  [%over [%v ~] p.gen]
                      [%tsld [%$ 2] [%limb %a]]
@@ -11664,7 +11664,7 @@
 ::  - XX Actually, it would also be really nice to produce another
 ::    version of this structure that doesn't have the (unit *) wrapper around
 ::    everything interesting. This would make the on-demand computation
-::    of various things hard, though
+::    of various things hard, though.
 ::
 ::  - XX Simply lying about the type of deep arms is not robust. I am just
 ::    claiming that they are nouns, but if another thing in the xray
@@ -12132,8 +12132,8 @@
         |=  [acc=table k=xkey]
         ^-  table
         ::
-        ?:  (~(has in live.acc) k)  acc                     ::  already processed
-        ?:  (~(has by refs.acc) k)  acc                     ::  already processed
+        ?:  (~(has in live.acc) k)  acc                 ::  already processed
+        ?:  (~(has by refs.acc) k)  acc                 ::  already processed
         ::
         =/  x=xray  (focus-on img k)
         =/  d=xdat  (need xdat.x)
@@ -12177,7 +12177,7 @@
       %+  (fold (map xkey xray) (pair xkey xray))
         [*(map xkey xray) ~(tap by xrays)]
       |=  [acc=(map xkey xray) [i=xkey x=xray]]
-      ?.  (~(has in live.tbl) i)  acc                     ::  Drop unused xrays
+      ?.  (~(has in live.tbl) i)  acc                   ::  Drop unused xrays
       (~(put by acc) i (fix-xray tbl x))
     ::
     ::  All the xrays which are simply references to `i`.
@@ -12202,7 +12202,7 @@
       =/  helps    ^-  (set help)    (~(uni in helps.acc) helps.ref-xray)
       =/  recipes  ^-  (set recipe)  (~(uni in recipes.acc) recipes.ref-xray)
       ::
-      =/  studs    ^-  (set stud)                         ::  Type system hack
+      =/  studs    ^-  (set stud)                       ::  Type system hack
                    %+  (fold (set stud) stud)
                      [studs.acc ~(tap in studs.ref-xray)]
                    |=  [acc=(set stud) new=stud]
@@ -12366,7 +12366,7 @@
       =/  x    (focus-on img i)
       =/  dat  (need xdat.x)
       ::
-      ?.  =(~ loop.x)          img                        ::  already done
+      ?.  =(~ loop.x)          img                      ::  already done
       ?:  (~(has in trace) i)  (replace-xray img x(loop `%.y))
       ::
       =.  trace  (~(put in trace) i)
@@ -12391,9 +12391,9 @@
                      ^$(img img, i i)
           ==
       ::
-      =.  x  (focus-on img i)                             ::  get updated xray
-      ?^  loop.x  img                                     ::  loop found
-      (replace-xray img x(loop `%.n))                     ::  no loop found
+      =.  x  (focus-on img i)                           ::  get updated xray
+      ?^  loop.x  img                                   ::  loop found
+      (replace-xray img x(loop `%.n))                   ::  no loop found
     --
   ::
   ::  Fills in the `xpats` fields in each xray (where possible).
@@ -12756,7 +12756,7 @@
       =/  x=xray  (focus-on st i)
       =/  dat  (need xdat.x)
       ::
-      ?^  xshape.x  [u.xshape.x st]                         ::  already processed
+      ?^  xshape.x  [u.xshape.x st]                     ::  already processed
       ::
       =^  res=xshape  st
         ?-  dat
@@ -12767,10 +12767,10 @@
           [%core *]  [%cell st]
           [%fork *]  (fork-xshape st (xray-branches st xkey.x))
           [%face *]  (xray-xshape st xray.dat)
-          [%pntr *]  !!                                   ::  run `cleanup` first
+          [%pntr *]  !!                                 ::  run `cleanup` first
         ==
       ::
-      =/  y=xray    x                                     ::  type system hack
+      =/  y=xray    x                                   ::  type system hack
       =.  xshape.y   `res
       =.  xrays.st  (~(put by xrays.st) xkey.y y)
       [res st]
@@ -12916,8 +12916,8 @@
       =/  dat=xdat  (need xdat.x)
       ::
       =^  res=xrole  st
-        ?:  ?=([~ %void] xshape.x)  [%void st]             ::  optimization
-        ?:  ?=([~ %noun] xshape.x)  [%noun st]             ::  optimization
+        ?:  ?=([~ %void] xshape.x)  [%void st]         ::  optimization
+        ?:  ?=([~ %noun] xshape.x)  [%noun st]         ::  optimization
         ?-  dat
           %noun      :_  st  %noun
           %void      :_  st  %void
@@ -12925,7 +12925,7 @@
           [%cell *]  :_  st  (cell-xrole-by-head (focus-on st head.dat))
           [%core *]  :_  st  %wide
           [%face *]  (xray-xrole st xray.dat)
-          [%pntr *]  !!                                   ::  Run `cleanup` first.
+          [%pntr *]  !!                                 ::  Run `cleanup` first.
           [%fork *]  (fork-xrole st (xray-branches st xkey.x))
         ==
       ::
@@ -13258,7 +13258,7 @@
         =.  st              (replace-xray st jray(xrole `xrole))
         [xkey.jray st]
       ::
-      ++  atom-atom                                       ::  Can't discriminate
+      ++  atom-atom                                     ::  Can't discriminate
         |=  [st=xtable [x=xkey xrole] [y=xkey xrole]]
         (joint st x y [%misjunction x y])
       ::
@@ -13270,7 +13270,7 @@
         |=  [st=xtable [w=xkey xrole] [t=xkey xrole]]
         (joint st w t [%conjunction w t])
       ::
-      ++  noun-noun                                       ::  Can't discriminate
+      ++  noun-noun                                     ::  Can't discriminate
         |=  [st=xtable [x=xkey xrole] [y=xkey xrole]]
         (joint st x y [%misjunction x y])
       ::
@@ -13278,7 +13278,7 @@
         |=  [st=xtable [x=xkey xrole] [y=xkey xrole]]
         (joint st x y [%misjunction x y])
       ::
-      ++  atom-optn                                       ::  Can't discriminate
+      ++  atom-optn                                     ::  Can't discriminate
         |=  [st=xtable [x=xkey xrole] [y=xkey [%option *]]]
         (joint st x y [%misjunction x y])
       ::
@@ -13823,15 +13823,15 @@
         [%$ @]     (axis-to-cord p.x)
         [%base *]  (spec [%base p.x])
         [%bust *]  (simple-wide '*' '' '' (spec [%base p.x]) ~)
-        [%dbug *]  (hn q.x)                               ::  p.x is irrelevant
+        [%dbug *]  (hn q.x)                             ::  p.x is irrelevant
         [%eror *]  %assembly-error
         [%hand *]  %ast-node-hand
-        [%note *]  (hn q.x)                               ::  p.x is irrelevant
+        [%note *]  (hn q.x)                             ::  p.x is irrelevant
         [%fits *]  %ast-node-fits
         [%knit *]  (simple-wide '"' '' '"' (turn p.x woof-to-plum))
         [%leaf *]  (spec x)
         [%limb *]  p.x
-        [%lost *]  (hn p.x)                               ::  for internal use
+        [%lost *]  (hn p.x)                             ::  for internal use
         [%rock *]  ?^  q.x  !!  (cat 3 '%' (crip (scow p.x `@`q.x)))
         [%sand *]  ?^  q.x  !!  (crip (scow p.x `@`q.x))
         [%tell *]  (simple-wide '<' ' ' '>' (hoons p.x))
@@ -13839,16 +13839,16 @@
         [%wing *]  (simple-wide '' '.' '' (turn p.x limb))
         [%yell *]  (simple-wide '>' ' ' '<' (hoons p.x))
         [%xray *]  (xray-to-plum p.x)
-        [%brcb *]  (chapter '|_' `(spec p.x) r.x)         ::  skip aliases
+        [%brcb *]  (chapter '|_' `(spec p.x) r.x)       ::  skip aliases
         [%brcl *]  (rune '|:' ~ ~ (hoons ~[p q]:x))
-        [%brcn *]  (chapter '|%' ~ q.x)                   ::  Ignoring p.x
+        [%brcn *]  (chapter '|%' ~ q.x)                 ::  Ignoring p.x
         [%brdt *]  (rune '|.' ~ ~ (hoons ~[p]:x))
         [%brkt *]  (chapter '|^' `(hn p.x) q.x)
         [%brhp *]  (rune '|-' ~ ~ (hn p.x) ~)
         [%brsg *]  (rune '|~' ~ ~ (spec p.x) (hn q.x) ~)
         [%brtr *]  (rune '|*' ~ ~ (spec p.x) (hn q.x) ~)
         [%brts *]  (rune '|=' ~ ~ (spec p.x) (hn q.x) ~)
-        [%brvt *]  (chapter '|@' ~ q.x)                   ::  Ignoring p.x
+        [%brvt *]  (chapter '|@' ~ q.x)                 ::  Ignoring p.x
         [%brwt *]  (rune '|?' ~ ~ (hn p.x) ~)
         [%clcb *]  (rune ':_' ~ ~ (hoons ~[p q]:x))
         [%clkt *]  (rune ':^' ~ ~ (hoons ~[p q r s]:x))
@@ -13891,10 +13891,10 @@
         [%sgld *]  (rune '~<' ~ ~ (hint p.x) (hn q.x) ~)
         [%sgbn *]  (rune '~>' ~ ~ (hint p.x) (hn q.x) ~)
         [%sgbs *]  (rune '~$' ~ ~ p.x (hn q.x) ~)
-        [%sgls *]  (rune '~+' ~ ~ (hn q.x) ~)             ::  Ignoring p.x
-        [%sgpd *]  (rune '~&' ~ ~ (hoons ~[q r]:x))       ::  Ignoring p.x
+        [%sgls *]  (rune '~+' ~ ~ (hn q.x) ~)           ::  Ignoring p.x
+        [%sgpd *]  (rune '~&' ~ ~ (hoons ~[q r]:x))     ::  Ignoring p.x
         [%sgts *]  (rune '~=' ~ ~ (hoons ~[p q]:x))
-        [%sgwt *]  (rune '~?' ~ ~ (hoons ~[q r s]:x))     ::  Ignoring p.x
+        [%sgwt *]  (rune '~?' ~ ~ (hoons ~[q r s]:x))   ::  Ignoring p.x
         [%sgzp *]  (rune '~!' ~ ~ (hoons ~[p q]:x))
         [%mcts *]  %ast-node-mcts
         [%mccl *]  (rune ';:' `'==' `[':(' spc ')'] (hoons [p q]:x))
@@ -13936,7 +13936,7 @@
         [%zpmc *]  (rune '!;' ~ ~ (hoons ~[p q]:x))
         [%zpts *]  (rune '!=' ~ ~ (hoons ~[p]:x))
         [%zpvt *]  (rune '!@' ~ ~ (wingseq p.x) (hoons ~[q r]:x))
-        [%zpwt *]  (hn q.x)                               ::  Ignore p.x
+        [%zpwt *]  (hn q.x)                             ::  Ignore p.x
         [%zpzp ~]  '!!'
       ==
       ++  hoons      hoons-to-plum-list
@@ -13970,7 +13970,7 @@
       ++  tiscol-to-plum
         |=  [updates=(list [^wing hoon]) body=hoon]
         ^-  plum
-        =/  rem=(list (pair ^wing hoon))  updates         ::  Note [TisCol Order]
+        =/  rem=(list (pair ^wing hoon))  updates       ::  Note [TisCol Order]
         =/  acc=hoon  body
         %+  hoon-to-plum  (dec maxdepth)
         |-  ^-  hoon
@@ -14097,7 +14097,7 @@
   ++  xray-to-plum
     |=  =manx:hoot
     ^-  plum
-    %ast-node-xray                                        ::  XX Punt
+    %ast-node-xray                                      ::  XX Punt
   ::
   ::  Render a plum to a skin.
   ::
@@ -14105,7 +14105,7 @@
     |=  =skin
     ^-  plum
     ?@  skin  skin
-    %todo-complex-skin                                    ::  XX Punt
+    %todo-complex-skin                                  ::  XX Punt
   ::
   ::  Render a list of wings a plum that looks something like "a:b:c"
   ::
@@ -14393,7 +14393,7 @@
     ++  tour-to-plum
       |=  t=tour
       ^-  plum
-      '%tour'                                             ::  XX TODO
+      '%tour'                                           ::  XX TODO
     ::
     ++  render-with-xpat
       |=  [p=xpat n=*]
@@ -14415,7 +14415,7 @@
                    =/  =plum  ((hard plum) .*(vtp(+< n) [9 2 0 1]))
                    (rune '!>' ~ ~ ~[plum])
         [%gate *]  (render-gate sample.p product.p)
-        [%gear *]  '%gear'                                ::  XX TODO
+        [%gear *]  '%gear'                              ::  XX TODO
         [%list *]  (render-list item.p n)
         [%tree *]  (render-tree item.p n)
         [%unit *]  (render-unit item.p n)
@@ -15069,7 +15069,7 @@
         ==
       top-level
     ::
-    ++  top-level                                        ::  entry-point
+    ++  top-level                                       ::  entry-point
       ;~(pfix mic ?:(in-tall-form tall-top wide-top))
     ::
     ++  inline-embed                                    ::  brace interpolation
@@ -15573,7 +15573,7 @@
           =.  ..$  (back col.saw)
             ::
           =^  col-ok  sty.saw
-            ?+  (sub col.saw inr.ind)  [| sty.saw]        :: columns advanced
+            ?+  (sub col.saw inr.ind)  [| sty.saw]      :: columns advanced
               $0  [& sty.saw]
               $8  [& %new %poem]
             ==
@@ -15957,7 +15957,7 @@
       ++  expr                                          ::  expression
         =>  (sail &)                                    ::  tall-form
         %+  ifix  [(star ace) ;~(simu gap (easy))]      ::  look-ahead for gap
-        (cook drop-top top-level)                        ::  list of tags
+        (cook drop-top top-level)                       ::  list of tags
         ::  
       ::
       ++  whit                                          ::  whitespace
@@ -16536,7 +16536,7 @@
             ==
       ==
     ::
-    ++  boog  !:                                         ::  core arms
+    ++  boog  !:                                        ::  core arms
       %+  knee  [p=*term q=*hoon]  |.  ~+
       ;~  pose
         ;~  pfix  ;~  pose 
