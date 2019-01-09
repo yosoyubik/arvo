@@ -2564,15 +2564,17 @@
       (rune ':*' `['=='] `['[' ' ' ']'] kids)
     ::
     ++  render-atom
-      |=  [=aura atom=@]
-      ^-  plum
+      |=  [=aura =atom]
+      ^-  cord
+      ?:  =(aura '')
+        (scot %ud atom)
       (scot aura atom)
     ::
     ++  render-const
       |=  [=aura const=@ =atom]
       ^-  plum
       ?:  =(~.n aura)  '~'
-      (cat 3 '%' (scot aura atom))
+      (cat 3 '%' (render-atom aura atom))
     ::
     ++  untyped-noun  ::  XX Where is the existing code for doing this?
       |=  [n=*]       ::  Can I just use that?
