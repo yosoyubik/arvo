@@ -42,14 +42,25 @@
   [~ +>.$(+<+ u.old)]
 ::
 ++  poke-noun
-  |=  a=@t
+  |=  a=$@(@t [wat=@t dat=*])
   ^-  [(list move) _+>]
-  ?:  =('call' a)  [[initial-call ~] +>]
-  ?:  =('file' a)  [[write-file ~] +>]
-  ?:  =('show' a)
-    ~&  ^-  (map ship [[[@ud @ux] [@ud @ux]] deed:eth-noun])
-        deeds
-    [~ +>]
+  ?@  a
+    ?:  =('call' a)  [[initial-call ~] +>]
+    ?:  =('cont' a)  next-in-queue
+    ?:  =('file' a)  [[write-file ~] +>]
+    ?:  =('show' a)
+      ~&  ^-  (map ship [[[@ud @ux] [@ud @ux]] deed:eth-noun])
+          deeds
+      [~ +>]
+    ?:  =('verify linear' a)  [[(verify 'linear') ~] +>]
+    ?:  =('verify conditional' a)  [[(verify 'conditional') ~] +>]
+    !!
+  ?:  =('list' wat.a)
+    =/  lis=(list @p)  ((list @p) dat.a)
+    [[(call lis %hull) ~] +>.$]
+    ::TODO  this might end up giving you a ton of calls still, if a galaxy
+    ::      is involved. fix that (special "no-recurse" flag) if it becomes
+    ::      a problem.
   !!
 ::
 ++  write-file
@@ -90,6 +101,8 @@
       =/  hout
         |=  num=@
         ?:  =(0x0 num)  "\"\""
+        ?:  =(0x740d.6d74.1711.163d.3fca.cecf.1f11.b867.9a7c.7964 num)
+          "tmp held by ceremony"
         (address-to-hex num)
       =/  kout
         |=  key=octs
@@ -146,6 +159,25 @@
     %deed  'rights(uint32)'
   ==
 ::
+++  verify
+  |=  wat=@t
+  ^-  move
+  %+  ask-node  /verify/[wat]
+  %+  murn
+    .^((list @t) %cx /(scot %p our.bol)/home/(scot %da now.bol)/[`@ta`wat]/txt)
+  |=  l=@t
+  ^-  (unit proto-read-request)
+  ?:  =('' l)  ~
+  :-  ~
+  :+  `l
+    ?:  =('linear' wat)  linear-sr
+    ?:  =('conditional' wat)  conditional-sr
+    !!
+  :-  'verifyBalance(address)'
+  ~|  l
+  :~  address+(rash l ;~(pfix (jest '0x') hex))
+  ==
+::
 ++  ask-node
   |=  [wir=wire req=(list proto-read-request)]
   ^-  move
@@ -156,6 +188,69 @@
   %+  json-request
     (need (de-purl:html parity))
   (batch-read-request req)
+::
+++  sigh-json-rpc-response-verify
+  |=  [wir=wire res=response:json-rpc]
+  ^-  [(list move) _+>]
+  ~|  ?:(?=(?(%error %fail) -.res) res -.res)
+  ?>  ?=(%batch -.res)
+  =+  ^-  (list @t)
+      %+  murn  bas.res
+      |=  r=response:json-rpc
+      ^-  (unit @t)
+      ?>  ?=(%result -.r)
+      ?>  ?=(%s -.res.r)
+      ?:  .=  p.res.r
+          '0x0000000000000000000000000000000000000000000000000000000000000001'
+        `id.r
+      ~&  [%incomplete id.r]
+      ~
+  =-  [[- ~] +>.$]
+  %+  ask-node  (weld /verify2 wir)
+  %+  turn  -
+  |=  id=@t
+  ^-  proto-read-request
+  :+  `id
+    ?+  wir  ~|(wir !!)
+      [%linear *]  linear-sr
+      [%conditional *]  conditional-sr
+    ==
+  :-  ?+  wir  ~|(wir !!)
+        [%linear *]  'batches(address)'
+        [%conditional *]  'commitments(address)'
+      ==
+  :~  address+(rash id ;~(pfix (jest '0x') hex))
+  ==
+::
+++  sigh-json-rpc-response-verify2
+  |=  [wir=wire res=response:json-rpc]
+  ^-  [(list move) _+>]
+  ~|  ?:(?=(?(%error %fail) -.res) res -.res)
+  ?>  ?=(%batch -.res)
+  =-  ~&  [%done2 (lent bas.res)]
+      [~ +>.$]
+  %+  turn  bas.res
+  |=  r=response:json-rpc
+  ~|  ?:(?=(?(%error %fail) -.r) r -.r)
+  ?>  ?=(%result -.r)
+  ?>  ?=(%s -.res.r)
+  ?+  wir  ~|(wir !!)
+      [%linear *]
+    =+  ^-  [@ud @ud @ud @ud amount=@ud @ux]
+        %+  decode-results  `@t`p.res.r
+        [%uint %uint %uint %uint %uint %address ~]
+    ?.  =(0 amount)  ~
+    ~&  [%unregistered-linear id.r]
+    ~
+  ::
+      [%conditional *]
+    =+  ^-  [@ud @ux total=@ud @ud]
+        %+  decode-results  `@t`p.res.r
+        [%uint %address %uint %uint ~]
+    ?.  =(0 total)  ~
+    ~&  [%unregistered-conditional id.r]
+    ~
+  ==
 ::
 ++  sigh-json-rpc-response
   |=  [wir=wire res=response:json-rpc]
