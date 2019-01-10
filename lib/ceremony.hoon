@@ -366,7 +366,12 @@
   =+  linear-star-release=(hex-to-num '0x86cd9cd0992f04231751e3761de45cecea5d1801')
   ::  XX only if csr is deployed at nonce 8681!
   =+  conditional-star-release=(hex-to-num '0x8c241098c3d3498fe1261421633fd57986d74aea')
-  =.  constitution  (hex-to-num '0xa23b5d8e86091ab6c14981f404c2864701aa2903')
+  =+  special-spawn-proxy=(hex-to-num '0xe86F3b9D53C4D660459Cb4deF9d2415117B767F9')
+  =+  doc-0=(hex-to-num '0x1234567890000000000000000000000000000000000000000000002019010900')
+  =+  doc-1=(hex-to-num '0xcb1f81e42b5e75f000f94fc71a3ea70cab4bfc6f236b91e717f1b9516e5596b5')
+  =+  doc-2=(hex-to-num '0x0000000000000000000000000000000000000000000000000000000000000060')
+  =.  constitution  (hex-to-num '0x6ac07b7c4601b5ce11de8dfe6335b871c7c4dd4d')
+  ::  pre-upgrade '0xa23b5d8e86091ab6c14981f404c2864701aa2903'
   ::  pre-rescue: '0x12778371a6aa58b1dd623c126e09cd28fc5b9b5c'
   ::
   =/  linear-lockup-addresses  *(list address)
@@ -629,6 +634,69 @@
     |=  who=ship
     [who ~ `[0x0 0x0]]
   ~&  [%tmp-points tmp-points]
+  ::
+  =/  old-tmp-points
+    ^-  %-  list
+        $:  who=ship
+            net=(unit [crypt=@ux auth=@ux])
+            $=  send
+            $:  own=address
+                manage=(unit address)
+                voting=(unit address)
+                spawn=(unit address)
+                transfer=(unit address)
+            ==
+        ==
+    %+  turn
+      ^-  (list ship)
+      ::  ~
+      ::  :~  ::  ~dopzod
+      ::      ~net
+      ::      ~wel
+      ::      ~wes
+      ::      ~sev
+      ::  ==
+      ::  :~  ~feb
+      ::  ==
+      ::  :~  ~rel
+      ::      ~rud
+      ::      ~nes
+      ::      ~fet
+      ::  ==
+      :~  ~nus
+        ::
+          ~ten
+          ~pub
+          ~sud
+          ~pem
+          ~dev
+          ~lur
+          ~def
+          ~bus
+      ==
+      ::  :~  
+      ::      ::  ~zod
+      ::      ::  ~marzod
+      ::      ::  ~binzod
+      ::      ::  ~wanzod
+      ::      ::  ~samzod
+      ::  ==
+      ::  XX what of dopzod?
+    |=  who=ship
+    =+  (~(got by all-addr) who)
+    :*  who  
+        ?:  |(?=(~ crypt) ?=(~ auth))
+          ~
+        `[u.crypt u.auth]
+        (need owner)
+        management
+        voting
+        ::  ?~  spawn  nope because we manually set these guys
+        ::    `*address
+        spawn
+        transfer
+    ==
+  ~&  [%old-tmp-points old-tmp-points]
   ::
   ::  Calculate conditional stars
   ::
@@ -1043,24 +1111,45 @@
     =.  this
       (create-ship i.tmp-points)
     $(tmp-points t.tmp-points)
+  ::O ?^  old-tmp-points
+  ::O   =?  this  ?=(^ net.i.old-tmp-points)
+  ::O     %^  do  constitution  300.000
+  ::O     (configure-keys:dat [who u.net]:i.old-tmp-points)
+  ::O   =.  this
+  ::O     (send-ship [who send]:i.old-tmp-points)
+  ::O   $(old-tmp-points t.old-tmp-points)
   ::
   ::  Deploy conditional stars
   ::
   ::CS  ~&  ['Deploying conditional stars...' +(nonce)]
-  ::CS  =/  conditional-star-gals=(list @p)
-  ::CS    ~
-  ::CS    ::  :~  ~rel
-  ::CS    ::      ~rud
-  ::CS    ::      ~nes
-  ::CS    ::      ~fet
-  ::CS    ::  ==
-  ::CS  |-
-  ::CS  ?^  conditional-star-gals
-  ::CS    =.  this
-  ::CS      %^  do  constitution  300.000
-  ::CS      %+  set-spawn-proxy:dat  i.conditional-star-gals
-  ::CS      conditional-star-release
-  ::CS    $(conditional-star-gals t.conditional-star-gals)
+  =/  conditional-star-gals=(list @p)
+    :~  ~pub
+        ~sud
+        ~pem
+        ~dev
+        ~lur
+        ~ten
+        ~bus
+        ~rel
+        ~rud
+        ~nes
+        ~nus
+        ~feb
+        ~def
+        ~fet
+    ==
+    ::  :~  ~rel
+    ::      ~rud
+    ::      ~nes
+    ::      ~fet
+    ::  ==
+  ::SS  |-
+  ::SS  ?^  conditional-star-gals
+  ::SS    =.  this
+  ::SS      %^  do  constitution  300.000
+  ::SS      %+  set-spawn-proxy:dat  i.conditional-star-gals
+  ::SS      special-spawn-proxy
+  ::SS    $(conditional-star-gals t.conditional-star-gals)
   ::CS  =.  this
   ::CS    (deposit-stars conditional-star-release con-stars)
   ::
@@ -1128,6 +1217,104 @@
     =.  this
       (send-ship [who own manage voting spawn transfer]:planet)
     $(planets t.planets)
+  ::
+  =/  zod-net
+    :-  (hex-to-num '0xf9cfce9e358657c2f2a1ea36f76ac88891ae70ffb14aff9a032f4e645ac13cb2')
+        (hex-to-num '0xf67337ea88a5ef905ab65ea29a5ba3858519dc297e6df10bf52649df057c7c5a')
+  =/  marzod-net
+    :-  (hex-to-num '0xf68b1ef787a6e35af4b62866f663c75f729dc3f3eed90997ffd272d5abe04a0d')
+        (hex-to-num '0xe6acb4951c84d3cd1bff58acad5bd70e67ce00c228ed60c13470229b4a6db052')
+  =/  samzod-net
+    :-  (hex-to-num '0x679ef9fcf5448b49c4603fdb57dbb8817a8f132321ecb780c02cad74b423cf89')
+        (hex-to-num '0x74d6e0960db8196809edfe9a999eaf5e2f3b1e34e9ed65266f1bf735d8dc4dc9')
+  =/  wanzod-net
+    :-  (hex-to-num '0x9170fe0f4f42a7ce1af7688df88100bd40c080ee962b59e57b26ac7bf974b9d5')
+        (hex-to-num '0x7b91da6fe334b10ccf11a7b5cba2f8af7d65f4f017bf19a5f7f3c41dfcb2a257')
+  =/  binzod-net
+    :-  (hex-to-num '0xe3cab27e170f469ae41b73335e527085fb5aa970c35677c87e31442703854518')
+        (hex-to-num '0xa9f9aef56cb492111049e0ee86fe1e916742c67989c106d1c81ee80d081eac81')
+  =.  this
+    %^  do  constitution  300.000
+    (configure-keys:dat ~zod zod-net)
+  =.  this
+    %^  do  constitution  300.000
+    (configure-keys:dat ~marzod marzod-net)
+  =.  this
+    %^  do  constitution  300.000
+    (configure-keys:dat ~samzod samzod-net)
+  =.  this
+    %^  do  constitution  300.000
+    (configure-keys:dat ~wanzod wanzod-net)
+  =.  this
+    %^  do  constitution  300.000
+    (configure-keys:dat ~binzod binzod-net)
+  ::
+  ::  Voting
+  ::
+  =/  vote-gals=(list ship)
+    :~  ::  ~zod
+        ::  ~bus
+        ::  ~def
+        ::  ~dev
+        ::  ~lur
+        ::  ~pem
+        ::  ~pub
+        ::  ~sud
+        ::  ~ten
+        ::  ~nus
+        ::  ~feb
+        ::  ~fet
+        ::  ~nes
+        ::  ~rel
+        ::  ~rud
+        ~wel
+    ==
+  ::V0  =.  this
+  ::V0    %^  do  constitution  300.000
+  ::V0    (start-document-poll:dat ~zod doc-0)
+  ::V0  |-
+  ::V0  ?^  vote-gals
+  ::V0    =.  this
+  ::V0      %^  do  constitution  300.000
+  ::V0      (cast-document-vote:dat i.vote-gals doc-0 &)
+  ::V0    $(vote-gals t.vote-gals)
+  ::V1  =.  this
+  ::V1    %^  do  constitution  300.000
+  ::V1    (start-document-poll:dat ~zod doc-1)
+  |-
+  ?^  vote-gals
+    =.  this
+      %^  do  constitution  300.000
+      (cast-document-vote:dat i.vote-gals doc-1 &)
+    $(vote-gals t.vote-gals)
+  ::V2  =.  this
+  ::V2    %^  do  constitution  300.000
+  ::V2    (start-document-poll:dat ~zod doc-2)
+  ::V2  |-
+  ::V2  ?^  vote-gals
+  ::V2    =.  this
+  ::V2      %^  do  constitution  300.000
+  ::V2      (cast-document-vote:dat i.vote-gals doc-2 &)
+  ::V2    $(vote-gals t.vote-gals)
+  =/  tlon-vote-gals=(list ship)
+    :~  ~bec  ~bel  ~bep  ~ber  ~bet  ~bex  ~byl  ~byr  ~byt  ~deb
+        ~deg  ~dem  ~des  ~det  ~duc  ~dun  ~dus  ~dut  ~dux  ~dyl
+        ~dyn  ~dyt  ~fel  ~fen  ~fex  ~fur  ~fyl  ~hul  ~hus  ~hut
+        ~lec  ~len  ~lep  ~ler  ~lev  ~luc  ~lud  ~lyn  ~lyr  ~lys
+        ~lyx  ~meb  ~mec  ~med  ~meg  ~mel  ~mes  ~mex  ~mug  ~mun
+        ~mur  ~myl  ~myn  ~myr  ~neb  ~ned  ~nel  ~ner  ~nev  ~nub
+        ~nux  ~nyd  ~nyl  ~nys  ~pec  ~pel  ~pex  ~rec  ~rem  ~ren
+        ~res  ~ret  ~rev  ~rux  ~ryc  ~ryd  ~ryl  ~rym  ~ryn  ~seb
+        ~sed  ~seg  ~sen  ~set  ~sug  ~sur  ~syl  ~syp  ~tec  ~ted
+        ~teg  ~tel  ~ter  ~tes  ~tex  ~tuc  ~tud  ~tun  ~tus  ~tyn
+        ~wed  ~weg  ~wer  ~wet  ~wyt  ::  ~wel
+    ==
+  ::TV1 |-
+  ::TV1 ?^  tlon-vote-gals
+  ::TV1   =.  this
+  ::TV1     %^  do  constitution  300.000
+  ::TV1     (cast-document-vote:dat i.tlon-vote-gals doc-1 &)
+  ::TV1   $(tlon-vote-gals t.tlon-vote-gals)
   ::B ~&  ['Depositing conditional release stars...' +(nonce)]
   ::B =.  this
   ::B   (deposit-stars conditional-star-release con-sar)
@@ -1162,8 +1349,8 @@
   ::B   %^  do  constit-final  300.000
   ::B   (set-dns-domains:dat "urbit.org" "urbit.org" "urbit.org")
   ::
-  ~&  linear-lockup-addresses=linear-lockup-addresses
-  ~&  conditional-lockup-addresses=conditional-lockup-addresses
+  ::LL  ~&  linear-lockup-addresses=linear-lockup-addresses
+  ::LL  ~&  conditional-lockup-addresses=conditional-lockup-addresses
   complete
 ::
 ::  sign pre-generated transactions
@@ -1310,6 +1497,8 @@
   ++  register-linear         (enc register-linear:cal)
   ++  register-conditional    (enc register-conditional:cal)
   ++  deposit                 (enc deposit:cal)
+  ++  start-document-poll     (enc start-document-poll:cal)
+  ++  cast-document-vote      (enc cast-document-vote:cal)
   --
 ::
 ++  cal
@@ -1449,6 +1638,23 @@
     :-  'deposit(address,uint16)'
     :~  [%address to]
         [%uint `@`star]
+    ==
+  ::
+  ++  start-document-poll
+    |=  [as=ship document=@]
+    ^-  call-data
+    :-  'startDocumentPoll(uint8,bytes32)'
+    :~  [%uint `@`as]
+        [%bytes-n 32^document]
+    ==
+  ::
+  ++  cast-document-vote
+    |=  [as=ship document=@ vote=?]
+    ^-  call-data
+    :-  'castDocumentVote(uint8,bytes32,bool)'
+    :~  [%uint `@`as]
+        [%bytes-n 32^document]
+        [%bool vote]
     ==
   --
 --
