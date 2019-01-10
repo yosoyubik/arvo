@@ -99,7 +99,7 @@
       ==                                                ::
     ++  card                                            ::  general card
       $%  {$diff lime}                                  ::
-          {$info wire ship term nori:clay}              ::
+          {$info wire term nori:clay}                   ::
           {$peer wire dock path}                        ::
           {$poke wire dock pear}                        ::
           {$pull wire dock ~}                          ::
@@ -3114,7 +3114,6 @@
   :*  ost.bol
       %info
       /jamfile
-      our.bol
       (foal:space:userlib paf [%hall-telegrams !>(-)])
   ==
 ::
@@ -3211,7 +3210,6 @@
   :*  ost.bol
       %info
       /jamfile
-      our.bol
       (foal:space:userlib paf [%hall-telegrams !>(-)])
   ==
 ::
@@ -3257,6 +3255,14 @@
         ^-  (unit (pair ship path))
         ?:  ?=({$circle *} p)  ~
         `[s p]
+    [~ +>]
+  ?:  =(a 'check all subs')
+    ~&  'here are all incoming subs'
+    ~&  ^-  (list (pair ship path))
+        %+  turn  ~(tap by sup.bol)
+        |=  {b/bone s/ship p/path}
+        ^-  (pair ship path)
+        [s p]
     [~ +>]
   ?:  =(a 'rebuild')
     ~&  'rebuilding message references...'
@@ -3314,6 +3320,15 @@
       [[b %quit ~] out]
     out
   ::
+  ?:  =(a 'print')
+    ~&  shape:(~(got by stories) %inbox)
+    [~ +>]
+  ::
+  ?:  =(a 'print all')
+    ~&  %+  turn  ~(tap by stories)
+        |=  [n=name s=story]
+        [n shape:s]
+    [~ +>]
   ::
   [~ +>]
 --

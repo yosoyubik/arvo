@@ -114,10 +114,10 @@
               mark 
               {$hiss hiss:eyre}
           ==
-          [%build wire @p ? schematic:ford]
-          [%kill wire @p]
+          [%build wire ? schematic:ford]
+          [%kill wire ~]
           {$deal wire sock term club}                   ::
-          {$info wire @p toro:clay}                     ::
+          {$info wire toro:clay}                        ::
       ==                                                ::
     ++  move  (pair bone card)                          ::  user-level move
     ++  sign                                            ::
@@ -363,7 +363,7 @@
       ?>  ?=($~ pux)
       ::  pin all builds to :now.hid so they don't get cached forever
       ::
-      (he-card(poy `+>+<(pux `way)) %build way our.hid live=%.n schematic)
+      (he-card(poy `+>+<(pux `way)) %build way live=%.n schematic)
     ::
     ++  dy-eyre                                         ::  send work to eyre
       |=  {way/wire usr/(unit knot) req/hiss:eyre}
@@ -376,7 +376,7 @@
       =.  poy  ~
       ?~  pux  +>
       %.  [%txt "! cancel {<u.pux>}"]
-      he-diff:(he-card [%kill u.pux our.hid])
+      he-diff:(he-card [%kill u.pux ~])
     ::
     ++  dy-slam                                         ::  call by ford
       |=  {way/wire gat/vase sam/vase}
@@ -586,7 +586,6 @@
         %-  he-card(poy ~)  :*
           %info
           /file
-          our.hid
           (foal:space:userlib (en-beam:format p.p.mad) cay)
         ==
       ::
@@ -1623,7 +1622,7 @@
     (he-diff %tan u.p.cit)
   ::
   ++  he-lens
-    |=  com/command:^^lens
+    |=  com/command:lens
     ^+  +>
     =+  ^-  source/dojo-source
         =|  num/@
@@ -1813,7 +1812,7 @@
   (wrap he-type):arm
 ::
 ++  poke-lens-command
-  |=  com/command:^^lens  ~|  poke-lens+com  %.  com
+  |=  com/command:lens  ~|  poke-lens+com  %.  com
   (wrap he-lens):arm
 ::
 ++  poke-json
