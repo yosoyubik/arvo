@@ -11539,6 +11539,8 @@
 ::
 ::  Left-fold over a list.
 ::
+::  This is `roll`, but with explicit type parameters.
+::
 ++  fold
    |*  [state=mold elem=mold]
    |=  [[st=state xs=(list elem)] f=$-([state elem] state)]
@@ -11553,6 +11555,8 @@
 ::  Another way to think about this is that it is the same as `turn`,
 ::  except that a state variable `st` is threaded through the
 ::  execution. The list is processed from left to right.
+::
+::  This is `spin`, but with explicit type parameters.
 ::
 ++  traverse
   |*  [state=mold in=mold out=mold]
@@ -14097,7 +14101,7 @@
     [%tree fmt (turn list wing-to-plum)]
   ::
   ::  Renders a spec to a plum. Similarly to `hoon-to-plum`, given all of
-  ::  the helper functions this becomse quite simple. It does have a lot of
+  ::  the helper functions this becomes quite simple. It does have a lot of
   ::  cases, though.
   ::
   ++  spec-to-plum
