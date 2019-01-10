@@ -5,14 +5,9 @@
 /+  landscape
 /=  full-page
   /^  manx
-  /|  
     /,  /web/collections  /;  landscape  /collections-elem/
         /web/pages        /!hymn/
-        /web/static-site  /|  /!hymn/
-                              /hymn/
-                          ==
-        /                 /;  landscape  /!hymn/ 
+        /web/static-site  /hymn/
     ==
     ::
-  ==
 full-page
