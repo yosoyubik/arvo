@@ -14,5 +14,4 @@
         /                 /;  landscape  /!hymn/
     ==
     ::
-  ==
 full-page
