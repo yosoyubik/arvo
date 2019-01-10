@@ -604,22 +604,21 @@
         (dy-eyre /show q.p.mad [r.p.mad p.p.mad maf ~ q.mim])
       ::
           $show
-        |^  ?:  ?|(=(p.p.mad %4) =(p.p.mad %5))
-              (dy-xprint cay note)
-            (dy-print cay note)
-        ++  mar
-          ?:  =(%noun p.cay)  ~
-          [[%rose [~ "    " ~] >p.cay< ~] ~]
-        ++  note
-          ^-  tang
-          ?-  p.p.mad
-            %0  ~
-            %1  [[%rose [~ "  " ~] (skol p.q.cay) ~] mar]
-            %2  [[%rose [~ "  " ~] (dy-show-type-noun p.q.cay) ~] mar]
-            %3  ~
-            %4  ~
-            %5  [[%rose [~ "  " ~] (xskol p.q.cay) ~] mar]
-          ==
+        |^  (prnt cay note)
+        ++  prnt  ?:  (gte p.p.mad 4)
+                    dy-xprint
+                  dy-print
+        ++  note  ^-  tang
+                  ?-  p.p.mad
+                    %0  ~
+                    %1  [[%rose [~ "  " ~] (skol p.q.cay) ~] maar]
+                    %2  [[%rose [~ "  " ~] (dy-show-type-noun p.q.cay) ~] maar]
+                    %3  ~
+                    %4  ~
+                    %5  [[%rose [~ "  " ~] (xskol p.q.cay) ~] maar]
+                  ==
+        ++  maar  ?:  =(%noun p.cay)  ~
+                  [[%rose [~ "    " ~] >p.cay< ~] ~]
         --
       ==
     ::
