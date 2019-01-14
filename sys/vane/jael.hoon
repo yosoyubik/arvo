@@ -1,4 +1,4 @@
-::                                                      ::  /van/jael
+!:                                                      ::  /van/jael
 ::                                                      ::  %reference/0
 !?  150
 ::
@@ -890,7 +890,7 @@
     ::
         $west
       =*  her  p.tac
-      =/  mes  ((hard message) r.tac)
+      =/  mes  (parse-message r.tac)
       ?-    -.mes
       ::
       ::  reset remote rights
@@ -1004,6 +1004,50 @@
         %|  |+node.p.source.etn
       ==
     ==
+  ::                                                    ::  +parse-message:of
+  ++  parse-message                                     ::  fast (hard message)
+    |=  m=*
+    ^-  message
+    ~|  %parse-message
+    ?.  ?=([%vent-result ^] m)
+      ((hard message) m)
+    ~|  %vent-result
+    :-  %vent-result
+    =+  vr=+.m
+    ^-  vent-result
+    ?+    -.vr  ~|(%bad-vent-result !!)
+        %snap
+      ~|  %vent-result
+      :-  %snap
+      ^-  snapshot
+      =+  sn=+.vr
+      :*  ~|  %kyz  ((hard (map ship public:able)) -.sn)
+          ~|  %eth  ((hard ,[dnses (map ship point)]) +<.sn)
+          ~|  %bok  ((hard eth-bookmark) +>.sn)
+      ==
+    ::
+        %chain
+      ~|  %chain
+      :-  %chain
+      ^-  chain
+      =+  ch=+.vr
+      ?+  -.ch  ~|(%bad-chain !!)
+        %&  ~|  %pam  &+(parse-logs +.ch)
+        %|  ~|  %bar  |+(parse-logs -.ch)
+      ==
+    ==
+  ::
+  ++  parse-logs
+    |=  l=*
+    ~|  %parse-logs
+    ^-  logs
+    ?~  l
+      ~
+    ?>  ?=([^ * *] l)
+    :+  :-  ((hard event-id:ethereum-types) -<.l)
+            ((hard diff-azimuth:azimuth-types) ->.l)
+      (parse-logs +<.l)
+    (parse-logs +>.l)
   ::                                                    ::  ++restore-block:of
   ++  restore-block                                     ::  rewind before block
     |=  [hen=duct block=@ud]
