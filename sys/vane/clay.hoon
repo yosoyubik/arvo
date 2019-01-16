@@ -1846,6 +1846,7 @@
       ?:  =(let aeon)
         ~
       $(aeon +(aeon))
+    =.  +>.$  (emit hen %give %mack ~)
     ::  persist updated state
     ::
     %=  +>.$
@@ -1888,8 +1889,13 @@
     ^+  +>
     ?>  ?=(^ ref)
     ?>  ?=(^ nak.u.ref)
+    =+  res=(made-result-to-cages-or-error res)
+    ?:  ?=(%| -.res)
+      ~&  "validate foreign plops failed"
+      %-  (slog p.res)
+      (emit hen %give %mack ~ leaf+"validate foreign plops failed" p.res)
     =+  ^-  lat/(list blob)
-        %+  turn  ~|("validate foreign plops failed" (made-result-to-cages res))
+        %+  turn  p.res
         |=  {bob/cage cay/cage}
         ?.  ?=($blob p.bob)
           ~|  %plop-not-blob
@@ -3921,7 +3927,7 @@
     =^  mos  ruf
       =/  den  ((de our now hen ruf) wer syd)
       abet:(take-foreign-update:den inx ((hard (unit rand)) res.req))
-    [[[hen %give %mack ~] mos] ..^$]
+    [mos ..^$]
   ::
       $wegh
     :_  ..^$  :_  ~
