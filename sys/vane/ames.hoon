@@ -741,7 +741,7 @@
           |=  [cop=coop cha=path ram=(unit [ryn=lane dam=flap])]
           ^-  [gud=? con=_+>]                        ::  acknowledgment
           ::  ~&  [%ames-cook cop cha ram]
-          =+  rum=(need (~(get by raz.bah) cha))
+          =+  rum=(fall (~(get by raz.bah) cha) *race)
           =+  lat=(~(get by mis.rum) did.rum)
           ?:  &(?=(~ lat) ?=(~ ram))
             ~&  %ack-late-or-redundant
