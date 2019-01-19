@@ -19,7 +19,7 @@
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    volume 3, Arvo models and skeleton    ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
-=>  
+=>
 |%
 ++  arch  {fil/(unit @uvI) dir/(map @ta $~)}            ::  fundamental node
 ++  arvo  (wind {p/term q/mill} mill)                   ::  arvo card
@@ -32,12 +32,9 @@
               {$ud p/@ud}                               ::  sequence
           ==                                            ::
 ++  desk  @tas                                          ::  ship desk case spur
+++  dock  (pair @p term)                                ::  message target
 ++  cage  (cask vase)                                   ::  global metadata
 ++  cask  |*(a/mold (pair mark a))                      ::  global data
-++  cuff                                                ::  permissions
-          $:  p/(unit (set monk))                       ::  can be read by
-              q/(set monk)                              ::  caused or created by
-          ==                                            ::
 ++  curd  {p/@tas q/*}                                  ::  typeless card
 ++  duct  (list wire)                                   ::  causal history
 ++  hypo  |*(a/mold (pair type a))                      ::  type associated
@@ -46,23 +43,9 @@
               ==                                        ::
               a                                         ::
           ==                                            ::
-++  kirk  (unit (set monk))                             ::  audience
-++  lens                                                ::  observation core
-  $_  ^?                                                ::
-  |%  ++  u  *(unit (unit $~))                          ::  existence
-      ++  v  *(unit (unit cage))                        ::  full history
-      ++  w  *(unit (unit (unit cage)))                 ::  latest diff
-      ++  x  *(unit (unit cage))                        ::  data at path
-      ++  y  *(unit (unit arch))                        ::  directory
-      ++  z  *(unit (unit cage))                        ::  current subtree
-  --                                                    ::
-++  marc                                                ::  structured mark
-  $@  mark                                              ::  plain mark
-  $%  {$tabl p/(list (pair marc marc))}                 ::  map
-  ==                                                    ::
 ++  mark  @tas                                          ::  content type
 ++  mash  |=(* (mass +<))                               ::  producing mass
-++  mass  $~  [%$ [%& ~]]                               ::  memory usage  
+++  mass  $~  [%$ [%& ~]]                               ::  memory usage
           (pair cord (each noun (list mash)))           ::
 ++  mill  (each vase milt)                              ::  vase+metavase
 ++  milt  {p/* q/*}                                     ::  metavase
@@ -74,6 +57,8 @@
 ++  pone  (list {p/@tas q/vise})                        ::  kernel modules old
 +$  scry-sample
   [fur=(unit (set monk)) ren=@tas why=shop syd=desk lot=coin tyl=path]
++$  vane-sample
+  [our=ship now=@da eny=@uvJ ski=slyd]
 ++  ship  @p                                            ::  network identity
 ++  sink  (trel bone ship path)                         ::  subscription
 ++  sley  $-  {* (unit (set monk)) term beam}           ::  namespace function
@@ -169,7 +154,10 @@
     ^+  +>
     =-  ?:(?=(%| -.res) ((slog p.res) +>.$) p.res)
     ^=  res  %-  mule  |.
-    =+  arg=[~2000.1.1 0 =>(~ |~(* ~))]
+    ::  XX should use real entropy and the real date
+    ::
+    =/  arg=vane-sample
+      [who ~2000.1.1 *@uvJ =>(~ |~(* ~))]
     =+  rig=(slym vase.vane arg)
     =+  gen=(rain pax txt)
     =+  rev=(slym (slap bud gen) bud)
@@ -200,20 +188,17 @@
       ::  reset cache and add in vane activation entry
       ::
       =^  rig  worm.vane
-        (~(slym wa *worm) vase.vane *[@p @da @ slyd])
+        (~(slym wa *worm) vase.vane *vane-sample)
       ::  cache the access of the %scry arm
       ::
-      =^  fun  worm.vane  (~(slap wa worm.vane) rig [%limb %scry])
-      ::  cache the call to +mint that the +slym in +scry will do
-      ::
-      +:(~(mint wa worm.vane) p.fun [%limb %$])
+      +:(~(slap wa worm.vane) rig [%limb %scry])
     ==
   ::
   ++  wink                                              ::  deploy
     |=  {now/@da eny/@ ski/slyd}
     =^  rig  worm.vane
       ~|  [%failed-vane-activation-for lal]
-      (~(slym wa worm.vane) vase.vane [who +<])  ::  activate vane
+      (~(slym wa worm.vane) vase.vane `vane-sample`[who +<])  ::  activate vane
     ~%  %wink  +>+>  ~
     |%
     ++  slid
@@ -300,7 +285,7 @@
       ^-  (unit (pair move worm))
       %+  biff  ((soft duct) -.q.wec)
       |=  a/duct
-      %+  bind  
+      %+  bind
         =-  ?-  -.har
               %|  ~&  [%dead-card p.har]  ~             ::  XX properly log?
               %&  (some p.har)
@@ -368,18 +353,17 @@
         ==
       ^-  (unit (unit (cask)))
       =+  fun=-:(~(slap wa worm.vane) rig [%limb %scry])
-      =+  pro=-:(~(slym wa worm.vane) fun old)
-      ?~  q.pro  ~
-      ?~  +.q.pro  [~ ~]
-      =/  dat  +>.q.pro
-      [~ ~ (mark -.dat) +.dat]
+      ::
+      %-  (unit (unit (cask)))
+      (slum q.fun old)
     ::
     ++  soar                                            ::  scrub vane
       |=  sev/vase
       ^-  vase
       ?:  &(=(-.q.vase.vane -.q.sev) =(+>.q.vase.vane +>.q.sev))
         vase.vane                                           ::  unchanged, use old
-      sev(+<.q [*@p *@da *@ =>(~ |~(* ~))])                 ::  clear to stop leak
+      =|  sam=vane-sample
+      sev(+<.q sam(ski =>(~ |~(* ~))))                      ::  clear to stop leak
     ::
     ++  swim
       ~/  %swim
@@ -393,11 +377,11 @@
       ::  ~&  [%swim-wyt `@ud`~(wyt in worm.vane)]
       =+  ^=  pru
           ?~  pux
-            ~|  [%swim-call-vane lal ({term $~} +.p.hil)]
+            ~|  [%swim-call-vane lal (symp ?@(+.p.hil +.p.hil +<.p.hil))]
             =^  vax  worm.vane  (~(slap wa worm.vane) rig [%limb %call])
             %^  slur-pro  lal  vax
             (slid [%& duc.vil hen] (slix hil))
-          ~|  [%swim-take-vane lal ({term $~} +.p.hil)]
+          ~|  [%swim-take-vane lal (symp ?@(+.p.hil +.p.hil +<.p.hil))]
           =^  vax  worm.vane  (~(slap wa worm.vane) rig [%limb %take])
           %^  slur-pro  lal   vax
           ;:  slid
@@ -550,9 +534,12 @@
     |=  {lac/? mor/(list muse)}
     =|  ova/(list ovum)
     |-  ^-  {p/(list ovum) q=(list [label=@tas =vane])}
-    ?~  mor  [(flop ova) vanes]
+    ?~  mor
+      [ova vanes]
     =^  nyx  vanes  (jack lac i.mor)
-    $(ova (weld p.nyx ova), mor (weld q.nyx t.mor))
+    ::  we emit ova to unix in fifo order, but emit internal moves depth-first
+    ::
+    $(ova (weld ova p.nyx), mor (weld q.nyx t.mor))
   --
 --
 =<  ::  Arvo larval stage
@@ -579,11 +566,11 @@
     ::  larval Arvo structural interface
     ::
     |%
-    ++  come  ^come                                     ::  22
-    ++  load  ^load                                     ::  46
-    ++  peek  |=(* ~)                                   ::  47
+    ++  come  ^come                                     ::   4
+    ++  load  ^load                                     ::  10
+    ++  peek  |=(* ~)                                   ::  46
     ::
-    ++  poke  |=  *                                     ::  10
+    ++  poke  |=  *                                     ::  47
               ^-  [(list ovum) *]
               =>  .(+< ((hard ,[now=@da ovo=ovum]) +<))
               ^-  [(list ovum) *]
@@ -628,7 +615,7 @@
                 (turn vanes.^poke |=([label=@tas =vane] [label vase.vane]))
               (load u.who now u.eny ova=~ u.bod nyf)
     ::
-    ++  wish  |=  txt=*                                 ::  4
+    ++  wish  |=  txt=*                                 ::  22
               ?>  ?=(@ txt)
               q:(slap ?~(bod pit u.bod) (ream txt))
     --
@@ -646,21 +633,21 @@
 =<  ::  Arvo structural interface
     ::
     |%
-    ++  come  |=  {@ @ @ (list ovum) vise pone}         ::  22
+    ++  come  |=  {@ @ @ (list ovum) vise pone}         ::   4
               ^-  {(list ovum) _+>}
               ~&  %hoon-come
               =^  rey  +>+  (^come +<)
               [rey +>.$]
     ::
-    ++  load  |=  {@ @ @ (list ovum) vase pane}         ::  46
+    ++  load  |=  {@ @ @ (list ovum) vase pane}         ::  10
               ^-  {(list ovum) _+>}
               ~&  %hoon-load
               =^  rey  +>+  (^load +<)
               [rey +>.$]
     ::
-    ++  peek  |=(* (^peek ((hard {@da path}) +<)))      ::  47
+    ++  peek  |=(* (^peek ((hard {@da path}) +<)))      ::  46
     ::
-    ++  poke  |=  *                                     ::  10
+    ++  poke  |=  *                                     ::  47
               ^-  [(list ovum) *]
               =>  .(+< ((hard ,[now=@da ovo=ovum]) +<))
               =^  ova  +>+.$  (^poke now ovo)
@@ -682,7 +669,7 @@
               =/  avo  $(ova t.ova)
               [[+.vov -.avo] +.avo]
     ::
-    ++  wish  |=(* (^wish ((hard @ta) +<)))             ::  4
+    ++  wish  |=(* (^wish ((hard @ta) +<)))             ::  22
     --
 ::  Arvo implementation core
 ::
@@ -778,7 +765,7 @@
     =.  eny  (shaz (cat 3 eny q.q.ovo))
     [~ +>.$]
   ==
-::                                                
+::
 ++  vega                                                ::  reboot kernel
   |=  $:  ::  now: current date
           ::  ova: actions to process after reboot

@@ -1,4 +1,4 @@
-::                                                      ::  ::  
+::                                                      ::  ::
 ::::  /app/talk/hoon                                    ::  ::
   ::                                                    ::  ::
 ::
@@ -1263,7 +1263,7 @@
         =-  (sh-act %phrase - [%inv inv [self nom]]~)
         %-  ~(rep in sis)
         |=  {s/ship a/audience}
-        (~(put in a) [s %inbox])
+        (~(put in a) [s %i])
       ::
       ++  filter
         |=  {nom/name cus/? utf/?}
@@ -1604,7 +1604,7 @@
         ::
         ::  prints help message
         ::
-        (sh-fact %txt "see http://urbit.org/docs/using/messaging/")
+        (sh-fact %txt "see https://urbit.org/docs/learn/arvo/arvo-internals/messaging/")
       --
     ::
     ++  sh-pact
