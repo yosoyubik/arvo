@@ -1,8 +1,12 @@
-::  /action/collections/mar
 ::
-/-  collections
-=,  api:collections
-|_  act=action
+::::  /hoon/actions/collection/mar
+  ::
+/?  309
+/+  collections
+=,  collections
+=,  format
+::
+|_  act=action:collections
 ::
 ++  grow
   |%
@@ -11,60 +15,106 @@
 ::
 ++  grab
   |%
-  ++  noun  action
+  ++  noun  action:collections
   ++  json
-    =,  dejs:format
-::     %+  cu  |=(action +<)
-    =<  action
+    |=  jon=^json
+    %-  (hard action:collections)
+    =<  (action jon)
     |%
     ++  action
-      %-  of  :~
-        create+create
-        delete+(ot col+(se %da) ~)
-        submit+(ot col+(se %da) tit+so wat+wain ~)
-        comment+(ot col+(se %da) top+(se %da) com+null-or-da wat+wain ~)
-        resubmit+(ot col+(se %da) top+(se %da) tit+so wat+wain ~)
-        delete-topic+(ot col+(se %da) top+(se %da) ~)
-        delete-comment+(ot col+(se %da) top+(se %da) com+(se %da) ~)
+      %-  ot:dejs
+      :~  ship+(su:dejs fed:ag)
+          desk+(su:dejs sym)
+          :-  %acts
+          %-  ar:dejs
+          %-  of:dejs
+          :~  write+write
+              delete+delete
+              perms+perms
+              collection+collection
+              post+post
+              comment+comment
+          ==
       ==
     ::
-    ++  null-or-da
-      %+  cu  |=(a=dime ?+(a !! [%n ~] ~, [%da @da] q.a))
-      %+  cu  |=(a=coin ?+(a !! [%$ ^] p.a))
-      (su nuck:so.hoon)
+    ++  write
+      %-  ot:dejs
+      :~  path+(su:dejs ;~(pfix fas (more fas urs:ab)))
+          mark+(su:dejs sym)
+          data+so:dejs
+      ==
     ::
-    ++  create
-::       (ot wat+(cu (hard kind) so) des+so pub+bo vis+bo ses+(as (se %p)) ~)
-      |=  a=json
-      ~|  a
-      ::=+  ^-  [wat=kind des=cord pub=? vis=? ses=(set @p)]
-      =+  ^-  [desc=cord publ=? visi=? comm=? xeno=? ses=(set @p)]
-          %.  a
-          :: change this to accept an array of @p
-          %-  ot  
-          :::~  wat+(cu (hard kind) so) 
-          :~  desc+so 
-              publ+bo 
-              visi+bo 
-              comm+bo 
-              xeno+bo 
-              ses+(su (cook sy (more ace fed:ag)))
-          ==
-      [desc publ visi comm xeno ses]
+    ++  delete
+      %-  ot:dejs
+      :~  path+(su:dejs ;~(pfix fas (more fas urs:ab)))
+      ==
     ::
-    ++  wain  (su (more newline (cook crip (star prn))))
-    :: ++  newline  (just '\0a')
-    ::XX getting sent \r by frontend
-    ++  newline  ;~(pfix (punt (just '\0d')) (just '\0a'))
+    ++  perms
+        %-  ot:dejs
+        :~  path+(su:dejs ;~(pfix fas (more fas urs:ab)))
+            :-  %read
+            %-  ot:dejs
+            :~  mod+(su:dejs ;~(pose (jest %black) (jest %white)))
+                who+whoms
+            ==
+            :-  %write
+            %-  ot:dejs
+            :~  mod+(su:dejs ;~(pose (jest %black) (jest %white)))
+                who+whoms
+            ==
+        ==
     ::
+    ++  whoms
+      |=  jon=^json
+      ^-  (set whom:clay)
+      =/  x  ((ar:dejs (su:dejs fed:ag)) jon)
+      %-  (hard (set whom:clay))
+      %-  ~(run in (sy x))
+      |=(w=@ [& w])
+    --
     ::
-    ++  as  |*(a=fist (cu sy (ar a)))                     ::  array as set
-    ++  se                                                ::  string as aura
-      =,  wired
-      |*  a=term
-      %+  cu
-        |=  b=cord  ^-  (odo:raid a)
-        (slav a b)
-      so
---  --
+    ++  collection
+      %-  ot:dejs
+      :~  path+(su:dejs ;~(pfix fas (more fas urs:ab)))
+          name+sa
+          desc+so:dejs
+          comments+bo:dejs
+          visible+bo:dejs
+          type+(su:dejs sym)
+      ==
+    ::
+    ++  post
+      %-  ot:dejs
+      :~  path+(su:dejs ;~(pfix fas (more fas urs:ab)))
+          name+sa
+          type+(su:dejs sym)
+          comments+bo:dejs
+          content+so:dejs
+          edit+bo:dejs
+      ==
+    ::
+    ++  comment
+      %-  ot:dejs
+      :~  path+(su:dejs ;~(pfix fas (more fas urs:ab)))
+          content+so:dejs
+      ==
+    ::
+    ++  sa            :: string as ta
+      |=  jon=^json
+      ?>  ?=([%s *] jon)
+      (scot %tas p.jon)
+  --
+::
 --
+
+
+
+
+
+
+
+
+
+
+
+

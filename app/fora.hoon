@@ -12,7 +12,6 @@
 ++  move  (pair bone card)
 ++  card
   $%  {$poke wire dock poke}
-      {$exec wire @p $~ {beak silk:ford}}
       {$info wire @p toro:clay}
   ==
 ++  poke
@@ -22,10 +21,10 @@
   ==
 --
 ::
-|_  {bol/bowl:gall $~}
+|_  {bol/bowl:gall ~}
 ::
 ++  prep
-  |=  old/(unit $~)
+  |=  old/(unit ~)
   ^-  (quip move _..prep)
   ?^  old  [~ ..prep(+<+ u.old)]
   :_  ..prep
@@ -44,6 +43,13 @@
   |=  {pax/path sup/spur hed/@t txt/@t}
   ^-  (quip move _+>)
   :_  +>
+  ::
+  ::  if txt is blank then return no moves.
+  ::
+  ?:  ?=(^ (rush txt spac:de-json:html))  ~
+  ::
+  ::  otherwise, post the content.
+  ::
   :~  %-  act
       :+  %phrase  [[our.bol %fora-posts] ~ ~]
       :_  ~
@@ -67,6 +73,13 @@
   |=  {pax/path sup/spur txt/@t}
   ^-  (quip move _+>)
   :_  +>
+  ::
+  ::  if txt is blank then return no moves.
+  ::
+  ?:  ?=(^ (rush txt spac:de-json:html))  ~
+  ::
+  ::  otherwise, post the content.
+  ::
   :~  ^-  move
       %-  act
       :+  %phrase  [[our.bol %fora-comments] ~ ~]
