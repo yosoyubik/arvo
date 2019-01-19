@@ -1,6 +1,6 @@
-::  API: input basic auth credentials for domain
+::  API: input auth token for domain
 ::
-::::  /hoon/init-auth-basic/hood/gen
+::::  /hoon/init-auth-token/hood/gen
   ::
 /?  314
 /-  sole
@@ -24,12 +24,8 @@
 ?:  ?=(%| -.hot)
   ~|(%ips-unsupported !!)
 %+  prompt
-  [%& %auth-user "username: "]
-%+  parse  (boss 256 (star ;~(less col prn)))
-|=  usr/@t
-%+  prompt
-  [%| %auth-passwd "password: "]
+  [%& %api-token "token: "]
 %+  parse  (boss 256 (star prn))
 |=  pas/@t
 %+  produce  %write-sec-atom    :: XX typed pair
-[hot (crip (en-base64:mimes:html (rap 3 usr ':' pas ~)))]
+[hot pas]
