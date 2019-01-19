@@ -17,12 +17,11 @@
     ?~  key.bal
       ~_  leaf+"Run |init-auth-basic {<`path`dom.bal>}"
       ~|(%basic-auth-no-key !!)
-    (cat 3 'Basic ' key.bal)
+    (cat 3 'Bearer ' key.bal)
   --
 ::
 ++  add-auth-header
   |=  a/hiss  ^-  hiss
-  ~&  auth+(en-purl:html p.a)
   %_(a q.q (~(add ja q.q.a) %authorization header:auth))
 ::
 ++  standard
