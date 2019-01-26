@@ -147,6 +147,7 @@
         |=  kyz/task:able
         ^+  +>
         ?+    -.kyz  ~&  [%strange-kiss -.kyz]  +>
+          $brev  (dump kyz)
           $flow  +>
           $harm  +>
           $hail  (send %hey ~)

@@ -172,6 +172,10 @@
     (module-ova:pill top)
   |=(a=[wire flog:dill] [%flog a])
 ::
+++  poke-brev                                         ::  toggle duct traces
+  |=  ~  =<  abet
+  (emit %flog /helm %brev ~)
+::
 ++  poke-verb                                         ::  toggle verbose
   |=  ~  =<  abet
   (emit %flog /helm %verb ~)

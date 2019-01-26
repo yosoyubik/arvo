@@ -461,12 +461,12 @@
     ==
   ::
   ++  hurl                                              ::  start loop
-    |=  {lac/? ovo/ovum}
+    |=  {lac/? duc/? ovo/ovum}
     ~?  &(!lac !=(%belt -.q.ovo))  [%unix -.q.ovo p.ovo]
     ::  ^-  {p/(list ovum) q/(pair worm (list {p/@tas q/vase}))}
     ^-  {p/(list ovum) q=(list [label=@tas =vane])}
     ?>  ?=(^ p.ovo)
-    %+  kick  lac
+    %^  kick  lac  duc
     :~  :*  i.p.ovo
             ~
             :^  %pass  t.p.ovo
@@ -501,7 +501,7 @@
     [[~ (turn p.fiq |=(a/move [lal a]))] [[label.i.naf q.fiq] t.naf]]
   ::
   ++  jack                                              ::  dispatch card
-    |=  {lac/? gum/muse}
+    |=  {lac/? duc/? gum/muse}
     ^-  {{p/(list ovum) q/(list muse)} _vanes}
     ~|  %failed-jack
     ::  =.  lac  |(lac ?=(?(%g %f) p.gum))
@@ -514,6 +514,9 @@
         :^  %pass  [p.gum p.q.r.gum]
           [(symp +>-.q.q.r.gum) p.r.gum]
         q.gum
+      =>  ?:  |(duc =(%soft +>-.q.q.r.gum))  .
+          ~>  %duct.[%pass [p.gum p.q.r.gum] (symp +>-.q.q.r.gum) `wire`p.r.gum `duct`q.gum]
+          .
       [p.q.r.gum ~ [[p.gum p.r.gum] q.gum] q.q.r.gum]
     ::
         $give
@@ -523,20 +526,26 @@
         !!
       ~?  &(!lac |(!=(%blit +>-.p.r.gum) !=(%d p.gum)))
         [%give p.gum (symp +>-.p.r.gum) `duct`q.gum]
+      =>  ?:  duc  .
+          ~>  %duct.[%give p.gum (symp +>-.p.r.gum) `duct`q.gum]
+          .
       [i.i.q.gum [~ t.i.q.gum] t.q.gum p.r.gum]
     ::
         $slip
       ~?  !lac  [%slip p.gum (symp +>-.q.p.r.gum) q.gum]
+      =>  ?:  duc  .
+          ~>  %duct.[%slip p.gum (symp +>-.q.p.r.gum) `duct`q.gum]
+          .
       [p.p.r.gum ~ q.gum q.p.r.gum]
     ==
   ::
   ++  kick                                              ::  new main loop
-    |=  {lac/? mor/(list muse)}
+    |=  {lac/? duc/? mor/(list muse)}
     =|  ova/(list ovum)
     |-  ^-  {p/(list ovum) q=(list [label=@tas =vane])}
     ?~  mor
       [ova vanes]
-    =^  nyx  vanes  (jack lac i.mor)
+    =^  nyx  vanes  (jack lac duc i.mor)
     ::  we emit ova to unix in fifo order, but emit internal moves depth-first
     ::
     $(ova (weld ova p.nyx), mor (weld q.nyx t.mor))
@@ -625,6 +634,7 @@
 =/  pit=vase  !>(..is)                                  ::
 =/  vil=vile  (viol p.pit)                              ::  cached reflexives
 =|  $:  lac=?                                           ::  laconic bit
+        duc=?                                           ::  really laconic bit
         eny=@                                           ::  entropy
         our=ship                                        ::  identity
         bud=vase                                        ::  %zuse
@@ -726,7 +736,7 @@
     [[ovo ~] +>.$]
   ::
   =^  zef  vanes
-    (~(hurl (is our vil eny bud vanes) now) lac ovo)
+    (~(hurl (is our vil eny bud vanes) now) lac duc ovo)
   [zef +>.$]
 ::  +feck: handle an arvo effect
 ::
@@ -737,6 +747,10 @@
       ::  pass through unrecognized effect
       ::
       [[~ ovo] +>.$]
+  ::  toggle duct traces
+  ::
+      %brev
+    [~ +>.$(duc !duc)]
   ::  toggle event verbose event printfs
   ::
       %verb

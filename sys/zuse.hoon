@@ -614,7 +614,8 @@
   ++  able  ^?
     |%
     ++  gift                                            ::  out result <-$
-      $%  {$bbye ~}                                    ::  reset prompt
+      $%  {$bbye ~}                                     ::  reset prompt
+          {$brev ~}                                     ::  duct traces
           {$blit p/(list blit)}                         ::  terminal output
           {$burl p/@t}                                  ::  activate url
           {$init p/@p}                                  ::  set owner
@@ -629,6 +630,7 @@
       $%  {$belt p/belt}                                ::  terminal input
           {$blew p/blew}                                ::  terminal config
           {$boot p/*}                                   ::  weird %dill boot
+          {$brev ~}                                     ::  duct traces
           {$crud p/@tas q/(list tank)}                  ::  error with trace
           {$flog p/flog}                                ::  wrapped error
           {$flow p/@tas q/(list gill:gall)}             ::  terminal config
@@ -698,7 +700,8 @@
         {$url p/@t}                                     ::  activate url
     ==                                                  ::
   ++  flog                                              ::  sent to %dill
-    $%  {$crud p/@tas q/(list tank)}                    ::
+    $%  {$brev ~}                                       ::  duct traces
+        {$crud p/@tas q/(list tank)}                    ::
         {$heft ~}                                      ::
         {$text p/tape}                                  ::
         {$veer p/@ta q/path r/@t}                       ::  install vane
