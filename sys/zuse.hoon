@@ -239,7 +239,6 @@
           {$halo p/lane q/@ r/ares}                     ::  hole with trace
           {$hole p/lane q/@}                            ::  packet failed
           [%init p=ship]                                ::  report install
-          {$kick p/@da}                                 ::  wake up
           {$nuke p/@p}                                  ::  toggle auto-block
           {$sunk p=ship q=life}                         ::  report death
           {$wake ~}                                     ::  timer activate
@@ -288,7 +287,7 @@
         [%mead p=lane q=rock]                           ::  accept packet
         [%milk p=ship q=soap r=*]                       ::  e2e pass message
         [%ouzo p=lane q=rock]                           ::  transmit packet
-        [%pito p=@da]                                   ::  timeout
+        [%pito p=ship q=@da]                            ::  timeout
         [%raki p=ship q=life r=pass]                    ::  neighbor'd
         [%sake ~]                                       ::  our private keys
         [%wine p=ship q=tape]                           ::  notify user
@@ -323,7 +322,6 @@
   ++  fort                                              ::  formal state
     $:  $1                                              ::  version
         gad/duct                                        ::  client interface
-        tim/(unit @da)                                  ::  pending timer
         tuf/(list turf)                                 ::  domains
         hop/@da                                         ::  network boot date
         bad/(set @p)                                    ::  bad ships

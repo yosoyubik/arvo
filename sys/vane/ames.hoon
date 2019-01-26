@@ -600,16 +600,17 @@
       ^-  [p=(list boon) q=fort]
       ?.  =(protocol-version (end 0 3 pac))  [~ fox]
       =+  kec=(bite pac)
-      ?:  (goop p.p.kec)
+      =/  her  p.p.kec
+      ?:  (goop her)
         [~ fox]
       ?.  =(our q.p.kec)
         [~ fox]
       =;  zap=[p=(list boon) q=fort]
-        [(weld p.zap next) q.zap]
+        [(weld p.zap (next2 her)) q.zap]
       =<  zork
       =<  zank
       ::  ~&  [%hear p.p.kec ryn `@p`(mug (shaf %flap pac))]
-      %-  ~(chew la:(ho:um p.p.kec) kay ryn %none (shaf %flap pac))
+      %-  ~(chew la:(ho:um her) kay ryn %none (shaf %flap pac))
       [q.kec r.kec]
     ::
     ++  goop                                            ::  blacklist
@@ -620,6 +621,14 @@
       |=  hen=duct                                      ::  refresh net
       ^-  [p=(list boon) q=fort]
       zork:(kick:um hen)
+    ::
+    ++  next2
+      |=  her=ship
+      ^-  (list boon)
+      ::
+      =/  sop=shed  (~(got by wab.zac.fox) our)
+      ::
+      [%pito her rtn.sop]~
     ::
     ++  next
       ^-  (list boon)
@@ -644,11 +653,23 @@
       ?.  gud  oh
       (cans:oh cha)
     ::
+    ++  wake2
+      ~/  %wake2
+      |=  hen=duct
+      ^-  [p=(list boon) q=fort]
+      ::
+      ?>  ?=([[@ ~] ~] hen)
+      =/  her=ship  `@p`(slav %p i.i.hen)
+      ::  TODO: do we need special handling if we don't have a shed for :her?
+      ::
+      =/  hoz  (ho:um her)
+      =/  fro=(list ship)  (saxo-scry our)
+      zork:zank:(thaw:hoz fro)
+    ::
     ++  wake                                            ::    wake:am
       ~/  %wake
       |=  hen=duct                                      ::  harvest packets
       ^-  [p=(list boon) q=fort]
-      =.  tim.fox  ~
       =/  neb=(list ship)  ~(tap in ~(key by wab.zac.fox))
       =|  bin=(list boon)
       |-  ^-  [p=(list boon) q=fort]
@@ -1080,9 +1101,10 @@
           =+  oub=bust:puz
           =^  yem  puz  (wack:puz now)
           =+  bou=bust:puz
-          =.  bin
-              ?.  &(bou !oub)  bin
-              :_(bin [%wine her " not responding still trying"])
+          ::
+          =?  bin  &(bou !oub)
+            :_(bin [%wine her " not responding still trying"])
+          ::
           =.  diz  ?:((boom:puz now) (pode:diz now) diz)
           (busk (xong fro) yem)
         ::
@@ -1330,10 +1352,12 @@
       [[gad.fox [%give %send p.bon q.bon]] ~]
     ::
         %pito
-      :_  fox(tim `p.bon)
-      :-  [gad.fox %pass /ames %b %wait p.bon]
-      ?~  tim.fox  ~
-      [gad.fox %pass /ames %b %rest u.tim.fox]~
+      ::  TODO: assert gad.fox?
+      ::
+      :_  fox
+      :~  [gad.fox %pass [p.bon]~ %b %rest q.bon]
+          [gad.fox %pass [p.bon]~ %b %wait q.bon]
+      ==
     ::
         %raki
       =*  her  p.bon
@@ -1473,12 +1497,6 @@
         ::
             %init
           :_  fox  [[%sake ~] [%brew ~] ~]
-        ::
-            %kick
-          =^  ban  fox  (~(kick am [our now fox(hop p.kyz) ski]) hen)
-          ::  +next:am called here because +wake calls +kick in a loop
-          ::
-          [(weld p.ban ~(next am [our now fox ski])) fox]
         ::
             %nuke
           :-  ~
