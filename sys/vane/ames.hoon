@@ -661,12 +661,12 @@
       =/  her=ship  `@p`(slav %p i.i.hen)
       ::  send relevant packets, updating internal state1
       ::
-      =/  pre=(unit @da)  rtn:(ho:um her)
+      =/  old=(unit @da)  rtn:(ho:um her)
       =^  mov  fox  zork:zank:thaw:(ho:um her)
-      =/  pos=(unit @da)  rtn:(ho:um her)
+      =/  new=(unit @da)  rtn:(ho:um her)
       ::  if the new timeout is different from the old timeout, update %behn
       ::
-      =?  mov  !=(pre pos)  :_(mov [%pito her pos])
+      =?  mov  !=(old new)  :_(mov [%pito her old new])
       ::
       [mov fox]
     ::

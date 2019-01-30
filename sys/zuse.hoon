@@ -287,7 +287,15 @@
         [%mead p=lane q=rock]                           ::  accept packet
         [%milk p=ship q=soap r=*]                       ::  e2e pass message
         [%ouzo p=lane q=rock]                           ::  transmit packet
-        [%pito p=ship q=@da]                            ::  timeout
+        ::  %pito: adjust timer for :ship
+        ::
+        $:  %pito
+            =ship
+            $=  todo
+            $%  [%set new=@da]
+                [%unset old=@da]
+                [%reset old=@da new=@da]
+        ==  ==
         [%raki p=ship q=life r=pass]                    ::  neighbor'd
         [%sake ~]                                       ::  our private keys
         [%wine p=ship q=tape]                           ::  notify user
