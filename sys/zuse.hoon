@@ -225,7 +225,7 @@
           $:  $g                                        ::  from %gall
       $%  {$unto p/cuft:gall}                           ::
           {$mean p/ares}                                ::  XX old clean up
-          {$nice ~}                                    ::
+          {$nice ~}                                     ::
       ==  ==                                            ::
           $:  @tas                                      ::
       $%  {$crud p/@tas q/(list tank)}                  ::  by any
@@ -233,11 +233,12 @@
           {$woot p/ship q/coop}                         ::  reaction message
       ==  ==  ==                                        ::
     ++  task                                            ::  in request ->$
-      $%  {$barn ~}                                    ::  new unix process
+      $%  {$barn ~}                                     ::  new unix process
           {$crud p/@tas q/(list tank)}                  ::  error with trace
           {$hear p/lane q/@}                            ::  receive packet
           {$halo p/lane q/@ r/ares}                     ::  hole with trace
           {$hole p/lane q/@}                            ::  packet failed
+          {$kick p/@da}                                 ::  wake up
           [%init p=ship]                                ::  report install
           {$nuke p/@p}                                  ::  toggle auto-block
           {$sunk p=ship q=life}                         ::  report death
@@ -287,18 +288,16 @@
         [%mead p=lane q=rock]                           ::  accept packet
         [%milk p=ship q=soap r=*]                       ::  e2e pass message
         [%ouzo p=lane q=rock]                           ::  transmit packet
-        ::  %pito: adjust timer for :ship
-        ::
-        $:  %pito
-            =ship
-            $=  todo
-            $%  [%set new=@da]
-                [%unset old=@da]
-                [%reset old=@da new=@da]
-        ==  ==
+        [%pito =ship =boop]                             ::  adjust ship timer
         [%raki p=ship q=life r=pass]                    ::  neighbor'd
         [%sake ~]                                       ::  our private keys
         [%wine p=ship q=tape]                           ::  notify user
+    ==                                                  ::
+  ++  boop                                              ::  timer adjustment
+  ::
+    $%  [%set new=@da]                                  ::  set fresh timer
+        [%unset old=@da]                                ::  cancel timer
+        [%reset old=@da new=@da]                        ::  move timer
     ==                                                  ::
   ++  cake  {p/sock q/skin r/@}                         ::  top level packet
   ++  cape                                              ::  end-to-end result
@@ -369,7 +368,23 @@
         lew/(unit deed)                                 ::  deed of friend
     ==                                                  ::
   ++  rock  @uvO                                        ::  packet
-  ++  shed                                              ::  packet flow
+  +$  shed                                              ::  packet flow
+    $~  :+
+    :*  rtt=~s1
+        rto=~s4
+        rtn=~
+        rue=~
+    ==  :*
+        nus=0
+        nif=0
+        nep=0
+        caw=2
+        cag=64
+    ==  :*
+        diq=~
+        pyz=~
+        puq=~
+    ==
     $:  $:  rtt/@dr                                     ::  smoothed rtt
             rto/@dr                                     ::  retransmit timeout
             rtn/(unit @da)                              ::  next timeout
