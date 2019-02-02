@@ -650,13 +650,13 @@
     ::
     ++  wake
       ~/  %wake
-      |=  hen=duct
+      |=  =wire
       ^-  [p=(list boon) q=fort]
       ::  parse friend :her out of duct
       ::
-      ~|  %ames-bad-behn-duct^hen
-      ?>  ?=([[@ ~] ~] hen)
-      =/  her=ship  `@p`(slav %p i.i.hen)
+      ~|  %ames-bad-behn-wire^wire
+      ?>  ?=([@ ~] wire)
+      =/  her=ship  `@p`(slav %p i.wire)
       ::  send relevant packets, updating internal state1
       ::
       zork:zank:thaw:(ho:um her)
@@ -1338,16 +1338,16 @@
       [[gad.fox [%give %send p.bon q.bon]] ~]
     ::
         %pito
-      ?>  ?=(^ gad.fox)
       :_  fox
       ^-  (list move)
+      =/  =duct  ~[/ames-timer]
       =/  =wire  /(scot %p ship.bon)
       ?-  -.boop.bon
-        %set    [~ %pass wire %b %wait new.boop.bon]~
-        %unset  [~ %pass wire %b %rest old.boop.bon]~
+        %set    [duct %pass wire %b %wait new.boop.bon]~
+        %unset  [duct %pass wire %b %rest old.boop.bon]~
         %reset
-          :~  [~ %pass wire %b %wait new.boop.bon]
-              [~ %pass wire %b %rest old.boop.bon]
+          :~  [duct %pass wire %b %wait new.boop.bon]
+              [duct %pass wire %b %rest old.boop.bon]
       ==  ==
     ::
         %raki
@@ -1435,7 +1435,9 @@
         ?-  +<.sih
         ::
             %wake
-          (~(wake am [our now fox ski]) hen)
+          ~|  %ames-bad-behn-duct^hen
+          ?>  =(~[/ames-timer] hen)
+          (~(wake am [our now fox ski]) tea)
         ::
             ?(%mean %nice)                              ::  XX obsolete
           ?:  ?=([%ye ~] tea)
@@ -1518,9 +1520,6 @@
               wab.zac.fox  (~(del by wab.zac.fox) who)
             ==
           [[%wine who " has sunk"]~ fox]
-        ::
-            %wake
-          (~(wake am [our now fox ski]) hen)
         ::
             %want
           (~(wise am [our now fox ski]) hen p.kyz q.kyz r.kyz)

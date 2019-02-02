@@ -242,7 +242,6 @@
           [%init p=ship]                                ::  report install
           {$nuke p/@p}                                  ::  toggle auto-block
           {$sunk p=ship q=life}                         ::  report death
-          {$wake ~}                                     ::  timer activate
           {$wegh ~}                                     ::  report memory
           {$west p/ship q/path r/*}                     ::  network request
           {$want p/ship q/path r/*}                     ::  forward message
@@ -7064,7 +7063,7 @@
       task:able:jael
   ==
 ++  note-arvo                                           ::  out request $->
-  $~  [%a %wake ~]
+  $~  [%a %barn ~]
   $%  {$a task:able:ames}
       {$b task:able:behn}
       {$c task:able:clay}
