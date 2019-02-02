@@ -238,8 +238,8 @@
           {$hear p/lane q/@}                            ::  receive packet
           {$halo p/lane q/@ r/ares}                     ::  hole with trace
           {$hole p/lane q/@}                            ::  packet failed
-          {$kick p/@da}                                 ::  wake up
           [%init p=ship]                                ::  report install
+          {$kick p/@da}                                 ::  wake up
           {$nuke p/@p}                                  ::  toggle auto-block
           {$sunk p=ship q=life}                         ::  report death
           {$wegh ~}                                     ::  report memory

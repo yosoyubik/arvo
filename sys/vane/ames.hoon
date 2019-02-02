@@ -309,7 +309,7 @@
     |%
     ++  puzz  .
     ++  abet  sed
-    ::  +abut: finalize, maybe producing a timer update
+    ::  +abut: maybe produce a timer update internal move
     ::
     ++  abut
       ^-  [(unit boop) _puzz]
