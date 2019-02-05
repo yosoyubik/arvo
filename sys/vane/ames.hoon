@@ -657,7 +657,7 @@
       ~|  %ames-bad-behn-wire^wire
       ?>  ?=([@ ~] wire)
       =/  her=ship  `@p`(slav %p i.wire)
-      ::  send relevant packets, updating internal state1
+      ::  send relevant packets, updating internal state
       ::
       zork:zank:thaw:(ho:um her)
     ::
