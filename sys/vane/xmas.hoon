@@ -8,9 +8,55 @@
 ::::                                                    ::::::  ames structures
   ::                                                    ::  ::
 ::
-=*  pipe  channel:able:jael                             ::  secure channel
-=*  gree  farm:pki:jael                                 ::  pki information
+:: =*  pipe  channel:able:jael                             ::  secure channel
+:: =*  gree  farm:pki:jael                                 ::  pki information
+=>  |%
+    ++  arms  (map chip (pair @ta @t))                  ::  stated identity
+    ++  bull                                            ::  cert metadata
+      $:  dad/ship                                      ::  parent
+          dob/?                                         ::  & clean, | dirty
+          nym/arms                                      ::  identity strings
+      ==                                                ::
+    ++  cert  (tale deed)                               ::  signed deed
+    ++  chip                                            ::  standard identity
+      $?  $giv                                          ::  given name
+          $sur                                          ::  surname
+          $had                                          ::  fictitious name
+          $mid                                          ::  middle name
+      ==                                                ::
+    ++  deed                                            ::  certificate deed
+      $:  doc/bull                                      ::  metadata
+          pub/pass                                      ::  public key
+      ==                                                ::
+    ++  farm  (map ship will)                           ::  pki dump set
+    ++  hand  @uvH                                      ::  128-bit hash
+    ++  life  @ud                                       ::  ship version
+    ++  mind  {who/ship lyf/life}                       ::  key identifier
+    ++  name  (pair @ta @t)                             ::  ascii / unicode
+    ++  oath  @                                         ::  signature
+    +*  tale  [typ]                                     ::  urbit-signed *
+      $:  dat/typ                                       ::  data
+          syg/(map ship (pair life oath))               ::  signatures
+      ==                                                ::
+    ++  will  (map life cert)                           ::  meta-certificate
+    --
+::
 |%                                                      ::
+++  pipe                                         ::  secure channel
+  $:  out/(unit (pair hand bill))                   ::  outbound key
+      inn/(map hand bill)                           ::  inbound keys
+      cur/(unit life)                               ::  their version
+      sax/(list ship)                               ::  their ancestry
+      pub/will                                      ::  their public keys
+  ==
+++  gree  (map ship will)                           ::  pki dump set
+++  bill  (pair @da @)                              ::  expiring value
+++  scar                                              ::  opaque duct
+  $:  p/@ud                                           ::  bone sequence
+      q/(map duct bone)                               ::  by duct
+      r/(map bone duct)                               ::  by bone
+  ==
+::
 ++  bait  {p/skin q/@ud r/dove}                         ::  fmt nrecvd spec
 ++  bath                                                ::  per friend
           $:  det/pipe                                  ::  secure channel
@@ -134,6 +180,7 @@
       --
   =|  $:  $:  now/@da
               eny/@
+              our/ship
           ==
           silo
           fex/(list gift)
@@ -273,7 +320,7 @@
     ++  sack                                            ::  send acknowledgment
       |=  {kos/bole dam/flap cop/coop}
       =+  ^=  yex
-          ((knit who lyf wyr det.bah) now eny [%back (mix kos 1) dam cop ~s0])
+          ((knit our who lyf wyr det.bah) now eny [%back (mix kos 1) dam cop ~s0])
       =.  +>.$  (to-gifs p.yex)
       |-  ^+  +>.^$
       ?~  q.yex  +>.^$
@@ -365,7 +412,7 @@
     ::
     ++  to-rail
       |=  {kos/bole cot/colt}
-      ~(. rail [[who lyf wyr det.bah] [now eny] kos (yawn:pump myn.cot) ~] cot)
+      ~(. rail [[our who lyf wyr det.bah] [now eny] kos (yawn:pump myn.cot) ~] cot)
     ::
     ++  to-wait
       |-  ^-  (unit @da)
@@ -457,7 +504,7 @@
         =+  rig=(~(got by wyr) p.p.mex)
         =+  pas=(whom q.p.mex q.mex)
         =+  mes=(need (tear:as:(nol:nu:crub:crypto rig) pas r.mex))
-        =+  [key out]=((hard (pair @ux @ux)) (cue mes))
+        =+  [key out]=((hard (pair @uvI @ux)) (cue mes))
         :-  :~  [%link ~2018.1.1 key]
                 [%meet q.mex]
             ==
@@ -480,7 +527,7 @@
     ::  data will crash the packet when we install it.
     ::
     %-  (bond |.(pub.dat:(~(got by (~(got by gyr) lyf)) him)))
-    (bind (~(get by pub.det) lyf) |=(cert:pki:jael pub.dat))
+    (bind (~(get by pub.det) lyf) |=(cert pub.dat))
   --
 ::                                                      ::
 ::::  hose                                              ::
@@ -909,7 +956,7 @@
         $%  {$line exp/@da key/code}                    ::  set symmetric key
         ==                                              ::
       --
-  |=  {her/@p lyf/life wyr/(map life ring) det/pipe}
+  |=  {our/ship her/@p lyf/life wyr/(map life ring) det/pipe}
   |=  {now/@da eny/@ ham/meal}
   =+  hom=(jam ham)
   ^-  (pair (list gift) (list rock))
@@ -982,7 +1029,8 @@
             {$wake $~}                                  ::  random wakeup
         ==                                              ::
       --                                                ::
-  =|  $:  $:  $:  her/ship
+  =|  $:  $:  $:  our/ship
+                  her/ship
                   lyf/life
                   wyr/(map life ring)
                   det/pipe
@@ -1095,7 +1143,7 @@
     ++  wy-mess                                         ::  send
       |=  {cha/chan val/*}
       ^+  +>
-      =+  yex=((knit her lyf wyr det) now eny [%bond [(mix kos 1) seq] cha val])
+      =+  yex=((knit our her lyf wyr det) now eny [%bond [(mix kos 1) seq] cha val])
       =.  fex  (weld (flop p.yex) fex)
       ~&  [?:(=(0 (end 0 1 kos)) %tx %bx) her kos seq cha (lent fex)]
       %_    +>.$
@@ -1166,9 +1214,9 @@
   ::                                                    ::
 =|  $:  syl/silo                                        ::  kernel state
     ==                                                  ::
-|=  {now/@da eny/@ ski/sley}                            ::  current invocation
+|=  [our=ship now=@da eny=@uvJ ski=sley]              ::  current invocation
 =>  |%
-    ++  love  ~(. loft [now eny] syl ~)                 ::  create loft
+    ++  love  ~(. loft [now eny our] syl ~)                 ::  create loft
     ++  lung                                            ::  gift to move
       |=  gax/gift:loft
       ^-  move
@@ -1177,10 +1225,10 @@
           $home  [~ %give gax]
           $link  [~ %pass ~ %j gax]
           $line  [~ %pass ~ %j gax]
-          $meet  [~ %pass ~ %j gax]
+          $meet  !!  :: [~ %pass ~ %j gax]
           $rest  [p.gax %give %rest q.gax]
           $send  [~ %give gax]
-          $veil  [~ %pass /det/(scot %p p.gax) %j gax]
+          $veil  [~ %pass /det/(scot %p p.gax) `note:able:xmas`[%j gax]]
           $west
         =+  pax=/msg/(scot %p p.gax)/(scot %ud q.gax)
         =+  cad=[%west p.gax +.r.gax s.gax]
@@ -1197,7 +1245,7 @@
 |%                                                    ::  vane interface
 ++  neon
   |=  our/ship
-  ^-  (vane task:able gift:able sign:able note:able silo silo)
+  :: ^-  (vane task:able gift:able sign:able note:able silo silo)
   =|  syl/silo
   |%
   ++  load  |=(silo +>)
@@ -1296,10 +1344,10 @@
       $mack  [%done who kos ?~(p.+.q.hin ~ `coop`[~ `[%fail u.p.+.q.hin]])]
     ==
   ::
-      $det
-    ?>  ?=({@ $~} +.tea)
-    =+  who=(slav %p i.t.tea)
-    ?>  ?=($veil +<.q.hin)
-    [%clue who p.+.q.hin]
+    ::   $det
+    :: ?>  ?=({@ $~} +.tea)
+    :: =+  who=(slav %p i.t.tea)
+    :: ?>  ?=($veil +<.q.hin)
+    :: [%clue who p.+.q.hin]
   ==
 --
