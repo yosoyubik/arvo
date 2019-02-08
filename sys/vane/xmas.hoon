@@ -1334,6 +1334,7 @@
   |=  {tea/wire hen/duct hin/(hypo sign-arvo)}
   ^-  {p/(list move) q/_..^$}
   %-  work
+  ^-  task:loft
   ?+    -.tea  !!
       $msg
     ?>  ?=({@ @ $~} +.tea)
@@ -1344,10 +1345,13 @@
       $mack  [%done who kos ?~(p.+.q.hin ~ `coop`[~ `[%fail u.p.+.q.hin]])]
     ==
   ::
-    ::   $det
-    :: ?>  ?=({@ $~} +.tea)
-    :: =+  who=(slav %p i.t.tea)
-    :: ?>  ?=($veil +<.q.hin)
-    :: [%clue who p.+.q.hin]
+      $det
+    ?>  ?=([@ ~] +.tea)
+    =+  who=(slav %p i.t.tea)
+    =/  sign=sign-arvo  q.hin
+    ::
+    ?>  ?=([%j %veil *] sign)
+    ?>  =(who p.sign)
+    [%clue who q.sign]
   ==
 --

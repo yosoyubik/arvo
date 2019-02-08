@@ -1810,10 +1810,47 @@
           [%pubs public]                                ::  public keys
           [%turf turf=(list turf)]                      ::  domains
           {$vest p/tally}                               ::  balance update
+          [%veil p=ship q=pipe]                         ::  ?? WTF is this
           [%vein =life vein=(map life ring)]            ::  private keys
           {$vine p/(list change)}                       ::  all raw changes
           [%vent p=vent-result]                         ::  ethereum changes
       ==                                                ::
+    ::  XX copied from xmas
+    ::
+    ++  arms  (map chip (pair @ta @t))                  ::  stated identity
+    ++  bill  (pair @da @)                              ::  expiring value
+    ++  bull                                            ::  cert metadata
+      $:  dad/ship                                      ::  parent
+          dob/?                                         ::  & clean, | dirty
+          nym/arms                                      ::  identity strings
+      ==                                                ::
+    ++  cert  (tale deed)                               ::  signed deed
+    ++  chip                                            ::  standard identity
+      $?  $giv                                          ::  given name
+          $sur                                          ::  surname
+          $had                                          ::  fictitious name
+          $mid                                          ::  middle name
+      ==                                                ::
+    ++  deed                                            ::  certificate deed
+      $:  doc/bull                                      ::  metadata
+          pub/pass                                      ::  public key
+      ==                                                ::
+    ++  hand  @uvH                                          ::  128-bit hash
+    ++  oath  @                                         ::  signature
+    ++  pipe                                         ::  secure channel
+      $:  out/(unit (pair hand bill))                   ::  outbound key
+          inn/(map hand bill)                           ::  inbound keys
+          cur/(unit life)                               ::  their version
+          sax/(list ship)                               ::  their ancestry
+          pub/will                                      ::  their public keys
+      ==
+    ++  tale                                            ::  urbit-signed *
+      |*  typ/mold                                      ::  payload mold
+      $:  dat/typ                                       ::  data
+          syg/(map ship (pair life oath))               ::  signatures
+      ==                                                ::
+    ++  will  (map life cert)                           ::  meta-certificate
+    ::  XX end of xmas hack
     ::                                                  ::
     ++  note                                            ::  out request $->
       =,  eyre                                          ::
