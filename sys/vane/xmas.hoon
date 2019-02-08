@@ -131,7 +131,14 @@
               ech/(map ship mute)                       ::  waiting partners
               pol/(map ship bath)                       ::  open partners
           ==                                            ::
-++  skin  ?($none $open $fast $full)                    ::  encoding stem
+::  +skin: message encoding tag
+::
+::    %none: unencrypted, unsigned
+::    %open: unencrypted, signed
+::    %full: asymmetrically encrypted, signed
+::    %fast: symmetrically encrypted, signed
+::
+++  skin  ?(%none %open %fast %full)
 ++  stat                                                ::  pump statistics
           $:  $:  cur/@ud                               ::  window q length
                   max/@ud                               ::  max pax out
@@ -481,50 +488,50 @@
 ++  nose  !:
   =>  |%
       ++  gift                                          ::  side effect
-        $%  {$link exp/@da key/code}                    ::  learn symmetric key
-            {$meet doy/gree}                            ::  learn public key(s)
+        $%  [%link exp=@da key=code]                    ::  learn symmetric key
+            [%meet doy=gree]                            ::  learn public key(s)
         ==                                              ::
       --
-  |=  $:  him/@p
-          wyr/(map life ring)
-          det/pipe
+  |=  $:  him=@p
+          wyr=(map life ring)
+          det=pipe
       ==
-  |=  {syn/skin msg/@}
-  ^-  (pair (list gift) {aut/? ham/meal})
+  |=  [syn=skin msg=@]
+  ^-  (pair (list gift) [aut=? ham=meal])
   |^  ?-    syn
-          $none  [~ | (maul msg)]
-          $fast
+          %none  [~ | (maul msg)]
+          %fast
         =+  [mag=`hand`(end 7 1 msg) bod=(rsh 7 1 msg)]
         =+  key=q:(~(got by inn.det) mag)
         =+  clr=(need (de:crub:crypto key bod))
         [~ & (maul clr)]
       ::
-          $full
-        =+  mex=((hard {p/{p/life q/life} q/gree r/@}) (cue msg))
+          %full
+        =+  mex=(,[p=[p=life q=life] q=gree r=@] (cue msg))
         =+  rig=(~(got by wyr) p.p.mex)
         =+  pas=(whom q.p.mex q.mex)
         =+  mes=(need (tear:as:(nol:nu:crub:crypto rig) pas r.mex))
-        =+  [key out]=((hard (pair @uvI @ux)) (cue mes))
+        =+  [key out]=(,(pair @uvI @ux) (cue mes))
         :-  :~  [%link ~2018.1.1 key]
                 [%meet q.mex]
             ==
         [& (maul out)]
       ::
-          $open
-        =+  mex=((hard {p/{$~ q/life} q/gree r/@}) (cue msg))
+          %open
+        =+  mex=(,[p=[~ q=life] q=gree r=@] (cue msg))
         =+  pas=(whom q.p.mex q.mex)
         =+  out=(need (sure:as:(com:nu:crub:crypto pas) r.mex))
         [[%meet q.mex]~ & (maul r.mex)]
       ==
-  ++  maul  |=(@ `meal`((hard meal) (cue +<)))          ::  unpack message
+  ++  maul  |=(@ (meal (cue +<)))                       ::  unpack message
   ++  whom                                              ::  select public key
-    |=  {lyf/life gyr/gree}
+    |=  [lyf=life gyr=gree]
     ^-  pass
     ::
-    ::  if we have the public key for this life, use it.
-    ::  otherwise, use the key the sender sent, without
-    ::  without checking its validity.  invalid public-key
-    ::  data will crash the packet when we install it.
+    ::  If we have the public key for this life, use it. Otherwise, use the key
+    ::  the sender sent, without ::  without checking its validity. Invalid
+    ::  public-key data will crash this event in jael when we try to install the
+    ::  +gree into jael using a %meet move.
     ::
     %-  (bond |.(pub.dat:(~(got by (~(got by gyr) lyf)) him)))
     (bind (~(get by pub.det) lyf) |=(cert pub.dat))
@@ -947,37 +954,58 @@
       ==
     --
   --
-::                                                      ::
-::::  knit                                              ::::  message encoder
-  ::                                                    ::
+::  +knit: message encoder
+::
 ++  knit
   =>  |%
-      ++  gift                                          ::  side effect
-        $%  {$line exp/@da key/code}                    ::  set symmetric key
-        ==                                              ::
+      ::  +gift: side effect
+      ::
+      +$  gift
+        $%  ::  %line: set symmetric key
+            ::
+            [%line exp=@da key=code]
+        ==
       --
-  |=  {our/ship her/@p lyf/life wyr/(map life ring) det/pipe}
-  |=  {now/@da eny/@ ham/meal}
-  =+  hom=(jam ham)
+  ::  outer gate: establish pki context, producing inner gate
+  ::
+  |=  [our=ship her=ship lyf=life wyr=(map life ring) det=pipe]
+  ::  inner gate: process a meal, producing side effects and packets
+  ::
+  |=  [now=@da eny=@ ham=meal]
   ^-  (pair (list gift) (list rock))
+  ::  hom: serialized meal
+  ::
+  =+  hom=(jam ham)
+  ::
   =<  weft
   |%
-  ++  wain                                              ::  message identity
+  ::  +wain: extract message identity
+  ::
+  ++  wain
     ^-  flea
     ?+  -.ham  [0 0]
-      $bond  p.ham
-      $carp  [kos liq]:p.ham
+      %bond  p.ham
+      %carp  [kos liq]:p.ham
     ==
+  ::  +wasp: produce a message with null security
   ::
-  ++  wasp  ^-({p/skin q/@} [%none hom])                ::  null security
-  ++  weft                                              ::  fragment message
+  ++  wasp  ^-([p=skin q=@] [%none hom])
+  ::  +weft: fragment a message
+  ::
+  ++  weft
     ^-  (pair (list gift) (list rock))
+    ::
     =+  gum=wisp
     :-  p.gum
+    ::  wit: number of fragments for message; each fragment has max 2^13 bits
+    ::
     =+  wit=(met 13 q.q.gum)
+    ::  if message fits in one packet, don't fragment
+    ::
     ?:  =(1 wit)
-      ::  message fits in one packet, don't fragment
       [(spit [our her] p.q.gum q.q.gum) ~]
+    ::  ruv: 
+    ::
     =+  ruv=(rip 13 q.q.gum)
     =+  inx=0
     |-  ^-  (list rock)
@@ -986,8 +1014,9 @@
     %+  spit
       [our her]
     wasp(ham [%carp [wain (ksin p.q.gum) wit] inx i.ruv])
+  ::  +wisp: generate message from meal
   ::
-  ++  wisp                                              ::  generate message
+  ++  wisp
     ^-  (pair (list gift) (pair skin @))
     ?:  =(%carp -.ham)
       [~ wasp]
@@ -1003,14 +1032,14 @@
       :-  %open
       %^    jam
           [~ lyf]
-        `gree`!!
+        `gree`[[her pub.det] ~ ~]
       (sign:as:cry hom)
     =+  key=(shaz :(mix (mug ham) now eny))
     :-  [%line ~2018.1.1 key]~
     :-  %full
     %^    jam
         [u.cur.det lyf]
-      `gree`!!
+      `gree`[[her pub.det] ~ ~]
     (seal:as:cry pub.dat:(~(got by pub.det) u.cur.det) (jam key hom))
   --
 ::                                                      ::
