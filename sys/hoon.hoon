@@ -5616,8 +5616,8 @@
   ++  bip  =+  tod=(ape qex:ab)
            (bass 0x1.0000 ;~(plug tod (stun [7 7] ;~(pfix dog tod))))
   ++  dem  (ape (bass 1.000 ;~(plug ted:ab (star ;~(pfix dog tid:ab)))))
-  ++  dim  (ape dip)
-  ++  dip  (bass 10 ;~(plug sed:ab (star sid:ab)))
+  ++  dim  (ape (diz 1 0))
+  ++  dip  (fit [1 0] (diz 1 0))  ::XX  staging (diz 2 0). see urbit/arvo#1065
   ++  dum  (bass 10 (plus sid:ab))
   ++  fed  %+  cook  fend:ob
            ;~  pose
@@ -5639,13 +5639,7 @@
   ++  hex  (ape (bass 0x1.0000 ;~(plug qex:ab (star ;~(pfix dog qix:ab)))))
   ++  lip  =+  tod=(ape ted:ab)
            (bass 256 ;~(plug tod (stun [3 3] ;~(pfix dog tod))))
-  ++  mot  ;~  pose
-             ;~  pfix
-               (just '1')
-               (cook |=(a/@ (add 10 (sub a '0'))) (shim '0' '2'))
-             ==
-             sed:ab
-           ==
+  ++  mot  (fit [1 12] (diz 1 2))  ::XX  staging (diz 2 2). see urbit/arvo#1065
   ++  viz  (ape (bass 0x200.0000 ;~(plug pev:ab (star ;~(pfix dog piv:ab)))))
   ++  vum  (bass 32 (plus siv:ab))
   ++  wiz  (ape (bass 0x4000.0000 ;~(plug pew:ab (star ;~(pfix dog piw:ab)))))
@@ -5700,8 +5694,8 @@
                   =>  .(rep ['.' (y-co m.t.yod)])
                   ['.' '.' (y-co h.t.yod)]
                 ==
-            =>  .(rep ['.' (a-co d.t.yod)])
-            =>  .(rep ['.' (a-co m.yod)])
+            =>  .(rep ['.' (y-co d.t.yod)])
+            =>  .(rep ['.' (y-co m.yod)])
             =>  .(rep ?:(a.yod rep ['-' rep]))
             ['~' (a-co y.yod)]
           ::
