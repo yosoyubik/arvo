@@ -46,21 +46,21 @@
   ::
   ;:  welp
     %+  expect-eq
-      !>  /cx/~nul/desk/~1234.5.6/bar/foo
+      !>  /cx/~nul/desk/~1234.05.06/bar/foo
       !>  ^-  path
           %-  scry-request-to-path:ford-gate
-          [%c care=%x [[~nul %desk [%da ~1234.5.6]] /foo/bar]]
+          [%c care=%x [[~nul %desk [%da ~1234.05.06]] /foo/bar]]
   ::
     %+  expect-eq
-      !>  [%c care=%x [[~nul %desk [%da ~1234.5.6]] /foo/bar]]
+      !>  [%c care=%x [[~nul %desk [%da ~1234.05.06]] /foo/bar]]
       !>  %-  need
-          (path-to-scry-request:ford-gate /cx/~nul/desk/~1234.5.6/bar/foo)
+          (path-to-scry-request:ford-gate /cx/~nul/desk/~1234.05.06/bar/foo)
   ==
 ::
 ++  test-parse-scaffold  ^-  tang
   ::
   =/  parsed
-    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
+    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.05.06] /bar/foo]))
       [1 1]
     "!.  |=(a=@ud +(a))"
   ?~  q.parsed
@@ -77,7 +77,7 @@
             libraries=~
             cranes=~
             ^=  sources
-              :~  :*  %dbug  [/~nul/desk/~1234.5.6/foo/bar [[1 1] [1 19]]]
+              :~  :*  %dbug  [/~nul/desk/~1234.05.06/foo/bar [[1 1] [1 19]]]
                       (ream '!.  |=(a=@ud +(a))')
         ==    ==  ==
     !>  parsed
@@ -85,7 +85,7 @@
 ++  test-parse-scaffold-sur-libk  ^-  tang
   ::
   =/  parsed
-    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
+    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.05.06] /bar/foo]))
       [1 1]
     """
     /-  struct, face=other
@@ -103,7 +103,7 @@
             cranes=~
             ^=  sources
               :~  :*  %dbug
-                      [/~nul/desk/~1234.5.6/foo/bar [3 1] [4 8]]
+                      [/~nul/desk/~1234.05.06/foo/bar [3 1] [4 8]]
                       (ream '|=(a a)')
         ==    ==  ==
     !>  p.u.q.parsed
@@ -111,7 +111,7 @@
 ++  test-parse-scaffold-zuse-version  ^-  tang
   ::
   =/  parsed
-    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
+    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.05.06] /bar/foo]))
       [1 1]
     """
     /?  400
@@ -128,7 +128,7 @@
             cranes=~
             ^=  sources
               :~  :*  %dbug
-                      [/~nul/desk/~1234.5.6/foo/bar [2 1] [3 8]]
+                      [/~nul/desk/~1234.05.06/foo/bar [2 1] [3 8]]
                       (ream '|=(a a)')
         ==    ==  ==
     !>  p.u.q.parsed
@@ -136,7 +136,7 @@
 ++  test-parse-scaffold-crane-fssg  ^-  tang
   ::
   =/  parsed
-    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
+    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.05.06] /bar/foo]))
       [1 1]
     """
     /~  !.  [a=1 b=3]
@@ -153,12 +153,12 @@
             ^=  crane
               :~  :*  %fssg
                       %dbug
-                      [/~nul/desk/~1234.5.6/foo/bar [1 5] [1 18]]
+                      [/~nul/desk/~1234.05.06/foo/bar [1 5] [1 18]]
                       (ream '[a=1 b=3]')
               ==  ==
             ^=  sources
               :~  :*  %dbug
-                      [/~nul/desk/~1234.5.6/foo/bar [2 1] [3 8]]
+                      [/~nul/desk/~1234.05.06/foo/bar [2 1] [3 8]]
                       (ream '|=(a b)')
         ==    ==  ==
     !>  p.u.q.parsed
@@ -166,7 +166,7 @@
 ++  test-parse-scaffold-crane-fsbc  ^-  tang
   ::
   =/  parsed
-    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
+    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.05.06] /bar/foo]))
       [1 1]
     """
     /$  !.  |=(a a)
@@ -183,12 +183,12 @@
             ^=  crane
               :~  :*  %fsbc
                       %dbug
-                      [/~nul/desk/~1234.5.6/foo/bar [1 5] [1 16]]
+                      [/~nul/desk/~1234.05.06/foo/bar [1 5] [1 16]]
                       (ream '|=(a a)')
               ==  ==
             ^=  sources
               :~  :*  %dbug
-                      [/~nul/desk/~1234.5.6/foo/bar [2 1] [3 8]]
+                      [/~nul/desk/~1234.05.06/foo/bar [2 1] [3 8]]
                       (ream '|=(a b)')
         ==    ==  ==
     !>  p.u.q.parsed
@@ -196,7 +196,7 @@
 ++  test-parse-scaffold-crane-fsbr  ^-  tang
   ::
   =/  parsed
-    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
+    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.05.06] /bar/foo]))
       [1 1]
     """
     /|  /~  ~
@@ -214,22 +214,22 @@
             ^=  crane
               :~  :*  %fsbr
                       :~  :*  %fssg  %dbug
-                              [/~nul/desk/~1234.5.6/foo/bar [1 9] [1 10]]
+                              [/~nul/desk/~1234.05.06/foo/bar [1 9] [1 10]]
                               [%bust %null]
                           ==
                           :*  %fssg  %dbug
-                              [/~nul/desk/~1234.5.6/foo/bar [2 9] [2 10]]
+                              [/~nul/desk/~1234.05.06/foo/bar [2 9] [2 10]]
                               [%bust %null]
               ==  ==  ==  ==
             ^=  sources
-              :~  [%dbug [/~nul/desk/~1234.5.6/foo/bar [4 1] [4 2]] [%sand %ud 5]]
+              :~  [%dbug [/~nul/desk/~1234.05.06/foo/bar [4 1] [4 2]] [%sand %ud 5]]
         ==    ==
     !>  p.u.q.parsed
 ::
 ++  test-parse-scaffold-crane-fsts  ^-  tang
   ::
   =/  parsed
-    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
+    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.05.06] /bar/foo]))
       [1 1]
     """
     /=  a  /~  ~
@@ -244,19 +244,19 @@
             libraries=~
             ^=  crane
               :~  :*  %fsts  %a
-                      %fssg  %dbug  [/~nul/desk/~1234.5.6/foo/bar [1 12] [1 13]]
+                      %fssg  %dbug  [/~nul/desk/~1234.05.06/foo/bar [1 12] [1 13]]
                       [%bust %null]
               ==  ==
             ^=  sources
               :~  :*  %dbug
-                      [/~nul/desk/~1234.5.6/foo/bar [2 1] [2 2]]  [%sand %ud 5]
+                      [/~nul/desk/~1234.05.06/foo/bar [2 1] [2 2]]  [%sand %ud 5]
         ==    ==  ==
     !>  p.u.q.parsed
 ::
 ++  test-parse-scaffold-crane-fsdt  ^-  tang
   ::
   =/  parsed
-    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
+    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.05.06] /bar/foo]))
       [1 1]
     """
     /.  /~  !.  a=5
@@ -274,23 +274,23 @@
             ^=  crane
               :~  :*  %fsdt
                       :~  :*  %fssg  %dbug
-                              [/~nul/desk/~1234.5.6/foo/bar [1 9] [1 16]]
+                              [/~nul/desk/~1234.05.06/foo/bar [1 9] [1 16]]
                               (ream 'a=5')
                           ==
                           :*  %fssg  %dbug
-                              [/~nul/desk/~1234.5.6/foo/bar [2 9] [2 16]]
+                              [/~nul/desk/~1234.05.06/foo/bar [2 9] [2 16]]
                               (ream 'b=6')
               ==  ==  ==  ==
             ^=  sources
               :~  :*  %dbug
-                      [/~nul/desk/~1234.5.6/foo/bar [4 1] [4 2]]  [%sand %ud 5]
+                      [/~nul/desk/~1234.05.06/foo/bar [4 1] [4 2]]  [%sand %ud 5]
         ==    ==  ==
     !>  p.u.q.parsed
 ::
 ++  test-parse-scaffold-crane-fscm  ^-  tang
   ::
   =/  parsed
-    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
+    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.05.06] /bar/foo]))
       [1 1]
     """
     /,
@@ -313,24 +313,24 @@
               :~  :*  %fscm
                       :~  :-  /path/to/a
                           :*  %fssg  %dbug
-                              [/~nul/desk/~1234.5.6/foo/bar [3 7] [3 14]]
+                              [/~nul/desk/~1234.05.06/foo/bar [3 7] [3 14]]
                               (ream 'a=5')
                           ==
                           :-  /path/to/b
                           :*  %fssg  %dbug
-                              [/~nul/desk/~1234.5.6/foo/bar [6 7] [6 14]]
+                              [/~nul/desk/~1234.05.06/foo/bar [6 7] [6 14]]
                               (ream 'b=6')
               ==  ==  ==  ==
             ^=  sources
               :~  :*  %dbug
-                      [/~nul/desk/~1234.5.6/foo/bar [8 1] [8 2]]  [%sand %ud 1]
+                      [/~nul/desk/~1234.05.06/foo/bar [8 1] [8 2]]  [%sand %ud 1]
         ==    ==  ==
     !>  p.u.q.parsed
 ::
 ++  test-parse-scaffold-crane-fspm  ^-  tang
   ::
   =/  parsed
-    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
+    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.05.06] /bar/foo]))
       [1 1]
     """
     /=  data  /&  mark  /~  !.  a=1
@@ -347,19 +347,19 @@
               :~  :*  %fsts  %data
                       %fspm  [%mark ~]
                       %fssg  %dbug
-                      [/~nul/desk/~1234.5.6/foo/bar [1 25] [1 32]]
+                      [/~nul/desk/~1234.05.06/foo/bar [1 25] [1 32]]
                       (ream 'a=1')
               ==  ==
             ^=  sources
               :~  :*  %dbug
-                      [/~nul/desk/~1234.5.6/foo/bar [2 1] [2 2]]  [%sand %ud 1]
+                      [/~nul/desk/~1234.05.06/foo/bar [2 1] [2 2]]  [%sand %ud 1]
         ==    ==  ==
     !>  p.u.q.parsed
 ::
 ++  test-parse-scaffold-crane-fscb  ^-  tang
   ::
   =/  parsed
-    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
+    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.05.06] /bar/foo]))
       [1 1]
     """
     /_  /mark/
@@ -377,14 +377,14 @@
               ==  ==
             ^=  sources
               :~  :*  %dbug
-                      [/~nul/desk/~1234.5.6/foo/bar [2 1] [2 2]]  [%sand %ud 8]
+                      [/~nul/desk/~1234.05.06/foo/bar [2 1] [2 2]]  [%sand %ud 8]
         ==    ==  ==
     !>  p.u.q.parsed
 ::
 ++  test-parse-scaffold-crane-fssm  ^-  tang
   ::
   =/  parsed
-    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
+    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.05.06] /bar/foo]))
       [1 1]
     """
     /=  data
@@ -403,24 +403,24 @@
               :~  :*  %fsts  %data
                       %fssm
                       :*  %dbug
-                          [/~nul/desk/~1234.5.6/foo/bar [2 7] [2 24]]
+                          [/~nul/desk/~1234.05.06/foo/bar [2 7] [2 24]]
                           (ream '|=(a=@u +(a))')
                       ==
                       %fssg
                       :*  %dbug
-                          [/~nul/desk/~1234.5.6/foo/bar [3 7] [3 12]]
+                          [/~nul/desk/~1234.05.06/foo/bar [3 7] [3 12]]
                           (ream '5')
               ==  ==  ==
             ^=  sources
               :~  :*  %dbug
-                      [/~nul/desk/~1234.5.6/foo/bar [4 1] [4 2]]  [%sand %ud 7]
+                      [/~nul/desk/~1234.05.06/foo/bar [4 1] [4 2]]  [%sand %ud 7]
         ==    ==  ==
     !>  p.u.q.parsed
 ::
 ++  test-parse-scaffold-crane-fscl  ^-  tang
   ::
   =/  parsed
-    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
+    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.05.06] /bar/foo]))
       [1 1]
     """
     /=  tests
@@ -442,14 +442,14 @@
               ==  ==
             ^=  sources
               :~  :*  %dbug
-                      [/~nul/desk/~1234.5.6/foo/bar [4 1] [4 2]]  [%sand %ud 3]
+                      [/~nul/desk/~1234.05.06/foo/bar [4 1] [4 2]]  [%sand %ud 3]
         ==    ==  ==
     !>  p.u.q.parsed
 ::
 ++  test-parse-scaffold-crane-fskt  ^-  tang
   ::
   =/  parsed
-    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
+    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.05.06] /bar/foo]))
       [1 1]
     """
     /=  data
@@ -470,37 +470,37 @@
               :~  :*  %fsts  %data
                       %fskt
                       :*  %dbug
-                          [/~nul/desk/~1234.5.6/foo/bar [2 7] [2 17]]
+                          [/~nul/desk/~1234.05.06/foo/bar [2 7] [2 17]]
                           %make
                           :+  %dbug
-                            [/~nul/desk/~1234.5.6/foo/bar [2 8] [2 12]]
+                            [/~nul/desk/~1234.05.06/foo/bar [2 8] [2 12]]
                           [%wing ~[%list]]
                           :~  :+  %dbug
-                                [/~nul/desk/~1234.5.6/foo/bar [2 13] [2 16]]
+                                [/~nul/desk/~1234.05.06/foo/bar [2 13] [2 16]]
                               [%base [%atom %ud]]
                           ==
                       ==
                       %fsdt
                       :~  :-  %fssg
                           :+  %dbug
-                            [/~nul/desk/~1234.5.6/foo/bar [3 11] [3 12]]
+                            [/~nul/desk/~1234.05.06/foo/bar [3 11] [3 12]]
                           [%sand %ud 1]
                           ::
                           :-  %fssg
                           :+  %dbug
-                            [/~nul/desk/~1234.5.6/foo/bar [4 11] [4 12]]
+                            [/~nul/desk/~1234.05.06/foo/bar [4 11] [4 12]]
                           [%sand %ud 2]
               ==  ==  ==
             ^=  sources
               :~  :*  %dbug
-                      [/~nul/desk/~1234.5.6/foo/bar [6 1] [6 2]]  [%sand %ud 6]
+                      [/~nul/desk/~1234.05.06/foo/bar [6 1] [6 2]]  [%sand %ud 6]
         ==    ==  ==
     !>  p.u.q.parsed
 ::
 ++  test-parse-scaffold-crane-fszp  ^-  tang
   ::
   =/  parsed
-    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
+    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.05.06] /bar/foo]))
       [1 1]
     """
     /=  data  /!mark/
@@ -519,14 +519,14 @@
               ==  ==
             ^=  sources
               :~  :*  %dbug
-                      [/~nul/desk/~1234.5.6/foo/bar [2 1] [2 2]]  [%sand %ud 2]
+                      [/~nul/desk/~1234.05.06/foo/bar [2 1] [2 2]]  [%sand %ud 2]
         ==    ==  ==
     !>  p.u.q.parsed
 ::
 ++  test-parse-scaffold-crane-fszy  ^-  tang
   ::
   =/  parsed
-    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.5.6] /bar/foo]))
+    %+  (full (parse-scaffold:ford-gate [[~nul %desk %da ~1234.05.06] /bar/foo]))
       [1 1]
     """
     /=  data  /mark/
@@ -545,7 +545,7 @@
               ==  ==
             ^=  sources
               :~  :*  %dbug
-                      [/~nul/desk/~1234.5.6/foo/bar [2 1] [2 2]]  [%sand %ud 9]
+                      [/~nul/desk/~1234.05.06/foo/bar [2 1] [2 2]]  [%sand %ud 9]
         ==    ==  ==
     !>  p.u.q.parsed
 ::
@@ -554,7 +554,7 @@
   =^  results1  ford-gate
     %-  ford-call  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=scry-is-forbidden
       ::  send a pinned literal, expects a %made response with pinned literal
       ::
@@ -562,7 +562,7 @@
         [duct=~ type=~ %build live=%.n [%$ %noun !>(**)]]
       ::
       ^=  moves
-        :~  :*  duct=~  %give  %made  ~1234.5.6
+        :~  :*  duct=~  %give  %made  ~1234.05.06
                 %complete  %success  %$  %noun  !>(**)
         ==  ==
     ==
@@ -576,7 +576,7 @@
   =^  results1  ford-gate
     %-  ford-call  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=scry-is-forbidden
       ::  if we autocons the same schematic, we should get two of it as a result
       ::
@@ -586,7 +586,7 @@
         ==
       ::
       ^=  moves
-        :~  :*  duct=~  %give  %made  ~1234.5.6  %complete
+        :~  :*  duct=~  %give  %made  ~1234.05.06  %complete
                 %success
                 [%success %$ %noun !>(**)]
                 [%success %$ %noun !>(**)]
@@ -601,7 +601,7 @@
   =^  results1  ford-gate
     %-  ford-call  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=scry-is-forbidden
       :: if we autocons different schematics, we get different values
       ::
@@ -611,7 +611,7 @@
         ==
       ::
       ^=  moves
-        :~  :*  duct=~  %give  %made  ~1234.5.6  %complete
+        :~  :*  duct=~  %give  %made  ~1234.05.06  %complete
                 %success
                 [%success %$ %noun !>(42)]
                 [%success %$ %noun !>(43)]
@@ -626,8 +626,8 @@
   =^  results1  ford-gate
     %-  ford-call  :*
       ford-gate
-      now=~1234.5.6
-      scry=(scry-succeed ~1234.5.6 [%noun !>(42)])
+      now=~1234.05.06
+      scry=(scry-succeed ~1234.05.06 [%noun !>(42)])
       ::  test a pinned scry which succeeds
       ::
       ^=  call-args
@@ -636,7 +636,7 @@
         ==
       ::
       ^=  moves
-        :~  :*  duct=~  %give  %made  ~1234.5.6  %complete  %success
+        :~  :*  duct=~  %give  %made  ~1234.05.06  %complete  %success
                 [%scry %noun !>(42)]
     ==  ==  ==
   ::
@@ -649,8 +649,8 @@
   =^  results1  ford-gate
     %-  ford-call  :*
       ford-gate
-      now=~1234.5.6
-      scry=(scry-fail ~1234.5.6)
+      now=~1234.05.06
+      scry=(scry-fail ~1234.05.06)
       ::  attempting to scry a path which fails should produce an error
       ::
       ^=  call-args
@@ -659,10 +659,10 @@
         ==
       ::
       ^=  moves
-        :~  :*  duct=~  %give  %made  ~1234.5.6  %complete
+        :~  :*  duct=~  %give  %made  ~1234.05.06  %complete
                 %error
                 :~  leaf+"scry failed for"
-                    leaf+"%cx /~nul/desk/~1234.5.6/foo/bar"
+                    leaf+"%cx /~nul/desk/~1234.05.06/foo/bar"
     ==  ==  ==  ==
   ::
   %+  weld
@@ -674,8 +674,8 @@
   =^  results1  ford-gate
     %-  ford-call  :*
       ford-gate
-      now=~1234.5.6
-      scry=(scry-block ~1234.5.6)
+      now=~1234.05.06
+      scry=(scry-block ~1234.05.06)
       ::  when we scry on a blocked path, expect a subscription move
       ::
       ^=  call-args
@@ -685,9 +685,9 @@
       ::
       ^=  moves
         :~  :*  duct=~  %pass
-                wire=/scry-request/cx/~nul/desk/~1234.5.6/foo/bar
+                wire=/scry-request/cx/~nul/desk/~1234.05.06/foo/bar
                 %c  %warp  ~nul  %desk
-                ~  %sing  %x  [%da ~1234.5.6]  /foo/bar
+                ~  %sing  %x  [%da ~1234.05.06]  /foo/bar
     ==  ==  ==
   ::
   =^  results2  ford-gate
@@ -698,13 +698,13 @@
       ::  when clay responds, send a %made
       ::
       ^=  take-args
-        :*  wire=/scry-request/cx/~nul/desk/~1234.5.6/foo/bar  duct=~
+        :*  wire=/scry-request/cx/~nul/desk/~1234.05.06/foo/bar  duct=~
             ^=  wrapped-sign  ^-  (hypo sign:ford-gate)  :-  *type
-            [%c %writ ~ [%x [%da ~1234.5.6] %desk] /bar/foo %noun !>(42)]
+            [%c %writ ~ [%x [%da ~1234.05.06] %desk] /bar/foo %noun !>(42)]
         ==
       ::
       ^=  moves
-        :~  :*  duct=~  %give  %made  ~1234.5.6  %complete  %success
+        :~  :*  duct=~  %give  %made  ~1234.05.06  %complete  %success
                 [%scry %noun !>(42)]
     ==  ==  ==
   ::
@@ -719,8 +719,8 @@
   =^  results1  ford-gate
     %-  ford-call  :*
       ford-gate
-      now=~1234.5.6
-      scry=(scry-block ~1234.5.6)
+      now=~1234.05.06
+      scry=(scry-block ~1234.05.06)
       ::  when we scry on a blocked path, expect a subscription move
       ::
       ^=  call-args
@@ -730,21 +730,21 @@
       ::
       ^=  moves
         :~  :*  duct=~[/one]  %pass
-                wire=/scry-request/cx/~nul/desk/~1234.5.6/foo/bar
+                wire=/scry-request/cx/~nul/desk/~1234.05.06/foo/bar
                 %c  %warp  ~nul  %desk
-                ~  %sing  %x  [%da ~1234.5.6]  /foo/bar
+                ~  %sing  %x  [%da ~1234.05.06]  /foo/bar
     ==  ==  ==
   ::
   =^  results2  ford-gate
     %-  ford-call  :*
       ford-gate
       now=~1234.5.7
-      scry=(scry-block ~1234.5.6)
+      scry=(scry-block ~1234.05.06)
       ::  when we scry on a blocked path, expect a subscription move
       ::
       ^=  call-args
         :*  duct=~[/two]  type=~  %build  live=%.n
-            [%pin ~1234.5.6 [%scry %c ren=%x rail=[[~nul %desk] /bar/foo]]]
+            [%pin ~1234.05.06 [%scry %c ren=%x rail=[[~nul %desk] /bar/foo]]]
         ==
       ::
       ^=  moves  ~
@@ -758,16 +758,16 @@
       ::  when clay responds, send a %made
       ::
       ^=  take-args
-        :*  wire=/scry-request/cx/~nul/desk/~1234.5.6/foo/bar  duct=~
+        :*  wire=/scry-request/cx/~nul/desk/~1234.05.06/foo/bar  duct=~
             ^=  wrapped-sign  ^-  (hypo sign:ford-gate)  :-  *type
-            [%c %writ ~ [%x [%da ~1234.5.6] %desk] /bar/foo %noun !>(42)]
+            [%c %writ ~ [%x [%da ~1234.05.06] %desk] /bar/foo %noun !>(42)]
         ==
       ::
       ^=  moves
         :~  :*  duct=~[/two]  %give  %made  ~1234.5.7  %complete  %success
                 [%scry %noun !>(42)]
             ==
-            :*  duct=~[/one]  %give  %made  ~1234.5.6  %complete  %success
+            :*  duct=~[/one]  %give  %made  ~1234.05.06  %complete  %success
                 [%scry %noun !>(42)]
     ==  ==  ==
   ::
@@ -783,8 +783,8 @@
   =^  results1  ford-gate
     %-  ford-call  :*
       ford-gate
-      now=~1234.5.6
-      scry=(scry-block ~1234.5.6)
+      now=~1234.05.06
+      scry=(scry-block ~1234.05.06)
       ::  when we scry on a blocked path, expect a subscription move
       ::
       ^=  call-args
@@ -794,9 +794,9 @@
       ::
       ^=  moves
         :~  :*  duct=~[/one]  %pass
-                wire=/scry-request/cx/~nul/desk/~1234.5.6/foo/bar
+                wire=/scry-request/cx/~nul/desk/~1234.05.06/foo/bar
                 %c  %warp  ~nul  %desk
-                ~  %sing  %x  [%da ~1234.5.6]  /foo/bar
+                ~  %sing  %x  [%da ~1234.05.06]  /foo/bar
     ==  ==  ==
   ::
   =^  results2  ford-gate
@@ -809,7 +809,7 @@
       ::
       ^=  moves
         :~  :*  duct=~[/one]  %pass
-                wire=/scry-request/cx/~nul/desk/~1234.5.6/foo/bar
+                wire=/scry-request/cx/~nul/desk/~1234.05.06/foo/bar
                 %c  %warp  ~nul  %desk  ~
     ==  ==  ==
   ::
@@ -824,8 +824,8 @@
   =^  results1  ford-gate
     %-  ford-call  :*
       ford-gate
-      now=~1234.5.6
-      scry=(scry-succeed ~1234.5.6 [%noun !>(42)])
+      now=~1234.05.06
+      scry=(scry-succeed ~1234.05.06 [%noun !>(42)])
       ::
       ^=  call-args
         :*  duct=~[/first]  type=~  %build  live=%.y
@@ -833,12 +833,12 @@
         ==
       ::
       ^=  moves
-        :~  :*  duct=~[/first]  %give  %made  ~1234.5.6  %complete  %success
+        :~  :*  duct=~[/first]  %give  %made  ~1234.05.06  %complete  %success
                 [%scry %noun !>(42)]
             ==
-            :*  duct=~[/first]  %pass  wire=/clay-sub/~nul/desk/~1234.5.6
+            :*  duct=~[/first]  %pass  wire=/clay-sub/~nul/desk/~1234.05.06
                 %c  %warp  ~nul  %desk
-                `[%mult [%da ~1234.5.6] (sy [%x /foo/bar]~)]
+                `[%mult [%da ~1234.05.06] (sy [%x /foo/bar]~)]
     ==  ==  ==
   ::
   =^  results2  ford-gate
@@ -848,7 +848,7 @@
       scry=(scry-succeed ~1234.5.7 [%noun !>(43)])
       ::
       ^=  take-args
-        :*  wire=/clay-sub/~nul/desk/~1234.5.6  duct=~[/first]
+        :*  wire=/clay-sub/~nul/desk/~1234.05.06  duct=~[/first]
             ^=  wrapped-sign  ^-  (hypo sign:ford-gate)  :-  *type
             [%c %wris [%da ~1234.5.7] (sy [%x /foo/bar]~)]
         ==
@@ -887,8 +887,8 @@
   =^  results1  ford-gate
     %-  ford-call  :*
       ford-gate
-      now=~1234.5.6
-      scry=(scry-succeed ~1234.5.6 [%noun !>(42)])
+      now=~1234.05.06
+      scry=(scry-succeed ~1234.05.06 [%noun !>(42)])
       ::  perform a live scry, we should get a %made and a clay subscription
       ::
       ^=  call-args
@@ -897,12 +897,12 @@
         ==
       ::
       ^=  moves
-        :~  :*  duct=~[/first]  %give  %made  ~1234.5.6  %complete  %success
+        :~  :*  duct=~[/first]  %give  %made  ~1234.05.06  %complete  %success
                 [%scry %noun !>(42)]
             ==
-            :*  duct=~[/first]  %pass  wire=/clay-sub/~nul/desk/~1234.5.6
+            :*  duct=~[/first]  %pass  wire=/clay-sub/~nul/desk/~1234.05.06
                 %c  %warp  ~nul  %desk
-                `[%mult [%da ~1234.5.6] (sy [%x /foo/bar]~)]
+                `[%mult [%da ~1234.05.06] (sy [%x /foo/bar]~)]
     ==  ==  ==
   ::
   =^  results2  ford-gate
@@ -933,7 +933,7 @@
       ::
       call-args=[duct=~[/first] type=~ %kill ~]
       ^=  moves
-        :~  :*  duct=~[/first]  %pass  wire=/clay-sub/~nul/desk/~1234.5.6
+        :~  :*  duct=~[/first]  %pass  wire=/clay-sub/~nul/desk/~1234.05.06
                 %c  %warp  ~nul  %desk  ~
     ==  ==  ==
   ::
@@ -977,7 +977,7 @@
   =^  results1  ford-gate
     %-  ford-call-with-comparator  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=(scry-blocks blocks)
       ::
       call-args=[duct=~[/first] type=~ %build live=%.y autocons]
@@ -1034,7 +1034,7 @@
       ::
       ^=  expected-moves
         ^-  (list move:ford-gate)
-        :~  :*  duct=~[/first]  %give  %made  ~1234.5.6  %complete  %success
+        :~  :*  duct=~[/first]  %give  %made  ~1234.05.06  %complete  %success
                 [%success %scry %noun scry-type %seven]
                 [%success %scry %noun scry-type %eight]
     ==  ==  ==
@@ -1065,13 +1065,13 @@
   =^  results1  ford-gate
     %-  ford-call  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=scry-is-forbidden
       ::
       call-args=[duct=~[/pin] type=~ %build live=%.n schematic]
       ::
       ^=  expected-moves
-        :~  :*  duct=~[/pin]  %give  %made  ~1234.5.6  %complete
+        :~  :*  duct=~[/pin]  %give  %made  ~1234.05.06  %complete
                 %success  %$  %noun  !>(42)
     ==  ==  ==
   results1
@@ -1083,13 +1083,13 @@
   =^  results1  ford-gate
     %-  ford-call  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=scry-is-forbidden
       ::
       call-args=[duct=~[/pin] type=~ %build live=%.n schematic]
       ::
       ^=  expected-moves
-        :~  :*  duct=~[/pin]  %give  %made  ~1234.5.6  %complete
+        :~  :*  duct=~[/pin]  %give  %made  ~1234.05.06  %complete
                 %success  %$  %noun  !>(42)
     ==  ==  ==
   results1
@@ -1100,12 +1100,12 @@
     %-  ford-call  :*
       ford-gate
       now=~1234.5.8
-      scry=(scry-succeed ~1234.5.6 [%noun !>(42)])
+      scry=(scry-succeed ~1234.05.06 [%noun !>(42)])
       ::
       ^=  call-args
         :*  duct=~[/pinned-in-pin]  type=~  %build  live=%.n
             %pin  ~1234.5.7
-            %pin  ~1234.5.6
+            %pin  ~1234.05.06
             [%scry %c care=%x rail=[[~nul %desk] /bar/foo]]
         ==
       ::
@@ -1122,26 +1122,26 @@
 ::
 ++  test-pinned-in-live  ^-  tang
   ::
-  =/  scry-42  (scry-succeed ~1234.5.6 [%noun !>(42)])
+  =/  scry-42  (scry-succeed ~1234.05.06 [%noun !>(42)])
   =/  scry-43  (scry-succeed ~1234.5.7 [%noun !>(43)])
   ::
   =/  schematic=schematic:ford-gate
-    :*  %same  %pin  ~1234.5.6
+    :*  %same  %pin  ~1234.05.06
         [%scry %c care=%x rail=[[~nul %desk] /bar/foo]]
     ==
   ::
-  =/  build=build:ford-gate  [~1234.5.6 schematic]
+  =/  build=build:ford-gate  [~1234.05.06 schematic]
   =/  result=build-result:ford-gate
     [%success [%scry %noun !>(42)]]
   ::
   =^  results1  ford-gate
     %-  ford-call  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=scry-42
       ::
       call-args=[duct=~[/live] type=~ %build live=%.y schematic]
-      moves=[duct=~[/live] %give %made ~1234.5.6 %complete result]~
+      moves=[duct=~[/live] %give %made ~1234.05.06 %complete result]~
     ==
   ::
   =^  results2  ford-gate
@@ -1162,14 +1162,14 @@
 ::
 ++  test-live-build-that-blocks  ^-  tang
   ::
-  =/  scry-blocked  (scry-block ~1234.5.6)
-  =/  scry-42  (scry-succeed ~1234.5.6 [%noun !>(42)])
+  =/  scry-blocked  (scry-block ~1234.05.06)
+  =/  scry-42  (scry-succeed ~1234.05.06 [%noun !>(42)])
   =/  scry-43  (scry-succeed ~1234.5.8 [%noun !>(43)])
   ::
   =^  results1  ford-gate
     %-  ford-call  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=scry-blocked
       ::
       ^=  call-args
@@ -1179,9 +1179,9 @@
       ::
       ^=  moves
         :~  :*  duct=~[/live]  %pass
-                wire=/scry-request/cx/~nul/desk/~1234.5.6/foo/bar
+                wire=/scry-request/cx/~nul/desk/~1234.05.06/foo/bar
                 %c  %warp  ~nul  %desk
-                ~  %sing  %x  [%da ~1234.5.6]  /foo/bar
+                ~  %sing  %x  [%da ~1234.05.06]  /foo/bar
     ==  ==  ==
   ::
   =^  results2    ford-gate
@@ -1191,18 +1191,18 @@
       scry=scry-42
       ::
       ^=  take-args
-        :*  wire=/scry-request/cx/~nul/desk/~1234.5.6/foo/bar  duct=~[/live]
+        :*  wire=/scry-request/cx/~nul/desk/~1234.05.06/foo/bar  duct=~[/live]
             ^=  wrapped-sign  ^-  (hypo sign:ford-gate)  :-  *type
-            [%c %writ ~ [%x [%da ~1234.5.6] %desk] /bar/foo %noun !>(42)]
+            [%c %writ ~ [%x [%da ~1234.05.06] %desk] /bar/foo %noun !>(42)]
         ==
       ::
       ^=  moves
-        :~  :*  duct=~[/live]  %give  %made  ~1234.5.6  %complete  %success
+        :~  :*  duct=~[/live]  %give  %made  ~1234.05.06  %complete  %success
                 [%scry %noun !>(42)]
             ==
-            :*  duct=~[/live]  %pass  wire=/clay-sub/~nul/desk/~1234.5.6
+            :*  duct=~[/live]  %pass  wire=/clay-sub/~nul/desk/~1234.05.06
                 %c  %warp  ~nul  %desk
-                `[%mult [%da ~1234.5.6] (sy [%x /foo/bar]~)]
+                `[%mult [%da ~1234.05.06] (sy [%x /foo/bar]~)]
     ==  ==  ==
   ::
   =^  results3  ford-gate
@@ -1212,7 +1212,7 @@
       scry=scry-43
       ::
       ^=  take-args
-        :*  wire=/clay-sub/~nul/desk/~1234.5.6  duct=~[/live]
+        :*  wire=/clay-sub/~nul/desk/~1234.05.06  duct=~[/live]
             ^=  wrapped-sign  ^-  (hypo sign:ford-gate)  :-  *type
             [%c %wris [%da ~1234.5.8] (sy [%x /foo/bar]~)]
         ==
@@ -1249,13 +1249,13 @@
 ::
 ++  test-live-and-once  ^-  tang
   ::
-  =/  scry-blocked  (scry-block ~1234.5.6)
-  =/  scry-42  (scry-succeed ~1234.5.6 [%noun !>(42)])
+  =/  scry-blocked  (scry-block ~1234.05.06)
+  =/  scry-42  (scry-succeed ~1234.05.06 [%noun !>(42)])
   ::
   =^  results1  ford-gate
     %-  ford-call  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=scry-blocked
       ::
       ^=  call-args
@@ -1265,9 +1265,9 @@
       ::
       ^=  moves
         :~  :*  duct=~[/live]  %pass
-                wire=/scry-request/cx/~nul/desk/~1234.5.6/foo/bar
+                wire=/scry-request/cx/~nul/desk/~1234.05.06/foo/bar
                 %c  %warp  ~nul  %desk
-                ~  %sing  %x  [%da ~1234.5.6]  /foo/bar
+                ~  %sing  %x  [%da ~1234.05.06]  /foo/bar
     ==  ==  ==
   ::
   =^  results2  ford-gate
@@ -1278,7 +1278,7 @@
       ::
       ^=  call-args
         :*  duct=~[/once]  type=~  %build  live=%.n
-            [%pin ~1234.5.6 [%scry %c ren=%x rail=[[~nul %desk] /bar/foo]]]
+            [%pin ~1234.05.06 [%scry %c ren=%x rail=[[~nul %desk] /bar/foo]]]
         ==
       ::
       moves=~
@@ -1291,18 +1291,18 @@
       scry=scry-is-forbidden
       ::
       ^=  take-args
-        :*  wire=/scry-request/cx/~nul/desk/~1234.5.6/foo/bar  duct=~[/live]
+        :*  wire=/scry-request/cx/~nul/desk/~1234.05.06/foo/bar  duct=~[/live]
             ^=  wrapped-sign  ^-  (hypo sign:ford-gate)  :-  *type
-            [%c %writ ~ [%x [%da ~1234.5.6] %desk] /bar/foo %noun !>(42)]
+            [%c %writ ~ [%x [%da ~1234.05.06] %desk] /bar/foo %noun !>(42)]
         ==
       ::
       ^=  moves
-        :~  :*  duct=~[/live]  %give  %made  ~1234.5.6  %complete
+        :~  :*  duct=~[/live]  %give  %made  ~1234.05.06  %complete
                 [%success [%scry %noun !>(42)]]
             ==
-            :*  duct=~[/live]  %pass  wire=/clay-sub/~nul/desk/~1234.5.6
+            :*  duct=~[/live]  %pass  wire=/clay-sub/~nul/desk/~1234.05.06
                 %c  %warp  ~nul  %desk
-                `[%mult [%da ~1234.5.6] (sy [%x /foo/bar]~)]
+                `[%mult [%da ~1234.05.06] (sy [%x /foo/bar]~)]
             ==
             :*  duct=~[/once]  %give  %made  ~1234.5.7  %complete
                 [%success [%scry %noun !>(42)]]
@@ -1317,7 +1317,7 @@
       call-args=[duct=~[/live] type=~ %kill ~]
       ::
       ^=  moves
-        :~  :*  duct=~[/live]  %pass  wire=/clay-sub/~nul/desk/~1234.5.6
+        :~  :*  duct=~[/live]  %pass  wire=/clay-sub/~nul/desk/~1234.05.06
                 %c  %warp  ~nul  %desk  ~
     ==  ==  ==
   ::
@@ -1331,13 +1331,13 @@
 ::
 ++  test-live-two-deep  ^-  tang
   ::
-  =/  scry-42  (scry-succeed ~1234.5.6 [%noun !>(42)])
+  =/  scry-42  (scry-succeed ~1234.05.06 [%noun !>(42)])
   =/  scry-43  (scry-succeed ~1234.5.7 [%noun !>(43)])
   ::
   =^  results1  ford-gate
     %-  ford-call  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=scry-42
       ::
       ^=  call-args
@@ -1346,13 +1346,13 @@
         ==
       ::
       ^=  moves
-        :~  :*  duct=~[/two-deep-4u]  %give  %made  ~1234.5.6  %complete
+        :~  :*  duct=~[/two-deep-4u]  %give  %made  ~1234.05.06  %complete
                 %success  [%scry %noun !>(42)]
             ==
             :*  duct=~[/two-deep-4u]  %pass
-                wire=/clay-sub/~nul/desk/~1234.5.6
+                wire=/clay-sub/~nul/desk/~1234.05.06
                 %c  %warp  ~nul  %desk
-                `[%mult [%da ~1234.5.6] (sy [%x /foo/bar]~)]
+                `[%mult [%da ~1234.05.06] (sy [%x /foo/bar]~)]
     ==  ==  ==
   ::
   =^  results2  ford-gate
@@ -1362,7 +1362,7 @@
       scry=scry-43
       ::
       ^=  take-args
-        :*  wire=/clay-sub/~nul/desk/~1234.5.6  duct=~[/two-deep-4u]
+        :*  wire=/clay-sub/~nul/desk/~1234.05.06  duct=~[/two-deep-4u]
             ^=  wrapped-sign  ^-  (hypo sign:ford-gate)  :-  *type
             [%c %wris [%da ~1234.5.7] (sy [%x /foo/bar]~)]
         ==
@@ -1404,7 +1404,7 @@
   ::
   =/  scry-results=(map [term beam] cage)
     %-  my  :~
-      :-  [%cx [[~nul %desk %da ~1234.5.6] /bar/foo]]
+      :-  [%cx [[~nul %desk %da ~1234.05.06] /bar/foo]]
       [%noun scry-type %it-doesnt-matter]
     ::
       :-  [%cx [[~nul %desk %da ~1234.5.7] /bar/foo]]
@@ -1423,18 +1423,18 @@
   =^  results1  ford-gate
     %-  ford-call  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=scry
       ::
       call-args=[duct=~[/ride] type=~ %build live=%.y same]
       ::
       ^=  moves
-        :~  :*  duct=~[/ride]  %give  %made  ~1234.5.6  %complete
+        :~  :*  duct=~[/ride]  %give  %made  ~1234.05.06  %complete
                 [%success [%ride scry-type %constant]]
             ==
-            :*  duct=~[/ride]  %pass  wire=/clay-sub/~nul/desk/~1234.5.6
+            :*  duct=~[/ride]  %pass  wire=/clay-sub/~nul/desk/~1234.05.06
                 %c  %warp  ~nul  %desk
-                `[%mult [%da ~1234.5.6] (sy [%x /foo/bar] ~)]
+                `[%mult [%da ~1234.05.06] (sy [%x /foo/bar] ~)]
     ==  ==  ==
   ::
   =^  results2  ford-gate
@@ -1444,7 +1444,7 @@
       scry=scry
       ::
       ^=  take-args
-        :*  wire=/clay-sub/~nul/desk/~1234.5.6  duct=~[/ride]
+        :*  wire=/clay-sub/~nul/desk/~1234.05.06  duct=~[/ride]
             ^=  wrapped-sign  ^-  (hypo sign:ford-gate)  :-  *type
             [%c %wris [%da ~1234.5.7] (sy [%x /foo/bar]~)]
         ==
@@ -1479,7 +1479,7 @@
   ::
   =/  scry-results=(map [term beam] cage)
     %-  my  :~
-      :-  [%cx [[~nul %desk %da ~1234.5.6] /bar/foo]]
+      :-  [%cx [[~nul %desk %da ~1234.05.06] /bar/foo]]
       [%noun !>(%it-does-in-fact-matter)]
     ::
       :-  [%cx [[~nul %desk %da ~1234.5.7] /bar/foo]]
@@ -1499,19 +1499,19 @@
   =^  results1  ford-gate
     %-  ford-call  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=scry
       ::
       call-args=[duct=~[/ride] type=~ %build live=%.y autocons]
       ::
       ^=  moves
-        :~  :*  duct=~[/ride]  %give  %made  ~1234.5.6  %complete  %success
+        :~  :*  duct=~[/ride]  %give  %made  ~1234.05.06  %complete  %success
                 [%success [%ride ride-type %constant]]
                 [%success [%scry %noun !>(%it-does-in-fact-matter)]]
             ==
-            :*  duct=~[/ride]  %pass  wire=/clay-sub/~nul/desk/~1234.5.6
+            :*  duct=~[/ride]  %pass  wire=/clay-sub/~nul/desk/~1234.05.06
                 %c  %warp  ~nul  %desk
-                `[%mult [%da ~1234.5.6] (sy [%x /foo/bar] ~)]
+                `[%mult [%da ~1234.05.06] (sy [%x /foo/bar] ~)]
     ==  ==  ==
   ::
   =^  results2  ford-gate
@@ -1521,7 +1521,7 @@
       scry=scry
       ::
       ^=  take-args
-        :*  wire=/clay-sub/~nul/desk/~1234.5.6  duct=~[/ride]
+        :*  wire=/clay-sub/~nul/desk/~1234.05.06  duct=~[/ride]
             ^=  wrapped-sign  ^-  (hypo sign:ford-gate)  :-  *type
             [%c %wris [%da ~1234.5.7] (sy [%x /foo/bar]~)]
         ==
@@ -1566,7 +1566,7 @@
   ::
   =/  scry-results=(map [term beam] cage)
     %-  my  :~
-      :-  [%cx [[~nul %home %da ~1234.5.6] /bar/foo]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /bar/foo]]
       [%noun scry-type %it-does-in-fact-matter]
     ::
       :-  [%cx [[~nul %home %da ~1234.5.7] /bar/foo]]
@@ -1582,18 +1582,18 @@
   =/  ride=schematic:ford-gate  [%ride formula subject-schematic]
   =/  autocons=schematic:ford-gate  [ride subject-schematic]
   ::
-  =/  static=schematic:ford-gate  [%same [%pin ~1234.5.6 autocons]]
+  =/  static=schematic:ford-gate  [%same [%pin ~1234.05.06 autocons]]
   ::
   =^  results1  ford-gate
     %-  ford-call  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=scry
       ::
       call-args=[duct=~[/static] type=~ %build live=%.y static]
       ::
       ^=  moves
-        :~  :*  duct=~[/static]  %give  %made  ~1234.5.6  %complete  %success
+        :~  :*  duct=~[/static]  %give  %made  ~1234.05.06  %complete  %success
                 [%success [%ride ride-type %constant]]
                 [%success [%scry %noun scry-type %it-does-in-fact-matter]]
     ==  ==  ==
@@ -1658,7 +1658,7 @@
   =^  results1  ford-gate
     %-  ford-call-with-comparator  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=scry-is-forbidden
       ::
       call-args=[duct=~[/call] type=~ %build live=%.y call-schematic]
@@ -1695,18 +1695,18 @@
 ::
 ++  test-call-scry-succeed  ^-  tang
   ::
-  =/  scry-42  (scry-succeed ~1234.5.6 [%noun !>(42)])
+  =/  scry-42  (scry-succeed ~1234.05.06 [%noun !>(42)])
   ::
   =/  sample-schematic=schematic:ford-gate  [%$ %noun !>(24)]
   =/  gate-schematic=schematic:ford-gate
-    [%$ %noun !>(|=(a=@ud .^(@ud %cx /~nul/desk/~1234.5.6/foo/bar)))]
+    [%$ %noun !>(|=(a=@ud .^(@ud %cx /~nul/desk/~1234.05.06/foo/bar)))]
   =/  call-schematic=schematic:ford-gate
     [%call gate-schematic sample-schematic]
   ::
   =^  results1  ford-gate
     %-  ford-call-with-comparator  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=scry-42
       ::
       call-args=[duct=~[/call] type=~ %build live=%.y call-schematic]
@@ -1743,18 +1743,18 @@
   ==
 ++  test-call-scry-fail  ^-  tang
   ::
-  =/  scry-failed  (scry-fail ~1234.5.6)
+  =/  scry-failed  (scry-fail ~1234.05.06)
   ::
   =/  sample-schematic=schematic:ford-gate  [%$ %noun !>(24)]
   =/  gate-schematic=schematic:ford-gate
-    [%$ %noun !>(|=(a=@ud .^(@ud %cx /~nul/desk/~1234.5.6/foo/bar)))]
+    [%$ %noun !>(|=(a=@ud .^(@ud %cx /~nul/desk/~1234.05.06/foo/bar)))]
   =/  call-schematic=schematic:ford-gate
     [%call gate-schematic sample-schematic]
   ::
   =^  results1  ford-gate
     %-  ford-call-with-comparator  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=scry-failed
       ::
       call-args=[duct=~[/dead] type=~ %build live=%.y call-schematic]
@@ -1769,7 +1769,7 @@
         ::  compare the move to the expected move, omitting check on stack trace
         ::
         %+  expect-eq
-          !>  :*  duct=~[/dead]  %give  %made  ~1234.5.6  %complete
+          !>  :*  duct=~[/dead]  %give  %made  ~1234.05.06  %complete
                   [%error [leaf+"ford: %call execution failed:" ~]]
               ==
           !>  i.moves(|7 ~)
@@ -1795,27 +1795,27 @@
 ::
 ++  test-call-scry-block  ^-  tang
   ::
-  =/  scry-blocked  (scry-block ~1234.5.6)
+  =/  scry-blocked  (scry-block ~1234.05.06)
   ::
   =/  sample-schematic=schematic:ford-gate  [%$ %noun !>(24)]
   =/  gate-schematic=schematic:ford-gate
-    [%$ %noun !>(|=(a=@ud .^(@ud %cx /~nul/desk/~1234.5.6/foo/bar)))]
+    [%$ %noun !>(|=(a=@ud .^(@ud %cx /~nul/desk/~1234.05.06/foo/bar)))]
   =/  call-schematic=schematic:ford-gate
     [%call gate-schematic sample-schematic]
   ::
   =^  results1  ford-gate
     %-  ford-call  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=scry-blocked
       ::
       call-args=[duct=~[/live] type=~ %build live=%.y call-schematic]
       ::
       ^=  moves
         :~  :*  duct=~[/live]  %pass
-                wire=/scry-request/cx/~nul/desk/~1234.5.6/foo/bar
+                wire=/scry-request/cx/~nul/desk/~1234.05.06/foo/bar
                 %c  %warp  ~nul  %desk
-                ~  %sing  %x  [%da ~1234.5.6]  /foo/bar
+                ~  %sing  %x  [%da ~1234.05.06]  /foo/bar
     ==  ==  ==
   ::
   =^  results2  ford-gate
@@ -1825,9 +1825,9 @@
       scry=scry-blocked
       ::
       ^=  call-args
-        :*  wire=/scry-request/cx/~nul/desk/~1234.5.6/foo/bar  duct=~
+        :*  wire=/scry-request/cx/~nul/desk/~1234.05.06/foo/bar  duct=~
             ^=  wrapped-sign  ^-  (hypo sign:ford-gate)  :-  *type
-            [%c %writ ~ [%x [%da ~1234.5.6] %desk] /bar/foo %noun !>(42)]
+            [%c %writ ~ [%x [%da ~1234.05.06] %desk] /bar/foo %noun !>(42)]
         ==
       ::
       ^=  comparator
@@ -1872,10 +1872,10 @@
   ::
   =/  scry-results=(map [term beam] cage)
     %-  my  :~
-      :-  [%cx [[~nul %desk %da ~1234.5.6] /timer]]
-      [%noun date-type ~1234.5.6]
+      :-  [%cx [[~nul %desk %da ~1234.05.06] /timer]]
+      [%noun date-type ~1234.05.06]
     ::
-      :-  [%cx [[~nul %desk %da ~1234.5.6] /result]]
+      :-  [%cx [[~nul %desk %da ~1234.05.06] /result]]
       [%noun term-type %first]
     ::
       :-  [%cx [[~nul %desk %da ~1234.5.7] /timer]]
@@ -1897,7 +1897,7 @@
   =^  results1  ford-gate
     %-  ford-call-with-comparator  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=scry
       ::
       ^=  call-args
@@ -1917,9 +1917,9 @@
         ::  make sure the other move is a subscription
         ::
         %+  expect-eq
-          !>  :*  duct=~[/call]  %pass  wire=/clay-sub/~nul/desk/~1234.5.6
+          !>  :*  duct=~[/call]  %pass  wire=/clay-sub/~nul/desk/~1234.05.06
                   %c  %warp  ~nul  %desk
-                  `[%mult [%da ~1234.5.6] (sy [%x /timer] ~)]
+                  `[%mult [%da ~1234.05.06] (sy [%x /timer] ~)]
               ==
           !>  i.t.moves
     ==
@@ -1931,7 +1931,7 @@
       scry=scry
       ::
       ^=  call-args
-        :*  wire=/clay-sub/~nul/desk/~1234.5.6  duct=~[/call]
+        :*  wire=/clay-sub/~nul/desk/~1234.05.06  duct=~[/call]
             ^=  wrapped-sign  ^-  (hypo sign:ford-gate)  :-  *type
             [%c %wris [%da ~1234.5.7] (sy [%x /timer]~)]
         ==
@@ -1984,18 +1984,18 @@
         [%scry [%c care=%x bel=[[~nul %desk] /bar/foo]]]
     ==
   ::
-  =/  scry-42  (scry-succeed ~1234.5.6 [%noun !>(42)])
+  =/  scry-42  (scry-succeed ~1234.05.06 [%noun !>(42)])
   ::
   =^  results1  ford-gate
     %-  ford-call  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=scry-42
       ::
       call-args=[duct=~[/once] type=~ %build live=%.n schematic]
       ::
       ^=  moves
-        :~  :*  duct=~[/once]  %give  %made  ~1234.5.6  %complete  %success
+        :~  :*  duct=~[/once]  %give  %made  ~1234.05.06  %complete  %success
                 [%scry %noun !>(42)]
     ==  ==  ==
   ::
@@ -2011,22 +2011,22 @@
         [%scry [%c care=%x bel=[[~nul %desk] /bar/foo]]]
     ==
   ::
-  =/  scry-42  (scry-fail ~1234.5.6)
+  =/  scry-42  (scry-fail ~1234.05.06)
   ::
   =^  results1  ford-gate
     %-  ford-call  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=scry-42
       ::
       call-args=[duct=~[/once] type=~ %build live=%.n schematic]
       ::
       ^=  moves
-        :~  :*  duct=~[/once]  %give  %made  ~1234.5.6  %complete
+        :~  :*  duct=~[/once]  %give  %made  ~1234.05.06  %complete
                 %error
                 :~  leaf+"%in-the-error-message"
                     leaf+"scry failed for"
-                    leaf+"%cx /~nul/desk/~1234.5.6/foo/bar"
+                    leaf+"%cx /~nul/desk/~1234.05.06/foo/bar"
     ==  ==  ==  ==
   ::
   ;:  weld
@@ -2041,7 +2041,7 @@
     %-  scry-with-results
     ^-  (map [term beam] cage)
     %-  my  :~
-      :-  [%cx [[~nul %desk %da ~1234.5.6] /hoon/bar/foo]]
+      :-  [%cx [[~nul %desk %da ~1234.05.06] /hoon/bar/foo]]
       :*  %noun  scry-type
           '!.  |=(a=@ud +(a))'
       ==
@@ -2052,13 +2052,13 @@
   =^  results1  ford-gate
     %-  ford-call  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=scry
       ::
       call-args=[duct=~[/hood] type=~ %build live=%.y schematic]
       ::
       ^=  moves
-        :~  :*  duct=~[/hood]  %give  %made  ~1234.5.6
+        :~  :*  duct=~[/hood]  %give  %made  ~1234.05.06
                 %complete  %success  %hood
                 :*  source-rail=[[~nul %desk] /hoon/bar/foo]
                     zuse-version=309
@@ -2070,9 +2070,9 @@
                               [/~nul/desk/0/foo/bar/hoon [1 1] [1 19]]
                               (ream '|=(a=@ud +(a))')
             ==  ==    ==  ==
-            :*  duct=~[/hood]  %pass  /clay-sub/~nul/desk/~1234.5.6
+            :*  duct=~[/hood]  %pass  /clay-sub/~nul/desk/~1234.05.06
                 %c  %warp  ~nul  %desk
-                `[%mult [%da ~1234.5.6] (sy [%x /foo/bar/hoon] ~)]
+                `[%mult [%da ~1234.05.06] (sy [%x /foo/bar/hoon] ~)]
     ==  ==  ==
   ::
   =^  results2  ford-gate
@@ -2084,7 +2084,7 @@
       call-args=[duct=~[/hood] type=~ %kill ~]
       ::
       ^=  moves
-        :~  :*  duct=~[/hood]  %pass  wire=/clay-sub/~nul/desk/~1234.5.6
+        :~  :*  duct=~[/hood]  %pass  wire=/clay-sub/~nul/desk/~1234.05.06
                 %c  %warp  ~nul  %desk  ~
     ==  ==  ==
   ::
@@ -2102,14 +2102,14 @@
   =^  results1  ford-gate
     %-  ford-call  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=scry-is-forbidden
       ::
       ^=  call-args
         [duct=~[/dead] type=~ %build live=%.y [%slim subject-type formula]]
       ::
       ^=  moves
-        :~  :*  duct=~[/dead]  %give  %made  ~1234.5.6  %complete
+        :~  :*  duct=~[/dead]  %give  %made  ~1234.05.06  %complete
                 [%success [%slim (~(mint ut subject-type) [%noun formula])]]
     ==  ==  ==
   ::
@@ -2138,7 +2138,7 @@
   =^  results1  ford-gate
     %-  ford-call-with-comparator  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=scry-is-forbidden
       ::
       call-args=[duct=~[/slit] type=~ %build live=%.y [%slit gate sample]]
@@ -2185,7 +2185,7 @@
   =^  results1  ford-gate
     %-  ford-call-with-comparator  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=scry-is-forbidden
       ::
       call-args=[duct=~[/slit] type=~ %build live=%.y [%slit gate sample]]
@@ -2239,7 +2239,7 @@
   =^  results1  ford-gate
     %-  ford-call-with-comparator  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=scry-is-forbidden
       ::
       ^=  call-args
@@ -2277,15 +2277,15 @@
 ::
 ++  test-ride-scry-succeed  ^-  tang
   ::
-  =/  scry-42  (scry-succeed ~1234.5.6 [%noun !>(42)])
+  =/  scry-42  (scry-succeed ~1234.05.06 [%noun !>(42)])
   ::
-  =/  formula=hoon  (ream '!:  .^(* %cx /~nul/desk/~1234.5.6/foo/bar)')
+  =/  formula=hoon  (ream '!:  .^(* %cx /~nul/desk/~1234.05.06/foo/bar)')
   =/  subject-schematic=schematic:ford-gate  [%$ %noun !>(.)]
   ::
   =^  results1  ford-gate
     %-  ford-call-with-comparator  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=scry-42
       ::
       ^=  call-args
@@ -2323,15 +2323,15 @@
 ::
 ++  test-ride-scry-fail  ^-  tang
   ::
-  =/  scry-failed  (scry-fail ~1234.5.6)
+  =/  scry-failed  (scry-fail ~1234.05.06)
   ::
-  =/  formula=hoon  (ream '!:  .^(* %cx /~nul/desk/~1234.5.6/foo/bar)')
+  =/  formula=hoon  (ream '!:  .^(* %cx /~nul/desk/~1234.05.06/foo/bar)')
   =/  subject-schematic=schematic:ford-gate  [%$ %noun !>(.)]
   ::
   =^  results1  ford-gate
     %-  ford-call-with-comparator  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=scry-failed
       ::
       ^=  call-args
@@ -2349,7 +2349,7 @@
         ::  compare the move to the expected move, omitting check on stack trace
         ::
         %+  expect-eq
-          !>  :*  duct=~[/dead]  %give  %made  ~1234.5.6  %complete
+          !>  :*  duct=~[/dead]  %give  %made  ~1234.05.06  %complete
                   [%error [leaf+"ford: %ride failed to execute:" ~]]
               ==
           !>  i.moves(|7 ~)
@@ -2373,15 +2373,15 @@
 ::
 ++  test-ride-scry-block  ^-  tang
   ::
-  =/  scry-blocked  (scry-block ~1234.5.6)
+  =/  scry-blocked  (scry-block ~1234.05.06)
   ::
-  =/  formula=hoon  (ream '!:  .^(* %cx /~nul/desk/~1234.5.6/foo/bar)')
+  =/  formula=hoon  (ream '!:  .^(* %cx /~nul/desk/~1234.05.06/foo/bar)')
   =/  subject-schematic=schematic:ford-gate  [%$ %noun !>(.)]
   ::
   =^  results1  ford-gate
     %-  ford-call  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=scry-blocked
       ::
       ^=  call-args
@@ -2391,9 +2391,9 @@
       ::
       ^=  moves
         :~  :*  duct=~[/live]  %pass
-                wire=/scry-request/cx/~nul/desk/~1234.5.6/foo/bar
+                wire=/scry-request/cx/~nul/desk/~1234.05.06/foo/bar
                 %c  %warp  ~nul  %desk
-                ~  %sing  %x  [%da ~1234.5.6]  /foo/bar
+                ~  %sing  %x  [%da ~1234.05.06]  /foo/bar
     ==  ==  ==
   ::
   =^  results2  ford-gate
@@ -2405,9 +2405,9 @@
       scry=scry-blocked
       ::
       ^=  take-args
-        :*  wire=/scry-request/cx/~nul/desk/~1234.5.6/foo/bar  duct=~[/live]
+        :*  wire=/scry-request/cx/~nul/desk/~1234.05.06/foo/bar  duct=~[/live]
             ^=  wrapped-sign  ^-  (hypo sign:ford-gate)  :-  *type
-            [%c %writ ~ [%x [%da ~1234.5.6] %desk] /bar/foo %noun !>(42)]
+            [%c %writ ~ [%x [%da ~1234.05.06] %desk] /bar/foo %noun !>(42)]
         ==
       ::
       ^=  comparator
@@ -2445,7 +2445,7 @@
   ::
   =/  scry-results=(map [term beam] cage)
     %-  my  :~
-      :-  [%cx [[~nul %desk %da ~1234.5.6] /bar/foo]]
+      :-  [%cx [[~nul %desk %da ~1234.05.06] /bar/foo]]
       [%noun scry-type %it-doesnt-matter]
     ::
       :-  [%cx [[~nul %desk %da ~1234.5.7] /bar/foo]]
@@ -2462,18 +2462,18 @@
   =^  results1  ford-gate
     %-  ford-call  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=scry
       ::
       call-args=[duct=~[/ride] type=~ %build live=%.y ride]
       ::
       ^=  moves
-        :~  :*  duct=~[/ride]  %give  %made  ~1234.5.6  %complete
+        :~  :*  duct=~[/ride]  %give  %made  ~1234.05.06  %complete
                 [%success [%ride scry-type %constant]]
             ==
-            :*  duct=~[/ride]  %pass  wire=/clay-sub/~nul/desk/~1234.5.6
+            :*  duct=~[/ride]  %pass  wire=/clay-sub/~nul/desk/~1234.05.06
                 %c  %warp  ~nul  %desk
-                `[%mult [%da ~1234.5.6] (sy [%x /foo/bar] ~)]
+                `[%mult [%da ~1234.05.06] (sy [%x /foo/bar] ~)]
     ==  ==  ==
   ::
   =^  results2  ford-gate
@@ -2483,7 +2483,7 @@
       scry=scry
       ::
       ^=  take-args
-        :*  wire=/clay-sub/~nul/desk/~1234.5.6  duct=~[/ride]
+        :*  wire=/clay-sub/~nul/desk/~1234.05.06  duct=~[/ride]
             ^=  wrapped-sign  ^-  (hypo sign:ford-gate)  :-  *type
             [%c %wris [%da ~1234.5.7] (sy [%x /foo/bar]~)]
         ==
@@ -2521,10 +2521,10 @@
   ::
   =/  scry-results=(map [term beam] cage)
     %-  my  :~
-      :-  [%cx [[~nul %desk %da ~1234.5.6] /a/posts]]
+      :-  [%cx [[~nul %desk %da ~1234.05.06] /a/posts]]
       [%noun scry-type [title='post-a' contents="post-a-contents"]]
     ::
-      :-  [%cx [[~nul %desk %da ~1234.5.6] /b/posts]]
+      :-  [%cx [[~nul %desk %da ~1234.05.06] /b/posts]]
       [%noun scry-type [title='post-b' contents="post-b-contents"]]
     ::
       :-  [%cx [[~nul %desk %da ~1234.5.7] /a/posts]]
@@ -2554,7 +2554,7 @@
   =^  results1  ford-gate
     %-  ford-call-with-comparator  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=scry
       ::
       call-args=[duct=~[/post-a] type=~ %build live=%.y rendered-a]
@@ -2569,15 +2569,15 @@
             move=i.moves
             duct=~[/post-a]
             type=scry-type
-            date=~1234.5.6
+            date=~1234.05.06
             title='post-a'
             contents="post-a-contents"
           ==
         %+  expect-eq
           !>  :*  duct=~[/post-a]  %pass
-                  wire=/clay-sub/~nul/desk/~1234.5.6  %c  %warp
+                  wire=/clay-sub/~nul/desk/~1234.05.06  %c  %warp
                   ~nul  %desk
-                  `[%mult [%da ~1234.5.6] (sy [%x /posts/a] [%x /posts/b] ~)]
+                  `[%mult [%da ~1234.05.06] (sy [%x /posts/a] [%x /posts/b] ~)]
               ==
           !>  i.t.moves
     ==
@@ -2620,7 +2620,7 @@
       scry=scry
       ::
       ^=  take-args
-        :*  wire=/clay-sub/~nul/desk/~1234.5.6  duct=~[/post-a]
+        :*  wire=/clay-sub/~nul/desk/~1234.05.06  duct=~[/post-a]
             ^=  wrapped-sign  ^-  (hypo sign:ford-gate)  :-  *type
             [%c %wris [%da ~1234.5.8] (sy [%x /posts/a]~)]
         ==
@@ -2703,10 +2703,10 @@
   ::
   =/  scry-results=(map [term beam] (unit cage))
     %-  my  :~
-      :-  [%cx [[~nul %home %da ~1234.5.6] /one/scry]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /one/scry]]
       ~
     ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /two/scry]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /two/scry]]
       ~
     ::
       :-  [%cx [[~nul %home %da ~1234.5.7] /one/scry]]
@@ -2728,28 +2728,28 @@
   =^  results1  ford-gate
     %-  ford-call  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=scry
       ::
       call-args=[duct=~[/alts] type=~ %build live=%.y alts]
       ::
       ^=  moves
-        :~  :*  duct=~[/alts]  %give  %made  ~1234.5.6  %complete  %error
+        :~  :*  duct=~[/alts]  %give  %made  ~1234.05.06  %complete  %error
                 :~  [%leaf "%alts: all options failed"]
                     [%leaf "option"]
                     :+  %rose  ["  " "\{" "}"]  :~
                         [%leaf "scry failed for"]
-                        [%leaf "%cx /~nul/home/~1234.5.6/scry/one"]
+                        [%leaf "%cx /~nul/home/~1234.05.06/scry/one"]
                     ==
                     [%leaf "option"]
                     :+  %rose  ["  " "\{" "}"]  :~
                         [%leaf "scry failed for"]
-                        [%leaf "%cx /~nul/home/~1234.5.6/scry/two"]
+                        [%leaf "%cx /~nul/home/~1234.05.06/scry/two"]
                     ==
             ==  ==
-            :*  duct=~[/alts]  %pass  wire=/clay-sub/~nul/home/~1234.5.6
+            :*  duct=~[/alts]  %pass  wire=/clay-sub/~nul/home/~1234.05.06
                 %c  %warp  ~nul  %home
-                `[%mult [%da ~1234.5.6] (sy [%x /scry/two] [%x /scry/one] ~)]
+                `[%mult [%da ~1234.05.06] (sy [%x /scry/two] [%x /scry/one] ~)]
     ==  ==  ==
   ::
   =^  results2  ford-gate
@@ -2759,7 +2759,7 @@
       scry=scry
       ::
       ^=  take-args
-        :*  wire=/clay-sub/~nul/home/~1234.5.6  duct=~[/alts]
+        :*  wire=/clay-sub/~nul/home/~1234.05.06  duct=~[/alts]
             ^=  wrapped-sign  ^-  (hypo sign:ford-gate)  :-  *type
             [%c %wris [%da ~1234.5.7] (sy [%x /scry/two]~)]
         ==
@@ -2780,7 +2780,7 @@
       scry=scry
       ::
       ^=  take-args
-        :*  wire=/clay-sub/~nul/home/~1234.5.6  duct=~[/alts]
+        :*  wire=/clay-sub/~nul/home/~1234.05.06  duct=~[/alts]
             ^=  wrapped-sign  ^-  (hypo sign:ford-gate)  :-  *type
             [%c %wris [%da ~1234.5.8] (sy [%x /scry/one]~)]
         ==
@@ -2821,10 +2821,10 @@
   ::
   =/  scry-results=(map [term beam] (unit cage))
     %-  my  :~
-      :-  [%cx [[~nul %desk %da ~1234.5.6] /one/scry]]
+      :-  [%cx [[~nul %desk %da ~1234.05.06] /one/scry]]
       ~
     ::
-      :-  [%cx [[~nul %desk %da ~1234.5.6] /two/scry]]
+      :-  [%cx [[~nul %desk %da ~1234.05.06] /two/scry]]
       `[%noun scry-type 'scry-two']
     ::
       :-  [%cx [[~nul %desk %da ~1234.5.7] /one/scry]]
@@ -2846,18 +2846,18 @@
   =^  results1  ford-gate
     %-  ford-call  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=scry
       ::
       call-args=[duct=~[/same] type=~ %build live=%.y same]
       ::
       ^=  moves
-        :~  :*  duct=~[/same]  %give  %made  ~1234.5.6  %complete
+        :~  :*  duct=~[/same]  %give  %made  ~1234.05.06  %complete
                 %success  %scry  %noun  scry-type  'scry-two'
             ==
-            :*  duct=~[/same]  %pass  wire=/clay-sub/~nul/desk/~1234.5.6
+            :*  duct=~[/same]  %pass  wire=/clay-sub/~nul/desk/~1234.05.06
                 %c  %warp  ~nul  %desk
-                `[%mult [%da ~1234.5.6] (sy [%x /scry/two] ~)]
+                `[%mult [%da ~1234.05.06] (sy [%x /scry/two] ~)]
     ==  ==  ==
   ::
   =/  scry1=schematic:ford-gate  [%scry [%c %x [~nul %desk] /one/scry]]
@@ -2923,7 +2923,7 @@
       call-args=[duct=~[/same] type=~ %kill ~]
       ::
       ^=  moves
-        :~  :*  duct=~[/same]  %pass  wire=/clay-sub/~nul/desk/~1234.5.6
+        :~  :*  duct=~[/same]  %pass  wire=/clay-sub/~nul/desk/~1234.05.06
                 %c  %warp  ~nul  %desk  ~
     ==  ==  ==
   ::
@@ -2955,11 +2955,11 @@
   ::
   =/  scry-results=(map [term beam] (unit cage))
     %-  my  :~
-      :-  [%cx [[~nul %desk %da ~1234.5.6] /one/scry]]
+      :-  [%cx [[~nul %desk %da ~1234.05.06] /one/scry]]
       ~
-      :-  [%cx [[~nul %desk %da ~1234.5.6] /two/scry]]
+      :-  [%cx [[~nul %desk %da ~1234.05.06] /two/scry]]
       `[%noun scry-type 'scry-two']
-      :-  [%cx [[~nul %desk %da ~1234.5.6] /three/scry]]
+      :-  [%cx [[~nul %desk %da ~1234.05.06] /three/scry]]
       ~
     ::
       :-  [%cx [[~nul %desk %da ~1234.5.7] /one/scry]]
@@ -2996,18 +2996,18 @@
   =^  results1  ford-gate
     %-  ford-call  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=scry
       ::
       call-args=[duct=~[/first] type=~ %build live=%.y alts1]
       ::
       ^=  moves
-        :~  :*  duct=~[/first]  %give  %made  ~1234.5.6  %complete
+        :~  :*  duct=~[/first]  %give  %made  ~1234.05.06  %complete
                 %success  %alts  %success  %scry  %noun  scry-type  'scry-two'
             ==
-            :*  duct=~[/first]  %pass  wire=/clay-sub/~nul/desk/~1234.5.6
+            :*  duct=~[/first]  %pass  wire=/clay-sub/~nul/desk/~1234.05.06
                 %c  %warp  ~nul  %desk
-                `[%mult [%da ~1234.5.6] (sy [%x /scry/one] [%x /scry/two] ~)]
+                `[%mult [%da ~1234.05.06] (sy [%x /scry/one] [%x /scry/two] ~)]
     ==  ==  ==
   ::  alts2 will depend on both scry3 and scry2
   ::
@@ -3058,7 +3058,7 @@
       scry=scry
       ::
       ^=  take-args
-        :*  wire=/clay-sub/~nul/desk/~1234.5.6  duct=~[/first]
+        :*  wire=/clay-sub/~nul/desk/~1234.05.06  duct=~[/first]
             ^=  wrapped-sign  ^-  (hypo sign:ford-gate)  :-  *type
             [%c %wris [%da ~1234.5.9] (sy [%x /scry/one] [%x /scry/two] ~)]
         ==
@@ -3114,7 +3114,7 @@
   =^  results1  ford-gate
     %-  ford-call  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=scry-is-forbidden
       ::  send a pinned literal, expects a %made response with pinned literal
       ::
@@ -3122,7 +3122,7 @@
         [duct=~[/trivial] type=~ %build live=%.n [%$ %noun !>(**)]]
       ::
       ^=  moves
-        :~  :*  duct=~[/trivial]  %give  %made  ~1234.5.6
+        :~  :*  duct=~[/trivial]  %give  %made  ~1234.05.06
                 %complete  %success  %$  %noun  !>(**)
         ==  ==
     ==
@@ -3151,8 +3151,8 @@
   =^  results1  ford-gate
     %-  ford-call  :*
       ford-gate
-      now=~1234.5.6
-      scry=(scry-succeed ~1234.5.6 [%noun !>(42)])
+      now=~1234.05.06
+      scry=(scry-succeed ~1234.05.06 [%noun !>(42)])
       ::
       ^=  call-args
         :*  duct=~[/build]  type=~  %build  live=%.y
@@ -3160,12 +3160,12 @@
         ==
       ::
       ^=  moves
-        :~  :*  duct=~[/build]  %give  %made  ~1234.5.6  %complete  %success
+        :~  :*  duct=~[/build]  %give  %made  ~1234.05.06  %complete  %success
                 [%scry %noun !>(42)]
             ==
             :*  duct=~[/build]  %pass  wire=/clay-sub/~nul/desk
                 %c  %warp  ~nul  %desk
-                `[%mult [%da ~1234.5.6] (sy [%x /foo/bar]~)]
+                `[%mult [%da ~1234.05.06] (sy [%x /foo/bar]~)]
     ==  ==  ==
   ::
   =^  results2  ford-gate
@@ -3229,7 +3229,7 @@
   ::
   =/  scry-results=(map [term beam] cage)
     %-  my  :~
-      :-  [%cx [[~nul %desk %da ~1234.5.6] /bar/foo]]
+      :-  [%cx [[~nul %desk %da ~1234.05.06] /bar/foo]]
       [%noun scry-type %it-doesnt-matter]
     ::
       :-  [%cx [[~nul %desk %da ~1234.5.7] /bar/foo]]
@@ -3248,18 +3248,18 @@
   =^  results1  ford-gate
     %-  ford-call  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=scry
       ::
       call-args=[duct=~[/ride] type=~ %build live=%.y same]
       ::
       ^=  moves
-        :~  :*  duct=~[/ride]  %give  %made  ~1234.5.6  %complete
+        :~  :*  duct=~[/ride]  %give  %made  ~1234.05.06  %complete
                 [%success [%ride scry-type %constant]]
             ==
             :*  duct=~[/ride]  %pass  wire=/clay-sub/~nul/desk
                 %c  %warp  ~nul  %desk
-                `[%mult [%da ~1234.5.6] (sy [%x /foo/bar] ~)]
+                `[%mult [%da ~1234.05.06] (sy [%x /foo/bar] ~)]
     ==  ==  ==
   ::
   =^  results2  ford-gate
@@ -3322,10 +3322,10 @@
   ::
   =/  scry-results=(map [term beam] cage)
     %-  my  :~
-      :-  [%cx [[~nul %desk %da ~1234.5.6] /a/posts]]
+      :-  [%cx [[~nul %desk %da ~1234.05.06] /a/posts]]
       [%noun scry-type [title='post-a' contents="post-a-contents"]]
     ::
-      :-  [%cx [[~nul %desk %da ~1234.5.6] /b/posts]]
+      :-  [%cx [[~nul %desk %da ~1234.05.06] /b/posts]]
       [%noun scry-type [title='post-b' contents="post-b-contents"]]
     ::
       :-  [%cx [[~nul %desk %da ~1234.5.9] /a/posts]]
@@ -3354,7 +3354,7 @@
   =^  results1  ford-gate
     %-  ford-call-with-comparator  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=scry
       ::
       call-args=[duct=~[/post-a] type=~ %build live=%.y rendered-a]
@@ -3369,14 +3369,14 @@
             move=i.moves
             duct=~[/post-a]
             type=scry-type
-            date=~1234.5.6
+            date=~1234.05.06
             title='post-a'
             contents="post-a-contents"
           ==
         %+  expect-eq
           !>  :*  duct=~[/post-a]  %pass  wire=/clay-sub/~nul/desk
                   %c  %warp  ~nul  %desk
-                  `[%mult [%da ~1234.5.6] (sy [%x /posts/a] [%x /posts/b] ~)]
+                  `[%mult [%da ~1234.05.06] (sy [%x /posts/a] [%x /posts/b] ~)]
               ==
           !>  i.t.moves
     ==
@@ -3539,15 +3539,15 @@
 ++  disabled-test-reef-slow
   ::
   =/  hoon-parsed=hoon
-    (rain /~nul/base/~1234.5.6/sys/hoon/hoon hoon-scry)
+    (rain /~nul/base/~1234.05.06/sys/hoon/hoon hoon-scry)
   ~&  %parsed-hoon
   ::
   =/  arvo-parsed=hoon
-    (rain /~nul/base/~1234.5.6/sys/arvo/hoon arvo-scry)
+    (rain /~nul/base/~1234.05.06/sys/arvo/hoon arvo-scry)
   ~&  %parsed-arvo
   ::
   =/  zuse-parsed=hoon
-    (rain /~nul/base/~1234.5.6/sys/zuse/hoon zuse-scry)
+    (rain /~nul/base/~1234.05.06/sys/zuse/hoon zuse-scry)
   ~&  %parsed-zuse
   ::
   =/  pit=vase  !>(~)
@@ -3562,20 +3562,20 @@
   ::
   =/  scry-results=(map [term beam] cage)
     %-  my  :~
-      :-  [%cx [[~nul %base %da ~1234.5.6] /hoon/hoon/sys]]
+      :-  [%cx [[~nul %base %da ~1234.05.06] /hoon/hoon/sys]]
       [%noun !>(hoon-scry)]
     ::
-      :-  [%cx [[~nul %base %da ~1234.5.6] /hoon/arvo/sys]]
+      :-  [%cx [[~nul %base %da ~1234.05.06] /hoon/arvo/sys]]
       [%noun !>(arvo-scry)]
     ::
-      :-  [%cx [[~nul %base %da ~1234.5.6] /hoon/zuse/sys]]
+      :-  [%cx [[~nul %base %da ~1234.05.06] /hoon/zuse/sys]]
       [%noun !>(zuse-scry)]
     ==
   ::
   =^  results1  ford-gate
     %-  ford-call-with-comparator  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=(scry-with-results scry-results)
       ::
       ^=  call-args
@@ -3618,8 +3618,8 @@
   =^  results1  ford-gate
     %-  ford-call-with-comparator  :*
       ford-gate
-      now=~1234.5.6
-      scry=(scry-reef ~1234.5.6)
+      now=~1234.05.06
+      scry=(scry-reef ~1234.05.06)
       ::
       ^=  call-args
         :*  duct=~[/reef]  type=~  %build  live=%.n
@@ -3660,17 +3660,17 @@
   ::
   =/  scry-results=(map [term beam] (unit cage))
     %-  my  :~
-      :-  [%cx [[~nul %desk %da ~1234.5.6] /hoon/bar/foo/lib]]
+      :-  [%cx [[~nul %desk %da ~1234.05.06] /hoon/bar/foo/lib]]
       `[%hoon !>(*hoon)]
     ::
-      :-  [%cx [[~nul %desk %da ~1234.5.6] /hoon/foo-bar/lib]]
+      :-  [%cx [[~nul %desk %da ~1234.05.06] /hoon/foo-bar/lib]]
       ~
     ==
   ::
   =^  results1  ford-gate
     %-  ford-call  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=(scry-with-results-and-failures scry-results)
       ::
       ^=  call-args
@@ -3679,7 +3679,7 @@
         ==
       ::
       ^=  moves
-        :~  :*  duct=~[/path]  %give  %made  ~1234.5.6  %complete
+        :~  :*  duct=~[/path]  %give  %made  ~1234.05.06  %complete
                 %success  %path  [[~nul %desk] /hoon/bar/foo/lib]
     ==  ==  ==
   ::
@@ -3695,7 +3695,7 @@
   =^  results1  ford-gate
     %-  ford-call-with-comparator  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=scry-is-forbidden
       ::
       ^=  call-args
@@ -3739,14 +3739,14 @@
   ::
   =/  scry-results=(map [term beam] cage)
     %-  my  :~
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/foo-bar/lib]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/foo-bar/lib]]
       [%hoon hoon-src-type hoon-src]
     ==
   ::
   =^  results1  ford-gate
     %-  ford-call  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=(scry-with-results scry-results)
       ::
       ^=  call-args
@@ -3755,7 +3755,7 @@
         ==
       ::
       ^=  moves
-        :~  :*  duct=~[/path]  %give  %made  ~1234.5.6  %complete
+        :~  :*  duct=~[/path]  %give  %made  ~1234.05.06  %complete
                 %success  %core  [%atom %tas ~]  %constant
     ==  ==  ==
   ::
@@ -3769,7 +3769,7 @@
   =/  hoon-src-type=type  [%atom %$ ~]
   =/  scry-results=(map [term beam] cage)
     %-  my  :~
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/data/sur]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/data/sur]]
       :-  %hoon
       :-  hoon-src-type
       '''
@@ -3779,7 +3779,7 @@
       --
       '''
     ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/data/lib]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/data/lib]]
       :-  %hoon
       :-  hoon-src-type
       '''
@@ -3792,7 +3792,7 @@
       --
       '''
     ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/program/gen]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/program/gen]]
       :-  %hoon
       :-  hoon-src-type
       '''
@@ -3805,7 +3805,7 @@
   =^  results1  ford-gate
     %-  ford-call-with-comparator  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=(scry-with-results scry-results)
       ::
       ^=  call-args
@@ -3837,7 +3837,7 @@
   =/  hoon-src-type=type  [%atom %$ ~]
   =/  scry-results=(map [term beam] cage)
     %-  my  :~
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/program/gen]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/program/gen]]
       :-  %hoon
       :-  hoon-src-type
       '''
@@ -3857,7 +3857,7 @@
   =^  results1  ford-gate
     %-  ford-call-with-comparator  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=(scry-with-results scry-results)
       ::
       ^=  call-args
@@ -3889,7 +3889,7 @@
   =/  hoon-src-type=type  [%atom %$ ~]
   =/  scry-results=(map [term beam] cage)
     %-  my  :~
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/program/gen]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/program/gen]]
       :-  %hoon
       :-  hoon-src-type
       '''
@@ -3902,7 +3902,7 @@
   =^  results1  ford-gate
     %-  ford-call-with-comparator  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=(scry-with-results scry-results)
       ::
       ^=  call-args
@@ -3934,7 +3934,7 @@
   =/  hoon-src-type=type  [%atom %$ ~]
   =/  scry-results=(map [term beam] cage)
     %-  my  :~
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/program/gen]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/program/gen]]
       :-  %hoon
       :-  hoon-src-type
       '''
@@ -3950,7 +3950,7 @@
   =^  results1  ford-gate
     %-  ford-call-with-comparator  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=(scry-with-results scry-results)
       ::
       ^=  call-args
@@ -3982,7 +3982,7 @@
   =/  hoon-src-type=type  [%atom %$ ~]
   =/  scry-results=(map [term beam] cage)
     %-  my  :~
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/program/gen]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/program/gen]]
       :-  %hoon
       :-  hoon-src-type
       '''
@@ -3995,7 +3995,7 @@
   =^  results1  ford-gate
     %-  ford-call  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=(scry-with-results scry-results)
       ::
       ^=  call-args
@@ -4004,7 +4004,7 @@
         ==
       ::
       ^=  moves
-        :~  :*  duct=~[/path]  %give  %made  ~1234.5.6  %complete  %error
+        :~  :*  duct=~[/path]  %give  %made  ~1234.05.06  %complete  %error
                 :~  :-  %leaf
                     "ford: %core on /~nul/home/0/gen/program/hoon failed:"
                     [%leaf "/^ failed: nest-fail"]
@@ -4020,7 +4020,7 @@
   =/  hoon-src-type=type  [%atom %$ ~]
   =/  scry-results=(map [term beam] cage)
     %-  my  :~
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/program/gen]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/program/gen]]
       :-  %hoon
       :-  hoon-src-type
       '''
@@ -4033,7 +4033,7 @@
   =^  results1  ford-gate
     %-  ford-call-with-comparator  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=(scry-with-results scry-results)
       ::
       ^=  call-args
@@ -4065,7 +4065,7 @@
   =/  hoon-src-type=type  [%atom %$ ~]
   =/  scry-results=(map [term beam] cage)
     %-  my  :~
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/program/gen]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/program/gen]]
       :-  %hoon
       :-  hoon-src-type
       '''
@@ -4082,7 +4082,7 @@
   =^  results1  ford-gate
     %-  ford-call-with-comparator  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=(scry-with-results scry-results)
       ::
       ^=  call-args
@@ -4114,7 +4114,7 @@
   =/  hoon-src-type=type  [%atom %$ ~]
   =/  scry-results=(map [term beam] cage)
     %-  my  :~
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/program/gen]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/program/gen]]
       :-  %hoon
       :-  hoon-src-type
       '''
@@ -4131,7 +4131,7 @@
   =^  results1  ford-gate
     %-  ford-call  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=(scry-with-results scry-results)
       ::
       ^=  call-args
@@ -4140,7 +4140,7 @@
         ==
       ::
       ^=  moves
-        :~  :*  duct=~[/path]  %give  %made  ~1234.5.6  %complete  %error
+        :~  :*  duct=~[/path]  %give  %made  ~1234.05.06  %complete  %error
                 :~  :-  %leaf
                     "ford: %core on /~nul/home/0/gen/program/hoon failed:"
                     [%leaf "/| failed: out of options"]
@@ -4156,7 +4156,7 @@
   =/  hoon-src-type=type  [%atom %$ ~]
   =/  scry-results=(map [term beam] cage)
     %-  my  :~
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/program/gen]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/program/gen]]
       :-  %hoon
       :-  hoon-src-type
       '''
@@ -4164,7 +4164,7 @@
       data
       '''
     ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/other/lib]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/other/lib]]
       :-  %hoon
       :-  hoon-src-type
       '''
@@ -4175,7 +4175,7 @@
   =^  results1  ford-gate
     %-  ford-call-with-comparator  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=(scry-with-results scry-results)
       ::
       ^=  call-args
@@ -4213,7 +4213,7 @@
   =/  hoon-src-type=type  [%atom %$ ~]
   =/  scry-results=(map [term beam] cage)
     %-  my  :~
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/program/gen]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/program/gen]]
       :-  %hoon
       :-  hoon-src-type
       '''
@@ -4222,7 +4222,7 @@
       data
       '''
     ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/somemark/mar]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/somemark/mar]]
       :-  %hoon
       :-  hoon-src-type
       '''
@@ -4234,7 +4234,7 @@
       --
       '''
     ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/other/lib]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/other/lib]]
       :-  %hoon
       :-  hoon-src-type
       '''
@@ -4245,7 +4245,7 @@
   =^  results1  ford-gate
     %-  ford-call-with-comparator  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=(scry-with-results scry-results)
       ::
       ^=  call-args
@@ -4277,7 +4277,7 @@
   =/  hoon-src-type=type  [%atom %$ ~]
   =/  scry-results=(map [term beam] cage)
     %-  my  :~
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/program/gen]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/program/gen]]
       :-  %hoon
       :-  hoon-src-type
       '''
@@ -4286,7 +4286,7 @@
       data
       '''
     ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/data]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/data]]
       :-  %hoon
       :-  hoon-src-type
       '''
@@ -4297,7 +4297,7 @@
   =^  results1  ford-gate
     %-  ford-call-with-comparator  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=(scry-with-results scry-results)
       ::
       ::
@@ -4330,7 +4330,7 @@
   =/  hoon-src-type=type  [%atom %$ ~]
   =/  scry-results=(map [term beam] cage)
     %-  my  :~
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/program/gen]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/program/gen]]
       :-  %hoon
       :-  hoon-src-type
       '''
@@ -4339,7 +4339,7 @@
       data
       '''
     ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/data]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/data]]
       :-  %hoon
       :-  hoon-src-type
       '''
@@ -4356,7 +4356,7 @@
   =^  results1  ford-gate
     %-  ford-call-with-comparator  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=(scry-with-results scry-results)
       ::
       ::
@@ -4389,7 +4389,7 @@
   =/  hoon-src-type=type  [%atom %$ ~]
   =/  scry-results=(map [term beam] cage)
     %-  my  :~
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/other/lib]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/other/lib]]
       :-  %hoon
       :-  hoon-src-type
       '''
@@ -4403,7 +4403,7 @@
   =^  results1  ford-gate
     %-  ford-call-with-comparator  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=(scry-with-results scry-results)
       ::
       ^=  call-args
@@ -4435,7 +4435,7 @@
         =/  =vase  vase.build-result.result
         ::
         %+  expect-eq
-          !>([[[~nul %home [%da ~1234.5.6]] /other/lib] %value])
+          !>([[[~nul %home [%da ~1234.05.06]] /other/lib] %value])
           vase
     ==
   ::
@@ -4450,7 +4450,7 @@
   =/  arch-type=type  -:!>(*arch)
   =/  scry-results=(map [term beam] cage)
     %-  my  :~
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/program/gen]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/program/gen]]
       :-  %hoon
       :-  hoon-src-type
       '''
@@ -4460,19 +4460,19 @@
       data
       '''
     ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /data]]
+      :-  [%cy [[~nul %home %da ~1234.05.06] /data]]
       :-  %arch
       :-  arch-type
       :-  ~
       (my ~[[~.one ~] [~.two ~] [~.hoon ~]])
     ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /one/data]]
+      :-  [%cy [[~nul %home %da ~1234.05.06] /one/data]]
       :-  %arch
       :-  arch-type
       :-  ~
       (my ~[[~.hoon ~]])
     ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /two/data]]
+      :-  [%cy [[~nul %home %da ~1234.05.06] /two/data]]
       :-  %arch
       :-  arch-type
       :-  ~
@@ -4480,20 +4480,20 @@
     ::
       ::  this "hoon" file should be filtered out
       ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /hoon/data]]
+      :-  [%cy [[~nul %home %da ~1234.05.06] /hoon/data]]
       :-  %arch
       :-  arch-type
       :-  fil=[~ u=0v6]
       ~
     ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/one/data]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/one/data]]
       :-  %hoon
       :-  hoon-src-type
       '''
       1
       '''
     ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/two/data]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/two/data]]
       :-  %hoon
       :-  hoon-src-type
       '''
@@ -4504,7 +4504,7 @@
   =^  results1  ford-gate
     %-  ford-call-with-comparator  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=(scry-with-results scry-results)
       ::
       ::
@@ -4539,7 +4539,7 @@
   =/  arch-type=type  -:!>(*arch)
   =/  scry-results=(map [term beam] (unit cage))
     %-  my  :~
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/program/gen]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/program/gen]]
       :-  ~
       :-  %hoon
       :-  hoon-src-type
@@ -4548,7 +4548,7 @@
       data
       '''
     ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/first/mar]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/first/mar]]
       :-  ~
       :-  %hoon
       :-  hoon-src-type
@@ -4561,7 +4561,7 @@
       --
       '''
     ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/second/mar]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/second/mar]]
       :-  ~
       :-  %hoon
       :-  hoon-src-type
@@ -4574,14 +4574,14 @@
       --
       '''
     ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/noun/mar]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/noun/mar]]
       ~
     ==
   ::
   =^  results1  ford-gate
     %-  ford-call-with-comparator  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=(scry-with-results-and-failures scry-results)
       ::
       ^=  call-args
@@ -4612,7 +4612,7 @@
   =/  hoon-src-type=type  [%atom %$ ~]
   =/  scry-results=(map [term beam] cage)
     %-  my  :~
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/program/gen]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/program/gen]]
       :-  %hoon
       :-  hoon-src-type
       '''
@@ -4621,7 +4621,7 @@
       data
       '''
     ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/foo/ren]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/foo/ren]]
       :-  %hoon
       :-  hoon-src-type
       '''
@@ -4629,7 +4629,7 @@
       data
       '''
     ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/data]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/data]]
       :-  %hoon
       :-  hoon-src-type
       '''
@@ -4640,7 +4640,7 @@
   =^  results1  ford-gate
     %-  ford-call-with-comparator  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=(scry-with-results scry-results)
       ::
       ::
@@ -4681,14 +4681,14 @@
     '''
   =/  scry-results=(map [term beam] cage)
     %-  my  :~
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/foo/mar]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/foo/mar]]
       [%hoon !>(hoon-src)]
     ==
   ::
   =^  results1  ford-gate
     %-  ford-call-with-comparator  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=(scry-with-results scry-results)
       ::
       ^=  call-args
@@ -4729,14 +4729,14 @@
   ::
   =/  scry-results=(map [term beam] cage)
     %-  my  :~
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/foo/mar]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/foo/mar]]
       [%hoon !>(hoon-src)]
     ==
   ::
   =^  results1  ford-gate
     %-  ford-call-with-comparator  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=(scry-with-results scry-results)
       ::
       ^=  call-args
@@ -4777,14 +4777,14 @@
   ::
   =/  scry-results=(map [term beam] cage)
     %-  my  :~
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/foo/mar]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/foo/mar]]
       [%hoon !>(hoon-src)]
     ==
   ::
   =^  results1  ford-gate
     %-  ford-call-with-comparator  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=(scry-with-results scry-results)
       ::
       ^=  call-args
@@ -4825,14 +4825,14 @@
   ::
   =/  scry-results=(map [term beam] cage)
     %-  my  :~
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/foo/mar]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/foo/mar]]
       [%hoon !>(hoon-src)]
     ==
   ::
   =^  results1  ford-gate
     %-  ford-call  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=(scry-with-results scry-results)
       ::
       ^=  call-args
@@ -4841,11 +4841,11 @@
         ==
       ::
       ^=  moves
-        :~  :*  duct=~[/path]  %give  %made  ~1234.5.6  %complete  %error
+        :~  :*  duct=~[/path]  %give  %made  ~1234.05.06  %complete  %error
                 :~  :-  %leaf
                     %+  weld
                       "ford: %vale failed: invalid input for mark: "
-                    "/~nul/home/~1234.5.6/mar/foo/hoon"
+                    "/~nul/home/~1234.05.06/mar/foo/hoon"
                 ::
                     :-  %leaf
                     "ford: %call execution failed:"
@@ -4883,20 +4883,20 @@
   ::
   =/  scry-results=(map [term beam] (unit cage))
     %-  my  :~
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/foo/mar]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/foo/mar]]
       `[%hoon hoon-src-type foo-mark-src]
     ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/bar/mar]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/bar/mar]]
       `[%hoon hoon-src-type bar-mark-src]
     ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/noun/mar]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/noun/mar]]
       ~
     ==
   ::
   =^  results1  ford-gate
     %-  ford-call-with-comparator  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=(scry-with-results-and-failures scry-results)
       ::
       ^=  call-args
@@ -4954,20 +4954,20 @@
   ::
   =/  scry-results=(map [term beam] (unit cage))
     %-  my  :~
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/foo/mar]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/foo/mar]]
       `[%hoon hoon-src-type foo-mark-src]
     ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/bar/mar]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/bar/mar]]
       `[%hoon hoon-src-type bar-mark-src]
     ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/noun/mar]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/noun/mar]]
       ~
     ==
   ::
   =^  results1  ford-gate
     %-  ford-call-with-comparator  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=(scry-with-results-and-failures scry-results)
       ::
       ^=  call-args
@@ -5001,7 +5001,7 @@
   =^  results1  ford-gate
     %-  ford-call-with-comparator  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=scry-is-forbidden
       ::
       ^=  call-args
@@ -5037,7 +5037,7 @@
   =/  hoon-src-type=type  [%atom %$ ~]
   =/  scry-results=(map [term beam] cage)
     %-  my  :~
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/foo/ren]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/foo/ren]]
       :-  %hoon
       :-  hoon-src-type
       '''
@@ -5045,7 +5045,7 @@
       data
       '''
     ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/data]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/data]]
       :-  %hoon
       :-  hoon-src-type
       '''
@@ -5056,7 +5056,7 @@
   =^  results1  ford-gate
     %-  ford-call-with-comparator  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=(scry-with-results scry-results)
       ::
       ::
@@ -5091,7 +5091,7 @@
   ::
   =/  scry-results=(map [term beam] (unit cage))
     %-  my  :~
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/foo/mar]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/foo/mar]]
       :^  ~  %hoon  hoon-src-type
       '''
       |_  cell=^
@@ -5102,7 +5102,7 @@
       --
       '''
     ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/bar/mar]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/bar/mar]]
       :^  ~  %hoon  hoon-src-type
       '''
       |_  sample=[@ @]
@@ -5113,26 +5113,26 @@
       --
       '''
     ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/foo/ren]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/foo/ren]]
       ~
     ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /bar/data]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /bar/data]]
       `[%bar !>([12 13])]
     ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/noun/mar]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/noun/mar]]
       ~
     ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /data]]
+      :-  [%cy [[~nul %home %da ~1234.05.06] /data]]
       `[%arch !>(`arch`[fil=~ dir=(my [%bar ~]~)])]
     ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /bar/data]]
+      :-  [%cy [[~nul %home %da ~1234.05.06] /bar/data]]
       `[%arch !>(`arch`[fil=`*@uv dir=~])]
     ==
   ::
   =^  results1  ford-gate
     %-  ford-call-with-comparator  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=(scry-with-results-and-failures scry-results)
       ::
       ::
@@ -5166,14 +5166,14 @@
   =/  hoon-src-type=type  [%atom %$ ~]
   =/  scry-results=(map [term beam] (unit cage))
     %-  my  :~
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/dat/ren]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/dat/ren]]
       :^  ~  %hoon  hoon-src-type
       '''
       /=  data  /~  !!
       data
       '''
     ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/dat/mar]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/dat/mar]]
       :^  ~  %hoon  hoon-src-type
       '''
       |_  atom=@
@@ -5184,26 +5184,26 @@
       --
       '''
     ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/txt/mar]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/txt/mar]]
       ~
     ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /txt/data]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /txt/data]]
       :^  ~  %txt  hoon-src-type
       '''
       one
       '''
     ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /data]]
+      :-  [%cy [[~nul %home %da ~1234.05.06] /data]]
       `[%arch !>(`arch`[fil=~ dir=(my [%txt ~]~)])]
     ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /txt/data]]
+      :-  [%cy [[~nul %home %da ~1234.05.06] /txt/data]]
       `[%arch !>(`arch`[fil=`*@uv dir=~])]
     ==
   ::
   =^  results1  ford-gate
     %-  ford-call-with-comparator  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=(scry-with-results-and-failures scry-results)
       ::
       ::
@@ -5238,7 +5238,7 @@
   ::
   =/  scry-results=(map [term beam] cage)
     %-  my  :~
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/foo/mar]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/foo/mar]]
       :+  %hoon  hoon-src-type
       '''
       |_  cell=^
@@ -5258,7 +5258,7 @@
   =^  results1  ford-gate
     %-  ford-call-with-comparator  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=(scry-with-results scry-results)
       ::
       ::
@@ -5295,7 +5295,7 @@
   ::
   =/  scry-results=(map [term beam] (unit cage))
     %-  my  :~
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/txt/mar]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/txt/mar]]
       :^  ~  %hoon  hoon-src-type
       '''
       |_  txt=wain
@@ -5315,7 +5315,7 @@
       --
       '''
     ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/txt-diff/mar]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/txt-diff/mar]]
       :^  ~  %hoon  hoon-src-type
       '''
       |_  txt-diff=(urge:clay cord)
@@ -5326,14 +5326,14 @@
       --
       '''
     ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/diff/txt/mar]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/diff/txt/mar]]
       ~
     ==
   ::
   =^  results1  ford-gate
     %-  ford-call-with-comparator  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=(scry-with-results-and-failures scry-results)
       ::
       ^=  call-args
@@ -5369,7 +5369,7 @@
   ::
   =/  scry-results=(map [term beam] (unit cage))
     %-  my  :~
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/txt/mar]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/txt/mar]]
       :^  ~  %hoon  hoon-src-type
       '''
       |_  txt=wain
@@ -5394,7 +5394,7 @@
       --
       '''
     ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/txt-diff/mar]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/txt-diff/mar]]
       :^  ~  %hoon  hoon-src-type
       '''
       |_  txt-diff=(urge:clay cord)
@@ -5405,14 +5405,14 @@
       --
       '''
     ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/diff/txt/mar]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/diff/txt/mar]]
       ~
     ==
   ::
   =^  results1  ford-gate
     %-  ford-call-with-comparator  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=(scry-with-results-and-failures scry-results)
       ::
       ^=  call-args
@@ -5448,7 +5448,7 @@
   ::
   =/  scry-results=(map [term beam] (unit cage))
     %-  my  :~
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/txt/mar]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/txt/mar]]
       :^  ~  %hoon  hoon-src-type
       '''
       |_  txt=wain
@@ -5473,7 +5473,7 @@
       --
       '''
     ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/foo/mar]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/foo/mar]]
       :^  ~  %hoon  hoon-src-type
       '''
       |_  foo=@t
@@ -5490,7 +5490,7 @@
       --
       '''
     ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/txt-diff/mar]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/txt-diff/mar]]
       :^  ~  %hoon  hoon-src-type
       '''
       |_  txt-diff=(urge:clay cord)
@@ -5501,17 +5501,17 @@
       --
       '''
     ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/diff/txt/mar]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/diff/txt/mar]]
       ~
     ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/noun/mar]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/noun/mar]]
       ~
     ==
   ::
   =^  results1  ford-gate
     %-  ford-call-with-comparator  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=(scry-with-results-and-failures scry-results)
       ::
       ^=  call-args
@@ -5555,22 +5555,22 @@
   ::
   =/  scry-results=(map [term beam] (unit cage))
     %-  my  :~
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/txt/mar]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/txt/mar]]
       :^  ~  %hoon  hoon-src-type
       txt-scry
     ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/txt-diff/mar]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/txt-diff/mar]]
       :^  ~  %hoon  hoon-src-type
       diff-scry
     ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/diff/txt/mar]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/diff/txt/mar]]
       ~
     ==
   ::
   =^  results1  ford-gate
     %-  ford-call-with-comparator  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=(scry-with-results-and-failures scry-results)
       ::
       ^=  call-args
@@ -5610,18 +5610,18 @@
   ::
   =/  scry-results=(map [term beam] (unit cage))
     %-  my  :~
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/txt/mar]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/txt/mar]]
       :^  ~  %hoon  hoon-src-type
       txt-scry
     ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/txt-diff/mar]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/txt-diff/mar]]
       :^  ~  %hoon  hoon-src-type
       diff-scry
     ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/diff/txt/mar]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/diff/txt/mar]]
       ~
     ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/hoon/mar]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/hoon/mar]]
       :^  ~  %hoon  hoon-src-type
       '''
       |_  foo=@t
@@ -5642,7 +5642,7 @@
   =^  results1  ford-gate
     %-  ford-call-with-comparator  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=(scry-with-results-and-failures scry-results)
       ::
       ^=  call-args
@@ -5683,7 +5683,7 @@
   =^  results1  ford-gate
     %-  ford-call  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=scry-is-forbidden
       ::
       ^=  call-args
@@ -5695,7 +5695,7 @@
         ==  ==
       ::
       ^=  moves
-        :~  :*  duct=~[/count]  %give  %made  ~1234.5.6  %complete
+        :~  :*  duct=~[/count]  %give  %made  ~1234.05.06  %complete
                 %success  %list
                 :~  [%success %$ %noun ud-type 1]
                     [%success %$ %noun ud-type 2]
@@ -5713,22 +5713,22 @@
   ::
   =/  scry-results=(map [term beam] (unit cage))
     %-  my  :~
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/txt/mar]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/txt/mar]]
       :^  ~  %hoon  hoon-src-type
       txt-scry
     ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/txt-diff/mar]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/txt-diff/mar]]
       :^  ~  %hoon  hoon-src-type
       diff-scry
     ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/diff/txt/mar]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/diff/txt/mar]]
       ~
     ==
   ::
   =^  results1  ford-gate
     %-  ford-call-with-comparator  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=(scry-with-results-and-failures scry-results)
       ::
       ^=  call-args
@@ -5780,7 +5780,7 @@
   ::
   =/  scry-results=(map [term beam] (unit cage))
     %-  my  :~
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/gh/app]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/gh/app]]
       :-  ~
       :-  %hoon
       :-  hoon-src-type
@@ -5792,7 +5792,7 @@
       (add sur-gh-two:gh lib-connector-val:connector)
       '''
     ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/gh/sur]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/gh/sur]]
       :-  ~
       :-  %hoon
       :-  hoon-src-type
@@ -5800,10 +5800,10 @@
       [sur-gh-one=1 sur-gh-two=2 sur-gh-three=3]
       '''
     ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/plan-acct/sur]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/plan-acct/sur]]
       ~
     ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/acct/plan/sur]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/acct/plan/sur]]
       :-  ~
       :-  %hoon
       :-  hoon-src-type
@@ -5811,10 +5811,10 @@
       [sur-plan-acct=1 sur-plan-acct=2]
       '''
     ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/lib/old/lib]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/lib/old/lib]]
       ~
     ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/old-lib/lib]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/old-lib/lib]]
       :-  ~
       :-  %hoon
       :-  hoon-src-type
@@ -5822,10 +5822,10 @@
       [old-lib-val=10 ~]
       '''
     ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/parse/gh/lib]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/parse/gh/lib]]
       ~
     ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/gh-parse/lib]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/gh-parse/lib]]
       :-  ~
       :-  %hoon
       :-  hoon-src-type
@@ -5836,7 +5836,7 @@
       [lib-gh-parse-val=(add old-lib-val sur-gh-three:gh) ~]
       '''
     ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/connector/lib]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/connector/lib]]
       :-  ~
       :-  %hoon
       :-  hoon-src-type
@@ -5851,7 +5851,7 @@
   =^  results1  ford-gate
     %-  ford-call-with-comparator  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=(scry-with-results-and-failures scry-results)
       ::
       ^=  call-args
@@ -5889,9 +5889,9 @@
         ::
         %+  expect-eq
           !>  ^-  move:ford-gate
-              :*  duct=~[/gh]  %pass  wire=/clay-sub/~nul/home/~1234.5.6
+              :*  duct=~[/gh]  %pass  wire=/clay-sub/~nul/home/~1234.05.06
                   %c  %warp  ~nul  %home
-                  `[%mult [%da ~1234.5.6] files]
+                  `[%mult [%da ~1234.05.06] files]
               ==
           !>  i.t.moves
     ==
@@ -6276,7 +6276,7 @@
       scry=(scry-with-results-and-failures scry-results)
       ::
       ^=  take-args
-        :*  wire=/clay-sub/~nul/home/~1234.5.6  duct=~[/gh]
+        :*  wire=/clay-sub/~nul/home/~1234.05.06  duct=~[/gh]
             ^=  wrapped-sign  ^-  (hypo sign:ford-gate)  :-  *type
             [%c %wris [%da ~1234.5.9] (sy [%x /lib/connector/hoon]~)]
         ==
@@ -6480,7 +6480,7 @@
   ::
   =/  scry-results=(map [term beam] cage)
     %-  my  :~
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/one/mar]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/one/mar]]
       :-  %hoon
       :-  hoon-src-type
       '''
@@ -6493,7 +6493,7 @@
       --
       '''
     ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/two/mar]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/two/mar]]
       :-  %hoon
       :-  hoon-src-type
       '''
@@ -6508,7 +6508,7 @@
       ::  todo: %cy looks funny here
       ::
       ::  make sure we can deal with random not-hoon files in mar
-      :-  [%cy [[~nul %home %da ~1234.5.6] /js/dummy/mar]]
+      :-  [%cy [[~nul %home %da ~1234.05.06] /js/dummy/mar]]
       :-  %js
       :-  hoon-src-type
       '''
@@ -6519,7 +6519,7 @@
   =^  results1  ford-gate
     %-  ford-call  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=(scry-with-results scry-results)
       ::
       ^=  call-args
@@ -6529,13 +6529,13 @@
       ::
       ^=  moves
         :~  ^-  move:ford-gate
-            :*  duct=~[/walk]  %give  %made  ~1234.5.6
+            :*  duct=~[/walk]  %give  %made  ~1234.05.06
                 %complete  %success  %walk
                 [%grab %one %two]~
             ==
             ^-  move:ford-gate
-            :*  duct=~[/walk]  %pass  /clay-sub/~nul/home/~1234.5.6
-                %c  %warp  ~nul  %home  ~  %mult  [%da ~1234.5.6]
+            :*  duct=~[/walk]  %pass  /clay-sub/~nul/home/~1234.05.06
+                %c  %warp  ~nul  %home  ~  %mult  [%da ~1234.05.06]
                 %-  sy  :~
                   [%x /mar/two/hoon]
                   [%x /mar/one/hoon]
@@ -6547,13 +6547,13 @@
   =^  results2  ford-gate
     %-  ford-call  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=scry-is-forbidden
       ::
       call-args=[duct=~[/walk] type=~ %kill ~]
       ::
       ^=  moves
-        :~  :*  duct=~[/walk]  %pass  /clay-sub/~nul/home/~1234.5.6
+        :~  :*  duct=~[/walk]  %pass  /clay-sub/~nul/home/~1234.05.06
                 %c  %warp  ~nul  %home  ~
     ==  ==  ==
   ::
@@ -6568,7 +6568,7 @@
   =^  results1  ford-gate
     %-  ford-call  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=(scry-with-results large-mark-graph)
       ::
       ^=  call-args
@@ -6578,13 +6578,13 @@
       ::
       ^=  moves
         :~  ^-  move:ford-gate
-            :*  duct=~[/walk]  %give  %made  ~1234.5.6
+            :*  duct=~[/walk]  %give  %made  ~1234.05.06
                 %complete  %success  %walk
                 [[%grab %one %two] [%grab %two %four] ~]
             ==
             ^-  move:ford-gate
-            :*  duct=~[/walk]  %pass  /clay-sub/~nul/home/~1234.5.6
-                %c  %warp  ~nul  %home  ~  %mult  [%da ~1234.5.6]
+            :*  duct=~[/walk]  %pass  /clay-sub/~nul/home/~1234.05.06
+                %c  %warp  ~nul  %home  ~  %mult  [%da ~1234.05.06]
                 %-  sy  :~
                   [%x /mar/one/hoon]
                   [%x /mar/two/hoon]
@@ -6598,13 +6598,13 @@
   =^  results2  ford-gate
     %-  ford-call  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=scry-is-forbidden
       ::
       call-args=[duct=~[/walk] type=~ %kill ~]
       ::
       ^=  moves
-        :~  :*  duct=~[/walk]  %pass  /clay-sub/~nul/home/~1234.5.6
+        :~  :*  duct=~[/walk]  %pass  /clay-sub/~nul/home/~1234.05.06
                 %c  %warp  ~nul  %home  ~
     ==  ==  ==
   ::
@@ -6620,7 +6620,7 @@
   =^  results1  ford-gate
     %-  ford-call-with-comparator  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=(scry-with-results large-mark-graph)
       ::
       ^=  call-args
@@ -6664,7 +6664,7 @@
   ::
   =/  scry-results1=(map [term beam] (unit cage))
     %-  my  :~
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/program/app]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/program/app]]
       :-  ~
       :-  %hoon
       :-  hoon-src-type
@@ -6679,7 +6679,7 @@
       data
       '''
     ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/things/lib]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/things/lib]]
       :-  ~
       :-  %hoon
       :-  hoon-src-type
@@ -6691,7 +6691,7 @@
       --
       '''
     ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/item/mar]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/item/mar]]
       :-  ~
       :-  %hoon
       :-  hoon-src-type
@@ -6706,29 +6706,29 @@
       --
       '''
     ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/item/ren]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/item/ren]]
       ~
     ::
-      :-  [%cx [[~nul %home %da ~1234.5.6] /item/data1/web]]
+      :-  [%cx [[~nul %home %da ~1234.05.06] /item/data1/web]]
       :-  ~
       :-  %item
       :-  item-type
       [%item 'one']
     ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /web]]
+      :-  [%cy [[~nul %home %da ~1234.05.06] /web]]
       `[%arch !>(`arch`[fil=~ dir=(my [[%data1 ~] ~])])]
     ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /data1/web]]
+      :-  [%cy [[~nul %home %da ~1234.05.06] /data1/web]]
       `[%arch !>(`arch`[fil=~ dir=(my [%item ~]~)])]
     ::
-      :-  [%cy [[~nul %home %da ~1234.5.6] /item/data1/web]]
+      :-  [%cy [[~nul %home %da ~1234.05.06] /item/data1/web]]
       `[%arch !>(`arch`[fil=`0v1 dir=~])]
     ==
   ::
   =^  results1  ford-gate
     %-  ford-call-with-comparator  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=(scry-with-results-and-failures scry-results1)
       ::
       ^=  call-args
@@ -6841,7 +6841,7 @@
       scry=(scry-with-results-and-failures scry-results2)
       ::
       ^=  take-args
-        :*  wire=/clay-sub/~nul/home/~1234.5.6  duct=~[/app]
+        :*  wire=/clay-sub/~nul/home/~1234.05.06  duct=~[/app]
             ^=  wrapped-sign  ^-  (hypo sign:ford-gate)  :-  *type
             [%c %wris [%da ~1234.5.7] (sy [%y /web]~)]
         ==
@@ -7008,7 +7008,7 @@
   =/  arch-type=type  -:!>(*arch)
   ::
   %-  my  :~
-    :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/one/mar]]
+    :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/one/mar]]
     :-  %hoon
     :-  hoon-src-type
     '''
@@ -7022,7 +7022,7 @@
     --
     '''
   ::
-    :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/two/mar]]
+    :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/two/mar]]
     :-  %hoon
     :-  hoon-src-type
     '''
@@ -7034,7 +7034,7 @@
     --
     '''
   ::
-    :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/three/mar]]
+    :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/three/mar]]
     :-  %hoon
     :-  hoon-src-type
     '''
@@ -7051,7 +7051,7 @@
     --
     '''
   ::
-    :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/four/mar]]
+    :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/four/mar]]
     :-  %hoon
     :-  hoon-src-type
     '''
@@ -7065,7 +7065,7 @@
     --
     '''
   ::
-    :-  [%cx [[~nul %home %da ~1234.5.6] /hoon/five/mar]]
+    :-  [%cx [[~nul %home %da ~1234.05.06] /hoon/five/mar]]
     :-  %hoon
     :-  hoon-src-type
     '''
@@ -7356,7 +7356,7 @@
   =^  results1  ford-gate
     %-  ford-call  :*
       ford-gate
-      now=~1234.5.6
+      now=~1234.05.06
       scry=scry-is-forbidden
       call-args=[duct=~[/empty] type=~ [%keep 0 0]]
       expected-moves=~
