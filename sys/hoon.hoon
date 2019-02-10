@@ -5426,11 +5426,21 @@
 ++  cit  (cook |=(a/@ (sub a '0')) (shim '0' '7'))      ::  octal digit
 ++  dem  (bass 10 (most gon dit))                       ::  decimal to atom
 ++  dit  (cook |=(a/@ (sub a '0')) (shim '0' '9'))      ::  decimal digit
+++  diz  |=([@ @] (bass 10 (stun +< dit)))              ::  decimal digits
 ++  dog  ;~(plug dot gay)                               ::  .  number separator
 ++  dof  ;~(plug hep gay)                               ::  - @q separator
 ++  doh  ;~(plug ;~(plug hep hep) gay)                  ::  --  phon separator
 ++  dun  (cold ~ ;~(plug hep hep))                      ::  -- (stop) to ~
 ++  duz  (cold ~ ;~(plug tis tis))                      ::  == (stet) to ~
+++  fit  |*  [[min=@ max=@] sef=rule]                   ::  bound atom value
+         =-  (sear - sef)
+         |=  a=@
+         ^-  (unit @)
+         ?:  ?|  (lth a min)
+                 &((gth a max) !=(0 max))
+             ==
+           ~
+         [~ a]
 ++  gah  (mask [`@`10 ' ' ~])                           ::  newline or ace
 ++  gap  (cold ~ ;~(plug gaq (star ;~(pose vul gah))))  ::  plural space
 ++  gaq  ;~  pose                                       ::  end of line
