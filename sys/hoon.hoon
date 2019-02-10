@@ -5331,9 +5331,10 @@
 ::
 ++  stun                                                ::  parse several times
   |*  {lig/{@ @} fel/rule}
+  =+  end=!=(0 +.lig)
   |=  tub/nail
   ^-  (like (list _(wonk (fel))))
-  ?:  =(0 +.lig)
+  ?:  &(=(0 +.lig) end)
     [p.tub [~ ~ tub]]
   =+  vex=(fel tub)
   ?~  q.vex
