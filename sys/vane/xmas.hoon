@@ -1004,7 +1004,7 @@
     ::
     ?:  =(1 wit)
       [(spit [our her] p.q.gum q.q.gum) ~]
-    ::  ruv: 
+    ::  ruv: packets generated from splitting message
     ::
     =+  ruv=(rip 13 q.q.gum)
     =+  inx=0
