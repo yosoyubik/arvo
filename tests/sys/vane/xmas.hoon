@@ -10,9 +10,14 @@
   =/  =ring  sec:ex:crub
   =|  =cert:xmas-gate
   =.  pub.dat.cert  'b'
+  ::
+  =/  =colt:xmas-gate  zeal:rail:xmas-gate
+  =/  =mini:xmas-gate  myn.colt
+  =/  mup  (yawn:pump:xmas-gate mini)
+  ::
   :*  our=~nul
       her=~nec
-      now=~2000.1.1
+      now=~2019.1.1
       eny=0xdead.beef
       life=1
       crub=crub
@@ -25,6 +30,10 @@
           sax=~
           pub=[[1 cert] ~ ~]
       ==
+      ::
+      colt=colt
+      mini=mini
+      mup=mup
   ==
 ::
 |%
@@ -37,8 +46,53 @@
   ~
 ++  test-hose  ^-  tang
   ~
-++  test-pump  ^-  tang
+::
+::  |pump core tests
+::
+++  test-pump-back  ^-  tang
   ~
+++  test-pump-cull  ^-  tang
+  ~
+++  test-pump-pack  ^-  tang
+  =/  =task:pump:xmas-gate
+    :-  %pack
+    :~  [& [0 0] 0v0 (jam %foo)]
+        [& [1 1] 0v1 (jam %bar)]
+        [& [2 2] 0v2 (jam %qux)]
+    ==
+  ::
+  =/  result1  (work:mup.fix now.fix task)
+  ::  TODO is this really supposed to completely no-op on the third packet?
+  ::  TODO is it supposed to emit the packets in reverse order?
+  ::
+  %+  expect-eq
+    !>  %~  .  zu:pump:xmas-gate
+        :-  ^-  fex=(list gift:pump:xmas-gate)
+            :~  [%send `@uvH`0v1 [1 1] `@uvO`(jam %bar)]
+                [%send `@uvH`0v0 [0 0] `@uvO`(jam %foo)]
+            ==
+        =/  lad0=@da  (add now.fix (mul 2 rtt.saw.mini.fix))
+        =/  lad1=@da  +(lad0)
+        ::
+        %_  mini.fix
+          las.saw  +(now.fix)
+          lad.saw  lad1
+          cur.saw  2
+          liv      %-  ~(gas to liv.mini.fix)
+                   ^-  (list coal:xmas-gate)
+                   :~  [now.fix lad0 [& [0 0] 0v0 (jam %foo)]]
+                       [+(now.fix) lad1 [& [1 1] 0v1 (jam %bar)]]
+                   ==
+        ==
+    !>  result1
+::
+++  test-pump-wake  ^-  tang
+  ~
+++  test-pump-wait  ^-  tang
+  ~
+::
+::  |knit core tests
+::
 ++  test-knit-carp  ^-  tang
   ::
   =/  knit
