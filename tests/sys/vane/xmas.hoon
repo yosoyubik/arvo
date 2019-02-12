@@ -86,9 +86,30 @@
         ==
     !>  result1
 ::
-++  test-pump-wake  ^-  tang
-  ~
 ++  test-pump-wait  ^-  tang
+  ::  use same +mini as the end of +test-pump-pack
+  ::
+  =/  lad0=@da  (add now.fix (mul 2 rtt.saw.mini.fix))
+  =/  lad1=@da  +(lad0)
+  ::
+  =.  mini.fix
+    %_  mini.fix
+      las.saw  +(now.fix)
+      lad.saw  lad1
+      cur.saw  2
+      liv      %-  ~(gas to liv.mini.fix)
+               ^-  (list coal:xmas-gate)
+               :~  [now.fix lad0 [& [0 0] 0v0 (jam %foo)]]
+                   [+(now.fix) lad1 [& [1 1] 0v1 (jam %bar)]]
+               ==
+    ==
+  ::
+  =/  result1  wait:(yawn:pump:xmas-gate mini.fix)
+  ::
+  %+  expect-eq
+    !>  `lad0
+    !>  result1
+++  test-pump-wake  ^-  tang
   ~
 ::
 ::  |knit core tests
