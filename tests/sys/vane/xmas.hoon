@@ -42,8 +42,23 @@
     !>  ~[%take %load %scry %neon %call %doze %stay]
     !>  (sloe -:!>(*xmas-gate))
 ::
-++  test-nose  ^-  tang
-  ~
+++  test-nose-none  ^-  tang
+  =/  message  [%none (jam [%bond [0 0] /foo/bar [%message %foo]])]
+  ::
+  =/  noser
+    %-  nose:xmas-gate
+    [him=her.fix wyr=rings.fix det=pipe.fix]
+  ::
+  =/  result1
+    %-  noser
+    message
+  ::
+  %+  expect-eq
+    !>  :-  ^-  (list gift:nose:xmas-gate)
+            ~
+        [aut=| ham=`meal:xmas-gate`[%bond [0 0] /foo/bar [%message %foo]]]
+    !>  result1
+::
 ++  test-hose  ^-  tang
   ~
 ::
