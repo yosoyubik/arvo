@@ -37,13 +37,18 @@
   ==
 ::
 |%
-++  test-trivial  ^-  tang
+::  TODO: remove +neon and +doze
+::
+++  test-vane-interface  ^-  tang
   %+  expect-eq
     !>  ~[%take %load %scry %neon %call %doze %stay]
     !>  (sloe -:!>(*xmas-gate))
 ::
+::  |nose core tests
+::
 ++  test-nose-none  ^-  tang
-  =/  message  [%none (jam [%bond [0 0] /foo/bar [%message %foo]])]
+  =/  =meal:xmas-gate  [%bond [0 0] /foo/bar [%message %foo]]
+  =/  message  [%none (jam meal)]
   ::
   =/  noser
     %-  nose:xmas-gate
@@ -56,11 +61,20 @@
   %+  expect-eq
     !>  :-  ^-  (list gift:nose:xmas-gate)
             ~
-        [aut=| ham=`meal:xmas-gate`[%bond [0 0] /foo/bar [%message %foo]]]
+        [aut=| ham=meal]
     !>  result1
 ::
+++  test-nose-fast  ^-  tang
+  [>"not implemented"<]~
+++  test-nose-full  ^-  tang
+  [>"not implemented"<]~
+++  test-nose-open  ^-  tang
+  [>"not implemented"<]~
+::
+::  |hose core tests
+::
 ++  test-hose  ^-  tang
-  ~
+  [>"not implemented"<]~
 ::
 ::  |pump core tests
 ::
@@ -305,6 +319,6 @@
     !>  result1
 ::
 ++  test-rail  ^-  tang
-  ~
+  [>"not implemented"<]~
 --
 
