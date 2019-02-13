@@ -86,7 +86,44 @@
     !>  result1
 ::
 ++  test-nose-full  ^-  tang
-  [>"not implemented"<]~
+  ::  generate a packet the same way as +test-knit-full
+  ::
+  ::  set the foreign life to 3 so we can test the %full case
+  ::
+  =.  cur.pipe.fix  `1
+  ?>  ?=(^ cur.pipe.fix)
+  ::
+  =/  message          [%message %foo %bar]
+  =/  =meal:xmas-gate  [%bond *flea:xmas-gate /chan/foo message]
+  ::
+  =/  liz   `[life:xmas-gate life:xmas-gate]`[u.cur.pipe.fix life.fix]
+  =/  key   (shaz :(mix (mug meal) now.fix eny.fix))
+  =.  inn.pipe.fix
+    ^-  (map hand:xmas-gate bill:xmas-gate)
+    :+  :-  `hand:xmas-gate`0v1
+        `bill:xmas-gate`[~2020.1.1 key]
+    ~  ~
+  =/  sit   (seal:as:crub.fix 'b' (jam key (jam meal)))
+  =/  ger   `gree:xmas-gate`[[her.fix pub.pipe.fix] ~ ~]
+  =/  maj   (jam liz ger sit)
+  =/  spat  (spit:xmas-gate [our.fix her.fix] %full maj)
+  ::
+  =/  noser
+    %-  nose:xmas-gate
+    [him=her.fix wyr=rings.fix det=pipe.fix]
+  ::
+  =/  result1
+    %-  noser
+    [%full maj]
+  ::
+  %+  expect-eq
+    !>  :-  ^-  (list gift:nose:xmas-gate)
+            :~  `gift:nose:xmas-gate`[%link ~2018.1.1 key]
+                `gift:nose:xmas-gate`[%meet ger]
+            ==
+        [& meal]
+    !>  result1
+::
 ++  test-nose-open  ^-  tang
   [>"not implemented"<]~
 ::
