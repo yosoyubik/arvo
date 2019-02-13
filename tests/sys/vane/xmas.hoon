@@ -65,7 +65,26 @@
     !>  result1
 ::
 ++  test-nose-fast  ^-  tang
-  [>"not implemented"<]~
+  =.  inn.pipe.fix
+    ^-  (map hand:xmas-gate bill:xmas-gate)
+    :+  :-  `hand:xmas-gate`0v1
+        `bill:xmas-gate`[~2020.1.1 `@J`%key]
+    ~  ~
+  =/  =meal:xmas-gate  [%bond [0 0] /foo/bar [%message %foo]]
+  =/  message  [%fast (cat 7 0v1 (en:crub:crypto `@J`%key (jam meal)))]
+  ::
+  =/  noser
+    %-  nose:xmas-gate
+    [him=her.fix wyr=rings.fix det=pipe.fix]
+  ::
+  =/  result1
+    %-  noser
+    message
+  ::
+  %+  expect-eq
+    !>  [~ & meal]
+    !>  result1
+::
 ++  test-nose-full  ^-  tang
   [>"not implemented"<]~
 ++  test-nose-open  ^-  tang
