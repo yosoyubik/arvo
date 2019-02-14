@@ -7012,7 +7012,7 @@
       ::
       moves=~
     ==
-  (weld results (expect-ford-empty ford-gate ~nul))
+  (weld results (expect-ford-very-empty ford-gate ~nul))
 ::
 ++  test-vega-complete-once-build  ^-  tang
   ::
@@ -7044,7 +7044,7 @@
   ;:  weld
     results1
     results2
-    (expect-ford-empty ford-gate ~nul)
+    (expect-ford-very-empty ford-gate ~nul)
   ==
 ::
 ++  test-vega-live-build  ^-  tang
@@ -7077,7 +7077,7 @@
   ;:  weld
     results1
     results2
-    (expect-ford-empty ford-gate ~nul)
+    (expect-ford-very-empty ford-gate ~nul)
   ==
 ::
 ++  test-vega-many  ^-  tang
@@ -7148,7 +7148,7 @@
     results2
     results3
     results4
-    (expect-ford-empty ford-gate ~nul)
+    (expect-ford-very-empty ford-gate ~nul)
   ==
 ::
 ++  test-vega-in-progress-once-build  ^-  tang
@@ -7186,7 +7186,7 @@
   ;:  weld
     results1
     results2
-    (expect-ford-empty ford-gate ~nul)
+    (expect-ford-very-empty ford-gate ~nul)
   ==
 ::  |data: shared data between cases
 ::  +|  data
@@ -7536,12 +7536,13 @@
 ::  +expect-ford-empty: assert that ford's state is one empty ship
 ::
 ::    At the end of every test, we want to assert that we have cleaned up all
-::    state.
+::    state, modulo caching.
 ::
 ++  expect-ford-empty
   |=  [ford-gate=_ford-gate ship=@p]
   ^-  tang
   ::
+  :: clear all caches
   =^  results1  ford-gate
     %-  ford-call  :*
       ford-gate
@@ -7565,6 +7566,35 @@
   ?:  =(default-state state)
     ~
   ::
+  =/  build-state=(list tank)
+    %-  zing
+    %+  turn  ~(tap by builds.state)
+    |=  [build=build:ford build-status=build-status:ford]
+    :~  [%leaf (build-to-tape:ford build)]
+        [%leaf "requesters: {<requesters.build-status>}"]
+        [%leaf "clients: {<~(tap in ~(key by clients.build-status))>}"]
+    ==
+  ::
+  =/  braces  [[' ' ' ' ~] ['{' ~] ['}' ~]]
+  ::
+  :~  [%leaf "failed to cleanup"]
+      [%leaf "builds.state:"]
+      [%rose braces build-state]
+  ==
+:: +expect-ford-very-empty: assert that ford's state is a very empty ship
+::
+::   At the end of some tests, we want to assert that we have cleaned up all
+::   state, *including* the caches.
+++  expect-ford-very-empty
+  |=  [ford-gate=_ford-gate ship=@p]
+  ^-  tang
+  ::
+  =/  ford  *ford-gate
+  =/  state  state.ax.+>+<.ford
+  =/  default-state  *ford-state:ford
+  ::
+  ?:  =(default-state state)
+    ~
   =/  build-state=(list tank)
     %-  zing
     %+  turn  ~(tap by builds.state)

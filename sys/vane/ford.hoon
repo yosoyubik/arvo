@@ -1467,8 +1467,6 @@
       `move`[duct %give %made now %incomplete ~]
     ::
     =.  moves  (weld incompletes moves)
-    :: For some reason, setting it to *_state instead of *ford-state
-    :: doesn't work. TODO: understand this.
     =.  state  *ford-state
     ..execute
   ::  +cancel: cancel a build
