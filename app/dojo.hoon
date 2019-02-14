@@ -1068,7 +1068,8 @@
     =+  |-  ^-  sink/dojo-sink
         ?-  -.sink.com
           $stdout       [%show %0]
-          $output-file  $(sink.com [%command (cat 3 '.' pax.sink.com)])
+          $output-file  $(sink.com [%command (cat 3 '@' pax.sink.com)])
+          $output-pill  $(sink.com [%command (cat 3 '.' pax.sink.com)])
           $output-clay  [%file (need (de-beam:format pax.sink.com))]
           $url          [%http %post `~. url.sink.com]
           $to-api       !!
