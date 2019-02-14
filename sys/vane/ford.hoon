@@ -77,7 +77,7 @@
 ::
 ::    Ford uses dependency tracking, caching, and results of previous builds
 ::    to eliminate excess work. When rerunning a live build, Ford "promotes"
-::    previous results to the new time if the build's dependencies hvaen't
+::    previous results to the new time if the build's dependencies haven't
 ::    changed since the previous build's formal date. Ford does this check
 ::    for each build in a tree of sub-builds under the "root build," which
 ::    is the build that was requested directly.
@@ -1093,6 +1093,7 @@
 ::      +cancel       stop trying to run a build and delete its tracking info
 ::      +wipe         wipe the build storage to free memory
 ::      +keep         resize caches, deleting entries if necessary
+::      +reset        cancel all live and in-progress builds; notify clients
 ::
 ::    The main internal arm is +execute-loop, which is called from +start-build,
 ::    +rebuild, and +unblock. +execute defines Ford's build loop.
@@ -1448,6 +1449,28 @@
               compiler-cache.state
       compiler-cache-size
     ==
+  ::  +reset: purge all builds and send %incomplete messages
+  ::
+  ::    The contents of Ford's build tables indirectly references the standard
+  ::    library and other core code. When a kernel reset occurs, these copies
+  ::    go out of date, making all the entries invalid. To handle this, we
+  ::    delete everything and send a message to everyone who is expecting a
+  ::    build result. These clients are expected to reiterate their original
+  ::    requests on hearing such %incomplete messages, allowing us to
+  ::    subsequently build our state anew.
+  ::
+  ++  reset  ^+  [moves state]
+    =<  finalize
+    =/  incompletes
+      %+  turn  ~(tap by ducts.state)
+      |=  [=^duct *]
+      `move`[duct %give %made now %incomplete ~]
+    ::
+    =.  moves  (weld incompletes moves)
+    :: For some reason, setting it to *_state instead of *ford-state
+    :: doesn't work. TODO: understand this.
+    =.  state  *ford-state
+    ..execute
   ::  +cancel: cancel a build
   ::
   ::    When called on a live build, removes all tracking related to the live
@@ -6185,11 +6208,11 @@
   ::
       ::  %vega: learn of kernel upgrade
       ::
-      ::    XX clear cache, rebuild live builds
-      ::
       %vega
     ::
-    [~ ford-gate]
+    =^  moves  state.ax  reset:this-event
+    ::
+    [moves ford-gate]
   ::
       ::  %wipe: wipe stored builds, clearing :percent-to-remove of the entries
       ::

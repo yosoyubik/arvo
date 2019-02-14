@@ -6999,6 +6999,195 @@
     results4
     (expect-ford-empty ford-gate ~nul)
   ==
+::
+++  test-vega-empty  ^-  tang
+  ::
+  =^  results  ford-gate
+    %-  ford-call  :*
+      ford-gate
+      now=~1234.5.8
+      scry=scry-is-forbidden
+      ::
+      call-args=[duct=~[/wherever] type=~ %vega ~]
+      ::
+      moves=~
+    ==
+  (weld results (expect-ford-empty ford-gate ~nul))
+::
+++  test-vega-complete-once-build  ^-  tang
+  ::
+  =^  results1  ford-gate
+    %-  ford-call  :*
+      ford-gate
+      now=~1234.5.6
+      scry=scry-is-forbidden
+      ::
+      ^=  call-args
+        [duct=~[/gimme] type=~ %build live=%.n [%$ %noun !>('result')]]
+      ::
+      ^=  moves
+        :~  :*  duct=~[/gimme]  %give  %made  ~1234.5.6
+                %complete  %success  %$  %noun  !>('result')
+    ==  ==  ==
+  ::
+  =^  results2  ford-gate
+    %-  ford-call  :*
+      ford-gate
+      now=~1234.5.7
+      scry=scry-is-forbidden
+      ::
+      call-args=[duct=~[/wherever] type=~ %vega ~]
+      ::
+      moves=~
+    ==
+  ::
+  ;:  weld
+    results1
+    results2
+    (expect-ford-empty ford-gate ~nul)
+  ==
+::
+++  test-vega-live-build  ^-  tang
+  ::
+  =^  results1  ford-gate
+    %-  ford-call  :*
+      ford-gate
+      now=~1234.5.6
+      scry=scry-is-forbidden
+      ::
+      ^=  call-args
+        [duct=~[/gimme] type=~ %build live=%.y [%$ %noun !>('result')]]
+      ::
+      ^=  moves
+        :~  :*  duct=~[/gimme]  %give  %made  ~1234.5.6
+                %complete  %success  %$  %noun  !>('result')
+    ==  ==  ==
+  ::
+  =^  results2  ford-gate
+    %-  ford-call  :*
+      ford-gate
+      now=~1234.5.7
+      scry=scry-is-forbidden
+      ::
+      call-args=[duct=~[/wherever] type=~ %vega ~]
+      ::
+      moves=~[[duct=~[/gimme] %give %made ~1234.5.7 %incomplete ~]]
+    ==
+  ::
+  ;:  weld
+    results1
+    results2
+    (expect-ford-empty ford-gate ~nul)
+  ==
+::
+++  test-vega-many  ^-  tang
+  ::
+  =^  results1  ford-gate
+    %-  ford-call  :*
+      ford-gate
+      now=~1234.5.6
+      scry=scry-is-forbidden
+      ::
+      ^=  call-args
+        [duct=~[/gimme] type=~ %build live=%.y [%$ %noun !>('anthony')]]
+      ::
+      ^=  moves
+        :~  :*  duct=~[/gimme]  %give  %made  ~1234.5.6
+                %complete  %success  %$  %noun  !>('anthony')
+    ==  ==  ==
+  ::
+  =^  results2  ford-gate
+    %-  ford-call  :*
+      ford-gate
+      now=~1234.5.7
+      scry=scry-is-forbidden
+      ::
+      ^=  call-args
+        [duct=~[/gotcha] type=~ %build live=%.y [%$ %noun !>('galen')]]
+      ::
+      ^=  moves
+        :~  :*  duct=~[/gotcha]  %give  %made  ~1234.5.7
+                %complete  %success  %$  %noun  !>('galen')
+    ==  ==  ==
+  ::
+  =^  results3  ford-gate
+    %-  ford-call  :*
+      ford-gate
+      now=~1234.5.8
+      scry=scry-is-forbidden
+      ::
+      ^=  call-args
+        [duct=~[/nah-bro] type=~ %build live=%.n [%$ %noun !>('curtis')]]
+      ::
+      ^=  moves
+        :~  :*  duct=~[/nah-bro]  %give  %made  ~1234.5.8
+                %complete  %success  %$  %noun  !>('curtis')
+    ==  ==  ==
+  ::
+  =^  results4  ford-gate
+    %-  ford-call-with-comparator  :*
+      ford-gate
+      now=~1234.5.9
+      scry=scry-is-forbidden
+      ::
+      call-args=[duct=~[/wherever] type=~ %vega ~]
+      ::
+      ^=  comparator
+        |=  moves=(list move:ford-gate)
+        ^-  tang
+        %+  expect-eq
+          !>  %-  sy
+              :~  [[duct=~[/gimme] %give %made ~1234.5.9 %incomplete ~]]
+                  [[duct=~[/gotcha] %give %made ~1234.5.9 %incomplete ~]]
+              ==
+          !>  (sy moves)
+    ==
+  ::
+  ;:  weld
+    results1
+    results2
+    results3
+    results4
+    (expect-ford-empty ford-gate ~nul)
+  ==
+::
+++  test-vega-in-progress-once-build  ^-  tang
+  ::
+  =^  results1  ford-gate
+    %-  ford-call  :*
+      ford-gate
+      now=~1234.5.6
+      scry=(scry-block ~1234.5.6)
+      ::  when we scry on a blocked path, expect a subscription move
+      ::
+      ^=  call-args
+        :*  duct=~[/gimme]  type=~  %build  live=%.n
+            [%scry %c ren=%x rail=[[~nul %desk] /bar/foo]]
+        ==
+      ::
+      ^=  moves
+        :~  :*  duct=~[/gimme]  %pass
+                wire=/scry-request/cx/~nul/desk/~1234.5.6/foo/bar
+                %c  %warp  ~nul  %desk
+                ~  %sing  %x  [%da ~1234.5.6]  /foo/bar
+    ==  ==  ==
+  ::
+  =^  results2  ford-gate
+    %-  ford-call  :*
+      ford-gate
+      now=~1234.5.7
+      scry=scry-is-forbidden
+      ::
+      call-args=[duct=~[/whatever] type=~ %vega ~]
+      ::
+      moves=~[[duct=~[/gimme] %give %made ~1234.5.7 %incomplete ~]]
+    ==
+  ::
+  ;:  weld
+    results1
+    results2
+    (expect-ford-empty ford-gate ~nul)
+  ==
 ::  |data: shared data between cases
 ::  +|  data
 ++  large-mark-graph
