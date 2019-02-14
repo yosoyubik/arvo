@@ -53,6 +53,8 @@
     ?+    -.sef  ~
         $tan  (wall (turn (flop p.sef) |=(a/tank ~(ram re a))))
         $txt  s+(crip p.sef)
+        $sag
+      (pairs file+s+(crip <`path`p.sef>) data+s+(crip (en-base64:mimes:html (jam q.sef))) ~)
         $sav
       (pairs file+s+(crip <`path`p.sef>) data+s+(crip (en-base64:mimes:html q.sef)) ~)
     ::
