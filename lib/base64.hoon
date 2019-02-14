@@ -30,10 +30,10 @@
 ::  Then, we execute the loop and get back a the result encoded as a
 ::  backwards tape.
 ::
-::  We need to replace `dif` characters with '=', since those are
-::  the result of the padding bytes we inserted earlier. Since the list
-::  is backwards, we just `slag` `dif` characters and then weld `dif`
-::  '='s to the front.
+::  We need to replace `dif` characters with '=' (or just drop them, if
+::  `pad` isn't set), since those are the result of the padding bytes
+::  we inserted earlier. Since the list is backwards, we just `slag`
+::  `dif` characters and then weld `dif` '='s to the front.
 ::
 ::  Finally, we reverse the tape and convert it to a cord.
 ::
