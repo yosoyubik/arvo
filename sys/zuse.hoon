@@ -3511,7 +3511,7 @@
         =+  smsg=(sign msg)
         (jam (~(en siva:aes shar ~) smsg))
       ::                                                ::  ++tear:as:crub:
-      ++  tear                                          ::
+      ++  tear  !:
         |=  {bpk/pass txt/@}
         ^-  (unit @ux)
         ?~  sek  ~|  %pubkey-only  !!
@@ -3519,8 +3519,10 @@
         =+  pk=(rsh 8 1 (rsh 3 1 bpk))
         =+  shar=(shax (shar:ed pk cry.u.sek))
         =+  ((hard {iv/@ len/@ cph/@}) (cue txt))
+        ~&  [iv=iv len=len cph=cph pass=pass shar=shar]
         =+  try=(~(de siva:aes shar ~) iv len cph)
         ?~  try  ~
+        ~&  %retry
         (sure:as:(com:nu:crub bpk) u.try)
       --  ::as
     ::                                                  ::  ++de:crub:crypto

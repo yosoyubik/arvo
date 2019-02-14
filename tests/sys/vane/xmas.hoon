@@ -302,18 +302,18 @@
         ==
     !>  result1
 ::
-::  |knit core tests
+::  +encode-meal tests
 ::
-++  test-knit-carp  ^-  tang
+++  test-encode-carp  ^-  tang
   ::
-  =/  knit
-    %-  knit:xmas-gate
+  =/  encoder
+    %-  encode-meal:xmas-gate
     [our.fix her.fix life.fix rings.fix pipe.fix]
   ::
   =/  packet           %packet-foo
   =/  =meal:xmas-gate  [%carp *moan:xmas-gate 42 packet]
   =/  result1
-    %-  knit
+    %-  encoder
     [now=now.fix eny=eny.fix ham=meal]
   ::
   =/  spat  (spit:xmas-gate [our.fix her.fix] %none (jam meal))
@@ -322,16 +322,16 @@
     !>  [~ ~[spat]]
     !>  result1
 ::
-++  test-knit-bond  ^-  tang
+++  test-encode-bond  ^-  tang
   ::
-  =/  knit
-    %-  knit:xmas-gate
+  =/  encoder
+    %-  encode-meal:xmas-gate
     [our.fix her.fix life.fix rings.fix pipe.fix]
   ::
   =/  message           [%message %foo %bar]
   =/  =meal:xmas-gate  [%bond *flea:xmas-gate /chan/foo message]
   =/  result1
-    %-  knit
+    %-  encoder
     [now=now.fix eny=eny.fix ham=meal]
   ::
   =/  sit  (sign:as:crub.fix (jam meal))
@@ -343,21 +343,21 @@
     !>  [~ ~[spat]]
     !>  result1
 ::
-++  test-knit-emit-line  ^-  tang
+++  test-encode-full-emit-gift  ^-  tang
   ::  set the foreign life to 3 so we can test the %full case
   ::
   =.  cur.pipe.fix  `1
   ?>  ?=(^ cur.pipe.fix)
   ::
-  =/  knit
-    %-  knit:xmas-gate
+  =/  encoder
+    %-  encode-meal:xmas-gate
     [our.fix her.fix life.fix rings.fix pipe.fix]
   ::
   =/  message          [%message %foo %bar]
   =/  =meal:xmas-gate  [%bond *flea:xmas-gate /chan/foo message]
   ::
   =/  result1
-    %-  knit
+    %-  encoder
     [now=now.fix eny=eny.fix ham=meal]
   ::
   =/  key  (shaz :(mix (mug meal) now.fix eny.fix))

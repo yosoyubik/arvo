@@ -61,11 +61,10 @@
 ++  bath                                                ::  per friend
           $:  det/pipe                                  ::  secure channel
               lun/(unit lane)                           ::  latest route
-              zam/scar                                  ::  outbound boles
-              fon/(map bole lock)                       ::  inbound locks
-              sal/(map bole colt)                       ::  outbound flows
+              zam/scar                                  ::  outbound bones
+              fon/(map bone lock)                       ::  inbound locks
+              sal/(map bone colt)                       ::  outbound flows
           ==                                            ::
-++  bole  bone                                          ::  inbound opaque
 ++  cake  {p/sock q/skin r/@}                           ::  top level packet
 ++  chan  path                                          ::  channel
 ++  clue                                                ::  live packet state
@@ -94,7 +93,7 @@
           ==                                            ::
 ++  dove  {p/@ud q/(map @ud @)}                         ::  count 13-blocks
 ++  flap  @uvH                                          ::  network packet id
-++  flea  (pair bole tick)                              ::  message id
+++  flea  (pair bone tick)                              ::  message id
 ++  frag  @ud                                           ::  fragment number
 ++  hand  @uvH                                          ::  128-bit hash
 ++  lock                                                ::  inbound sequencer
@@ -115,7 +114,7 @@
               lop/(qeu clue)                            ::  lost packets
           ==                                            ::
 ++  moan                                                ::  message invariant
-          $:  {kos/bole liq/tick}                       ::  flow identity
+          $:  {kos/bone liq/tick}                       ::  flow identity
               syn/@                                     ::  skin number
               cnt/@                                     ::  number of packets
           ==                                            ::
@@ -160,6 +159,15 @@
 ++  move  %+  pair                                      ::  local move
             duct                                        ::
           (wind note:able:xmas gift:able:xmas)          ::
+::  +meal-to-flea: extract message identity from message
+::
+++  meal-to-flea
+  |=  =meal
+  ^-  flea
+  ?+  -.meal  [0 0]
+    %bond  p.meal
+    %carp  [kos liq]:p.meal
+  ==
 ::                                                      ::
 ::::  loft                                              ::::  main transceiver
   ::                                                    ::
@@ -174,14 +182,14 @@
             {$rest p/duct q/coop}                       ::  message result
             {$send p/lane q/@}                          ::  transmit packet
             {$veil p/ship}                              ::  cache channel
-            {$west p/ship q/bole r/chan s/*}            ::  outbound message
+            {$west p/ship q/bone r/chan s/*}            ::  outbound message
         ==                                              ::
       ++  task                                          ::  input
         $%  {$clue p/ship q/pipe}                       ::  update channel
-            {$done p/ship q/bole r/coop}                ::  completion
+            {$done p/ship q/bone r/coop}                ::  completion
             {$hear p/lane q/@}                          ::  incoming packet
             {$mess p/ship q/duct r/chan s/*}            ::  forward message
-            {$rend p/ship q/bole r/chan s/*}            ::  backward message
+            {$rend p/ship q/bone r/chan s/*}            ::  backward message
             {$wake $~}                                  ::  wakeup
         ==
       --
@@ -283,7 +291,7 @@
     ++  acme  |=(fic/gift +>(fex [fic fex]))            ::  effect
     ++  blow                                            ::  register duct
       |=  hen/duct
-      ^-  {bole _+>}
+      ^-  {bone _+>}
       =+  kus=(~(get by q.zam.bah) hen)
       ?^  kus  [u.kus +>.$]
       :-  p.zam.bah
@@ -294,22 +302,22 @@
       ==
     ::
     ++  done
-      |=  {kos/bole cop/coop}
+      |=  {kos/bone cop/coop}
       ^+  +>
       (in-task %done +<)
     ::                                                  ::
     ++  have                                            ::  receive message
-      |=  {kos/bole cha/chan val/*}
+      |=  {kos/bone cha/chan val/*}
       ^+  +>
       ?:  =(0 (end 0 1 kos))
         =+  hen=(~(got by r.zam.bah) kos)
         ::
-        ::  if the bole is even, this is a backward flow,
+        ::  if the bone is even, this is a backward flow,
         ::  like a subscription update; ack automatically.
         ::
         (acme:(in-task %done kos ~) %east hen who cha val)
       ::
-      ::  if the bole is odd, it's a forward flow.  we
+      ::  if the bone is odd, it's a forward flow.  we
       ::  need to wait for the target to actively ack it.
       ::
       (acme %west who kos cha val)
@@ -320,18 +328,24 @@
       (in-task %hear +<)
     ::                                                  ::
     ++  mess                                            ::  send message
-      |=  {kos/bole cha/chan val/*}
+      |=  {kos/bone cha/chan val/*}
       ^+  +>
       (to-task kos %mess cha val)
     ::                                                  ::
     ++  sack                                            ::  send acknowledgment
-      |=  {kos/bole dam/flap cop/coop}
-      =+  ^=  yex
-          ((knit our who lyf wyr det.bah) now eny [%back (mix kos 1) dam cop ~s0])
-      =.  +>.$  (to-gifs p.yex)
+      |=  {kos/bone dam/flap cop/coop}
+      ^+  +>
+      ::
+      =+  ^-  [gifts=(list gift:encode-meal) rocks=(list rock)]
+          ::
+          %-  (encode-meal our who lyf wyr det.bah)
+          [now eny [%back (mix kos 1) dam cop ~s0]]
+      ::
+      =.  +>.$  (to-gifs gifts)
+      ::
       |-  ^+  +>.^$
-      ?~  q.yex  +>.^$
-      $(q.yex t.q.yex, +>.^$ (send ~ i.q.yex))
+      ?~  rocks  +>.^$
+      $(rocks t.rocks, +>.^$ (send ~ i.rocks))
     ::                                                  ::
     ++  send                                            ::  send packet
       |=  {urg/(unit lane) pac/rock}
@@ -411,14 +425,14 @@
       (in-gifs hoz)
     ::
     ++  to-task
-      |=  {kos/bole kyz/task:rail}
+      |=  {kos/bone kyz/task:rail}
       ^+  +>
       =+  cot=((bond |.(zeal:rail)) (~(get by sal.bah) kos))
       =^  raz  cot  abet:(work:(to-rail kos cot) kyz)
       (to-gifs raz)
     ::
     ++  to-rail
-      |=  {kos/bole cot/colt}
+      |=  {kos/bone cot/colt}
       ~(. rail [[our who lyf wyr det.bah] [now eny] kos (yawn:pump myn.cot) ~] cot)
     ::
     ++  to-wait
@@ -510,7 +524,9 @@
         =+  mex=(,[p=[p=life q=life] q=gree r=@] (cue msg))
         =+  rig=(~(got by wyr) p.p.mex)
         =+  pas=(whom q.p.mex q.mex)
-        =+  mes=(need (tear:as:(nol:nu:crub:crypto rig) pas r.mex))
+        =+  cry=(nol:nu:crub:crypto rig)
+        =+  may=(tear:as:cry pas r.mex)
+        =+  mes=(need may)
         =+  [key out]=(,(pair @uvI @ux) (cue mes))
         :-  :~  [%link ~2018.1.1 key]
                 [%meet q.mex]
@@ -543,15 +559,15 @@
   =>  |%                                                ::
       ++  gift                                          ::  action
         $%  {$fore her/ship org/lane pac/rock}          ::  send forward
-            {$have kos/bole cha/chan val/*}             ::  report message
+            {$have kos/bone cha/chan val/*}             ::  report message
             {$link exp/@da key/code}                    ::  learn symmetric key
             {$meet doy/gree}                            ::  learn public key
-            {$rack kos/bole dam/flap cop/coop}          ::  report ack
+            {$rack kos/bone dam/flap cop/coop}          ::  report ack
             {$rout lyn/lane}                            ::  learn route
-            {$sack kos/bole dam/flap cop/coop}          ::  send ack
+            {$sack kos/bone dam/flap cop/coop}          ::  send ack
         ==                                              ::
       ++  task                                          ::  event
-        $%  {$done kos/bole cop/coop}                   ::  commit message
+        $%  {$done kos/bone cop/coop}                   ::  commit message
             {$hear lyn/lane dam/flap syn/skin msg/@}    ::  raw packet
         ==                                              ::
       --                                                ::
@@ -560,7 +576,7 @@
               det/pipe                                  ::
           ==                                            ::
           fex/(list gift)                               ::
-          fon/(map bole lock)                           ::
+          fon/(map bone lock)                           ::
       ==
   |%                                                    ::
   ++  abet  [(flop fex) fon]                            ::  resolve
@@ -621,7 +637,7 @@
     [%ix +.u.urg]
   ::
   ++  hy                                                ::  message assembler
-    =|  $:  $:  kos/bole                                ::  sender
+    =|  $:  $:  kos/bone                                ::  sender
                 liq/tick                                ::  message number
             ==
             $:  aut/?                                   ::  authenticated
@@ -954,93 +970,106 @@
       ==
     --
   --
-::  +knit: message encoder
+::  +encode-meal: generate a message and packets from a +meal, with effects
 ::
-++  knit
+++  encode-meal
   =>  |%
       ::  +gift: side effect
       ::
       +$  gift
         $%  ::  %line: set symmetric key
             ::
+            ::    Connections start as %full, which uses asymmetric encryption.
+            ::    This core can produce an upgrade to a shared symmetric key,
+            ::    which is must faster; hence the %fast tag on that encryption.
+            ::
             [%line exp=@da key=code]
         ==
       --
   ::  outer gate: establish pki context, producing inner gate
   ::
-  |=  [our=ship her=ship lyf=life wyr=(map life ring) det=pipe]
+  |=  [our=ship her=ship =life rings=(map life ring) =pipe]
   ::  inner gate: process a meal, producing side effects and packets
   ::
-  |=  [now=@da eny=@ ham=meal]
-  ^-  (pair (list gift) (list rock))
-  ::  hom: serialized meal
+  |=  [now=@da eny=@ =meal]
   ::
-  =+  hom=(jam ham)
+  |^  ^-  [gifts=(list gift) rocks=(list rock)]
+      ::
+      =+  ^-  [gifts=(list gift) =skin =rock]  generate-message
+      ::
+      [gifts (generate-packets skin rock)]
+  ::  +generate-packets: generate a message, then split it into packets
   ::
-  =<  weft
-  |%
-  ::  +wain: extract message identity
-  ::
-  ++  wain
-    ^-  flea
-    ?+  -.ham  [0 0]
-      %bond  p.ham
-      %carp  [kos liq]:p.ham
-    ==
-  ::  +wasp: produce a message with null security
-  ::
-  ++  wasp  ^-([p=skin q=@] [%none hom])
-  ::  +weft: fragment a message
-  ::
-  ++  weft
-    ^-  (pair (list gift) (list rock))
+  ++  generate-packets
+    |=  [=skin =rock]
+    ^-  (list ^rock)
+    ::  total-packets: number of packets for message
     ::
-    =+  gum=wisp
-    :-  p.gum
-    ::  wit: number of fragments for message; each fragment has max 2^13 bits
+    ::    Each packet has max 2^13 bits so it fits in the MTU on most systems.
     ::
-    =+  wit=(met 13 q.q.gum)
+    =/  total-packets=@ud  (met 13 rock)
     ::  if message fits in one packet, don't fragment
     ::
-    ?:  =(1 wit)
-      [(spit [our her] p.q.gum q.q.gum) ~]
-    ::  ruv: packets generated from splitting message
+    ?:  =(1 total-packets)
+      [(spit [our her] skin rock) ~]
+    ::  packets: packets generated from splitting message
     ::
-    =+  ruv=(rip 13 q.q.gum)
-    =+  inx=0
-    |-  ^-  (list rock)
-    ?~  ruv  ~
-    :_  $(ruv t.ruv, inx +(inx))
-    %+  spit
-      [our her]
-    wasp(ham [%carp [wain (ksin p.q.gum) wit] inx i.ruv])
-  ::  +wisp: generate message from meal
+    =/  packets=(list ^rock)  (rip 13 rock)
+    =/  packet-index=@ud     0
+    ::
+    |-  ^-  (list ^rock)
+    ?~  packets  ~
+    ::
+    :-  ^-  ^rock
+        %^  spit  [our her]  %none
+        %-  jam
+        ^-  ^meal
+        :+  %carp
+          [(meal-to-flea meal) (ksin skin) total-packets]
+        [packet-index i.packets]
+    ::
+    $(packets t.packets, packet-index +(packet-index))
+  ::  +generate-message: generate message from meal
   ::
-  ++  wisp
-    ^-  (pair (list gift) (pair skin @))
-    ?:  =(%carp -.ham)
-      [~ wasp]
-    ?^  out.det
+  ++  generate-message
+    ^-  [gifts=(list gift) =skin =rock]
+    ::  if we're passed a single packet, don't bother double-encrypting it
+    ::
+    ?:  =(%carp -.meal)
+      [~ %none (jam meal)]
+    ::  if this channel has a symmetric key, use it to encrypt
+    ::
+    ?^  out.pipe
       :-  ~
       :-  %fast
       %^  cat  7
-        p.u.out.det
-      (en:crub:crypto q.q.u.out.det hom)
-    =+  cry=(nol:nu:crub:crypto (~(got by wyr) lyf))
-    ?~  cur.det
+        p.u.out.pipe
+      (en:crub:crypto q.q.u.out.pipe (jam meal))
+    ::  cry: crypto obtained from our private keyring
+    ::
+    =+  cry=(nol:nu:crub:crypto (~(got by rings) life))
+    ::  if we don't know their life, just sign this packet without encryption
+    ::
+    ?~  cur.pipe
       :-  ~
       :-  %open
       %^    jam
-          [~ lyf]
-        `gree`[[her pub.det] ~ ~]
-      (sign:as:cry hom)
-    =+  key=(shaz :(mix (mug ham) now eny))
+          [~ life]
+        `gree`[[her pub.pipe] ~ ~]
+      (sign:as:cry (jam meal))
+    ::  asymmetric encrypt; also produce symmetric key gift for upgrade
+    ::
+    =+  key=(shaz :(mix (mug meal) now eny))
     :-  [%line ~2018.1.1 key]~
     :-  %full
     %^    jam
-        [u.cur.det lyf]
-      `gree`[[her pub.det] ~ ~]
-    (seal:as:cry pub.dat:(~(got by pub.det) u.cur.det) (jam key hom))
+        [u.cur.pipe life]
+      `gree`[[her pub.pipe] ~ ~]
+    ::  TODO: do we really want to triple-jam the meal?
+    ::
+    =/  =cert  (~(got by pub.pipe) u.cur.pipe)
+    =/  =pass  pub.dat.cert
+    (seal:as:cry pass (jam [key (jam meal)]))
   --
 ::                                                      ::
 ::::  rail                                              ::::  message manager
@@ -1049,7 +1078,7 @@
   =>  |%                                                ::
       ++  gift                                          ::
         $%  {$line p/@da q/code}                        ::  sent key
-            {$mack p/bole q/coop}                       ::  message ack
+            {$mack p/bone q/coop}                       ::  message ack
             {$send p/flap q/rock}                       ::  release packet
         ==                                              ::
       ++  task                                          ::
@@ -1067,7 +1096,7 @@
               $:  now/@da
                   eny/@
               ==
-              kos/bole
+              kos/bone
               mup/_(yawn:pump)
               fex/(list gift)
           ==
@@ -1172,8 +1201,13 @@
     ++  wy-mess                                         ::  send
       |=  {cha/chan val/*}
       ^+  +>
-      =+  yex=((knit our her lyf wyr det) now eny [%bond [(mix kos 1) seq] cha val])
-      =.  fex  (weld (flop p.yex) fex)
+      ::
+      =+  ^-  [gifts=(list gift) rocks=(list rock)]
+          ::
+          %-  (encode-meal our her lyf wyr det)
+          [now eny [%bond [(mix kos 1) seq] cha val]]
+      ::
+      =.  fex  (weld (flop gifts) fex)
       ~&  [?:(=(0 (end 0 1 kos)) %tx %bx) her kos seq cha (lent fex)]
       %_    +>.$
           seq  +(seq)
@@ -1183,12 +1217,12 @@
         ^-  comb
         :*  ~
             cha
-            (lent q.yex)
+            (lent rocks)
             0
             =+  inx=0
-            |-  ?~  q.yex  ~
-                :_  $(q.yex +.q.yex, inx +(inx))
-                [& [inx seq] (shaf %flap i.q.yex) i.q.yex]
+            |-  ?~  rocks  ~
+                :_  $(rocks +.rocks, inx +(inx))
+                [& [inx seq] (shaf %flap i.rocks) i.rocks]
         ==
       ==
     ::                                                  ::
