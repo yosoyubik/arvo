@@ -135,7 +135,7 @@
 ::    %none: unencrypted, unsigned
 ::    %open: unencrypted, signed
 ::    %full: asymmetrically encrypted, signed
-::    %fast: symmetrically encrypted, signed
+::    %fast: symmetrically encrypted, unsigned
 ::
 ++  skin  ?(%none %open %fast %full)
 ++  stat                                                ::  pump statistics
@@ -276,7 +276,7 @@
     ;:  (cury hunt lth)
       $(pol l.pol)
       $(pol r.pol)
-      ~(to-wait et p.n.pol q.n.pol)
+      ~(to-next-wakeup et p.n.pol q.n.pol)
     ==
   ::                                                    ::
   ++  etre                                              ::  old neighbor
@@ -435,13 +435,13 @@
       |=  {kos/bone cot/colt}
       ~(. rail [[our who lyf wyr det.bah] [now eny] kos (yawn:pump myn.cot) ~] cot)
     ::
-    ++  to-wait
+    ++  to-next-wakeup
       |-  ^-  (unit @da)
       ?~  sal.bah  ~
       ;:  (cury hunt lth)
         $(sal.bah l.sal.bah)
         $(sal.bah r.sal.bah)
-        wait:(to-rail p.n.sal.bah q.n.sal.bah)
+        next-wakeup:(to-rail p.n.sal.bah q.n.sal.bah)
       ==
     ::
     ++  to-wake
@@ -740,41 +740,48 @@
   --
 ::                                                      ::
 ::::  outbound cores                                    ::::
-  ::                                                    ::
+::  +pump: packet pump
 ::
-::::  packet pump
-  ::
-++  pump                                                ::  packet pump
-  =>  |%                                                ::
-      ++  gift                                          ::  effect
-        $%  {$good p/flap q/part r/@dr s/coop}          ::  logical ack
-            {$send p/flap q/part r/rock}                ::  release packet
-        ==                                              ::
-      ++  task                                          ::  event
-        $%  {$back p/flap q/coop r/@dr}                 ::  raw ack
-            {$cull p/tick}                              ::  cancel message
-            {$pack p/(list clue)}                       ::  submit packets
-            {$wake $~}                                  ::  random wakeup
-        ==                                              ::
+++  pump
+  =>  |%
+      ::  +gift: effect; either %good logical ack, or %send packet
+      ::
+      ++  gift
+        $%  [%good p=flap q=part r=@dr s=coop]
+            [%send p=flap q=part r=rock]
+        ==
+      ::  +task: request to the packet pump
+      ::
+      ++  task
+        $%  [%back p=flap q=coop r=@dr]                 ::  raw ack
+            [%cull p=tick]                              ::  cancel message
+            [%pack p=(list clue)]                       ::  submit packets
+            [%wake ~]                                   ::  random wakeup
+        ==
       --
   |%
-  ++  yawn                                              ::
-    |=  myn/mini                                        ::
+  ++  yawn
+    |=  myn=mini
     ^+  zu
-    ~(. zu ~ myn)                                       ::
+    ~(. zu ~ myn)
   ::
   ++  zu                                                ::  state machine
-    |_  $:  fex/(list gift)                             ::  effects
+    |_  $:  fex=(list gift)                             ::  effects
             mini                                        ::  state
         ==
-    ::                                                  ::
-    ++  abba                                            ::  a older than b
-      |=  {a/part b/part}
+    ::  +older: is part :a older than part :b?
+    ::
+    ++  older
+      |=  [a=part b=part]
+      ^-  ?
       |((lth q.a q.b) &(=(q.a q.b) (lth p.a p.b)))
-    ::                                                  ::
-    ++  abet                                            ::  resolve
-      ^-  {(list gift:pump) mini}
+    ::  +abet: finalize, reversing output moves
+    ::
+    ++  abet
+      ^-  [(list gift) mini]
+      ::  TODO: why is this commented out?
       ::  =.  .  aver
+      ::
       [(flop fex) +<+]
     ::                                                  ::
     ++  aver                                            ::  verify
@@ -845,8 +852,9 @@
       =?  ded  vig.clu.u.ack  (weld ~(tap to r.liv) ded)
       =.  lov  ?:(top [n.liv lov ~] lov)
       [ack ded lov]
-    ::                                                  ::
-    ++  clap                                            ::  ordered enqueue
+    ::  +clap: ordered enqueue; TODO finish description
+    ::
+    ++  clap
       ::
       ::  the `lop` queue isn't really a queue in case of
       ::  resent packets; packets from older messages
@@ -859,16 +867,17 @@
           lop
         |-  ^+  lop
         ?~  lop  [clu ~ ~]
-        ?:  ?|  (abba tel.clu tel.n.lop)
+        ?:  ?|  (older tel.clu tel.n.lop)
                 ?&  =(tel.clu tel.n.lop)
                     (lth fap.clu fap.n.lop)
             ==  ==
           [n.lop l.lop $(lop r.lop)]
         [n.lop $(lop l.lop) r.lop]
       ==
-    ::                                                  ::
-    ++  cull                                            ::  clear message
-      |=  tiq/tick
+    ::  +cull: clear a message from live and and lost queues, by +tick
+    ::
+    ++  cull
+      |=  tiq=tick
       %_    +>
           liv
         |-  ^+  liv
@@ -884,50 +893,98 @@
         ?:  =(tiq q.tel.n.lop)  pol
         ~(nip to `(qeu clue)`pol)
       ==
-    ::                                                  ::
-    ++  done                                            ::  process cooked ack
-      |=  {lyd/(unit coal) dam/flap cop/coop rtt/@dr}
+    ::  +done: process cooked ack; may emit a %good ack gift; TODO finish
+    ::
+    ++  done
+      |=  [lyd=(unit coal) dam=flap cop=coop rtt=@dr]
       ^+  +>
       ?~  lyd  +>
       %_  +>
         cur.saw  (dec cur.saw)
         fex      [[%good dam tel.clu.u.lyd rtt cop] fex]
       ==
-    ::                                                  ::
-    ++  fire                                            ::  send a packet
-      |=  {now/@da clu/clue}
+    ::  +fire: send a packet, emitting a %send gift and adjusting state
+    ::
+    ++  fire
+      |=  [now=@da clu=clue]
       ^+  +>
+      ::  make sure we don't exceed the max packets in flight
+      ::
       ?>  (lth cur.saw max.saw)
-      =+  out=?:((lte now las.saw) +(las.saw) now)
-      =+  lod=(add now (mul 2 rtt.saw))
-      =.  lod  ?:((gth lod lad.saw) lod +(lad.saw))
-      ::  ~&  [%fire (flam fap.clu) `@da`out `@da`lod]
+      ::  sent-at: set last-sent date to :now or incremented previous value
+      ::
+      =/  sent-at=@da  ?:((lte now las.saw) +(las.saw) now)
+      ::  deadline: set the deadline to twice roundtrip time, or increment previous
+      ::
+      =/  deadline=@da  (add now (mul 2 rtt.saw))
+      =.  deadline      ?:((lte deadline lad.saw) +(lad.saw) deadline)
+      ::  emit the packet, updating state accordingly
+      ::
+      ::    Emits a %send gift for this packet.
+      ::    Sets the 'last sent' date, :las.saw, to the new value.
+      ::    Sets the 'last deadline' date, :lad.saw, to the new value.
+      ::    Increments the number of live packets, :cur.saw.
+      ::    Enqueues the packet into the live packet queue, :liv.
+      ::
       %=  +>.$
         fex      [[%send fap.clu tel.clu dat.clu] fex]
-        las.saw  out
-        lad.saw  lod
+        las.saw  sent-at
+        lad.saw  deadline
         cur.saw  +(cur.saw)
-        liv      (~(put to liv) [out lod clu])
+        liv      (~(put to liv) [sent-at deadline clu])
       ==
-    ::                                                  ::
-    ++  flay                                            ::  time out packets
-      |=  now/@da
+    ::  +timeout-packets: mark packets as dead if their deadlines have expired
+    ::
+    ++  timeout-packets
+      |=  now=@da
       ^+  +>
-      =-  (lose(liv q.ole) p.ole)
-      ^=  ole
-      =|  ded/(list coal)
-      |-  ^+  [p=ded q=liv]
-      ?~  liv  [ded ~]
-      ?:  (gte now lod.n.liv)
-        ::
-        ::  everything in front of a dead packet is dead
-        ::
-        $(liv l.liv, ded (welp ~(tap to r.liv) [n.liv ded]))
-      =+  ryt=$(liv r.liv)
-      [p.ryt [n.liv l.liv q.ryt]]
-    ::                                                  ::
-    ++  lose                                            ::  abandon packets
-      |=  cud/(list coal)
+      ::  when done, apply changes to :liv and call +lose on the dead packets
+      ::
+      =-  (lose(liv live.-) dead.-)
+      ::
+      ^-  [dead=(list coal) live=(qeu coal)]
+      ::
+      =/  dead=(list coal)  ~
+      =/  live=(qeu coal)  liv
+      ::  binary search through :live for dead packets
+      ::
+      ::    The :live packet tree is sorted right-to-left by the packets'
+      ::    lost-by deadlines. Packets with later deadlines are on the left.
+      ::    Packets with earlier deadlines are on the right.
+      ::
+      ::    Start by examining the packet at the tree's root.
+      ::
+      ::      If the tree is empty (~):
+      ::
+      ::    We're done. Produce the empty tree and any dead packets we reaped.
+      ::
+      ::      If the root packet is dead:
+      ::
+      ::    Kill everything to its right, since all those packets have older
+      ::    deadlines than the root and will also be dead. Then recurse on
+      ::    the left node, since the top node might not have been the newest
+      ::    packet that needs to die.
+      ::
+      ::      If the root packet is alive:
+      ::
+      ::    Recurse to the right, which will look for older packets
+      ::    to be marked dead. Replace the right side of the :live tree with
+      ::    the modified tree resulting from the recursion.
+      ::
+      |-  ^+  [dead=dead live=live]
+      ?~  live  [dead ~]
+      ::  if packet at root of queue is dead, everything to its right is too
+      ::
+      ?:  (gte now lod.n.live)
+        $(live l.live, dead (welp ~(tap to r.live) [n.live dead]))
+      ::  otherwise, replace right side of tree with recursion result
+      ::
+      =+  right-result=$(live r.live)
+      [dead.right-result [n.live l.live live.right-result]]
+    ::  +lose: abandon packets
+    ::
+    ++  lose
+      |=  cud=(list coal)
       ^+  +>
       ?~  cud  +>
       =.  +>  (clap clu.i.cud)
@@ -936,37 +993,61 @@
         cur.saw  (dec cur.saw)
         rey.saw  +(rey.saw)
       ==
-    ::                                                  ::
-    ++  ship                                            ::  send packets
-      |=  {now/@da cly/(list clue)}
+    ::  +send-packets: emit %send gifts for packets in retry queue then :clues
+    ::
+    ++  send-packets
+      |=  [now=@da clues=(list clue)]
       ^+  +>
+      ::  if the number of packets in flight is maxed out, don't send more
+      ::
       ?:  (gte cur.saw max.saw)  +>
+      ::  if our retry queue is empty, fire every remaining packet in :clues
+      ::
       ?:  =(0 rey.saw)
-        ?~  cly  +>
-        $(cly t.cly, +> (fire now i.cly))
+        ?~  clues  +>
+        $(clues t.clues, +> (fire now i.clues))
+      ::  retry queue is nonempty; pop :clu off the queue and fire that first
+      ::
       =^  clu  lop  ~(get to lop)
       $(+> (fire(rey.saw (dec rey.saw)) now clu))
-    ::                                                  ::
-    ++  wait                                            ::  next wakeup
-      ^-  (unit @da)
-      =+  tup=`(unit coal)`~(top to liv)
-      ?~(tup ~ `lod.u.tup)
-    ::                                                  ::
-    ++  want                                            ::  window space
-      ^-  @ud
-      ?:  (gte cur.saw max.saw)  0
-      =+  gap=(sub max.saw cur.saw)
-      ?:  (gte rey.saw gap)  0
-      (sub gap rey.saw)
+    ::  +next-wakeup: produce next wakeup time, or ~ if no live packets
     ::
-    ++  work                                            ::
-      |=  {now/@da job/task}                            ::  perform
+    ::    Called externally to query timing information.
+    ::
+    ++  next-wakeup
+      ^-  (unit @da)
+      =/  top=(unit coal)  ~(top to liv)
+      ?~(top ~ `lod.u.top)
+    ::  +window-slots: how many packets can be sent before window fills up?
+    ::
+    ::   Called externally to query window information.
+    ::   This is equivalent to `(sub (sub max.saw cur.saw) rey.saw)`,
+    ::   except this code prevents subtraction underflows.
+    ::
+    ++  window-slots
+      ^-  @ud
+      ::  if the number of live packets is maxed out, there are no open slots
+      ::
+      ?:  (gte cur.saw max.saw)  0
+      ::  gap: how many packets could be sent before :cur.saw reaches :max.saw
+      ::
+      =+  gap=(sub max.saw cur.saw)
+      ::  if the retry queue is at least as big as :gap, no open slots
+      ::
+      ?:  (gte rey.saw gap)  0
+      ::  TODO why is this right? What is rey.saw and why subtract it?
+      ::
+      (sub gap rey.saw)
+    ::  +work: main entry point; handle an incoming +task
+    ::
+    ++  work
+      |=  [now=@da job=task]
       ^+  +>
       ?-  -.job
-        $back  (back now [p q r]:job)
-        $cull  (cull p.job)
-        $pack  (ship now p.job)
-        $wake  (flay now)
+        %back  (back now [p q r]:job)
+        %cull  (cull p.job)
+        %pack  (send-packets now p.job)
+        %wake  (timeout-packets now)
       ==
     --
   --
@@ -1110,10 +1191,10 @@
     ++  bulk                                            ::  queue count
       ^-  @ud
       |-(?~(cob 0 :(add 1 $(cob l.cob) $(cob r.cob))))
-    ::                                                  ::
-    ++  wait                                            ::  next wakeup
+    ::
+    ++  next-wakeup
       ^-  (unit @da)
-      wait:mup
+      next-wakeup:mup
     --
   ::
   ++  work                                              ::
@@ -1151,8 +1232,8 @@
     ::                                                  ::
     ++  wy-feed                                         ::  feed pump
       ^+  .
-      =^  cly  .  (wy-find want.mup)
-      ~&  [%wy-feed want.mup (lent cly)]
+      =^  cly  .  (wy-find window-slots.mup)
+      ~&  [%wy-feed window-slots.mup (lent cly)]
       +(mup (work:mup now %pack cly))
     ::                                                  ::
     ++  wy-find                                         ::  collect packets

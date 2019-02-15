@@ -258,7 +258,7 @@
                ==
     ==
   ::
-  =/  result1  wait:(yawn:pump:xmas-gate mini.fix)
+  =/  result1  next-wakeup:(yawn:pump:xmas-gate mini.fix)
   ::
   %+  expect-eq
     !>  `lad0
