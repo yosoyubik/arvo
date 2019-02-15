@@ -7006,7 +7006,7 @@
   =^  results  ford-gate
     %-  ford-call  :*
       ford-gate
-      now=~1234.5.8
+      now=~1234.5.6
       scry=scry-is-forbidden
       ::
       call-args=[duct=~[/wherever] type=~ %vega ~]
@@ -7544,6 +7544,7 @@
   ^-  tang
   ::
   :: clear all caches
+  ::
   =^  results1  ford-gate
     %-  ford-call  :*
       ford-gate
