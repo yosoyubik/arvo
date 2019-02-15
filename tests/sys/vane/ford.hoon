@@ -14,6 +14,7 @@
 ::
 =/  test-pit=vase  !>(..zuse)
 =/  ford-gate  (ford-vane test-pit)
+=/  ford-types  *ford-gate  :: use only for getting the defined types, please
 ~!  +6.ford-gate
 ::
 |%
@@ -7561,45 +7562,34 @@
   =.  max-size.queue.build-cache.state  max-size.queue.build-cache.default-state
   =.  next-anchor-id.build-cache.state  0
   ::
-  %+  welp  results1
-  ::
-  ?:  =(default-state state)
-    ~
-  ::
-  =/  build-state=(list tank)
-    %-  zing
-    %+  turn  ~(tap by builds.state)
-    |=  [build=build:ford build-status=build-status:ford]
-    :~  [%leaf (build-to-tape:ford build)]
-        [%leaf "requesters: {<requesters.build-status>}"]
-        [%leaf "clients: {<~(tap in ~(key by clients.build-status))>}"]
-    ==
-  ::
-  =/  braces  [[' ' ' ' ~] ['{' ~] ['}' ~]]
-  ::
-  :~  [%leaf "failed to cleanup"]
-      [%leaf "builds.state:"]
-      [%rose braces build-state]
-  ==
+  (welp results1 (expect-ford-state-zero state))
 :: +expect-ford-very-empty: assert that ford's state is a very empty ship
 ::
 ::   At the end of some tests, we want to assert that we have cleaned up all
 ::   state, *including* the caches.
+::
 ++  expect-ford-very-empty
   |=  [ford-gate=_ford-gate ship=@p]
   ^-  tang
   ::
   =/  ford  *ford-gate
   =/  state  state.ax.+>+<.ford
-  =/  default-state  *ford-state:ford
+  ::
+  (expect-ford-state-zero state)
+::
+++  expect-ford-state-zero
+  |=  state=ford-state:ford-types
+  ^-  tang
+  ::
+  =/  default-state  *ford-state:ford-types
   ::
   ?:  =(default-state state)
     ~
   =/  build-state=(list tank)
     %-  zing
     %+  turn  ~(tap by builds.state)
-    |=  [build=build:ford build-status=build-status:ford]
-    :~  [%leaf (build-to-tape:ford build)]
+    |=  [build=build:ford-types build-status=build-status:ford-types]
+    :~  [%leaf (build-to-tape:ford-types build)]
         [%leaf "requesters: {<requesters.build-status>}"]
         [%leaf "clients: {<~(tap in ~(key by clients.build-status))>}"]
     ==
