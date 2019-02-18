@@ -22,8 +22,9 @@
       completed=?
       tags=(set @ta)
   ==
+::  the actions/commands
 +$  mandatum
-  $%  [%opus-novus opus]
+  $%  [%opus-novus guid=(unit @uvH) novus=opus]
       [%missio-novo missio]
       [%opus guid=@uvH]
       [%missio guid=@uvH]
