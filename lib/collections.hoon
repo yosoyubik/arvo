@@ -986,7 +986,7 @@
     =/  circ=circle:hall  (path-to-circle pax our.bol)
     %-  ta-hall-action
     :+  %phrase   [circ ~ ~]
-    [%fat [%text ~[header]] [%lin | (crip (en-json:html jon))]]~
+    [%fat [%text ~[(crip (en-json:html jon))]] [%lin | header]]~
   ::
   --
 --
