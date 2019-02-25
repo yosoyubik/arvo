@@ -25,7 +25,7 @@
 ::
 ++  explode-words
   ::  Explode a bytestring to words of bit-width `wid`. Result is in LSW order.
-  |=  [=octs wid=@]
+  |=  [wid=@ =octs]
   ^-  (list @)
   ~&  %explode-words
   =/  atom-bit-width   (met 0 q.octs)
@@ -69,7 +69,7 @@
     =/  pad=@ud  (~(dif fo 3) 0 p.bs)
     =/  fudge=@  (lsh 3 pad (rev 3 bs))
     =/  focts    [(add pad p.bs) fudge]
-    [pad (explode-words focts 24)]
+    [pad (explode-words 24 focts)]
   ::
   ++  unfudge-padding
     ::  Drop `ext` bytes from the front of a reversed base64-encoded
