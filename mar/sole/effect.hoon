@@ -4,6 +4,7 @@
 /?    310
 /-    sole
 /+    base64
+!:
 ::
 ::::
   ::
@@ -55,9 +56,15 @@
         $tan  (wall (turn (flop p.sef) |=(a/tank ~(ram re a))))
         $txt  s+(crip p.sef)
         $sag
+      ~&  %jam
       =/  =atom  (jam q.sef)
+      ~&  %met
       =/  =octs  [(met 3 atom) atom]
-      (pairs file+s+(crip <`path`p.sef>) data+s+(en:base64 octs) ~)
+      ~&  [%octs-size -:octs]
+      ~&  %base64
+      =/  enc  (en:base64 octs)
+      ~&  %json
+      (pairs file+s+(crip <`path`p.sef>) data+s+enc ~)
         $sav
       (pairs file+s+(crip <`path`p.sef>) data+s+(crip (en-base64:mimes:html q.sef)) ~)
     ::

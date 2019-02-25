@@ -3,6 +3,7 @@
   ::                                                    ::
 =<  ride
 =>  %141  =>
+!:
 ::                                                      ::
 ::::    0: version stub                                 ::
   ::                                                    ::
@@ -957,7 +958,6 @@
   (swp boz dat)
 ::
 ::  Like `rip` but produces n-bit blocks instead of 2^n bit blocks.
-::
 ::
 ++  ripn
   ~/  %ripn

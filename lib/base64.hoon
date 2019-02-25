@@ -27,12 +27,16 @@
   ::  Explode a bytestring to words of bit-width `wid`. Result is in LSW order.
   |=  [=octs wid=@]
   ^-  (list @)
+  ~&  %explode-words
   =/  atom-bit-width   (met 0 q.octs)
   =/  octs-bit-width   (mul 8 p.octs)
   =/  atom-word-width  (div-ceil atom-bit-width wid)
   =/  rslt-word-width  (div-ceil octs-bit-width wid)
   =/  pad              (sub rslt-word-width atom-word-width)
-  (weld (ripn wid q.octs) (reap pad 0))
+  ~&  [%start-ripn wid p.octs]
+  =/  x  (ripn wid q.octs)
+  ~&  %end-ripn
+  (weld x (reap pad 0))
 ::
 ::  +en:base64: encode +octs to base64 cord
 ::
@@ -47,6 +51,8 @@
   ::
   |^  |=  bs=octs
       ^-  cord
+      ~&  %en-base64
+      =-  ~&  %en-base64-done  -
       =/  x  (octs-to-blocks bs)
       (crip (flop (unfudge-padding pad.x (encode-blocks blocks.x))))
   ::
@@ -59,6 +65,7 @@
     ::
     |=  bs=octs
     ^-  [pad=@ud blocks=(list word24)]
+    ~&  %octs-to-blocks
     =/  pad=@ud  (~(dif fo 3) 0 p.bs)
     =/  fudge=@  (lsh 3 pad (rev 3 bs))
     =/  focts    [(add pad p.bs) fudge]
@@ -68,14 +75,16 @@
     ::  Drop `ext` bytes from the front of a reversed base64-encoded
     ::  string and (optionally) replace them with `=` chars.
     |=  [ext=@ t=tape]  ^-  tape
+    ~&  %unfudge-paddingi
     %+  weld  ?.(pad ~ (reap ext '='))
     (slag ext t)
   ::
   ++  encode-blocks
     ::  Build a reversed base64 tape given a reversed list of 24-bit blocks.
     |=  ws=(list word24)  ^-  tape
-    ::  ~&  %encode-blocks
-    ::  =-  ~&  %end-encode-blocks  -
+    ~&  %encode-blocks
+    =-  ~&  %end-encode-blocks  -
+    !.
     (zing (turn ws encode-block))
   ::
   ++  encode-block
