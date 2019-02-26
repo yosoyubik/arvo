@@ -1083,7 +1083,6 @@
     |=  buf/(list @c)
     =(%& -:(he-dope (tufa buf)))
   ::
-  ::
   ++  he-stir                                           ::  apply change
     |=  cal/sole-change
     ^+  +>
