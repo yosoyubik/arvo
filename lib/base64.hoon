@@ -6,7 +6,8 @@
 =+  [pad=& url=|]
 |%
 ::
-+$  byte  @D
++$  byte    @D
++$  word24  @
 ::
 ++  div-ceil
   ::  divide, rounding up.
@@ -42,8 +43,6 @@
 ::
 ::  +en:base64: encode +octs to base64 cord
 ::
-++  word24  @
-::
 ::  Encode an `octs` into a base64 string.
 ::
 ::  First, we break up the input into a list of 24-bit words. The input
@@ -65,15 +64,15 @@
     'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
   ::
   |^  |=  bs=octs  ^-  cord
-      =/  x  (octs-to-blocks bs)
-      (crip (flop (unpad pad.x (encode-blocks blocks.x))))
+      =+  ^-  [padding=@ blocks=(list word24)]
+          (octs-to-blocks bs)
+      (crip (flop (unpad padding (encode-blocks blocks))))
   ::
   ++  octs-to-blocks
-    |=  bs=octs  ^-  [pad=@ud blocks=(list word24)]
-    =/  extra=@ud  (~(dif fo 3) 0 p.bs)
-    =/  padded=@   (lsh 3 extra (rev 3 bs))
-    =/  focts      [(add extra p.bs) padded]
-    [pad (explode-words 24 focts)]
+    |=  bs=octs  ^-  [padding=@ud (list word24)]
+    =/  padding=@ud  (~(dif fo 3) 0 p.bs)
+    =/  padded=octs  [(add padding p.bs) (lsh 3 padding (rev 3 bs))]
+    [padding (explode-words 24 padded)]
   ::
   ++  unpad
     |=  [extra=@ t=tape]  ^-  tape
