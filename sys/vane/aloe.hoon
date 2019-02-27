@@ -4,7 +4,9 @@
 ::
 !:
 !?  141
-|=  pit=vase
+::  3-bit ames protocol version; only packets at this version will be accepted
+::
+=/  protocol-version  7
 =>
 ::  type definitions
 ::
@@ -16,10 +18,10 @@
   ::  +task: requests to this vane
   ::
   +$  task
-    $%  ::  %pass-message: encode and send message to another ship
+    $%  ::  %pass-message: encode and send :message to another :ship
         ::
         [%pass-message =ship =path message=*]
-        ::  %ward: send a message to :ship to be forwarded to another ship
+        ::  %forward-message: ask :ship to relay :message to another ship
         ::
         ::    This sends :ship a message that has been wrapped in an envelope
         ::    containing the address of the intended recipient.
@@ -216,10 +218,14 @@
       [%ix expiration-date=@da port=@ud ipv4=@if]
   ==
 +$  symmetric-key  @uvI
-+$  error  [tag=@tas =tang]
++$  error          [tag=@tas =tang]
++$  packet         [[to=ship from=ship] =encoding payload=@]
++$  encoding       ?(%none %open %fast %full)
 --
 =<
 ::  vane interface core
+::
+|=  pit=vase
 ::
 =|  ames-state
 =*  state  -
@@ -323,4 +329,115 @@
   ::
   ++  emit  |=(=move event-core(moves [move moves]))
   --
+::  +decode-packet: deserialize a packet from a bytestream, reading the header
+::
+++  decode-packet
+  |=  buffer=@uvO
+  ^-  packet
+  ::  first 32 (2^5) bits are header; the rest is body
+  ::
+  =/  header  (end 5 1 buffer)
+  =/  body    (rsh 5 1 buffer)
+  ::
+  =/  version           (end 0 3 header)
+  =/  checksum          (cut 0 [3 20] header)
+  =/  receiver-width    (decode-ship-type (cut 0 [23 2] header))
+  =/  sender-width      (decode-ship-type (cut 0 [25 2] header))
+  =/  message-encoding  (number-to-encoding (cut 0 [27 5] header))
+  ::
+  ?>  =(protocol-version version)
+  ?>  =(checksum (end 0 20 (mug body)))
+  ::
+  :+  :-  to=(end 3 receiver-width body)
+      from=(cut 3 [receiver-width sender-width] body)
+    encoding=message-encoding
+  payload=(rsh 3 (add receiver-width sender-width) body)
+::  +encode-packet: serialize a packet into a bytestream
+::
+++  encode-packet
+  |=  =packet
+  ^-  @uvO
+  ::
+  =/  receiver-type   (encode-ship-type to.packet)
+  =/  receiver-width  (bex +(receiver-type))
+  ::
+  =/  sender-type   (encode-ship-type from.packet)
+  =/  sender-width  (bex +(sender-type))
+  ::  body: <<receiver sender payload>>
+  ::
+  =/  body
+    ;:  mix
+      to.packet
+      (lsh 3 receiver-width from.packet)
+      (lsh 3 (add receiver-width sender-width) payload.packet)
+    ==
+  ::
+  =/  encoding-number  (encoding-to-number encoding.packet)
+  ::  header: 32-bit header assembled from bitstreams of fields
+  ::
+  ::    <<protocol-version checksum receiver-type sender-type encoding>>
+  ::
+  =/  header
+    %+  can  0
+    :~  [3 protocol-version]
+        [20 (mug body)]
+        [2 receiver-type]
+        [2 sender-type]
+        [5 encoding-number]
+    ==
+  ::  result is <<header body>>
+  ::
+  (mix header (lsh 5 1 body))
+::  +decode-ship-type: decode a ship type specifier into a byte width
+::
+++  decode-ship-type
+  |=  ship-type=@
+  ^-  @
+  ::
+  ?+  ship-type  ~|  %invalid-ship-type  !!
+    %0  2
+    %1  4
+    %2  8
+    %3  16
+  ==
+::  +encode-ship-type: produce a number representing :ship's address type
+::
+::    0 means galaxy or star.
+::    1 means planet.
+::    2 means moon.
+::    3 means comet.
+::
+++  encode-ship-type
+  |=  =ship
+  ^-  @
+  ::
+  =/  bytes  (met 3 ship)
+  ::
+  ?:  (lte bytes 2)  0
+  ?:  (lte bytes 4)  1
+  ?:  (lte bytes 8)  2
+  3
+::  +number-to-encoding: read a number off the wire into an encoding type
+::
+++  number-to-encoding
+  |=  number=@
+  ^-  encoding
+  ?+  number  ~|  %invalid-encoding  !!
+    %0  %none
+    %1  %open
+    %2  %fast
+    %3  %full
+  ==
+::  +encoding-to-number: convert encoding to wire-compatible enumeration
+::
+++  encoding-to-number
+  |=  =encoding
+  ^-  @
+  ::
+  ?-  encoding
+    %none  0
+    %open  1
+    %fast  2
+    %full  3
+  ==
 --
