@@ -136,7 +136,7 @@
               ::
               [%wake ~]
       ==  ==
-      $:  %c  
+      $:  %c
           $%  ::  %give-message: response (subscription update) from clay
               ::
               ::    Only applicable for backward flows, where the neighbor
