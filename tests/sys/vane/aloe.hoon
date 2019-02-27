@@ -7,8 +7,6 @@
 =/  aloe-gate  (aloe-raw test-pit)
 ::
 |%
-::  tests that %aloe asks for private keys on %init
-::
 ++  test-packet-encoding  ^-  tang
   =/  =packet:aloe-gate
     [[to=~nec from=~doznec-doznec] encoding=%none payload=(jam [42 43])]
