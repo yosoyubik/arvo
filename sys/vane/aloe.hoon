@@ -169,7 +169,7 @@
               [%ack-message =error=(unit error)]
       ==  ==
       $:  %j
-          $%  ::  %give-message: response (subscription update) from clay
+          $%  ::  %give-message: response (subscription update) from jael
               ::
               ::    Only applicable for backward flows, where the neighbor
               ::    initiated the flow and we're streaming down subscription
