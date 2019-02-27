@@ -280,6 +280,7 @@
     =<  abet
     ?-  sign
       [%b %wake ~]  (wake:event-core wire)
+      *             ~|  [%aloe-not-implemented -.sign]  !!
     ==
   ::
   [moves ames-gate]
