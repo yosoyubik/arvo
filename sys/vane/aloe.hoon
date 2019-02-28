@@ -212,15 +212,38 @@
 ::    A lane can expire when we're no longer confident the other party
 ::    is still reachable using this route.
 ::
+::    TODO: more docs
+::
 +$  lane
-  $%  [%if expiration-date=@da port=@ud ipv4=@if]
+  $%  [%if (expiring [port=@ud ipv4=@if])]
       [%is port=@ud lane=(unit lane) ipv6=@is]
-      [%ix expiration-date=@da port=@ud ipv4=@if]
+      [%ix (expiring [port=@ud ipv4=@if])]
   ==
 +$  symmetric-key  @uvI
++$  public-key     pass
++$  private-key    ring
++$  hash128        @uvH
 +$  error          [tag=@tas =tang]
 +$  packet         [[to=ship from=ship] =encoding payload=@]
 +$  encoding       ?(%none %open %fast %full)
+::  TODO: define these
+::
++$  meal           _!!
++$  signature      _!!
+::  +pipe: (possibly) secure channel between our and her
+::
+::    Everything we need to encode or decode a message between our and her.
+::    :her-sponsors is the list of her current sponsors, not numeric ancestors.
+::
+::    TODO: do we need the map of her public keys, or just her current key?
+::
++$  pipe
+  $:  fast-key=(unit [=hash128 key=(expiring symmetric-key)])
+      her-life=life
+      her-public-keys=(map life public-key)
+      her-sponsors=(list ship)
+  ==
++*  expiring  [value]  [expiration-date=@da =value]
 --
 =<
 ::  vane interface core
@@ -329,6 +352,56 @@
   ::
   ++  emit  |=(=move event-core(moves [move moves]))
   --
+::  +decode-message: deserialize a message from a bytestream to a noun
+::
+++  message-decoder
+  =>  |%
+      +$  gift
+        $%  [%fast-key key=(expiring symmetric-key)]
+            [%meet =ship =life =public-key]
+        ==
+      --
+  ::  outer gate: establish context
+  ::
+  ::    her:       who was this message from?
+  ::    key-ring:  our private keys at different lifes
+  ::    pipe:      channel information
+  ::
+  |=  $:  her=ship
+          key-ring=(map life ring)
+          =pipe
+      ==
+  ::  inner gate: decode a message
+  ::
+  |=  [=encoding message=@]
+  ^-  [gifts=(list gift) authenticated=? =meal]
+  ::
+  |^  ?-  encoding
+        %none  decode-none
+        %open  decode-open
+        %fast  decode-fast
+        %full  decode-full
+      ==
+  ::
+  ++  decode-none
+    ^-  [gifts=(list gift) authenticated=? =meal]
+    ::
+    [~ %.n (meal (cue message))]
+  ::
+  ++  decode-open
+    ^-  [gifts=(list gift) authenticated=? =meal]
+    ::
+    =+  %-  ,[[=our=life =her=life] =signature payload=@]
+        (cue message)
+    ::  TODO: verify signature
+    ::  TODO: alias zuse crypto primitives
+    ::  TODO: finish this function
+    ::  TODO: define message types
+    ::  TODO: define +signature type
+    !!
+  ++  decode-fast  !!
+  ++  decode-full  !!
+  --
 ::  +decode-packet: deserialize a packet from a bytestream, reading the header
 ::
 ++  decode-packet
@@ -388,7 +461,12 @@
   ::  result is <<header body>>
   ::
   (mix header (lsh 5 1 body))
-::  +decode-ship-type: decode a ship type specifier into a byte width
+::  +decode-ship-type: decode a 2-bit ship type specifier into a byte width
+::
+::    Type 0: galaxy or star -- 2 bytes
+::    Type 1: planet         -- 4 bytes
+::    Type 2: moon           -- 8 bytes
+::    Type 3: comet          -- 16 bytes
 ::
 ++  decode-ship-type
   |=  ship-type=@
@@ -400,12 +478,12 @@
     %2  8
     %3  16
   ==
-::  +encode-ship-type: produce a number representing :ship's address type
+::  +encode-ship-type: produce a 2-bit number representing :ship's address type
 ::
-::    0 means galaxy or star.
-::    1 means planet.
-::    2 means moon.
-::    3 means comet.
+::    0: galaxy or star
+::    1: planet
+::    2: moon
+::    3: comet
 ::
 ++  encode-ship-type
   |=  =ship
