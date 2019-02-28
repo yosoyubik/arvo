@@ -27,17 +27,12 @@
   ::  Explode a bytestring to words of bit-width `wid`. Result is in LSW order.
   |=  [wid=@ =octs]
   ^-  (list @)
-  ~&  %explode-words
   =/  atom-bit-width   (met 0 q.octs)
   =/  octs-bit-width   (mul 8 p.octs)
   =/  atom-word-width  (div-ceil atom-bit-width wid)
   =/  rslt-word-width  (div-ceil octs-bit-width wid)
   =/  pad              (sub rslt-word-width atom-word-width)
-  ~&  [%start-ripn wid p.octs]
   =/  x  (ripn wid q.octs)
-  ~&  %end-ripn
-  =-  ~&  %end-weld  -
-  ~&  %start-weld
   %+  weld  x
   (reap pad 0)
 ::
@@ -82,8 +77,6 @@
   ::
   ++  encode-blocks
     |=  ws=(list word24)  ^-  tape
-    =-  ~&  %end-encode-blocks  -
-    ~&  %start-encode-blocks
     (zing (turn ws encode-block))
   ::
   ++  encode-block
