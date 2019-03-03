@@ -125,11 +125,11 @@
     ?.  ?=($pass -.q.a)  a
     [p.a %pass p.q.a q.q.a]
   ::
-  ++  mo-conf                                           ::  configure
-    |=  {dap/dude lum/culm}
-    (mo-boot dap p.p.lum q.p.lum da+now)
+  :: +mo-conf: assemble a beak and pass an %exec to ford.
   ::
-  ++  mo-pass                                           ::  standard pass
+  ++  mo-conf
+    |=  [=dude =ship =desk]
+    (mo-boot dude ship desk da+now)
     |=  {pax/path noh/note-arvo}
     %_(+> moz :_(moz [hen %pass pax noh]))
   ::
@@ -1304,7 +1304,10 @@
     ?.  =(our p.p.q.hic)
       ~&  [%gall-not-ours p.p.q.hic]
       [~ ..^$]
-    mo-abet:(mo-conf:(mo-abed:mo hen) q.p.q.hic q.q.hic)
+    =/  dude  q.p.q.hic
+    =/  ship  p.q.q.hic
+    =/  desk  q.q.q.hic
+    mo-abet:(mo-conf:(mo-abed:mo hen) dude ship desk)
   ::
       $deal
     =<  mo-abet
