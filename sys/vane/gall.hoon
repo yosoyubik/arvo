@@ -116,14 +116,11 @@
     ^+  +>
     +>(hen duct)
   ::
-  ++  mo-abet                                           ::  resolve to
-    ^+  [*(list move) +>+]
-    :_  +>+
-    %-  flop
-    %+  turn  moz
-    |=  a/move
-    ?.  ?=($pass -.q.a)  a
-    [p.a %pass p.q.a q.q.a]
+  :: +mo-abet: resolve moves
+  ::
+  ++  mo-abet
+    ^-  [(list move) _+>+]
+    [(flop moz) +>+]
   ::
   :: +mo-conf: assemble a beak and pass an %exec to ford.
   ::
