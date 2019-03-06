@@ -1,6 +1,7 @@
-!:
-=,  ethe
+::
 =,  ethereum
+=,  rpc
+=,  key
 ::
 =|  addr=address
 =|  gas-price=@ud
@@ -623,7 +624,7 @@
       ::      ~def
       ::      ~bus
       ::  ==
-      ::  :~  
+      ::  :~
       ::      ::  ~zod
       ::      ::  ~marzod
       ::      ::  ~binzod
@@ -674,7 +675,7 @@
           ~def
           ~bus
       ==
-      ::  :~  
+      ::  :~
       ::      ::  ~zod
       ::      ::  ~marzod
       ::      ::  ~binzod
@@ -684,7 +685,7 @@
       ::  XX what of dopzod?
     |=  who=ship
     =+  (~(got by all-addr) who)
-    :*  who  
+    :*  who
         ?:  |(?=(~ crypt) ?=(~ auth))
           ~
         `[u.crypt u.auth]
@@ -1373,7 +1374,7 @@
   |=  [n=@ud tx=transaction]
   ~?  =(0 (mod n 100))  [%signing n]
   =?  gas-price.tx  ?=(^ gas)  u.gas
-  (crip '0' 'x' ((x-co:co 0) (sign-transaction tx pk)))
+  (crip '0' 'x' ((x-co:co 0) (sign-transaction:key:ethereum tx pk)))
 ::
 ::  create or spawn a ship, configure its spawn proxy and pubkeys
 ++  create-ship
@@ -1608,6 +1609,7 @@
             rate-unit=@ud
         ==
     ^-  call-data
+    ~&  [%register-linear stars to]
     :-  'register(address,uint256,uint16,uint16,uint256)'
     :~  [%address to]
         [%uint windup]
