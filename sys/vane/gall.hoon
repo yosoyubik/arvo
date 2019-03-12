@@ -1329,9 +1329,10 @@
         $wind  `%j
         $wipe  `%f
       ::
-        $request  `%l
-        $serve    `%r
-        $connect  `%r
+        $request     `%l
+        $serve       `%r
+        $connect     `%r
+        $disconnect  `%r
       ==
     --
   --
