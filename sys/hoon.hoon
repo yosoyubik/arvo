@@ -14,6 +14,7 @@
 ::  #  %base
 ::
 ::    basic mathematical operations
+!:
 |%
 ::  #  %math
 ::    unsigned arithmetic
@@ -287,8 +288,9 @@
   ::  mold generator: produces a discriminated fork between two types,
   ::  defaulting to {a}.
   ::
-  $%  [%| p=that]
-      [%& p=this]
+  $~  [%& p=this]
+  $%  [%& p=this]
+      [%| p=that]
   ==
 ::
 ++  gate
@@ -6475,8 +6477,8 @@
   $%                                                    ::
     {$$ p/axis}                                         ::  simple leg
   ::                                                    ::
-    {$base p/base}                                      ::  base spec
-    {$bust p/base}                                      ::  bunt base
+    {$base p/base}                                      ::  base spec literal (= a mold)
+    {$bust p/base}                                      ::  bunt value of base type
     {$dbug p/spot q/hoon}                               ::  debug info in trace
     {$eror p/tape}                                      ::  assembly error
     {$hand p/type q/nock}                               ::  premade result
@@ -6513,7 +6515,7 @@
     {$clsg p/(list hoon)}                               ::  :~ [p ~]
     {$cltr p/(list hoon)}                               ::  :* p as a tuple
   ::                                            ::::::  invocations
-    {$cncb p/wing q/(list (pair wing hoon))}            ::  %_
+    {$cncb p/wing q/(list (pair wing hoon))}            ::  %_  casting %=
     {$cndt p/hoon q/hoon}                               ::  %.
     {$cnhp p/hoon q/hoon}                               ::  %-
     {$cncl p/hoon q/(list hoon)}                        ::  %:
@@ -8417,6 +8419,8 @@
       `[%name term.p.gen skin]
     ==
   ::
+  :: Desugar hoon to basic hoon
+  ::
   ++  open
     ^-  hoon
     ?-    gen
@@ -8527,7 +8531,7 @@
         {$cnhp *}  [%cncl p.gen q.gen ~]
         ::  this probably should work, but doesn't
         ::
-        ::  {$cncl *}  [%cntr [%$ ~] p.gen [[[[%& 6] ~] [%cltr q.gen]] ~]]
+        :: {$cncl *}  [%cntr [%$ ~] p.gen [[[[%& 6] ~] [%cltr q.gen]] ~]]
         {$cncl *}  [%cnsg [%$ ~] p.gen q.gen]
         {$cnsg *}
       ::  this complex matching system is a leftover from the old
@@ -8787,6 +8791,7 @@
 ::::  5c: compiler backend and prettyprinter
   ::
 ++  ut
+  ::  Jet registration.
   ~%    %ut
       +>+
     ==
@@ -8835,8 +8840,10 @@
   =+  :*  fan=*(set {type hoon})
           rib=*(set {type type hoon})
           vet=`?`&
-          fab=`?`&
+          fab=`?`&                     ::  Whether we are not in test mode.
       ==
+  ::  The type of the subject we are compiling against.
+  ::
   =+  sut=`type`%noun
   |%
   ++  clip
@@ -8845,6 +8852,8 @@
     ref
   ::
   ::  +ar: texture engine
+  ::
+  ::    Does something with skins.
   ::
   ++  ar  !:
     ~%    %ar
@@ -9080,18 +9089,7 @@
           %wash  ref
       ==
     --
-  ::
-  ++  bleu
-    |=  {gol/type gen/hoon}
-    ^-  {type nock}
-    =+  pro=(mint gol gen)
-    =+  jon=(apex:musk bran q.pro)
-    ?:  |(?=(~ jon) ?=($wait -.u.jon))
-      ?:  &(!fab vet)
-        ~&  %bleu-fail
-        !!
-      [p.pro q.pro]
-    [p.pro %1 p.u.jon]
+  ::  Related to :~ constant folding
   ::
   ++  blow
     |=  {gol/type gen/hoon}
@@ -9144,6 +9142,7 @@
       [%hint *]  (hint p.sut burp(sut q.sut))
       [%hold *]  [%hold burp(sut p.sut) q.sut]
     ==
+  ::  Type of the product of a tiscom, given the subject type
   ::
   ++  busk
     ~/  %busk
@@ -9458,6 +9457,7 @@
       (echo:cin p.q.lop rig)
     =-  [p.- [%9 p.q.lop (hike axe q.-)]]
     (ecmo:cin ~(tap in q.q.lop) rig)
+  ::  The implementation of %=.
   ::
   ++  et
     |_  {hyp/wing rig/(list (pair wing hoon))}
@@ -9539,6 +9539,7 @@
                   sut  p:(fine %| p.p.yep)
                 ==
     ==    ==
+  :: Name resolution
   ::
   ++  fond
     ~/  %fond
@@ -10015,6 +10016,13 @@
       {* * ~}   [dov $(dom l.dom)]
       {* * *}   [dov $(dom l.dom) $(dom r.dom)]
     ==
+  ::  Compiler entrypoint.
+  :: 
+  ::    The compiller, regarded as a function from subject type and hoon
+  ::    to product type and nock, is this arm.
+  ::    
+  ::    Invocation: (~(mint ut subject-type) goal-type hoon-ast)
+  ::    where goal-type is something the product type must nest in (why?).
   ::
   ++  mint
     ~/  %mint
@@ -10027,6 +10035,7 @@
         ~>(%mean.[%leaf "mint-vain"] !!)
       [%void %0 0]
     ?-    gen
+    ::  Core runes which are compiled directly to nock.
     ::
         {^ *}
       =+  hed=$(gen p.gen, gol %noun)
@@ -10095,13 +10104,13 @@
       =+  nor=$(gen p.gen, gol bool)
       =+  fex=(gain p.gen)
       =+  wux=(lose p.gen)
-      =+  ^=  duy
+      =+  ^=  test-code
           ?:  =(%void fex)
             ?:(=(%void wux) [%0 0] [%1 1])
           ?:(=(%void wux) [%1 0] q.nor)
       =+  hiq=$(sut fex, gen q.gen)
       =+  ran=$(sut wux, gen r.gen)
-      [(fork p.hiq p.ran ~) (cond duy q.hiq q.ran)]
+      [(fork p.hiq p.ran ~) (cond test-code q.hiq q.ran)]
     ::
         {$wthx *}
       :-  (nice bool)
@@ -10146,6 +10155,8 @@
         {$zpvt *}   ?:((feel p.gen) $(gen q.gen) $(gen r.gen))
     ::
         {$zpzp ~}  [%void [%0 0]]
+    ::  Macroexpand non-core runes.
+    ::
         *
       =+  doz=~(open ap gen)
       ?:  =(doz gen)
@@ -10153,6 +10164,7 @@
         ~>(%mean.[%leaf "mint-open"] !!)
       $(gen doz)
     ==
+    ::  Check that `typ` nests under `gol`.
     ::
     ++  nice
       |=  typ/type
@@ -10547,7 +10559,10 @@
       $read  [?=($zinc met) |]
       $rite  [?=($iron met) |]
     ==
-  ::
+  ::  Type inference
+  ::  
+  ::    Given a subject type (sut of this ut core) and a hoon,
+  ::    yields a product type.
   ++  play
     ~/  %play
     =>  .(vet |)
