@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Chess</title>
+    <link rel="stylesheet" href="/~chess/chessboard-css.css">
+    <script type="application/javascript" src="/~modulo/session.js"></script>
+    <script type="application/javascript" src="/~/channel/channel.js"></script>
+ 
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="~chess/chessboard-js.js"></script>
+  </head>
+  <body>
+    <div id="board1" style="width: 400px"></div>
+    <script>
+      function onChangeFunc(oldPos, newPos) {
+        let fen = ChessBoard.objToFen(newPos);
+
+        window.urb.poke(window.ship, "chess", "chess-command", 
+          {pos: fen},
+          (json) => {
+            console.log(json);
+          },
+          (err) => {
+            console.log(err);
+          }
+        );
+      }
+
+      var cfg = {
+        draggable: true,
+        dropOffBoard: 'snapback', // this is the default
+        position: 'start',
+        onChange: onChangeFunc
+      };
+      var board1 = ChessBoard('board1', cfg);
+
+      function doSub() {
+        window.urb.subscribe(window.ship, "chess", "/game",
+          (err) => {
+            console.log(err);
+          },
+          (event) => {
+            console.log(event);
+            board1.position(event);
+          },
+          () => {
+            doSub();
+          }
+        );
+      }
+      doSub();
+    </script>
+  </body>
+</html>
