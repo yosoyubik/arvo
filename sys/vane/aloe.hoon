@@ -6,7 +6,7 @@
 !?  141
 ::  3-bit ames protocol version; only packets at this version will be accepted
 ::
-=/  protocol-version  7
+=/  protocol-version=?(%0 %1 %2 %3 %4 %5 %6 %7)  %0
 =>
 ::  type definitions
 ::
@@ -222,14 +222,14 @@
 +$  symmetric-key  @uvI
 +$  public-key     pass
 +$  private-key    ring
-+$  hash128        @uvH
++$  key-hash       @uvH
++$  signature      @
 +$  error          [tag=@tas =tang]
 +$  packet         [[to=ship from=ship] =encoding payload=@]
 +$  encoding       ?(%none %open %fast %full)
 ::  TODO: define these
 ::
-+$  meal           _!!
-+$  signature      _!!
++$  meal           [%'TODO' ~]
 ::  +pipe: (possibly) secure channel between our and her
 ::
 ::    Everything we need to encode or decode a message between our and her.
@@ -238,12 +238,28 @@
 ::    TODO: do we need the map of her public keys, or just her current key?
 ::
 +$  pipe
-  $:  fast-key=(unit [=hash128 key=(expiring symmetric-key)])
+  $:  fast-key=(unit [=key-hash key=(expiring symmetric-key)])
       her-life=life
       her-public-keys=(map life public-key)
       her-sponsors=(list ship)
   ==
+::  +deed: identity attestation, typically signed by sponsor
+::
++$  deed  (attested [=life =public-key =signature])
+::  +expiring: a value that expires at the specified date
+::
 +*  expiring  [value]  [expiration-date=@da =value]
+::  +attested: a value signed by :ship.oath to attest to its validity
+::
++*  attested  [value]  [oath=[=ship =life =signature] =value]
+::
+++  packet-format
+  |%
+  +$  none  raw-payload=@
+  +$  open  [=from=life deed=(unit deed) signed-payload=@]
+  +$  fast  [=key-hash encrypted-payload=@]
+  +$  full  [[=to=life =from=life] deed=(unit deed) encrypted-payload=@]
+  --
 --
 =<
 ::  vane interface core
@@ -340,8 +356,6 @@
     ==
   ::
   +|  %utilities
-  ::
-  ++  event-core  .
   ::  +abet: finalize, producing [moves state] with moves in the right order
   ::
   ++  abet  [(flop moves) state]
@@ -351,30 +365,34 @@
   ::    at the end of an event.
   ::
   ++  emit  |=(=move event-core(moves [move moves]))
+  ::
+  ++  event-core  .
   --
-::  +decode-message: deserialize a message from a bytestream to a noun
+::  +interpret-packet: authenticate and decrypt a packet, effectfully
 ::
-++  message-decoder
+++  interpret-packet
   =>  |%
       +$  gift
-        $%  [%fast-key key=(expiring symmetric-key)]
+        $%  [%symmetric-key =symmetric-key]
             [%meet =ship =life =public-key]
         ==
       --
   ::  outer gate: establish context
   ::
-  ::    her:       who was this message from?
-  ::    key-ring:  our private keys at different lifes
-  ::    pipe:      channel information
+  ::    her:             ship that sent us the message
+  ::    our-private-key: our private key at current life
+  ::    pipe:            channel between our and her
   ::
   |=  $:  her=ship
-          key-ring=(map life ring)
+          =our=private-key
           =pipe
       ==
-  ::  inner gate: decode a message
+  ::  inner gate: decode a packet
   ::
-  |=  [=encoding message=@]
+  |=  [=encoding buffer=@]
   ^-  [gifts=(list gift) authenticated=? =meal]
+  ::
+  =|  gifts=(list gift)
   ::
   |^  ?-  encoding
         %none  decode-none
@@ -382,25 +400,128 @@
         %fast  decode-fast
         %full  decode-full
       ==
+  ::  +decode-none: decode an unsigned, unencrypted packet
   ::
   ++  decode-none
     ^-  [gifts=(list gift) authenticated=? =meal]
     ::
-    [~ %.n (meal (cue message))]
+    (produce-meal authenticated=%.n buffer)
+  ::  +decode-open: decode a signed, unencrypted packet
   ::
   ++  decode-open
     ^-  [gifts=(list gift) authenticated=? =meal]
     ::
-    =+  %-  ,[[=our=life =her=life] =signature payload=@]
-        (cue message)
-    ::  TODO: verify signature
-    ::  TODO: alias zuse crypto primitives
-    ::  TODO: finish this function
-    ::  TODO: define message types
-    ::  TODO: define +signature type
-    !!
-  ++  decode-fast  !!
-  ++  decode-full  !!
+    =/  packet-noun  (cue buffer)
+    =/  open-packet  (open:packet-format packet-noun)
+    ::
+    =?    decoder-core
+        ?=(^ deed.open-packet)
+      (apply-deed u.deed.open-packet)
+    ::  TODO: is this assertion valid if we hear a new deed?
+    ::
+    ?>  =(her-life.pipe from-life.open-packet)
+    ::
+    =/  her-public-key  (~(got by her-public-keys.pipe) her-life.pipe)
+    ::
+    %+  produce-meal  authenticated=%.y
+    %-  need
+    (extract-signed her-public-key signed-payload.open-packet)
+  ::  +decode-fast: decode a packet with symmetric encryption
+  ::
+  ++  decode-fast
+    ^-  [gifts=(list gift) authenticated=? =meal]
+    ::
+    ?~  fast-key.pipe
+      ~|  %ames-no-fast-key^her  !!
+    ::
+    =/  packet-noun  (cue buffer)
+    =/  fast-packet  (fast:packet-format packet-noun)
+    ::
+    ?>  =(key-hash.fast-packet key-hash.u.fast-key.pipe)
+    ::
+    =/  cleartext
+      %-  need
+      %+  de:crub:crypto
+        value.key.u.fast-key.pipe
+      encrypted-payload.fast-packet
+    ::
+    (produce-meal authenticated=%.y cleartext)
+  ::  +decode-full: decode a packet with asymmetric encryption
+  ::
+  ++  decode-full
+    ^-  [gifts=(list gift) authenticated=? =meal]
+    ::
+    =/  packet-noun  (cue buffer)
+    =/  full-packet  (full:packet-format packet-noun)
+    ::
+    =?    decoder-core
+        ?=(^ deed.full-packet)
+      (apply-deed u.deed.full-packet)
+    ::  TODO: is this assertion valid if we hear a new deed?
+    ::
+    ?>  =(her-life.pipe from-life.full-packet)
+    ::
+    =+  %-  ,[=symmetric-key jammed-message=@]
+        (cue encrypted-payload.full-packet)
+    ::
+    =/  her-public-key  (~(got by her-public-keys.pipe) her-life.pipe)
+    ::
+    =.  decoder-core  (give %symmetric-key symmetric-key)
+    =.  decoder-core  (give %meet her her-life.pipe her-public-key)
+    ::
+    (produce-meal authenticated=%.y jammed-message)
+  ::  +apply-deed: produce a %meet gift if the deed checks out
+  ::
+  ++  apply-deed
+    |=  =deed
+    ^+  decoder-core
+    ::
+    =+  [life public-key signature]=value.deed
+    ::
+    ::  if we already know the public key for this life, noop
+    ::
+    ?:  =(`public-key (~(get by her-public-keys.pipe) life))
+      decoder-core
+    ::  TODO: what if the deed verifies at the same fife for :her?
+    ::
+    ?>  (verify-deed deed)
+    ::
+    (give %meet her life public-key)
+  ::  +verify-deed: produce %.y iff deed is valid
+  ::
+  ::    TODO: actually implement; this is just a stub
+  ::
+  ++  verify-deed
+    |=  =deed
+    ^-  ?
+    ::  if :her is anything other than a moon or comet, the deed is invalid
+    ::
+    ?+    (clan:title her)  %.n
+        ::  %earl: :her is a moon, with deed signed by numeric parent
+        ::
+        %earl
+      ~|  %ames-moons-not-implemented  !!
+    ::
+        ::  %pawn: comet, self-signed, life 1, address is fingerprint
+        ::
+        %pawn
+      ~|  %ames-comets-not-implemented  !!
+    ==
+  ::  +give: emit +gift effect, to be flopped later
+  ::
+  ++  give  |=(=gift decoder-core(gifts [gift gifts]))
+  ::  +produce-meal: exit this core with a +meal +cue'd from :meal-precursor
+  ::
+  ++  produce-meal
+    |=  [authenticated=? meal-precursor=@]
+    ^-  [gifts=(list gift) authenticated=? =meal]
+    ::
+    :+  (flop gifts)  authenticated
+    %-  meal
+    =-  ~&  cued+-  -
+    (cue meal-precursor)
+  ::
+  ++  decoder-core  .
   --
 ::  +decode-packet: deserialize a packet from a bytestream, reading the header
 ::
@@ -518,4 +639,11 @@
     %fast  2
     %full  3
   ==
+::  +extract-signed: if valid signature, produce extracted value; else produce ~
+::
+++  extract-signed
+  |=  [=public-key signed-buffer=@]
+  ^-  (unit @)
+  ::
+  (sure:as:(com:nu:crub:crypto public-key) signed-buffer)
 --
