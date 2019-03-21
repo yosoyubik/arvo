@@ -518,7 +518,6 @@
     ::
     :+  (flop gifts)  authenticated
     %-  meal
-    =-  ~&  cued+-  -
     (cue meal-precursor)
   ::
   ++  decoder-core  .
