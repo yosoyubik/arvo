@@ -186,9 +186,9 @@
                 %start
                 :-  404
                 :~  ['content-type' 'text/html']
-                    ['content-length' '153']
+                    ['content-length' '156']
                 ==
-                [~ (file-not-found-page:http-server-gate '/')]
+                [~ (error-page:http-server-gate 404 %.n '/' ~)]
                 complete=%.y
         ==  ==
     ==
@@ -276,6 +276,96 @@
       ^=  expected-move
         :~  :*  duct=~[/http-blah]  %give  %response
                 [%start [200 ['content-type' 'text/html']~] `[5 'Hiya!'] %.y]
+    ==  ==  ==
+  ::
+  ;:  weld
+    results1
+    results2
+    results3
+    results4
+  ==
+::
+++  test-app-error
+  ::
+  =^  results1  http-server-gate
+    %-  http-server-call  :*
+      http-server-gate
+      now=~1111.1.1
+      scry=scry-provides-code
+      call-args=[duct=~[/init] ~ [%init ~nul]]
+      expected-moves=~
+    ==
+  ::  app1 binds successfully
+  ::
+  =^  results2  http-server-gate
+    %-  http-server-call  :*
+      http-server-gate
+      now=~1111.1.2
+      scry=scry-provides-code
+      call-args=[duct=~[/app1] ~ [%connect [~ /] %app1]]
+      expected-moves=[duct=~[/app1] %give %bound %.y [~ /]]~
+    ==
+  ::  outside requests a path that app1 has bound to
+  ::
+  =^  results3  http-server-gate
+    %-  http-server-call-with-comparator  :*
+      http-server-gate
+      now=~1111.1.3
+      scry=scry-provides-code
+      ^=  call-args
+        :*  duct=~[/http-blah]  ~
+            %request
+            %.n
+            [%ipv4 .192.168.1.1]
+            [%'GET' '/' ~ ~]
+        ==
+      ^=  comparator
+        |=  moves=(list move:http-server-gate)
+        ^-  tang
+        ::
+        ?.  ?=([* ~] moves)
+          [%leaf "wrong number of moves: {<(lent moves)>}"]~
+        ::
+        ::
+        =/  move=move:http-server-gate                              i.moves
+        =/  =duct                                             duct.move
+        =/  card=(wind note:http-server-gate gift:able:http-server-gate)  card.move
+        ::
+        %+  weld
+          (expect-eq !>(~[/http-blah]) !>(duct))
+        ::
+        %+  expect-gall-deal
+          :+  /run-app/app1  [~nul ~nul]
+              ^-  cush:gall
+              :*  %app1  %poke  %handle-http-request
+                  !>([%.n %.n [%ipv4 .192.168.1.1] [%'GET' '/' ~ ~]])
+              ==
+          card
+    ==
+  ::  the poke fails. we should relay this to the client
+  ::
+  =^  results4  http-server-gate
+    %-  http-server-take  :*
+      http-server-gate
+      now=~1111.1.4
+      scry=scry-provides-code
+      ^=  take-args
+        :*  wire=/run-app/app1  duct=~[/http-blah]
+            ^-  (hypo sign:http-server-gate)
+            :-  *type
+            :*  %g  %unto  %coup  ~
+                :~  [%leaf "/~zod/...../app1:<[1 1].[1 20]>"]
+            ==  ==
+         ==
+      ^=  expected-move
+        :~  :*  duct=~[/http-blah]  %give  %response
+                %start
+                :-  500
+                :~  ['content-type' 'text/html']
+                    ['content-length' '180']
+                ==
+                [~ (internal-server-error:http-server-gate %.n '/' ~)]
+                complete=%.y
     ==  ==  ==
   ::
   ;:  weld
@@ -592,7 +682,6 @@
             !>  p.card
         ::
         %+  expect-schematic
-          :^  %cast  [~nul %home]  %mime
           :+  %call
             :+  %call
               [%core [[~nul %home] /hoon/handler/gen]]
@@ -616,8 +705,10 @@
             ^-  made-result:ford
             :-  %complete
             ^-  build-result:ford
-            :-  %success
-            [%cast %mime !>([['text' 'plain' ~] (as-octs:mimes:html 'one two three')])]
+            :^  %success  %cast  %mime
+            !>
+            :-  [200 ['content-type' 'text/plain']~]
+            `(as-octs:mimes:html 'one two three')
          ==
       ^=  expected-move
         :~  :*  duct=~[/http-blah]  %give  %response
@@ -757,14 +848,18 @@
                 %give
                 %response
                 %start
-                :-  400
+                :-  403
                 :~  ['content-type' 'text/html']
-                    ['content-length' '206']
+                    ['content-length' '182']
                 ==
               ::
                 :-  ~
-                %^  internal-server-error:http-server-gate  %.n
-                '/~/channel/1234567890abcdef'  ~
+                %-  error-page:http-server-gate  :*
+                  403
+                  %.n
+                  '/~/channel/1234567890abcdef'
+                  ~
+                ==
               ::
                 complete=%.y
         ==  ==

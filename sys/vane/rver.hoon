@@ -110,6 +110,15 @@
       ::  channel-state: state managed by the +channel core
       ::
       =channel-state
+      ::  domains: domain-names that resolve to us
+      ::
+      domains=(set turf)
+      ::  http-config: our server configuration
+      ::
+      =http-config
+      ::  ports: live servers
+      ::
+      ports=[insecure=@ud secure=(unit @ud)]
   ==
 ::  +outstanding-connection: open http connections not fully complete:
 ::
@@ -319,23 +328,6 @@
   ::  if we reached this, we have an invalid action key. fail parsing.
   ::
   ~
-::  +file-not-found-page: 404 page for when all other options failed
-::
-++  file-not-found-page
-  |=  url=@t
-  ^-  octs
-  %-  as-octs:mimes:html
-  %-  crip
-  %-  en-xml:html
-  ;html
-    ;head
-      ;title:"404 Not Found"
-    ==
-    ;body
-      ;h1:"Not Found"
-      ;p:"The requested URL {<(trip url)>} was not found on this server."
-    ==
-  ==
 ::  +login-page: internal page to login to an Urbit
 ::
 ++  login-page
@@ -408,6 +400,39 @@
       ;*  ?:  authorized
             ;=
               ;code:"*{(render-tang-to-marl 80 t)}"
+            ==
+          ~
+    ==
+  ==
+::  +error-page: 400 page, with an error string if logged in
+::
+++  error-page
+  |=  [code=@ud authorized=? url=@t t=tape]
+  ^-  octs
+  ::
+  =/  code-as-tape=tape  (format-ud-as-integer code)
+  =/  message=tape
+    ?:  =(code 400)
+      "Bad Request"
+    ?:  =(code 403)
+      "Forbidden"
+    ?:  =(code 404)
+      "Not Found"
+    "Unknown Error"
+  ::
+  %-  as-octs:mimes:html
+  %-  crip
+  %-  en-xml:html
+  ;html
+    ;head
+      ;title:"{code-as-tape} {message}"
+    ==
+    ;body
+      ;h1:"{message}"
+      ;p:"There was an error while handling the request for {<(trip url)>}."
+      ;*  ?:  authorized
+            ;=
+              ;code:"{t}"
             ==
           ~
     ==
@@ -657,8 +682,6 @@
       ::
       =-  [[duct %pass /run-build %f %build live=%.n schematic=-]~ state]
       ::
-      =-  [%cast [our desk.generator.action] %mime -]
-      ::
       :+  %call
         :+  %call
           [%core [[our desk.generator.action] (flop path.generator.action)]]
@@ -693,7 +716,7 @@
     ::
         %four-oh-four
       %^  return-static-data-on-duct  404  'text/html'
-      (file-not-found-page url.request)
+      (error-page 404 authenticated url.request ~)
     ==
   ::  +cancel-request: handles a request being externally aborted
   ::
@@ -897,20 +920,16 @@
       ::    page; issuing a redirect won't help.
       ::
       ?.  authenticated
-        ~&  %unauthenticated
-        ::  TODO: Real 400 page.
-        ::
-        %^  return-static-data-on-duct  400  'text/html'
-        (internal-server-error authenticated url.request ~)
+        %^  return-static-data-on-duct  403  'text/html'
+        (error-page 403 authenticated url.request "unauthenticated channel usage")
       ::  parse out the path key the subscription is on
       ::
       =+  request-line=(parse-request-line url.request)
       ?.  ?=([@t @t @t ~] site.request-line)
-        ~&  %bad-request-line
         ::  url is not of the form '/~/channel/'
         ::
         %^  return-static-data-on-duct  400  'text/html'
-        (internal-server-error authenticated url.request ~)
+        (error-page 400 authenticated url.request "malformed channel url")
       ::  channel-id: unique channel id parsed out of url
       ::
       =+  channel-id=i.t.t.site.request-line
@@ -1028,12 +1047,12 @@
       ::
       ?~  maybe-channel=(~(get by session.channel-state.state) channel-id)
         %^  return-static-data-on-duct  404  'text/html'
-        (internal-server-error %.y url.request ~)
+        (error-page 404 %.y url.request ~)
       ::  if there's already a duct listening to this channel, we must 400
       ::
       ?:  ?=([%| *] state.u.maybe-channel)
         %^  return-static-data-on-duct  400  'text/html'
-        (internal-server-error %.y url.request ~)
+        (error-page 400 %.y url.request "channel already bound")
       ::  when opening an event-stream, we must cancel our timeout timer
       ::
       =.  moves
@@ -1109,27 +1128,23 @@
       ::  error when there's no body
       ::
       ?~  body.request
-        ~&  %no-body
         %^  return-static-data-on-duct  400  'text/html'
-        (internal-server-error %.y url.request ~)
+        (error-page 400 %.y url.request "no put body")
       ::  if the incoming body isn't json, this is a bad request, 400.
       ::
       ?~  maybe-json=(de-json:html q.u.body.request)
-        ~&  %no-json
         %^  return-static-data-on-duct  400  'text/html'
-        (internal-server-error %.y url.request ~)
+        (error-page 400 %.y url.request "put body not json")
       ::  parse the json into an array of +channel-request items
       ::
       ?~  maybe-requests=(parse-channel-request u.maybe-json)
-        ~&  [%no-parse u.maybe-json]
         %^  return-static-data-on-duct  400  'text/html'
-        (internal-server-error %.y url.request ~)
+        (error-page 400 %.y url.request "invalid channel json")
       ::  while weird, the request list could be empty
       ::
       ?:  =(~ u.maybe-requests)
-        ~&  %empty-list
         %^  return-static-data-on-duct  400  'text/html'
-        (internal-server-error %.y url.request ~)
+        (error-page 400 %.y url.request "empty list of actions")
       ::  check for the existence of the channel-id
       ::
       ::    if we have no session, create a new one set to expire in
@@ -1362,35 +1377,70 @@
     --
   ::  +handle-ford-response: translates a ford response for the outside world
   ::
-  ::    TODO: Get the authentication state and source url here.
-  ::
   ++  handle-ford-response
     |=  made-result=made-result:ford
     ^-  [(list move) server-state]
     ::
+    =+  connection=(~(got by connections.state) duct)
+    ::
     ?:  ?=(%incomplete -.made-result)
       %^  return-static-data-on-duct  500  'text/html'
-      ::  TODO: Thread original URL and authentication state here.
-      (internal-server-error %.y 'http://' tang.made-result)
+      ::
+      %-  internal-server-error  :*
+          authenticated.inbound-request.connection
+          url.request.inbound-request.connection
+          tang.made-result
+      ==
     ::
     ?:  ?=(%error -.build-result.made-result)
       %^  return-static-data-on-duct  500  'text/html'
-      (internal-server-error %.y 'http://' message.build-result.made-result)
+      ::
+      %-  internal-server-error  :*
+          authenticated.inbound-request.connection
+          url.request.inbound-request.connection
+          message.build-result.made-result
+      ==
     ::
     =/  =cage  (result-to-cage:ford build-result.made-result)
     ::
+    =/  result=simple-payload:http  ((hard simple-payload:http) q.q.cage)
+    ::  ensure we have a valid content-length header
+    ::
+    ::    We pass on the response and the headers the generator produces, but
+    ::    ensure that we have a single content-length header set correctly in
+    ::    the returned if this has a body, and has no content-length if there
+    ::    is no body returned to the client.
+    ::
+    =.  headers.response-header.result
+      ?~  data.result
+        (delete-header:http 'content-length' headers.response-header.result)
+      ::
+      %^  set-header:http  'content-length'
+        (crip (format-ud-as-integer p.u.data.result))
+      headers.response-header.result
+    ::
     %-  handle-response
-    =/  result=mime  ((hard mime) q.q.cage)
     ::
     ^-  http-event:http
     :*  %start
-        :-  200
-        ^-  header-list:http
-        :~  ['content-type' (en-mite:mimes:html p.result)]
-            ['content-length' (crip (format-ud-as-integer p.q.result))]
-        ==
-        `(unit octs)`[~ q.result]
+        response-header.result
+        data.result
         complete=%.y
+    ==
+  ::  +handle-gall-error: a call to +poke-http-response resulted in a %coup
+  ::
+  ++  handle-gall-error
+    |=  =tang
+    ^-  [(list move) server-state]
+    ::
+    =+  connection=(~(got by connections.state) duct)
+    ::
+    %^  return-static-data-on-duct  500  'text/html'
+    ::
+    %-  internal-server-error  :*
+        authenticated.inbound-request.connection
+        url.request.inbound-request.connection
+        tang
     ==
   ::  +handle-response: check a response for correctness and send to earth
   ::
@@ -1656,7 +1706,7 @@
     ;:  weld
       ::  hand back default configuration for now
       ::
-      [duct %give %set-config *http-config]~
+      [duct %give %set-config http-config.server-state.ax]~
     ::
       closed-connections
     ==
@@ -1664,15 +1714,42 @@
   ::
   =/  event-args  [[our eny duct now scry-gate] server-state.ax]
   =/  server  (per-server-event event-args)
-  ?-    -.task
   ::
-      ::  %live: notifies us of our running server config
-      ::
-      ::    [insecure-port=@ud secure-port=(unit @ud)]
+  ?-    -.task
+      ::  %live: notifies us of the ports of our live http servers
       ::
       %live
-    ~&  [%todo-live task]
+    =.  ports.server-state.ax  +.task
     [~ http-server-gate]
+      ::  %rule: updates our http configuration
+      ::
+      %rule
+    ?-  -.http-rule.task
+        ::  %cert: install tls certificate
+        ::
+        %cert
+      =*  config  http-config.server-state.ax
+      ?:  =(secure.config cert.http-rule.task)
+        [~ http-server-gate]
+      =.  secure.config  cert.http-rule.task
+      :_  http-server-gate
+      [duct %give %set-config config]~
+        ::  %turf: add or remove domain name
+        ::
+        %turf
+      =*  domains  domains.server-state.ax
+      =/  mod/(set turf)
+        ?:  ?=(%put action.http-rule.task)
+          (~(put in domains) turf.http-rule.task)
+        (~(del in domains) turf.http-rule.task)
+      ?:  =(domains mod)
+        [~ http-server-gate]
+      =.  domains  mod
+      :_  http-server-gate
+      =/  cmd
+        [%acme %poke `cage`[%acme-order !>(mod)]]
+      [duct %pass /acme/order %g %deal [our our] cmd]~
+    ==
   ::
       %request
     =^  moves  server-state.ax  (request:server +.task)
@@ -1735,11 +1812,23 @@
   ::
   ++  run-app
     ::
-    ?.  ?=([%g %unto %http-response *] sign)
-      ::  entirely normal to get things other than http-response calls, but we
-      ::  don't care.
+    ?>  ?=([%g %unto *] sign)
+    ::
+    ::
+    ?:  ?=([%coup *] p.sign)
+      ?~  p.p.sign
+        ::  received a positive acknowledgment: take no action
+        ::
+        [~ http-server-gate]
+      ::  we have an error; propagate it to the client
       ::
-      [~ http-server-gate]
+      =/  event-args  [[our eny duct now scry-gate] server-state.ax]
+      =/  handle-gall-error
+        handle-gall-error:(per-server-event event-args)
+      =^  moves  server-state.ax  (handle-gall-error u.p.p.sign)
+      [moves http-server-gate]
+    ::
+    ?>  ?=([%g %unto %http-response *] sign)
     ::
     =/  event-args  [[our eny duct now scry-gate] server-state.ax]
     =/  handle-response  handle-response:(per-server-event event-args)
@@ -1771,9 +1860,6 @@
       =^  moves  server-state.ax
         (on-channel-timeout i.t.t.wire)
       [moves http-server-gate]
-      ::    %wake
-      ::
-      ::  TODO: wake me up inside
     ::
         ?(%poke %subscription)
       ?>  ?=([%g %unto *] sign)
@@ -1802,6 +1888,41 @@
 ::  +scry: request a path in the urbit namespace
 ::
 ++  scry
-  |=  *
-  [~ ~]
+  |=  [fur=(unit (set monk)) ren=@tas why=shop syd=desk lot=coin tyl=path]
+  ^-  (unit (unit cage))
+  ?.  ?=(%& -.why)
+    ~
+  =*  who  p.why
+  ?.  ?=(%$ ren)
+    [~ ~]
+  ?.  ?=(%$ -.lot)
+    [~ ~]
+  ?.  ?=(%host syd)
+    [~ ~]
+  %-  (lift (lift |=(a=hart:eyre [%hart !>(a)])))
+  ^-  (unit (unit hart:eyre))
+  ?.  =(our who)
+    ?.  =([%da now] p.lot)
+      [~ ~]
+    ~&  [%r %scry-foreign-host who]
+    ~
+  =.  p.lot  ?.(=([%da now] p.lot) p.lot [%tas %real])
+  ?+  p.lot
+    [~ ~]
+  ::
+      [%tas %fake]
+    ``[& [~ 8.443] %& /localhost]
+  ::
+      [%tas %real]
+    =*  domains  domains.server-state.ax
+    =*  ports  ports.server-state.ax
+    =/  =host:eyre  [%& ?^(domains n.domains /localhost)]
+    =/  secure=?  &(?=(^ secure.ports) !?=(hoke:eyre host))
+    =/  port=(unit @ud)
+      ?.  secure
+        ?:(=(80 insecure.ports) ~ `insecure.ports)
+      ?>  ?=(^ secure.ports)
+      ?:(=(443 u.secure.ports) ~ secure.ports)
+    ``[secure port host]
+  ==
 --

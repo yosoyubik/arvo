@@ -296,6 +296,47 @@
       `value.i.header-list
     ::
     $(header-list t.header-list)
+  ::  +set-header: sets the value of an item in the header list
+  ::
+  ::    This adds to the end if it doesn't exist.
+  ::
+  ++  set-header
+    |=  [header=@t value=@t =header-list]
+    ^-  ^header-list
+    ::
+    ?~  header-list
+      ::  we didn't encounter the value, add it to the end
+      ::
+      [[header value] ~]
+    ::
+    ?:  =(key.i.header-list header)
+      [[header value] t.header-list]
+    ::
+    [i.header-list $(header-list t.header-list)]
+  ::  +delete-header: removes the first instance of a header from the list
+  ::
+  ++  delete-header
+    |=  [header=@t =header-list]
+    ^-  ^header-list
+    ::
+    ?~  header-list
+      ~
+    ::  if we see it in the list, remove it
+    ::
+    ?:  =(key.i.header-list header)
+      t.header-list
+    ::
+    [i.header-list $(header-list t.header-list)]
+  ::  +simple-payload: a simple, one event response used for generators
+  ::
+  +$  simple-payload
+    $:  ::  response-header: status code, etc
+        ::
+        =response-header
+        ::  data: the data returned as the body
+        ::
+        data=(unit octs)
+    ==
   --
 ::                                                      ::::
 ::::                      ++ames                          ::  (1a) network
@@ -887,10 +928,10 @@
   +=  http-rule
     $%  :: %cert: set or clear certificate and keypair
         ::
-        [%cert p=(unit [key=wain cert=wain])]
+        [%cert cert=(unit [key=wain cert=wain])]
         :: %turf: add or remove established dns binding
         ::
-        [%turf p=?(%put %del) q=turf]
+        [%turf action=?(%put %del) =turf]
     ==
   ++  httq                                              ::  raw http request
     $:  p/meth                                          ::  method
@@ -2199,9 +2240,12 @@
           ::  report upgrade
           ::
           [%vega ~]
-          ::  set http ports (?)
+          ::  notifies us of the ports of our live http servers
           ::
-          [%live p=@ud q=(unit @ud)]
+          [%live insecure=@ud secure=(unit @ud)]
+          ::  update http configuration
+          ::
+          [%rule =http-rule:eyre]
           ::  starts handling an inbound http request
           ::
           [%request secure=? =address =request:http]
