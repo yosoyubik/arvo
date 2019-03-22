@@ -384,7 +384,7 @@
   ::    pipe:            channel between our and her
   ::
   |=  $:  her=ship
-          =our=private-key
+          crypto-core=acru:ames
           =pipe
       ==
   ::  inner gate: decode a packet
@@ -459,12 +459,16 @@
       (apply-deed u.deed.full-packet)
     ::  TODO: is this assertion valid if we hear a new deed?
     ::
+    ~|  [%ames-life-mismatch her her-life.pipe from-life.full-packet]
     ?>  =(her-life.pipe from-life.full-packet)
     ::
-    =+  %-  ,[=symmetric-key jammed-message=@]
-        (cue encrypted-payload.full-packet)
-    ::
     =/  her-public-key  (~(got by her-public-keys.pipe) her-life.pipe)
+    =/  jammed-wrapped=@
+      %-  need
+      (tear:as:crypto-core her-public-key encrypted-payload.full-packet)
+    ::
+    =+  %-  ,[=symmetric-key jammed-message=@]
+        (cue jammed-wrapped)
     ::
     =.  decoder-core  (give %symmetric-key symmetric-key)
     =.  decoder-core  (give %meet her her-life.pipe her-public-key)
@@ -477,7 +481,6 @@
     ^+  decoder-core
     ::
     =+  [life public-key signature]=value.deed
-    ::
     ::  if we already know the public key for this life, noop
     ::
     ?:  =(`public-key (~(get by her-public-keys.pipe) life))

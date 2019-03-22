@@ -63,7 +63,7 @@
     %.  [%none formatted]
     %-  interpret-packet:aloe  :*
       her.fix
-      our-private-key.fix
+      our-crub.fix
       ^-  pipe:aloe
       [fast-key=~ her-life.fix her-public-keys.fix her-sponsors.fix]
     ==
@@ -75,7 +75,7 @@
 ++  test-interpret-packet-open-no-deed  ^-  tang
   =/  test-meal=meal:aloe  [%'TODO' ~]
   =/  jammed-meal=@        (jam test-meal)
-  =/  signed-payload=@  (sign:as:her-crub.fix jammed-meal)
+  =/  signed-payload=@     (sign:as:her-crub.fix jammed-meal)
   ::
   =/  formatted=open:packet-format:aloe
     [from=her-life.fix deed=~ signed-payload]
@@ -83,7 +83,7 @@
   =/  packet-interpreter
     %-  interpret-packet:aloe  :*
       her.fix
-      our-private-key.fix
+      our-crub.fix
       ^-  pipe:aloe
       [fast-key=~ her-life.fix her-public-keys.fix her-sponsors.fix]
     ==
@@ -99,8 +99,37 @@
 ++  notest-interpret-packet-fast  ^-  tang
   !!
 ::
-++  notest-interpret-packet-full  ^-  tang
-  !!
+++  test-interpret-packet-full  ^-  tang
+  =/  test-meal=meal:aloe  [%'TODO' ~]
+  =/  jammed-meal=@        (jam test-meal)
+  =/  =symmetric-key:aloe  (shaz %symmetric-key-foo)
+  =/  jammed-message=@     (jam symmetric-key jammed-meal)
+  =/  encrypted=@  (seal:as:her-crub.fix our-public-key.fix jammed-message)
+  ::
+  =/  formatted=full:packet-format:aloe
+    [[to=our-life.fix from=her-life.fix] deed=~ encrypted]
+  ::
+  =/  packet-interpreter
+    %-  interpret-packet:aloe  :*
+      her.fix
+      our-crub.fix
+      ^-  pipe:aloe
+      [fast-key=~ her-life.fix her-public-keys.fix her-sponsors.fix]
+    ==
+  ::
+  =/  interpreted
+    %-  packet-interpreter
+    [%full (jam formatted)]
+  ::
+  %+  expect-eq
+    !>  :+  ^=  gifts
+            :~  [%symmetric-key symmetric-key]
+                [%meet her her-life her-public-key]:fix
+            ==
+          authenticated=%.y
+        meal=test-meal
+    ::
+    !>  interpreted
 ::
 ++  aloe-call
   |=  $:  aloe-gate=_aloe-gate
