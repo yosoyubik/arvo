@@ -434,18 +434,15 @@
     ?~  fast-key.pipe
       ~|  %ames-no-fast-key^her  !!
     ::
-    =/  packet-noun  (cue buffer)
-    =/  fast-packet  (fast:packet-format packet-noun)
+    =/  key-hash=@   (end 7 1 buffer)
+    =/  payload=@    (rsh 7 1 buffer)
     ::
-    ?>  =(key-hash.fast-packet key-hash.u.fast-key.pipe)
+    ~|  [%ames-bad-fast-key `@ux`key-hash `@ux`key-hash.u.fast-key.pipe]
+    ?>  =(key-hash key-hash.u.fast-key.pipe)
     ::
-    =/  cleartext
-      %-  need
-      %+  de:crub:crypto
-        value.key.u.fast-key.pipe
-      encrypted-payload.fast-packet
-    ::
-    (produce-meal authenticated=%.y cleartext)
+    %+  produce-meal  authenticated=%.y
+    %-  need
+    (de:crub:crypto value.key.u.fast-key.pipe payload)
   ::  +decode-full: decode a packet with asymmetric encryption
   ::
   ++  decode-full

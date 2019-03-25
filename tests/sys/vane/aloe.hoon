@@ -44,6 +44,7 @@
 ::
 |%
 ++  test-packet-encoding  ^-  tang
+  ::
   =/  =packet:aloe
     [[to=~nec from=~doznec-doznec] encoding=%none payload=(jam [42 43])]
   ::
@@ -55,6 +56,7 @@
     !>  decoded
 ::
 ++  test-interpret-packet-none  ^-  tang
+  ::
   =/  test-meal=meal:aloe  [%'TODO' ~]
   ::
   =/  formatted=none:packet-format:aloe  raw-payload=(jam test-meal)
@@ -73,6 +75,7 @@
     !>  interpreted
 ::
 ++  test-interpret-packet-open-no-deed  ^-  tang
+  ::
   =/  test-meal=meal:aloe  [%'TODO' ~]
   =/  jammed-meal=@        (jam test-meal)
   =/  signed-payload=@     (sign:as:her-crub.fix jammed-meal)
@@ -96,10 +99,42 @@
     !>  [gifts=~ authenticated=%.y meal=test-meal]
     !>  interpreted
 ::
-++  notest-interpret-packet-fast  ^-  tang
-  !!
+++  test-interpret-packet-fast  ^-  tang
+  ::
+  =/  test-meal=meal:aloe            [%'TODO' ~]
+  =/  jammed-meal=@                  (jam test-meal)
+  =/  =symmetric-key:aloe            `@uvI`0xbeef.cafe
+  =/  hashed-key=key-hash:aloe       (shaf %hand symmetric-key)
+  ::
+  =/  encrypted=@  (en:crub:crypto `@J`symmetric-key jammed-meal)
+  =/  formatted=@  (cat 7 hashed-key encrypted)
+  ::
+  =/  packet-interpreter
+    %-  interpret-packet:aloe  :*
+      her.fix
+      our-crub.fix
+      ^-  pipe:aloe
+      :*  :-  ~
+          :+  key-hash=`@uvH`hashed-key
+            expiration-date=`@da`(add ~d1 now.fix)
+          value=symmetric-key
+      ::
+          her-life.fix
+          her-public-keys.fix
+          her-sponsors.fix
+      ==
+    ==
+  ::
+  =/  interpreted
+    %-  packet-interpreter
+    [%fast formatted]
+  ::
+  %+  expect-eq
+    !>  [gifts=~ authenticated=& meal=test-meal]
+    !>  interpreted
 ::
 ++  test-interpret-packet-full  ^-  tang
+  ::
   =/  test-meal=meal:aloe  [%'TODO' ~]
   =/  jammed-meal=@        (jam test-meal)
   =/  =symmetric-key:aloe  (shaz %symmetric-key-foo)
