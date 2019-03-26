@@ -219,17 +219,51 @@
       [%is port=@ud lane=(unit lane) ipv6=@is]
       [%ix (expiring [port=@ud ipv4=@if])]
   ==
-+$  symmetric-key  @uvI
-+$  public-key     pass
-+$  private-key    ring
-+$  key-hash       @uvH
-+$  signature      @
-+$  error          [tag=@tas =tang]
-+$  packet         [[to=ship from=ship] =encoding payload=@]
-+$  encoding       ?(%none %open %fast %full)
-::  TODO: define these
++$  symmetric-key       @uvI
++$  public-key          pass
++$  private-key         ring
++$  key-hash            @uvH
++$  signature           @
++$  packet-id           @uvH
++$  message-descriptor  [=message-id encoding-num=@ num-fragments=@]
++$  message-id          [=bone =message-seq]
++$  message-seq         @ud
++$  error               [tag=@tas =tang]
++$  packet              [[to=ship from=ship] =encoding payload=@]
++$  encoding            ?(%none %open %fast %full)
+::  +meal: packet payload
 ::
-+$  meal           [%'TODO' ~]
++$  meal
+  $%  ::  %back: acknowledgment
+      ::
+      ::    bone: opaque flow identifier
+      ::    packet-id: hash of acknowledged contents
+      ::    error: non-null iff nack (negative acknowledgment)
+      ::    wtf: TODO what is this
+      ::
+      [%back =bone =packet-id error=(unit error) wtf=@dr]
+      ::  %bond: message
+      ::
+      ::    message-id: pair of flow id and message sequence number
+      ::    remote-route: intended recipient module on receiving ship
+      ::    message: noun payload
+      ::
+      [%bond =message-id remote-route=path message=*]
+      ::  %carp: message fragment
+      ::
+      ::    message-descriptor: message id and fragment count
+      ::    fragment-num: which fragment is being sent
+      ::    message-fragment: one slice of a message's bytestream
+      ::
+      [%carp =message-descriptor fragment-num=@ message-fragment=@]
+      ::  %fore: forwarded packet
+      ::
+      ::    ship: destination ship, to be forwarded to
+      ::    lane: IP route, or null if unknown
+      ::    payload: the wrapped packet, to be sent to :ship
+      ::
+      [%fore =ship lane=(unit lane) payload=@]
+  ==
 ::  +pipe: (possibly) secure channel between our and her
 ::
 ::    Everything we need to encode or decode a message between our and her.

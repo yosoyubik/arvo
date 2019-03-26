@@ -57,7 +57,7 @@
 ::
 ++  test-interpret-packet-none  ^-  tang
   ::
-  =/  test-meal=meal:aloe  [%'TODO' ~]
+  =/  test-meal=meal:aloe  [%bond [1 1] /remote-route [%foo %bar]]
   ::
   =/  formatted=none:packet-format:aloe  raw-payload=(jam test-meal)
   ::
@@ -76,7 +76,7 @@
 ::
 ++  test-interpret-packet-open-no-deed  ^-  tang
   ::
-  =/  test-meal=meal:aloe  [%'TODO' ~]
+  =/  test-meal=meal:aloe  [%bond [1 1] /remote-route [%foo %bar]]
   =/  jammed-meal=@        (jam test-meal)
   =/  signed-payload=@     (sign:as:her-crub.fix jammed-meal)
   ::
@@ -101,7 +101,7 @@
 ::
 ++  test-interpret-packet-fast  ^-  tang
   ::
-  =/  test-meal=meal:aloe            [%'TODO' ~]
+  =/  test-meal=meal:aloe            [%bond [1 1] /remote-route [%foo %bar]]
   =/  jammed-meal=@                  (jam test-meal)
   =/  =symmetric-key:aloe            `@uvI`0xbeef.cafe
   =/  hashed-key=key-hash:aloe       (shaf %hand symmetric-key)
@@ -135,7 +135,7 @@
 ::
 ++  test-interpret-packet-full  ^-  tang
   ::
-  =/  test-meal=meal:aloe  [%'TODO' ~]
+  =/  test-meal=meal:aloe  [%bond [1 1] /remote-route [%foo %bar]]
   =/  jammed-meal=@        (jam test-meal)
   =/  =symmetric-key:aloe  (shaz %symmetric-key-foo)
   =/  jammed-message=@     (jam symmetric-key jammed-meal)
