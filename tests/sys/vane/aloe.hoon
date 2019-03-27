@@ -166,6 +166,118 @@
     ::
     !>  interpreted
 ::
+::  +encode-meal tests
+::
+++  test-encode-meal-carp  ^-  tang
+  ::
+  =/  encoder
+    %-  encode-meal:aloe  :*
+      our.fix
+      our-life.fix
+      our-crub.fix
+      her.fix
+      ^-  pipe:aloe
+      [fast-key=~ her-life.fix her-public-keys.fix her-sponsors.fix]
+    ==
+  ::
+  =/  packet      %packet-foo
+  =/  =meal:aloe  [%carp *message-descriptor:aloe 42 packet]
+  =/  result1
+    %-  encoder
+    [now.fix eny.fix meal]
+  ::
+  =/  spat  (encode-packet:aloe [our.fix her.fix] %none (jam meal))
+  ::
+  %+  expect-eq
+    !>  [~ ~[spat]]
+    !>  result1
+::
+++  test-encode-meal-bond-full  ^-  tang
+  ::
+  =/  encoder
+    %-  encode-meal:aloe  :*
+      our.fix
+      our-life.fix
+      our-crub.fix
+      her.fix
+      ^-  pipe:aloe
+      [fast-key=~ her-life.fix her-public-keys.fix her-sponsors.fix]
+    ==
+  ::
+  =/  message     [%message (gulf 1 2.000)]
+  =/  =meal:aloe  [%bond [0 0] /remote/route message]
+  =/  result1
+    %-  encoder
+    [now.fix eny.fix meal]
+  ::
+  =/  actual-gifts=(list gift:encode-meal:aloe)  gifts.result1
+  =/  actual-fragments=(list @)                  fragments.result1
+  ::
+  =/  sit  (sign:as:our-crub.fix (jam meal))
+  =/  wrapper-meal=meal:aloe
+    [%carp [[0 0] 2 1] 0 sit]
+  ::
+  =/  maj  (jam wrapper-meal)
+  ::
+  =/  spat  (encode-packet:aloe [our.fix her.fix] %open maj)
+  ::
+  ;:  weld
+    %+  expect-eq
+      !>  6
+      !>  (lent actual-fragments)
+  ::
+    ::  checking against 1.024 fails because header brings it just over that
+    ::
+    %+  expect-eq
+      !>  %.y
+      !>  (levy actual-fragments |=(@ (lte (met 3 +<) 1.100)))
+  ::  make sure all but the last packet are actually large enough
+  ::
+    %+  expect-eq
+      !>  %.y
+      !>  (levy (tail (flop actual-fragments)) |=(@ (gte (met 3 +<) 1.000)))
+  ::
+    %+  expect-eq
+      !>  1
+      !>  (lent actual-gifts)
+  ::
+    %+  expect-eq
+      !>  %symmetric-key
+      !>  ?>(?=(^ actual-gifts) -.i.actual-gifts)
+  ==
+::
+::  TODO reinstate when handling moons and comets
+::++  test-encode-meal-full-emit-gift  ^-  tang
+::  ::  set the foreign life to 3 so we can test the %full case
+::  ::
+::  =.  cur.pipe.fix  `1
+::  ?>  ?=(^ cur.pipe.fix)
+::  ::
+::  =/  encoder
+::    %-  encode-meal:xmas-gate
+::    [our.fix her.fix life.fix rings.fix pipe.fix]
+::  ::
+::  =/  message          [%message %foo %bar]
+::  =/  =meal:xmas-gate  [%bond *flea:xmas-gate /chan/foo message]
+::  ::
+::  =/  result1
+::    %-  encoder
+::    [now=now.fix eny=eny.fix ham=meal]
+::  ::
+::  =/  key  (shaz :(mix (mug meal) now.fix eny.fix))
+::  ::  TODO: do we really want to triple-jam the message?
+::  ::
+::  =/  sit  (seal:as:crub.fix 'b' (jam key (jam meal)))
+::  =/  maj  (jam [u.cur.pipe.fix life.fix] [[her.fix pub.pipe.fix] ~ ~] sit)
+::  ::
+::  =/  spat  (spit:xmas-gate [our.fix her.fix] %full maj)
+::  ::  TODO: why does the date always come out as ~2018.1.1?
+::  ::
+::  %+  expect-eq
+::    !>  :-  [%line ~2018.1.1 key]~
+::        [spat]~
+::    !>  result1
+::
 ++  aloe-call
   |=  $:  aloe-gate=_aloe-gate
           now=@da

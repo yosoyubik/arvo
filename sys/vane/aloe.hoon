@@ -224,10 +224,10 @@
 +$  private-key         ring
 +$  key-hash            @uvH
 +$  signature           @
-+$  packet-id           @uvH
 +$  message-descriptor  [=message-id encoding-num=@ num-fragments=@]
 +$  message-id          [=bone =message-seq]
 +$  message-seq         @ud
++$  packet-id           @uvH
 +$  error               [tag=@tas =tang]
 +$  packet              [[to=ship from=ship] =encoding payload=@]
 +$  encoding            ?(%none %open %fast %full)
@@ -242,7 +242,7 @@
       ::    wtf: TODO what is this
       ::
       [%back =bone =packet-id error=(unit error) wtf=@dr]
-      ::  %bond: message
+      ::  %bond: full message
       ::
       ::    message-id: pair of flow id and message sequence number
       ::    remote-route: intended recipient module on receiving ship
@@ -401,6 +401,121 @@
   ++  emit  |=(=move event-core(moves [move moves]))
   ::
   ++  event-core  .
+  --
+::  +encode-meal: generate a message and packets from a +meal, with effects
+::
+++  encode-meal
+  =>  |%
+      ::  +gift: side effect
+      ::
+      +$  gift
+        $%  ::  %line: set symmetric key
+            ::
+            ::    Connections start as %full, which uses asymmetric encryption.
+            ::    This core can produce an upgrade to a shared symmetric key,
+            ::    which is must faster; hence the %fast tag on that encryption.
+            ::
+            [%symmetric-key symmetric-key=(expiring symmetric-key)]
+        ==
+      --
+  ::  outer gate: establish pki context, producing inner gate
+  ::
+  |=  [our=ship =our=life crypto-core=acru:ames her=ship =pipe]
+  ::  inner gate: process a meal, producing side effects and packets
+  ::
+  |=  [now=@da eny=@ =meal]
+  ::
+  |^  ^-  [gifts=(list gift) fragments=(list @)]
+      ::
+      =+  ^-  [gifts=(list gift) =encoding message=@]  generate-message
+      ::
+      [gifts (generate-fragments encoding message)]
+  ::  +generate-fragments: split a message into packets
+  ::
+  ++  generate-fragments
+    |=  [=encoding message=@]
+    ^-  (list @)
+    ::  total-packets: number of packets for message
+    ::
+    ::    Each packet has max 2^13 bits so it fits in the MTU on most systems.
+    ::
+    =/  total-fragments=@ud  (met 13 message)
+    ::  if message fits in one packet, don't fragment
+    ::
+    ?:  =(1 total-fragments)
+      [(encode-packet [our her] encoding message) ~]
+    ::  fragments: fragments generated from splitting message
+    ::
+    =/  fragments=(list @)  (rip 13 message)
+    =/  fragment-index=@ud  0
+    ::  wrap each fragment in a %none encoding of a %carp meal
+    ::
+    |-  ^-  (list @)
+    ?~  fragments  ~
+    ::
+    :-  ^-  @
+        %^  encode-packet  [our her]  %none
+        %-  jam
+        ^-  ^meal
+        :+  %carp
+          ^-  message-descriptor
+          [(get-message-id meal) (encoding-to-number encoding) total-fragments]
+        [fragment-index i.fragments]
+    ::
+    $(fragments t.fragments, fragment-index +(fragment-index))
+  ::  +generate-message: generate message from meal
+  ::
+  ++  generate-message
+    ^-  [gifts=(list gift) =encoding payload=@]
+    ::  if :meal is just a single fragment, don't bother double-encrypting it
+    ::
+    ?:  =(%carp -.meal)
+      [gifts=~ encoding=%none payload=(jam meal)]
+    ::  if this channel has a symmetric key, use it to encrypt
+    ::
+    ?^  fast-key.pipe
+      :-  ~
+      :-  %fast
+      %^  cat  7
+        key-hash.u.fast-key.pipe
+      (en:crub:crypto value.key.u.fast-key.pipe (jam meal))
+::  TODO: do we need this? When would we not know her life?
+::  if we don't know their life, just sign this packet without encryption
+::
+::    ?~  cur.pipe
+::      :-  ~
+::      :-  %open
+::      %^    jam
+::          [~ life]
+::        `gree`[[her pub.pipe] ~ ~]
+::      (sign:as:crypto-core (jam meal))
+::
+    ::  asymmetric encrypt; also produce symmetric key gift for upgrade
+    ::
+    ::    Generate a new symmetric key by hashing entropy, the date,
+    ::    and an insecure hash of :meal. We might want to change this to use
+    ::    a key derived using Diffie-Hellman.
+    ::
+    =/  new-symmetric-key=symmetric-key  (shaz :(mix (mug meal) now eny))
+    ::  expire the key in one month
+    ::  TODO: when should the key expire?
+    ::
+    :-  [%symmetric-key `@da`(add now ~m1) new-symmetric-key]~
+    :-  %full
+    %-  jam
+    ::
+    ^-  full:packet-format
+    ::  TODO: send our deed if we're a moon or comet
+    ::
+    :+  [to=her-life.pipe from=our-life]  deed=~
+    ::  encrypt the pair of [new-symmetric-key (jammed-meal)] for her eyes only
+    ::
+    ::    This sends the new symmetric key by piggy-backing it onto the
+    ::    original message.
+    ::
+    %+  seal:as:crypto-core
+      (~(got by her-public-keys.pipe) her-life.pipe)
+    (jam [new-symmetric-key (jam meal)])
   --
 ::  +interpret-packet: authenticate and decrypt a packet, effectfully
 ::
@@ -671,6 +786,15 @@
     %open  1
     %fast  2
     %full  3
+  ==
+::  +get-message-id: extract message-id from a +meal, or default to initial value
+::
+++  get-message-id
+  |=  =meal
+  ^-  message-id
+  ?+  -.meal  [0 0]
+    %bond  message-id.meal
+    %carp  message-id.message-descriptor.meal
   ==
 ::  +extract-signed: if valid signature, produce extracted value; else produce ~
 ::
