@@ -43,7 +43,6 @@ If you're looking to make code contributions, a good place to start might be the
 Most parts of Arvo have dedicated maintainers.
 
 * `/sys/hoon`: @pilfer-pandex (~pilfer-pandex)
-* `/sys/zuse`: @pilfer-pandex (~pilfer-pandex)
 * `/sys/arvo`: @jtobin (~nidsut-tomdun)
 * `/sys/vane/ames`: @belisarius222 (~rovnys-ricfer) & @joemfb (~master-morzod)
 * `/sys/vane/behn`: @belisarius222 (~rovnys-ricfer)
