@@ -4,6 +4,11 @@
   /^  octs
   /;  as-octs:mimes:html
   /:  /===/app/chess/index  /html/
+/=  game-html
+  /^  octs
+  /;  as-octs:mimes:html
+  /:  /===/app/chess/game  /html/
+
 /=  chess-js
   /^  octs
   /;  as-octs:mimes:html
@@ -15,6 +20,7 @@
 /=  chess-png
   /^  (map knot @)
   /:  /===/app/chess/img  /_  /png/
+=,  format
 ::
 |%
 :: +move: output effect
@@ -30,56 +36,165 @@
 +$  poke
   $%  [%modulo-bind app=term]
       [%modulo-unbind app=term]
+      [%chess-command com=command]
+  ==
++$  game  [fen=@t ori=@t]
++$  state
+  $%  [%0 sta=(map @p (map @da game)) all=(set @p)]
   ==
 --
 ::
-|_  [bol=bowl:gall sta=@t]
+|_  [bol=bowl:gall state]
 ::
 ++  this  .
 ::
-++  poke-noun
-  |=  asd=?(%bind %unbind)
-  ^-  (quip move _this)
-  :_  this
-  ?:  =(%bind asd)
-    [ost.bol %poke /subapp [our.bol %modulo] `poke`[%modulo-bind %chess]]~
-  [ost.bol %poke /subapp [our.bol %modulo] `poke`[%modulo-unbind %chess]]~
 ++  prep
-  |=  old=(unit @t)
+  |=  old=(unit state)
   ^-  (quip move _this)
-  ~&  %prep
-  :-  [ost.bol %poke /subapp [our.bol %modulo] [%modulo-bind %chess]]~
+  :-  [ost.bol %poke /chess [our.bol %modulo] [%modulo-bind %chess]]~
   ?~  old
     this
-  this(sta u.old)
+  %=  this
+    sta  sta.u.old
+    all  all.u.old
+  ==
+::
+++  list-date-to-json
+  |=  datlis=(list @da)
+  ^-  json
+  :-  %a
+  %+  turn  datlis
+    |=  dat=@da
+    [%s (crip (scow %da dat))]
+::
+++  peer-list
+  |=  [pax=path]
+  ^-  (quip move _this)
+  =/  pairpda  %+  turn  ~(tap in all)
+    |=  a=@p
+    ^-  [@p (list @da)]
+    =/  asd  ~(tap in ~(key by (~(got by sta) a)))
+    [a asd]
+  =/  output
+    %+  frond:enjs  %games
+    :-  %a
+    %+  turn  pairpda
+      |=  [shp=@p lis=(list @da)]
+      ^-  json
+      %-  pairs:enjs
+      :~  [%ship (ship:enjs shp)]
+          [%dates (list-date-to-json lis)]
+      ==
+  [[ost.bol %diff %json output]~ this]
 ::
 ++  peer-game
   |=  [pax=path]
   ^-  (quip move _this)
+  =/  shp  `@p`(slav %p &1:pax)
+  =/  gid  `@da`(slav %da &2:pax)
+  =/  allwshp  (~(get by sta) shp)
+  ?~  allwshp
+    [~ this]
+  =/  agame  (~(get by u.allwshp) gid)
+  ?~  agame
+    [~ this]
+  =/  obj  %-  my  :~
+    fen+s+fen.u.agame
+    orientation+s+ori.u.agame
+  ==
   :_  this
-  [ost.bol %diff %json [%s sta]]~
+  [ost.bol %diff %json [%o obj]]~
+::
+++  poke-chess-command
+  |=  com=command
+  ^-  (quip move _this)
+  ?-  -.com
+    %new
+      (handle-new-command com)
+      ::
+    %pos
+      (handle-position-command com)
+ ==
+::
+++  handle-new-command
+  |=  com=command
+  ^-  (quip move _this)
+  ?-  -.com  %pos  !!  %new
+  =/  allwshp  (~(get by sta) shp.+.com)
+  =/  unix-da  (from-unix:chrono:userlib gid.+.com)
+  =/  pokenew  ?:  =(src.bol our.bol)
+    ?:  =(ori.+.com 'white')
+      =/  newcom   com(shp our.bol, ori 'black')
+      [ost.bol %poke /n [shp.+.com %chess] [%chess-command newcom]]~
+    =/  newcom  com(shp our.bol, ori 'white')
+    [ost.bol %poke /n [shp.+.com %chess] [%chess-command newcom]]~
+  ~  
+  ?~  allwshp
+    =/  mapnewgame
+      (~(put by *(map @da game)) unix-da ['' ori.+.com])
+    :-  pokenew
+    %=  this
+      sta  (~(put by sta) shp.+.com mapnewgame)
+      all  (~(put in all) shp.+.com)
+    ==
+  =/  mapnewgame  (~(put by u.allwshp) unix-da ['' ori.+.com])
+  :-  pokenew
+::     %+  turn  (prey:pubsub:userlib /list bol)
+::    |=  [=bone ^]
+::    [bone %diff %json [%o newgameobj]]
+  %=  this
+    sta  (~(put by sta) shp.+.com mapnewgame)
+  ==
+  ==
+::
+++  handle-position-command
+  |=  com=command
+  ^-  (quip move _this)
+  ?-  -.com  %new  !!  %pos
+  =/  allwshp  (~(get by sta) shp.+.com)
+  ?~  allwshp
+    [~ this]
+  =/  unix-da  (from-unix:chrono:userlib gid.+.com)
+  =/  agame  (~(get by u.allwshp) unix-da)
+  ?~  agame
+    [~ this]
+  =/  newgame  (~(put by u.allwshp) unix-da [pos.+.com ori.u.agame])
+  =/  newgameobj  %-  my  :~
+    fen+s+pos.+.com
+    orientation+s+ori.u.agame
+  ==
+  =/  pokenew 
+   ?:  =(src.bol our.bol)
+     [ost.bol %poke /n [shp.+.com %chess] [%chess-command com(shp our.bol)]]~
+   ~
+  =/  newmoves=(list move)
+    ?:  =(src.bol our.bol)
+      ~
+    %+  turn  (prey:pubsub:userlib /game/[(scot %p shp.+.com)]/[(scot %da unix-da)] bol)
+    |=  [=bone ^]
+    [bone %diff %json [%o newgameobj]]
+  :-  (weld pokenew newmoves)
+  %=  this
+    sta  (~(put by sta) shp.+.com newgame)
+  ==
+  ==
 ::
 ++  poke-handle-http-request
-  %-  (require-authorization ost.bol move this)
+  %-  (require-authorization:app ost.bol move this)
   |=  =inbound-request:http-server
   ^-  (quip move _this)
   =+  request-line=(parse-request-line url.request.inbound-request)
   =+  back-path=(flop site.request-line)
   =/  name=@t
     =+  back-path=(flop site.request-line)
-    ~&  back-path
     ?~  back-path
-      'World'
+      ''
     i.back-path
   ::
-  ~&  name
-  ~&  back-path
   ?~  back-path
     :_  this  ~
-  ~&  &2:back-path
   ?:  =(&2:back-path 'img')
     =/  img  (as-octs:mimes:html (~(got by chess-png) `@ta`name))
-
     :_  this
     :~  ^-  move
         :-  ost.bol
@@ -103,6 +218,14 @@
             [%start [200 ['content-type' 'text/css']~] [~ chess-css] %.y]
         ==
     ==
+  ?:  =(name 'game')
+  :_  this
+  :~  ^-  move
+      :-  ost.bol
+      :*  %http-response
+          [%start [200 ['content-type' 'text/html']~] [~ game-html] %.y]
+      ==
+  ==
   :_  this
   :~  ^-  move
       :-  ost.bol
@@ -110,12 +233,4 @@
           [%start [200 ['content-type' 'text/html']~] [~ index] %.y]
       ==
   ==
-++  poke-chess-command
-  |=  com=command
-  ^-  (quip move _this)
-  ~&  com
-  :_  this(sta +.com)
-  %+  turn  (prey:pubsub:userlib /game bol)
-  |=  [=bone ^]
-  [bone %diff %json [%s +.com]]
 --

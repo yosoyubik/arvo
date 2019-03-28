@@ -5,8 +5,16 @@
   |%
   ++  noun  command
   ++  json
-    %-  of:dejs
-    :~  pos+so:dejs
-    ==
+    |=  jon=^json
+    ^-  command
+    %-  command
+    =<  (action jon)
+    |%
+    ++  action
+      %-  of:dejs
+      :~  new+(ot:dejs shp+(su:dejs fed:ag) gid+ni:dejs ori+so:dejs ~)
+          pos+(ot:dejs shp+(su:dejs fed:ag) gid+ni:dejs pos+so:dejs ~)
+      ==
+    --
   --
 --

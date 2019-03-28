@@ -2,53 +2,68 @@
 <html>
   <head>
     <title>Chess</title>
-    <link rel="stylesheet" href="/~chess/chessboard-css.css">
     <script type="application/javascript" src="/~modulo/session.js"></script>
     <script type="application/javascript" src="/~/channel/channel.js"></script>
- 
-    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
-    <script src="~chess/chessboard-js.js"></script>
   </head>
   <body>
-    <div id="board1" style="width: 400px"></div>
+    <p>Create new game?</p>
+    <input type="text" id="shipName" />
+    <button id="createNew">Create</button>
+    <div id="root"></div>
     <script>
-      function onChangeFunc(oldPos, newPos) {
-        let fen = ChessBoard.objToFen(newPos);
 
-        window.urb.poke(window.ship, "chess", "chess-command", 
-          {pos: fen},
-          (json) => {
-            console.log(json);
+      function createGame(shp) {
+        window.urb.poke(window.ship, "chess", "chess-command",
+          {
+            new: {
+              shp: shp,
+              gid: Math.trunc(new Date().getTime() / 1000),
+              ori: Math.random() > 0.5 ? 'white' : 'black'
+            }
           },
-          (err) => {
-            console.log(err);
+          (succ) => {
+            console.log(succ);
+          },
+          (fail) => {
+            console.log(fail);
           }
         );
+
       }
 
-      var cfg = {
-        draggable: true,
-        dropOffBoard: 'snapback', // this is the default
-        position: 'start',
-        onChange: onChangeFunc
-      };
-      var board1 = ChessBoard('board1', cfg);
+      let createBtn = document.getElementById("createNew");
+      createBtn.addEventListener("click", () => {
+        let shpName = document.getElementById("shipName");
+        createGame(shpName.value);
+        shpName.value
+      });
 
-      function doSub() {
-        window.urb.subscribe(window.ship, "chess", "/game",
+      function makeA(shp, da) {
+        let newA = document.createElement("a", {});
+        newA.href = "/~chess/" + shp + "/" + da + "/game";
+        newA.innerText = shp + " - " + da;
+        newA.style = "display:block";
+        return newA;
+      }
+      function doSubList() {
+        window.urb.subscribe(window.ship, "chess", "/list",
           (err) => {
             console.log(err);
           },
           (event) => {
-            console.log(event);
-            board1.position(event);
+            root.innerHTML = "";
+            for (let i = 0; i < event.games.length; i++) {
+              for (let j = 0 ; j < event.games[i].dates.length; j++) {
+                root.appendChild(makeA(event.games[i].ship, event.games[i].dates[j]));
+              }
+            }
           },
           () => {
-            doSub();
+            doSubList();
           }
         );
       }
-      doSub();
+      doSubList();
     </script>
   </body>
 </html>
