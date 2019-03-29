@@ -246,37 +246,41 @@
       !>  ?>(?=(^ actual-gifts) -.i.actual-gifts)
   ==
 ::
-::  TODO reinstate when handling moons and comets
-::++  test-encode-meal-full-emit-gift  ^-  tang
-::  ::  set the foreign life to 3 so we can test the %full case
-::  ::
-::  =.  cur.pipe.fix  `1
-::  ?>  ?=(^ cur.pipe.fix)
-::  ::
-::  =/  encoder
-::    %-  encode-meal:xmas-gate
-::    [our.fix her.fix life.fix rings.fix pipe.fix]
-::  ::
-::  =/  message          [%message %foo %bar]
-::  =/  =meal:xmas-gate  [%bond *flea:xmas-gate /chan/foo message]
-::  ::
-::  =/  result1
-::    %-  encoder
-::    [now=now.fix eny=eny.fix ham=meal]
-::  ::
-::  =/  key  (shaz :(mix (mug meal) now.fix eny.fix))
-::  ::  TODO: do we really want to triple-jam the message?
-::  ::
-::  =/  sit  (seal:as:crub.fix 'b' (jam key (jam meal)))
-::  =/  maj  (jam [u.cur.pipe.fix life.fix] [[her.fix pub.pipe.fix] ~ ~] sit)
-::  ::
-::  =/  spat  (spit:xmas-gate [our.fix her.fix] %full maj)
-::  ::  TODO: why does the date always come out as ~2018.1.1?
-::  ::
-::  %+  expect-eq
-::    !>  :-  [%line ~2018.1.1 key]~
-::        [spat]~
-::    !>  result1
+++  test-encode-meal-full-emit-gift  ^-  tang
+  ::
+  =/  encoder
+    %-  encode-meal:aloe  :*
+      our.fix
+      our-life.fix
+      our-crub.fix
+      her.fix
+      ^-  pipe:aloe
+      [fast-key=~ `her-life.fix her-public-keys.fix her-sponsors.fix]
+    ==
+  ::
+  =/  message     [%message %foo %bar]
+  =/  =meal:aloe  [%bond [0 0] /remote/route message]
+  ::
+  =/  result1
+    %-  encoder
+    [now=now.fix eny=eny.fix ham=meal]
+  ::
+  =/  actual-gifts=(list gift:encode-meal:aloe)  gifts.result1
+  =/  actual-fragments=(list @)                  fragments.result1
+  ::
+  ;:  weld
+    %+  expect-eq
+      !>  1
+      !>  (lent actual-fragments)
+  ::
+    %+  expect-eq
+      !>  1
+      !>  (lent actual-gifts)
+  ::
+    %+  expect-eq
+      !>  %symmetric-key
+      !>  ?>(?=(^ actual-gifts) -.i.actual-gifts)
+  ==
 ::
 ++  aloe-call
   |=  $:  aloe-gate=_aloe-gate
