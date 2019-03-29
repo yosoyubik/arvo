@@ -67,7 +67,7 @@
       her.fix
       our-crub.fix
       ^-  pipe:aloe
-      [fast-key=~ her-life.fix her-public-keys.fix her-sponsors.fix]
+      [fast-key=~ `her-life.fix her-public-keys.fix her-sponsors.fix]
     ==
   ::
   %+  expect-eq
@@ -88,7 +88,7 @@
       her.fix
       our-crub.fix
       ^-  pipe:aloe
-      [fast-key=~ her-life.fix her-public-keys.fix her-sponsors.fix]
+      [fast-key=~ `her-life.fix her-public-keys.fix her-sponsors.fix]
     ==
   ::
   =/  interpreted
@@ -119,7 +119,7 @@
             expiration-date=`@da`(add ~d1 now.fix)
           value=symmetric-key
       ::
-          her-life.fix
+          `her-life.fix
           her-public-keys.fix
           her-sponsors.fix
       ==
@@ -149,7 +149,7 @@
       her.fix
       our-crub.fix
       ^-  pipe:aloe
-      [fast-key=~ her-life.fix her-public-keys.fix her-sponsors.fix]
+      [fast-key=~ `her-life.fix her-public-keys.fix her-sponsors.fix]
     ==
   ::
   =/  interpreted
@@ -177,7 +177,7 @@
       our-crub.fix
       her.fix
       ^-  pipe:aloe
-      [fast-key=~ her-life.fix her-public-keys.fix her-sponsors.fix]
+      [fast-key=~ `her-life.fix her-public-keys.fix her-sponsors.fix]
     ==
   ::
   =/  packet      %packet-foo
@@ -201,7 +201,7 @@
       our-crub.fix
       her.fix
       ^-  pipe:aloe
-      [fast-key=~ her-life.fix her-public-keys.fix her-sponsors.fix]
+      [fast-key=~ `her-life.fix her-public-keys.fix her-sponsors.fix]
     ==
   ::
   =/  message     [%message (gulf 1 2.000)]

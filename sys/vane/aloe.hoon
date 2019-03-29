@@ -273,7 +273,7 @@
 ::
 +$  pipe
   $:  fast-key=(unit [=key-hash key=(expiring symmetric-key)])
-      her-life=life
+      her-life=(unit life)
       her-public-keys=(map life public-key)
       her-sponsors=(list ship)
   ==
@@ -479,17 +479,15 @@
       %^  cat  7
         key-hash.u.fast-key.pipe
       (en:crub:crypto value.key.u.fast-key.pipe (jam meal))
-::  TODO: do we need this? When would we not know her life?
-::  if we don't know their life, just sign this packet without encryption
-::
-::    ?~  cur.pipe
-::      :-  ~
-::      :-  %open
-::      %^    jam
-::          [~ life]
-::        `gree`[[her pub.pipe] ~ ~]
-::      (sign:as:crypto-core (jam meal))
-::
+    ::  if we don't know their life, just sign this packet without encryption
+    ::
+    ?~  her-life.pipe
+      :-  ~
+      :-  %open
+      %^    jam
+          our-life
+        deed=~
+      (sign:as:crypto-core (jam meal))
     ::  asymmetric encrypt; also produce symmetric key gift for upgrade
     ::
     ::    Generate a new symmetric key by hashing entropy, the date,
@@ -507,14 +505,14 @@
     ^-  full:packet-format
     ::  TODO: send our deed if we're a moon or comet
     ::
-    :+  [to=her-life.pipe from=our-life]  deed=~
+    :+  [to=u.her-life.pipe from=our-life]  deed=~
     ::  encrypt the pair of [new-symmetric-key (jammed-meal)] for her eyes only
     ::
     ::    This sends the new symmetric key by piggy-backing it onto the
     ::    original message.
     ::
     %+  seal:as:crypto-core
-      (~(got by her-public-keys.pipe) her-life.pipe)
+      (~(got by her-public-keys.pipe) u.her-life.pipe)
     (jam [new-symmetric-key (jam meal)])
   --
 ::  +interpret-packet: authenticate and decrypt a packet, effectfully
@@ -566,11 +564,12 @@
     =?    decoder-core
         ?=(^ deed.open-packet)
       (apply-deed u.deed.open-packet)
-    ::  TODO: is this assertion valid if we hear a new deed?
+    ::  TODO: is this assertion at all correct?
+    ::  TODO: make sure the deed gets applied to the pipe if needed
     ::
-    ?>  =(her-life.pipe from-life.open-packet)
+    ?>  =((need her-life.pipe) from-life.open-packet)
     ::
-    =/  her-public-key  (~(got by her-public-keys.pipe) her-life.pipe)
+    =/  her-public-key  (~(got by her-public-keys.pipe) (need her-life.pipe))
     ::
     %+  produce-meal  authenticated=%.y
     %-  need
@@ -606,9 +605,9 @@
     ::  TODO: is this assertion valid if we hear a new deed?
     ::
     ~|  [%ames-life-mismatch her her-life.pipe from-life.full-packet]
-    ?>  =(her-life.pipe from-life.full-packet)
+    ?>  =((need her-life.pipe) from-life.full-packet)
     ::
-    =/  her-public-key  (~(got by her-public-keys.pipe) her-life.pipe)
+    =/  her-public-key  (~(got by her-public-keys.pipe) (need her-life.pipe))
     =/  jammed-wrapped=@
       %-  need
       (tear:as:crypto-core her-public-key encrypted-payload.full-packet)
@@ -617,7 +616,7 @@
         (cue jammed-wrapped)
     ::
     =.  decoder-core  (give %symmetric-key symmetric-key)
-    =.  decoder-core  (give %meet her her-life.pipe her-public-key)
+    =.  decoder-core  (give %meet her (need her-life.pipe) her-public-key)
     ::
     (produce-meal authenticated=%.y jammed-message)
   ::  +apply-deed: produce a %meet gift if the deed checks out
