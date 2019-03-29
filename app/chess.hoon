@@ -139,9 +139,6 @@
     ==
   =/  mapnewgame  (~(put by u.allwshp) unix-da ['' ori.+.com])
   :-  pokenew
-::     %+  turn  (prey:pubsub:userlib /list bol)
-::    |=  [=bone ^]
-::    [bone %diff %json [%o newgameobj]]
   %=  this
     sta  (~(put by sta) shp.+.com mapnewgame)
   ==
@@ -193,44 +190,14 @@
   ::
   ?~  back-path
     :_  this  ~
+  ?:  (lte (lent back-path) 1)
+    [[ost.bol %http-response (html-response:app index)]~ this]
   ?:  =(&2:back-path 'img')
     =/  img  (as-octs:mimes:html (~(got by chess-png) `@ta`name))
-    :_  this
-    :~  ^-  move
-        :-  ost.bol
-        :*  %http-response
-            [%start [200 ['content-type' 'image/png']~] [~ img] %.y]
-        ==
-    ==
+    [[ost.bol %http-response (png-response:app img)]~ this]
   ?:  =(name 'chessboard-js')
-    :_  this
-    :~  ^-  move
-        :-  ost.bol
-        :*  %http-response
-            [%start [200 ['content-type' 'application/javascript']~] [~ chess-js] %.y]
-        ==
-    ==
+    [[ost.bol %http-response (js-response:app chess-js)]~ this]
   ?:  =(name 'chessboard-css')
-    :_  this
-    :~  ^-  move
-        :-  ost.bol
-        :*  %http-response
-            [%start [200 ['content-type' 'text/css']~] [~ chess-css] %.y]
-        ==
-    ==
-  ?:  =(name 'game')
-  :_  this
-  :~  ^-  move
-      :-  ost.bol
-      :*  %http-response
-          [%start [200 ['content-type' 'text/html']~] [~ game-html] %.y]
-      ==
-  ==
-  :_  this
-  :~  ^-  move
-      :-  ost.bol
-      :*  %http-response
-          [%start [200 ['content-type' 'text/html']~] [~ index] %.y]
-      ==
-  ==
+    [[ost.bol %http-response (css-response:app chess-css)]~ this]
+  [[ost.bol %http-response (html-response:app game-html)]~ this]
 --

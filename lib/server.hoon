@@ -49,6 +49,11 @@
     ^-  http-event:http
     [%start [200 ['content-type' 'text/css']~] [~ oct-css] %.y]
   ::
+  ++  png-response
+    |=  oct-png=octs
+    ^-  http-event:http
+    [%start [200 ['content-type' 'image/png']~] [~ oct-png] %.y]
+  ::
   ++  login-redirect
     |=  =inbound-request:http-server
     ^-  http-event:http
